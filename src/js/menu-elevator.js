@@ -1,0 +1,160 @@
+import * as React from 'react';
+import {useEffect, useState} from "react";
+import { useContext } from 'react';
+import { UpdateContext } from '../App'
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import SettingsTwoToneIcon from '@mui/icons-material/SettingsTwoTone';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import Stack from '@mui/material/Stack';
+import * as Dialogs from './dialogs';
+import { Elevators } from './elevators.js';
+import ElevatorTab from './elevator-tab.js';
+
+
+
+function ElevatorSelectMenu () {
+    const {update, setUpdate} = useContext(UpdateContext);
+    const [ElevatorName, SetElevatorName] = useState("");
+
+    const handleChangeElevator = (event) => {
+            SetElevatorName(event.target.value);
+        };
+    const handleClickElevatorMenu = (event, index) => {
+            Elevators.setSelected = index;
+            setUpdate ( !update )
+        }
+    return (
+      <Stack direction= 'row' justifyContent={'space-between'} sx={{ p: 1 }} >
+      <FormControl fullWidth size='small' style={ {width : 500 } }>
+            <InputLabel  >Elevator Name</InputLabel> 
+              <Select value={Elevators.ElevatorsName+' - '+Elevators.ElevatorsDate} label="Elevator Name" onChange = {handleChangeElevator} >
+                {Elevators.ElevatorList.map((name, index ) => (
+                  <MenuItem key={index+1} value={ name } onClick={ (event) => { handleClickElevatorMenu(event, index) }}>
+                  { index+1 + ". " +  name}
+                  </MenuItem>
+                ))}
+              </Select>
+          </FormControl>
+          <Button onClick={()=>{Elevators.ElevatorClone()  ; setUpdate( !update ) }}
+            style={ {width : 180, height : 40 } }
+            variant='outlined'>
+            Duplicate Elevator</Button>
+          <Button onClick={()=>{Elevators.ElevatorDel()  ; setUpdate( !update ) }}
+            style={ {width : 180, height : 40 } }
+            variant='outlined'>
+            Delete Elevator</Button>
+          </Stack>
+    );
+  };
+
+export default function ElevatorMenu () {
+    const {update, setUpdate} = useContext(UpdateContext);
+
+    console.log( 'ElevatorMenu, Elevator.ElevatorsName = ', Elevators.ElevatorsName );
+    console.log( 'ElevatorMenu, Elevator = ', Elevators );
+    if ( Elevators.State == 'closed' ) return (<></>)
+    else
+    return (
+      <>
+        <Box component="main" sx={{ p: 2 }}>
+            <ElevatorSelectMenu/>
+            <TextField
+                size='small'
+              value={ Elevators.ElevatorsName }
+              label="Elevator Name"
+              sx={{ p: 1 }}
+              InputProps={{ 
+                endAdornment:
+                  <IconButton color="primary" aria-label="Edit Elevator Name" component="label" onClick={() => {
+                     Dialogs.ElevatorDialogShow(Elevators.ElevatorsName, 0);
+                     setUpdate( !update )
+                      }}>
+                    <Tooltip title="Edit Elevator Name">
+                      <SettingsTwoToneIcon />
+                    </Tooltip>
+                  </IconButton> }}
+            />
+            <TextField
+              size='small'
+              onChange={ (e) => { Elevators.setDate = e.currentTarget.value; setUpdate( !update ) } }
+              value={ Elevators.ElevatorsDate }
+              label="Дата инспекции"
+              sx={{ p: 1 }}
+              type = 'date'
+            />
+            <br/>
+            <TextField
+              size='small'
+              value={ Elevators.ElevatorAdress }
+              label="Адресс"
+              fullWidth 
+              sx={{ p: 1 }}
+            />
+            <br/>
+            <TextField
+                size='small'
+              value={Elevators.ElevatorOwner}
+              label="Владелец элеватора"
+              sx={{ p: 1 }}
+            />
+            <TextField
+                size='small'
+              value={Elevators.ElevatorClient}
+              label="Клиент по залогу"
+              sx={{ p: 1 }}
+            />
+            <br/>
+            <TextField
+                size='small'
+              value={Elevators.ElevatorContactName}
+              label="Контактное лицо"
+              sx={{ p: 1 }}
+            />
+            <TextField
+                size='small'
+              value={Elevators.ElevatorContactPosition}
+              label="Должность"
+              sx={{ p: 1 }}
+            />
+            <TextField
+                size='small'
+              value={Elevators.ElevatorContactPhone}
+              label="Телефон"
+              sx={{ p: 1 }}
+            />
+            <br/>
+            <TextField
+                size='small'
+              value={Elevators.ElevatorInspectorName}
+              label="Инспектор"
+              fullWidth
+              sx={{ p: 1 }}
+            />
+            <br/>
+            <TextField
+                size='small'
+              value={Elevators.ElevatorComments}
+              label="Комментарий"
+              fullWidth
+              sx={{ p: 1 }}
+            />
+
+
+        </Box>
+
+        <ElevatorTab />
+
+      </>
+
+    );
+  }
