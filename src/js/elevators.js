@@ -186,8 +186,9 @@ class cElevators {
     }
     set setSelected(data) { this.Selected = data }
     get ElevatorsFound(){
+        if ( this.Elevators || null )
         if ( this.Elevators.length > 0 ) return this.Elevators.length
-        else return 0
+            else return 0
     }
     get ElevatorsName(){
         if ( this.ElevatorsFound ) return this.Elevators[this.Selected].Name
