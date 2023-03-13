@@ -1,0 +1,9 @@
+{
+    "name": "AVCC-Elevators",
+    "short_name": "Elevators",
+    "theme_color": "#2196f3",
+    "background_color": "#2196f3",
+    "display": "fullscreen",
+    "scope": "/Agri",
+    "start_url": "/"
+  }

@@ -4,8 +4,11 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { StyledEngineProvider } from '@mui/material/styles';
+import LocalServiceWorkerRegister from './js/sw-register';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
+LocalServiceWorkerRegister();
 
 root.render(
   <React.StrictMode>

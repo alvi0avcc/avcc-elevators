@@ -16,16 +16,15 @@ UpdateContext.displayName = 'UpdateContext';
 function App(props) {
   const [update, setUpdate] = useState();
 
-  //if ("serviceWorker" in navigator) {
-  //  navigator.serviceWorker.register("./js/sw.js");
-  //}
-  //self.addEventListener("install", (e) => {
-  //  console.log("[Service Worker] Install");
-  //});
-
   return (
     <div>
     <UpdateContext.Provider value={ {update, setUpdate} }>
+      <link rel="manifest" href="manifest.json" />
+      <meta name="mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="application-name" content="PWA Workshop" />
+      <meta name="apple-mobile-web-app-title" content="PWA Workshop" />
+      <meta name="msapplication-starturl" content="/index.html" />
       <meta name="viewport" content="initial-scale=1, width=device-width" />
       <MenuApp />
       <ElevatorMenu />
