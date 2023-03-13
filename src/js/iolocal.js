@@ -44,15 +44,11 @@ export function ElevatorListGet () {
 
 export function OpenElevator() {
     let data = localStorage.getItem("Elevator");
-    console.log('data=',data);
     if ( data ) { data = JSON.parse(data) }
     else {
             data = null;
             alert ("Локальная БД пуста!")
         }
-    //let a = Elevators;
-    //a.Elevators = data; 
-    //a.State = 'Open';
     return( data );
 };
 
@@ -86,29 +82,16 @@ export function FileInputButton(props) {
 
 export async function FileImport(props) {
 
-   // const decoded = atob(encoded);
-   // const original = fromBinary(decoded);
-   // console.log(original); // ☸☹☺☻☼☾☿
-   
     FileWork = FileSel.current.files[0];
-    let FileJSON;
+    let FileJSON = null;
     let file = await new Promise((resolve) => {
-        let reader = new FileReader();
-        reader.onload = function() {
-            resolve(reader.result)
-        };  
-            
-        reader.readAsText(FileWork); 
-    });
-            console.log( 'file=', file );
-            let original = fromBinary( file );
-            console.log('fromBinary=', original);
-            FileJSON = JSON.parse(original);
-            console.log('imported FileJSON=', FileJSON); 
-
-            Elevators.setElevators = FileJSON;
-            Elevators.State = 'import';
-            console.log('Elevators ==== ', Elevators);
+            let reader = new FileReader();
+            reader.onload = function() { resolve(reader.result) };  
+            reader.readAsText(FileWork); 
+        });
+    let original = fromBinary( file );
+    FileJSON = JSON.parse(original);
+    //Elevators.setElevators = FileJSON;
     return FileJSON;
     }
 
@@ -141,10 +124,7 @@ function fromBinary(binary) {
 
 function FileSave (props) {
     if ( Elevators.ElevatorsFound ) {
-        let data = WarehouseToJSON(Elevators);
-        console.log('Save');
-        console.log('Elevators=',Elevators);
-        console.log('data=',data);
+        let data = WarehouseToJSON(Elevators.Elevators);
         let a=document.createElement("a");
         let name = Elevators.ElevatorsName + Elevators.ElevatorsDate + '.json';
         console.log("File save",name);

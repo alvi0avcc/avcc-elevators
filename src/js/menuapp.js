@@ -78,8 +78,7 @@ function ResponsiveAppBar(props) {
                 </MenuItem>
                 <Divider/>
                 <MenuItem key={1} onClick={ () => ( 
-                    Elevators.setElevators = iolocal.OpenElevator() ,
-                    Elevators.State = 'Open',
+                    Elevators.setElevators =  iolocal.OpenElevator() ,
                     setUpdate( !update ),
                     handleClickFileMenu()
                     ) }>
@@ -95,8 +94,10 @@ function ResponsiveAppBar(props) {
                     <MenuItem key={3} component="label" onClick={ () => ( handleClickFileMenu() )}>
                       Import
                       <input ref={iolocal.FileSel} hidden accept=".json" type="file" onChange={() => ( 
-                          iolocal.FileImport(),
-                          setUpdate( !update ) )}/>
+                        console.log('promise', iolocal.FileImport()),
+                        Elevators.setElevators = iolocal.FileImport(),
+                        setUpdate( !update )
+                        )}/>
                     </MenuItem>
                 
                 <MenuItem key={4} onClick={ () => (

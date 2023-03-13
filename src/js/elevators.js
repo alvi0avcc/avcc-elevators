@@ -231,7 +231,12 @@ class cElevators {
         if ( this.ElevatorsFound) return this.Elevators[this.Selected].Comments
         else return ''
     }
-    set setElevators(data){ this.Elevators = data }
+    set setElevators(data){
+        if ( data || null ) {
+            this.Elevators = data;
+            this.State = 'Open';
+            }
+         }
     AddElevator(){
         this.Elevators.push(new cElevator());
         this.State = 'Elevator added'
