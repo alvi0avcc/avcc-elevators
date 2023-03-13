@@ -232,10 +232,9 @@ class cElevators {
         else return ''
     }
     set setElevators(data){
-        if ( data || null ) {
-            this.Elevators = data;
-            this.State = 'Open';
-            }
+        this.Elevators = data;
+        this.State = 'open'
+        if ( data == null ) this.State = 'closed';
          }
     AddElevator(){
         this.Elevators.push(new cElevator());
