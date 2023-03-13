@@ -7,7 +7,6 @@ import MenuItem from '@mui/material/MenuItem';
 export let ElevatorOpened = false; // Local BD Opened/Closed
 export let FileSel = React.createRef();
 let FileWork;
-//let FileJSON;
 let ElevatorKey = ''; //ключ текущего элеватора в localStorage
 export let ElevatorList = [];
 export let WarehouseList = [];
@@ -30,14 +29,11 @@ export function NewElevator(props) {
 }
 
 export function ElevatorListGet () {
-   // let ii = Calc.Elevators.length;
    let ii = 0;
     let data;
     ElevatorList = [];
     for( let i =0 ; i < ii ; i++){
-        //data = Calc.Elevators[i].id + Calc.Elevators[i].Name;
         ElevatorList.push( data );
-        //console.log("data" , data);
     };
     console.log("ElevatorList", ElevatorList);
 }
@@ -91,8 +87,7 @@ export async function FileImport(props) {
         });
     let original = fromBinary( file );
     FileJSON = JSON.parse(original);
-    //Elevators.setElevators = FileJSON;
-    return FileJSON;
+    return Promise.resolve(FileJSON)
     }
 
 function toBinary(string) {

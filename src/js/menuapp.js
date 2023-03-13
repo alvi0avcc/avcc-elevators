@@ -94,8 +94,8 @@ function ResponsiveAppBar(props) {
                     <MenuItem key={3} component="label" onClick={ () => ( handleClickFileMenu() )}>
                       Import
                       <input ref={iolocal.FileSel} hidden accept=".json" type="file" onChange={() => ( 
-                        console.log('promise', iolocal.FileImport()),
-                        Elevators.setElevators = iolocal.FileImport(),
+                        iolocal.FileImport().then( (result) => { Elevators.setElevators = result } ),
+                        console.log('promise', Elevators ),
                         setUpdate( !update )
                         )}/>
                     </MenuItem>

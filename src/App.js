@@ -7,6 +7,8 @@ import { Elevators } from './js/elevators.js';
 import ElevatorTab from './js/elevator-tab.js';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
+import { Button } from '@mui/material';
+import { Label } from '@mui/icons-material';
 
 export const UpdateContext = React.createContext(false);
 UpdateContext.displayName = 'UpdateContext';
@@ -33,11 +35,17 @@ function App(props) {
     <Stack
       direction={'row'}
       justifyContent={'space-around'}
-      divider={<Divider orientation="vertical" flexItem />} > 
-        <a>©&nbsp;2023&nbsp; AVCC</a>
-        <a href="/about">About</a>
-        <a href="mailto: cargo.control.ua@gmail.com">Feedback</a>
-        <a href="/terms">Legal Notices</a>
+      divider={<Divider orientation="vertical" flexItem />} >
+        <Button>©&nbsp;2023&nbsp; AVCC</Button> 
+        <Button onClick={ () => { alert( 'Calculation of the volume and weight of cargo on elevators' ) }} >
+          About</Button>
+          <Button onClick={ () => {
+            let email = document.createElement("a");
+            email.href = "mailto:cargo.control.ua@gmail.com";
+            email.click()} }>
+          FeedBack</Button>
+        <Button onClick={ () => { alert( 'MIT License. Copyright (c) 2023 Aleksandr Vavilov (alvi.ua@gmail.com)' ) }} >
+        Legal Notices</Button>
     </Stack>
     <Divider/>
     </div>
