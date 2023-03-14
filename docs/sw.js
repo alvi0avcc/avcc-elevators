@@ -7,7 +7,7 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     addResourcesToCache([
       "https://alvi0avcc.github.io/avcc-elevators/",
-      "https://alvi0avcc.github.io/avcc-elevators/static/"
+      "https://alvi0avcc.github.io/avcc-elevators/favicon.ico"
     ])
   );
 });
