@@ -20,8 +20,6 @@ function App(props) {
 
   //LocalServiceWorkerRegister();
 
-  
-
   registerServiceWorker();
 
   return (

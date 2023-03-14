@@ -19,6 +19,8 @@ import Stack from '@mui/material/Stack';
 import * as Dialogs from './dialogs';
 import { Elevators } from './elevators.js';
 import ElevatorTab from './elevator-tab.js';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 
 
@@ -57,18 +59,18 @@ function ElevatorSelectMenu () {
     );
   };
 
-export default function ElevatorMenu () {
-    const {update, setUpdate} = useContext(UpdateContext);
+function ElevatorMenuBase(){
+  const {update, setUpdate} = useContext(UpdateContext);
+  const [checked, setChecked] = React.useState(false);
 
-    console.log( 'ElevatorMenu, Elevator.ElevatorsName = ', Elevators.ElevatorsName );
-    console.log( 'ElevatorMenu, Elevator = ', Elevators );
-    if ( Elevators.State == 'closed' ) return (<></>)
-    else
-    return (
-      <>
-        <Box component="main" sx={{ p: 2 }}>
-            <ElevatorSelectMenu/>
-            <TextField
+  const handleChange_ElDet = (event) => {
+    setChecked(event.target.checked);
+  };
+
+  return (
+    <>
+      <ElevatorSelectMenu/>
+      <TextField
                 size='small'
               value={ Elevators.ElevatorsName }
               label="Elevator Name"
@@ -92,7 +94,23 @@ export default function ElevatorMenu () {
               sx={{ p: 1 }}
               type = 'date'
             />
-            <br/>
+            <FormControlLabel control={
+              <Checkbox 
+              checked={checked}
+              onChange={handleChange_ElDet}
+              />
+            } label="Show Elevator Details" />
+            
+            <ElevatorMenuDetail show={checked}/>
+    </>
+  )
+}
+
+function ElevatorMenuDetail(show){
+  if ( !show.show ) return (<></>)
+  else
+return (
+  <>
             <TextField
               size='small'
               value={ Elevators.ElevatorAdress }
@@ -148,8 +166,22 @@ export default function ElevatorMenu () {
               fullWidth
               sx={{ p: 1 }}
             />
+  </>
+)
+}
 
+export default function ElevatorMenu () {
+    const {update, setUpdate} = useContext(UpdateContext);
+    const [checked, setChecked] = React.useState(true);
 
+    console.log( 'ElevatorMenu, Elevator.ElevatorsName = ', Elevators.ElevatorsName );
+    console.log( 'ElevatorMenu, Elevator = ', Elevators );
+    if ( Elevators.State == 'closed' ) return (<></>)
+    else
+    return (
+      <>
+        <Box component="main" sx={{ p: 2 }}>
+            <ElevatorMenuBase/>
         </Box>
 
         <ElevatorTab />
