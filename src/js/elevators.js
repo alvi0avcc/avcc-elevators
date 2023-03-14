@@ -204,34 +204,42 @@ class cElevators {
         if ( this.ElevatorsFound) return this.Elevators[this.Selected].Adress
         else return ''
     }
+    set setAdress(data) { if ( this.ElevatorsFound ) this.Elevators[this.Selected].Adress = data }
     get ElevatorOwner(){
         if ( this.ElevatorsFound) return this.Elevators[this.Selected].Owner
         else return ''
     }
+    set setOwner(data) { if ( this.ElevatorsFound ) this.Elevators[this.Selected].Owner = data }
     get ElevatorClient(){
         if ( this.ElevatorsFound) return this.Elevators[this.Selected].Client
         else return ''
     }
+    set setClient(data) { if ( this.ElevatorsFound ) this.Elevators[this.Selected].Client = data }
     get ElevatorContactName(){
         if ( this.ElevatorsFound) return this.Elevators[this.Selected].ContactName
         else return ''
     }
+    set setContactName(data) { if ( this.ElevatorsFound ) this.Elevators[this.Selected].ContactName = data }
     get ElevatorContactPosition(){
         if ( this.ElevatorsFound) return this.Elevators[this.Selected].ContactPosition
         else return ''
     }
+    set setContactPosition(data) { if ( this.ElevatorsFound ) this.Elevators[this.Selected].ContactPosition = data }
     get ElevatorContactPhone(){
         if ( this.ElevatorsFound) return this.Elevators[this.Selected].ContactPhone
         else return ''
     }
+    set setContactPhone(data) { if ( this.ElevatorsFound ) this.Elevators[this.Selected].ContactPhone = data }
     get ElevatorInspectorName(){
         if ( this.ElevatorsFound) return this.Elevators[this.Selected].InspectorName
         else return ''
     }
+    set setInspectorName(data) { if ( this.ElevatorsFound ) this.Elevators[this.Selected].InspectorName = data }
     get ElevatorComments(){
         if ( this.ElevatorsFound) return this.Elevators[this.Selected].Comments
         else return ''
     }
+    set setComments(data) { if ( this.ElevatorsFound ) this.Elevators[this.Selected].Comments = data }
     set setElevators(data){
         this.Elevators = data;
         if ( data || null ) { this.State = 'open' } else this.State = 'closed';

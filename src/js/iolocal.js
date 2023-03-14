@@ -121,7 +121,7 @@ function FileSave (props) {
     if ( Elevators.ElevatorsFound ) {
         let data = WarehouseToJSON(Elevators.Elevators);
         let a=document.createElement("a");
-        let name = Elevators.ElevatorsName + Elevators.ElevatorsDate + '.json';
+        let name = 'Elevators.json';
         console.log("File save",name);
         a.setAttribute("download", name||"Elevator.json");
         a.setAttribute("href", "data:application/octet-stream;base64," + btoa( toBinary (data) ||"undefined"));

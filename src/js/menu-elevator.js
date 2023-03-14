@@ -107,12 +107,15 @@ function ElevatorMenuBase(){
 }
 
 function ElevatorMenuDetail(show){
+  const {update, setUpdate} = useContext(UpdateContext);
+
   if ( !show.show ) return (<></>)
   else
 return (
   <>
             <TextField
               size='small'
+              onChange={ (e) => { Elevators.setAdress = e.currentTarget.value; setUpdate( !update ) } }
               value={ Elevators.ElevatorAdress }
               label="Адресс"
               fullWidth 
@@ -120,39 +123,45 @@ return (
             />
             <br/>
             <TextField
-                size='small'
+              size='small'
+              onChange={ (e) => { Elevators.setOwner = e.currentTarget.value; setUpdate( !update ) } }
               value={Elevators.ElevatorOwner}
               label="Владелец элеватора"
               sx={{ p: 1 }}
             />
             <TextField
-                size='small'
+              size='small'
+              onChange={ (e) => { Elevators.setClient = e.currentTarget.value; setUpdate( !update ) } }
               value={Elevators.ElevatorClient}
               label="Клиент по залогу"
               sx={{ p: 1 }}
             />
             <br/>
             <TextField
-                size='small'
+              size='small'
+              onChange={ (e) => { Elevators.setContactName = e.currentTarget.value; setUpdate( !update ) } }
               value={Elevators.ElevatorContactName}
               label="Контактное лицо"
               sx={{ p: 1 }}
             />
             <TextField
-                size='small'
+              size='small'
+              onChange={ (e) => { Elevators.setContactPosition = e.currentTarget.value; setUpdate( !update ) } }
               value={Elevators.ElevatorContactPosition}
               label="Должность"
               sx={{ p: 1 }}
             />
             <TextField
-                size='small'
+              size='small'
+              onChange={ (e) => { Elevators.setContactPhone = e.currentTarget.value; setUpdate( !update ) } }
               value={Elevators.ElevatorContactPhone}
               label="Телефон"
               sx={{ p: 1 }}
             />
             <br/>
             <TextField
-                size='small'
+              size='small'
+              onChange={ (e) => { Elevators.setInspectorName = e.currentTarget.value; setUpdate( !update ) } }
               value={Elevators.ElevatorInspectorName}
               label="Инспектор"
               fullWidth
@@ -160,7 +169,8 @@ return (
             />
             <br/>
             <TextField
-                size='small'
+              size='small'
+              onChange={ (e) => { Elevators.setComments = e.currentTarget.value; setUpdate( !update ) } }
               value={Elevators.ElevatorComments}
               label="Комментарий"
               fullWidth
