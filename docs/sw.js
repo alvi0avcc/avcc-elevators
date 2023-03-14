@@ -1,5 +1,8 @@
+const CACHE_NAME_1 = "V1";
+const CACHE_NAME_2 = "V2";
+
 const addResourcesToCache = async (resources) => {
-  const cache = await caches.open("v1");
+  const cache = await caches.open(CACHE_NAME_1);
   await cache.addAll(resources);
 };
 
@@ -30,3 +33,40 @@ self.addEventListener("install", (event) => {
     ])
   );
 });
+
+self.addEventListener('message', async (event) => {
+    console.log('Got message in the service worker', event);
+  });
+
+  
+  self.addEventListener("activate", event => {
+    // delete any unexpected caches
+    event.waitUntil(
+      caches
+        .keys()
+        .then(keys => keys.filter(key => key !== CACHE_NAME_2))
+        .then(keys =>
+          Promise.all(
+            keys.map(key => {
+              console.log(`Deleting cache ${key}`);
+              return caches.delete(key);
+            })
+          )
+        )
+    );
+  });
+
+
+self.addEventListener("fetch", event => {
+    // Cache-First Strategy
+    event.respondWith(
+      caches
+        .match(event.request) // check if the request has already been cached
+        .then(cached => cached || fetch(event.request)) // otherwise request network
+        .then(
+          response =>
+            cache(event.request, response) // put response in cache
+              .then(() => response) // resolve promise with the network response
+        )
+    );
+  });
