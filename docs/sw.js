@@ -6,7 +6,8 @@ const addResourcesToCache = async (resources) => {
 self.addEventListener("install", (event) => {
   event.waitUntil(
     addResourcesToCache([
-      "https://alvi0avcc.github.io/avcc-elevators/"
+      "https://alvi0avcc.github.io/avcc-elevators/",
+      "https://alvi0avcc.github.io/avcc-elevators/static/"
     ])
   );
 });
