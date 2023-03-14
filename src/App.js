@@ -9,12 +9,20 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import { Button } from '@mui/material';
 import { Label } from '@mui/icons-material';
+import LocalServiceWorkerRegister from './js/sw-register';
+import registerServiceWorker from './js/sw-register';
 
 export const UpdateContext = React.createContext(false);
 UpdateContext.displayName = 'UpdateContext';
 
 function App(props) {
   const [update, setUpdate] = useState();
+
+  //LocalServiceWorkerRegister();
+
+  
+
+  registerServiceWorker();
 
   return (
     <div>
