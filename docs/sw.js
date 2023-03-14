@@ -6,8 +6,7 @@ const addResourcesToCache = async (resources) => {
 self.addEventListener("install", (event) => {
   event.waitUntil(
     addResourcesToCache([
-      "https://github.com/alvi0avcc/",
-      "https://github.com/alvi0avcc/index.html"
+      "https://github.com/alvi0avcc/"
     ])
   );
 });
