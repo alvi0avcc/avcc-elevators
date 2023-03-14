@@ -85,12 +85,16 @@ self.addEventListener('install', (event) => {
   );
 });
 
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    cacheFirst({
-      request: event.request,
-      preloadResponsePromise: event.preloadResponse,
-      fallbackUrl: './gallery/myLittleVader.jpg',
-    })
-  );
+//self.addEventListener('fetch', (event) => {
+//  event.respondWith(
+//    cacheFirst({
+//      request: event.request,
+//      preloadResponsePromise: event.preloadResponse,
+//      fallbackUrl: './gallery/myLittleVader.jpg',
+//    })
+//  );
+//});
+
+self.addEventListener("fetch", (event) => {
+  event.respondWith(cacheFirst(event.request));
 });
