@@ -1,6 +1,6 @@
 const CACHE_NAME_1 = "V1";
 //const STATIC_CACHE_URLS = ["styles.css", "scripts.js"];
-const STATIC_CACHE_URLS = ["https://alvi0avcc.github.io/avcc-elevators/", "/static"];
+const STATIC_CACHE_URLS = ["/avcc-elevators/", "/static"];
 
 
 self.addEventListener("install", event => {  
