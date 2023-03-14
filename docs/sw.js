@@ -12,7 +12,8 @@ self.addEventListener("install", (event) => {
       "https://alvi0avcc.github.io/avcc-elevators/192.png",
       "https://alvi0avcc.github.io/avcc-elevators/asset-manifest.json",
       "https://alvi0avcc.github.io/avcc-elevators/manifest.json",
-      "https://alvi0avcc.github.io/avcc-elevators/static/css/",
+      "https://alvi0avcc.github.io/avcc-elevators/static/css/main.93ab147d.css",
+      "https://alvi0avcc.github.io/avcc-elevators/static/css/main.93ab147d.css.map",
       "https://alvi0avcc.github.io/avcc-elevators/static/js/787.dc98cd1f.chunk.js",
       "https://alvi0avcc.github.io/avcc-elevators/static/media/roboto-all-300-normal.168d6383e73339293ac3.woff"
     ])
