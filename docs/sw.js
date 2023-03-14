@@ -7,12 +7,7 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     addResourcesToCache([
       "/",
-      "/index.html",
-      "/static",
-      "/192.png",
-      "/asset-manifest.json",
-      "/favicon.ico",
-      "/manifest.json"
+      "/index.html"
     ])
   );
 });
