@@ -11,7 +11,11 @@ self.addEventListener("install", (event) => {
       "https://alvi0avcc.github.io/avcc-elevators/favicon.ico",
       "https://alvi0avcc.github.io/avcc-elevators/192.png",
       "https://alvi0avcc.github.io/avcc-elevators/asset-manifest.json",
-      "https://alvi0avcc.github.io/avcc-elevators/manifest.json"
+      "https://alvi0avcc.github.io/avcc-elevators/manifest.json",
+      "https://alvi0avcc.github.io/avcc-elevators/static/",
+      "https://alvi0avcc.github.io/avcc-elevators/static/css/",
+      "https://alvi0avcc.github.io/avcc-elevators/static/js/",
+      "https://alvi0avcc.github.io/avcc-elevators/static/media/"
     ])
   );
 });
