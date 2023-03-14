@@ -8,7 +8,10 @@ self.addEventListener("install", (event) => {
     addResourcesToCache([
       "https://alvi0avcc.github.io/avcc-elevators/",
       "https://alvi0avcc.github.io/avcc-elevators/index.html",
-      "https://alvi0avcc.github.io/avcc-elevators/favicon.ico"
+      "https://alvi0avcc.github.io/avcc-elevators/favicon.ico",
+      "https://alvi0avcc.github.io/avcc-elevators/192.png",
+      "https://alvi0avcc.github.io/avcc-elevators/asset-manifest.json",
+      "https://alvi0avcc.github.io/avcc-elevators/manifest.json"
     ])
   );
 });
