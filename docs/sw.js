@@ -1,5 +1,5 @@
 const CACHE_NAME_1 = "V1";
-const CACHE_NAME_2 = "V2";
+//const CACHE_NAME_2 = "V2";
 
 const addResourcesToCache = async (resources) => {
   const cache = await caches.open(CACHE_NAME_1);
@@ -44,7 +44,7 @@ self.addEventListener('message', async (event) => {
     event.waitUntil(
       caches
         .keys()
-        .then(keys => keys.filter(key => key !== CACHE_NAME_2))
+        .then(keys => keys.filter(key => key !== CACHE_NAME_1))
         .then(keys =>
           Promise.all(
             keys.map(key => {
