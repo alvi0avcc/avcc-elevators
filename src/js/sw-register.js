@@ -1,5 +1,5 @@
 export default function LocalServiceWorkerRegister() {
-    const swPath = `${process.env.PUBLIC_URL}/sw.js`;
+    const swPath = `${process.env.PUBLIC_URL}/js/sw.js`;
     if ('serviceWorker' in navigator ) {
       window.addEventListener('load', function () {
         navigator.serviceWorker
