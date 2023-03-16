@@ -1,4 +1,6 @@
 export default function registerServiceWorker(){
+  const Path = `${process.env.PUBLIC_URL}`;
+    console.log('Path=',Path);
   //LocalRegisterServiceWorker();
   //ExternalRegisterServiceWorker();
 }
