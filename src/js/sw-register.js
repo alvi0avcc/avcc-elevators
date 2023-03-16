@@ -2,9 +2,10 @@ export default function registerServiceWorker(){
   const Path = window.location.href;
     console.log('Path=',Path);
     if ( Path == 'http://localhost:3000/' ) { console.log('local') }
-    else { console.log('external') };
-  //LocalRegisterServiceWorker();
-  //ExternalRegisterServiceWorker();
+    else {
+      console.log('external');
+      //ExternalRegisterServiceWorker();
+    };
 }
 
 

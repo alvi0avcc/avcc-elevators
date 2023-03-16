@@ -10,12 +10,14 @@ const putInCache = async (request, response) => {
 
 const cacheFirst = async ({ request, preloadResponsePromise, fallbackUrl }) => {
   // First try to get the resource from the cache
+  // Сначала попробуйте получить ресурс из кэша
   const responseFromCache = await caches.match(request);
   if (responseFromCache) {
     return responseFromCache;
   }
 
   // Next try to use the preloaded response, if it's there
+  // Далее попробуйте использовать предустановленный ответ, если он есть
   const preloadResponse = await preloadResponsePromise;
   if (preloadResponse) {
     console.info('using preload response', preloadResponse);
@@ -24,6 +26,7 @@ const cacheFirst = async ({ request, preloadResponsePromise, fallbackUrl }) => {
   }
 
   // Next try to get the resource from the network
+  // Далее попробуйте получить ресурс из сети
   try {
     const responseFromNetwork = await fetch(request);
     // response may be used only once
@@ -39,6 +42,9 @@ const cacheFirst = async ({ request, preloadResponsePromise, fallbackUrl }) => {
     // when even the fallback response is not available,
     // there is nothing we can do, but we must always
     // return a Response object
+    // если даже резервный ответ недоступен,
+    // здесь мы ничего не можем сделать, но мы всегда должны
+    // возврат объекта Response
     return new Response('Network error happened', {
       status: 408,
       headers: { 'Content-Type': 'text/plain' },
