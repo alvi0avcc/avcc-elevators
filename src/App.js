@@ -18,8 +18,6 @@ UpdateContext.displayName = 'UpdateContext';
 function App(props) {
   const [update, setUpdate] = useState();
 
-  //LocalServiceWorkerRegister();
-
   registerServiceWorker();
 
   return (

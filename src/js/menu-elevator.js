@@ -90,7 +90,7 @@ function ElevatorMenuBase(){
               size='small'
               onChange={ (e) => { Elevators.setDate = e.currentTarget.value; setUpdate( !update ) } }
               value={ Elevators.ElevatorsDate }
-              label="Дата инспекции"
+              label="Inspection date"
               sx={{ p: 1 }}
               type = 'date'
             />
@@ -117,7 +117,7 @@ return (
               size='small'
               onChange={ (e) => { Elevators.setAdress = e.currentTarget.value; setUpdate( !update ) } }
               value={ Elevators.ElevatorAdress }
-              label="Адресс"
+              label="Elevator address"
               fullWidth 
               sx={{ p: 1 }}
             />
@@ -126,14 +126,14 @@ return (
               size='small'
               onChange={ (e) => { Elevators.setOwner = e.currentTarget.value; setUpdate( !update ) } }
               value={Elevators.ElevatorOwner}
-              label="Владелец элеватора"
+              label="Elevator owner"
               sx={{ p: 1 }}
             />
             <TextField
               size='small'
               onChange={ (e) => { Elevators.setClient = e.currentTarget.value; setUpdate( !update ) } }
               value={Elevators.ElevatorClient}
-              label="Клиент по залогу"
+              label="Client by deposit"
               sx={{ p: 1 }}
             />
             <br/>
@@ -141,21 +141,21 @@ return (
               size='small'
               onChange={ (e) => { Elevators.setContactName = e.currentTarget.value; setUpdate( !update ) } }
               value={Elevators.ElevatorContactName}
-              label="Контактное лицо"
+              label="Contact"
               sx={{ p: 1 }}
             />
             <TextField
               size='small'
               onChange={ (e) => { Elevators.setContactPosition = e.currentTarget.value; setUpdate( !update ) } }
               value={Elevators.ElevatorContactPosition}
-              label="Должность"
+              label="Position"
               sx={{ p: 1 }}
             />
             <TextField
               size='small'
               onChange={ (e) => { Elevators.setContactPhone = e.currentTarget.value; setUpdate( !update ) } }
               value={Elevators.ElevatorContactPhone}
-              label="Телефон"
+              label="Phone"
               sx={{ p: 1 }}
             />
             <br/>
@@ -163,7 +163,7 @@ return (
               size='small'
               onChange={ (e) => { Elevators.setInspectorName = e.currentTarget.value; setUpdate( !update ) } }
               value={Elevators.ElevatorInspectorName}
-              label="Инспектор"
+              label="Inspector"
               fullWidth
               sx={{ p: 1 }}
             />
@@ -172,7 +172,7 @@ return (
               size='small'
               onChange={ (e) => { Elevators.setComments = e.currentTarget.value; setUpdate( !update ) } }
               value={Elevators.ElevatorComments}
-              label="Комментарий"
+              label="Comments"
               fullWidth
               sx={{ p: 1 }}
             />

@@ -52,9 +52,9 @@ export default function BasicTabs() {
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" centered >
-          <Tab label="Силосный комплекс" {...a11yProps(0)} />
-          <Tab label="Силоса" {...a11yProps(1)} />
-          <Tab label="Напольные склады" {...a11yProps(2)} />
+          <Tab label="Silo complex" {...a11yProps(0)} />
+          <Tab label="Silos" {...a11yProps(1)} />
+          <Tab label="Floor warehouses" {...a11yProps(2)} />
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>

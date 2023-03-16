@@ -23,7 +23,7 @@ export function RoundSqureToDiameter(){
     let d  = Elevators.SiloDimension.Diameter;
     let square;
     if ( d > 0 ) square = Calc.MyRound( 3.14 * Math.pow( d/2, 2 ), 3 );
-    if ( square = prompt ( 'Calculate Diameter from Area  (m^2).', square ) )
+    if ( square = prompt ( 'Calculate Diameter from Area  (m²).', square ) )
       d =  Calc.MyRound( Math.sqrt( square / 3.14 ) * 2, 3 );
     return d;
   }

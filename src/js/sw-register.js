@@ -1,4 +1,10 @@
-export default function LocalServiceWorkerRegister() {
+export default function registerServiceWorker(){
+  //LocalRegisterServiceWorker();
+  //ExternalRegisterServiceWorker();
+}
+
+
+async function LocalRegisterServiceWorker() {
     const swPath = `${process.env.PUBLIC_URL}/sw.js`;
     if ('serviceWorker' in navigator ) {
       window.addEventListener('load', function () {
@@ -10,7 +16,7 @@ export default function LocalServiceWorkerRegister() {
   }
 }
 
-export const registerServiceWorker = async () => {
+async function ExternalRegisterServiceWorker() {
     if ("serviceWorker" in navigator) {
       try {
         const registration = await navigator.serviceWorker.register("/sw.js", {

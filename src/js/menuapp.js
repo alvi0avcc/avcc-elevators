@@ -111,7 +111,7 @@ function ResponsiveAppBar(props) {
                   setUpdate( !update ),
                   handleClickFileMenu()
                   ) }>
-                  <Typography textAlign="center">{'reload'}</Typography>
+                  <Typography textAlign="center">{'reload info'}</Typography>
                 </MenuItem>
             </Menu>
           </Box>

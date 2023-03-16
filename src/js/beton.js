@@ -5,7 +5,7 @@ export default function Beton() {
   
     return (
       <>
-      в разработке
+      in development
       </>
     );
 }

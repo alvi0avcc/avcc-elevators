@@ -5,7 +5,7 @@ export default function Warehouse() {
   
     return (
       <>
-      Напольные склады - в разработке
+      in development
       </>
     );
 }

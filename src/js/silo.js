@@ -167,8 +167,8 @@ function SiloInfo(){
                 <TextField value={ Elevators.SiloDimension.Sound } label="Measuring point level (m)" sx={{ p: 1 }} onChange={ChangeSound} size='small' />
             </Stack>
             <Stack direction= 'row'>
-                <TextField value={ Elevators.SiloVolume } label="Сargo volume (m^3)" sx={{ p: 1 }} size='small' />
-                <TextField style={{ backgroundColor: 'whitesmoke' }} value={ Elevators.SiloMass } label="Cargo weight (mt)" sx={{ p: 1 }} size='small' />
+                <TextField value={ Elevators.SiloVolume } label="Сargo volume (m³)" sx={{ p: 1 }} size='small' />
+                <TextField style={{ backgroundColor: 'whitesmoke' }} value={ Elevators.SiloMass } label="Cargo weight (MT)" sx={{ p: 1 }} size='small' />
             </Stack>
             </Stack>
 
@@ -192,7 +192,7 @@ function SiloInfo(){
         </Stack>
         <Divider/>
         <Box>
-            Сводная информация по силосам:
+            Summary information on silos:
             <br/>
             <SiloTotalInfo/>
             <br/>
@@ -209,7 +209,7 @@ function SiloTotalInfo(){
         {Elevators.SiloTotalInfo.map((name, index ) => (
                     <TextField
                       style={ { width : 500 } }
-                      size='small' key = {index} label={name[0]+' - '+name[1]+' = '+name[2]+' mt'} 
+                      size='small' key = {index} label={name[0]+' - '+name[1]+' = '+name[2]+' MT'} 
                     />))}
         </Box>
     )
@@ -221,7 +221,7 @@ function SiloCargoInfo(){
         {Elevators.SiloCargoInfo.map((name, index ) => (
                     <TextField
                       style={ { width : 500 } }
-                      size='small' key = {index} label={name[0]+' = '+name[1]+' mt'} 
+                      size='small' key = {index} label={name[0]+' = '+name[1]+' MT'} 
                     />))}
         </Box>
     )
