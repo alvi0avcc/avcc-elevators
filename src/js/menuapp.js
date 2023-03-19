@@ -130,6 +130,7 @@ function ResponsiveAppBar(props) {
               textDecoration: 'none',
             }}
           >
+            <img src="localhost:3000/avcc-elevators/public/favicon.ico"></img>
             Elevators
           </Typography>
         </Toolbar>
