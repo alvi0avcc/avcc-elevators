@@ -17,12 +17,12 @@ UpdateContext.displayName = 'UpdateContext';
 
 function App(props) {
   const [update, setUpdate] = useState();
-
+  ElVersion();
   registerServiceWorker();
 
   return (
     <div>
-    <UpdateContext.Provider value={ {update, setUpdate} }>
+    <UpdateContext.Provider value={ [update, setUpdate] }>
       <link rel="manifest" href="manifest.json" />
       <meta name="mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -55,3 +55,17 @@ function App(props) {
   );
 } export default App;
 
+function ElVersion(){
+  const requestURL = window.location.href+'package.json';
+  let request = new XMLHttpRequest();
+  let fileJson;
+  request.open('GET', requestURL);
+  request.responseType = '';
+  request.send();
+  request.onload = function() {
+  fileJson = request.response;
+  //console.log('request=',request)
+  //console.log('requestURL=',requestURL)
+  //console.log('fileJson=',fileJson);
+  }
+};

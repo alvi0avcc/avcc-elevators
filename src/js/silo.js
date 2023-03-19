@@ -17,32 +17,6 @@ import Canvas from './silo_draw';
 import * as Dialogs from './dialogs';
 
 
-function TabPanel(props) {
-    const { children, value, index, ...other } = props;
-  
-    return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`simple-tabpanel-${index}`}
-        aria-labelledby={`simple-tab-${index}`}
-        {...other}
-      >
-        {value === index && (
-          <Box sx={{ p: 3 }}>
-            <Typography>{children}</Typography>
-          </Box>
-        )}
-      </div>
-    );
-  }
-  
-  TabPanel.propTypes = {
-    children: PropTypes.node,
-    index: PropTypes.number.isRequired,
-    value: PropTypes.number.isRequired,
-  };
-  
   function a11yProps(index) {
     return {
       id: `simple-tab-${index}`,
@@ -50,7 +24,7 @@ function TabPanel(props) {
     };
   }
   
-  export function SiloTabs() {
+  function SiloTabs() {
     const [value, setValue] = React.useState(0);
   
     const handleChange = (event, newValue) => {
@@ -71,11 +45,11 @@ function TabPanel(props) {
             </Box>
         </Box>
         )
-        } else return (<><br/>Силоса отсутствуют</>);   
+        } else return (<><br/>No silos</>);   
   }
 
 export default function Silo(){
-    const {update, setUpdate} = useContext(UpdateContext);
+    const [update, setUpdate] = useContext(UpdateContext);
     return (
         <>
         <Stack spacing={5} direction= 'row' divider={<Divider orientation="vertical" flexItem />} justifyContent={'space-between'}>
@@ -98,7 +72,7 @@ export default function Silo(){
 }
 
 function SiloInfo(){
-    const {update, setUpdate} = useContext(UpdateContext);
+    const [update, setUpdate] = useContext(UpdateContext);
     const [value, setValue] = React.useState(false);
 
     const ChangeName = (event) => {

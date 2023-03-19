@@ -4,7 +4,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import Beton from './beton';
+import ComplexSilo from './complex-silo';
 import Silo from './silo';
 import Warehouse from './warehouse';
 
@@ -58,7 +58,7 @@ export default function BasicTabs() {
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
-        <Beton/>
+        <ComplexSilo/>
       </TabPanel>
       <TabPanel value={value} index={1}>
         <Silo/>

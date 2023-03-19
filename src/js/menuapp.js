@@ -23,7 +23,7 @@ import Divider from '@mui/material/Divider';
 const FileMenu = ['Create/Add', 'Open', 'Save', 'Import', 'Export'];
 
 function ResponsiveAppBar(props) {
-    const {update, setUpdate} = useContext(UpdateContext);
+    const [update, setUpdate] = useContext(UpdateContext);
     const [anchorElFile, setAnchorElFile] = React.useState(null);
 
   const handleOpenFileMenu = (event) => {

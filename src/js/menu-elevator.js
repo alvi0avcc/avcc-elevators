@@ -25,7 +25,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 
 
 function ElevatorSelectMenu () {
-    const {update, setUpdate} = useContext(UpdateContext);
+    const [update, setUpdate] = useContext(UpdateContext);
     const [ElevatorName, SetElevatorName] = useState("");
 
     const handleChangeElevator = (event) => {
@@ -60,7 +60,7 @@ function ElevatorSelectMenu () {
   };
 
 function ElevatorMenuBase(){
-  const {update, setUpdate} = useContext(UpdateContext);
+  const [update, setUpdate] = useContext(UpdateContext);
   const [checked, setChecked] = React.useState(false);
 
   const handleChange_ElDet = (event) => {
@@ -106,10 +106,10 @@ function ElevatorMenuBase(){
   )
 }
 
-function ElevatorMenuDetail(show){
-  const {update, setUpdate} = useContext(UpdateContext);
+function ElevatorMenuDetail(props){
+  const [update, setUpdate] = useContext(UpdateContext);
 
-  if ( !show.show ) return (<></>)
+  if ( !props.show ) return (<></>)
   else
 return (
   <>
@@ -181,7 +181,7 @@ return (
 }
 
 export default function ElevatorMenu () {
-    const {update, setUpdate} = useContext(UpdateContext);
+    const [update, setUpdate] = useContext(UpdateContext);
     const [checked, setChecked] = React.useState(true);
 
     console.log( 'ElevatorMenu, Elevator.ElevatorsName = ', Elevators.ElevatorsName );
