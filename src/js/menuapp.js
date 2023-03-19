@@ -130,9 +130,9 @@ function ResponsiveAppBar(props) {
               textDecoration: 'none',
             }}
           >
-            <img src="favicon.ico" alt='AVCC-' height="25" ></img>
             Elevators
           </Typography>
+        <Avatar alt="AVCC" src="favicon.ico" />
         </Toolbar>
       </Container>
     </AppBar>
