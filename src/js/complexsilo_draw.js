@@ -33,13 +33,28 @@ const Canvas = props => {
     ctx.strokeRect(  5, yc-5, length*z, -width*z );
     //прямоугольный силос
     let x, y = 0; //размеры прямоугольнпго силоса
+    let d = 0; //диаметр силоса
     for ( let i = 0; i < row; i++ ) {
         items = Complex.Silo[ i ].length; 
         for ( let ii = 0; ii < items; ii++ ) {
-            //console.log('Complex.Silo.Dimensions=',Complex.Silo[0][0].Dimensions);
             x = Complex.Silo[i][ii].Dimensions.Length;
             y = Complex.Silo[i][ii].Dimensions.Width;
-            ctx.strokeRect(  10+ii*x*z+ii*z*0.5, yc-10-i*y*z-i*z*0.5, x*z, -y*z );
+            d = Complex.Silo[i][ii].Dimensions.Diameter;
+            if ( Complex.Silo[ i ][ ii ].Type == 'square' )
+                ctx.strokeRect(  10+ii*x*z+ii*z*0.5, yc-10-i*y*z-i*z*0.5, x*z, -y*z );
+            if ( Complex.Silo[ i ][ ii ].Type == 'circle' ){   
+                ctx.beginPath();
+                ctx.arc( 10+ii*x*z+ii*z*0.5 + d/2*z , yc-10-i*y*z-i*z*0.5 - d/2*z , d/2*z , 0 , Math.PI*2 );
+                ctx.stroke();
+            }
+            if ( Complex.Silo[ i ][ ii ].Type == 'star' ){   
+                ctx.beginPath();
+                ctx.arc( 10+ii*x*z+ii*z*0.5 + d/2*z , yc-10-i*y*z-i*z*0.5 - d*z , d/2*z , 3.14/2 , 0, true );
+                ctx.arc( 10+ii*x*z+ii*z*0.5 + d*z + d/2*z , yc-10-i*y*z-i*z*0.5 - d*z , d/2*z , 3.14 , 3.14/2, true );
+                ctx.arc( 10+ii*x*z+ii*z*0.5 + d*z + d/2*z , yc-10-i*y*z-i*z*0.5 , d/2*z , 3.14*1.5 , 3.14, true );
+                ctx.arc( 10+ii*x*z+ii*z*0.5 + d/2*z  , yc-10-i*y*z-i*z*0.5 , d/2*z , 0 , 3.14*1.5 , true );
+                ctx.stroke();
+            }
         }
     }
     //ctx.strokeRect(  10, y -5, 3*z, -3*z );

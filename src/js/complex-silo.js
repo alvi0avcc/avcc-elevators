@@ -24,6 +24,7 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
+import { Block } from '@mui/icons-material';
 
 function a11yProps(index) {
   return {
@@ -140,11 +141,16 @@ function ComplexSiloInfo() {
     const [update, setUpdate] = useContext(UpdateContext);
     const [qr, setQR] = React.useState(10);
     const [dim, setDim] = React.useState(false);
-    //let a = dim;
+    const [L, setL] = React.useState(6);
+    const [W, setW] = React.useState(6);
+    const [D, setD] = React.useState(6);
+    const [type, setType] = React.useState('square');
+    const [dimS_show, setDimS_show] = React.useState(true);
+    const handleChange = (event) => {
+        if ( event.target.value == 'square' ) { setDimS_show ( true ) } else { setDimS_show ( false ) };
+        setType(event.target.value);
+      };
 
-    const [value, setValue] = React.useState('square');
-    const handleChange = (event) => { setValue(event.target.value); };
-    
     function DrawCanvas(){
       return (
         <>
@@ -187,24 +193,41 @@ function ComplexSiloInfo() {
             row
             aria-labelledby="radio-buttons-group-typeSilo"
             name="adio-buttons-group-typeSilo"
-            value={value}
-            onChange={handleChange}
+            value={type}
+            onChange={handleChange} 
           >
-            <FormControlLabel value="square" control={<Radio />} label="square" />
-            <FormControlLabel value="circle" control={<Radio />} label="circle" />
-            <FormControlLabel value="star" control={<Radio />} label="star" />
+            <FormControlLabel value="square" control={<Radio size='small'/>} label="square" />
+            <FormControlLabel value="circle" control={<Radio size='small'/>} label="circle" />
+            <FormControlLabel value="star" control={<Radio size='small'/>} label="star" />
           </RadioGroup>
           </FormControl>
 
           <TextField
-            value={qr}
-            label="Quantyti in row" size='small' type='number'
+            value={qr} sx={{ p: 1 }}
+            label="Quantyti in row" size='small' type='number' style={ {  width : 150 } }
             onChange={(e) => { setQR( e.currentTarget.value)  }}
           />
+
+          <TextField id='CSilo_L' disabled = { !dimS_show }
+            value={ L }
+            label="Length of Silo (m)" size='small' style={ {width : 150 } }
+            onChange={(e) => { setL( e.currentTarget.value )  }}
+          />
+          <TextField id='CSilo_W' disabled = { !dimS_show }
+            value={ W }
+            label="Width of Silo (m)" size='small' style={ {width : 150 } }
+            onChange={(e) => { setW( e.currentTarget.value )  }}
+          />
+          <TextField id='CSilo_D' disabled = { dimS_show }
+            value={ D }
+            label="Diameter of Silo (m)" size='small' style={ {width : 150 } }
+            onChange={(e) => { setD( e.currentTarget.value )  }}
+          /> 
+
         </Stack>
 
         <Stack direction= 'row' justifyContent={'space-between'} sx={{ p: 1 }} >
-          <Button variant="outlined" onClick={()=>{ Elevators.ComplexSiloAdd( qr, '' ); setDim(!dim) }} >
+          <Button variant="outlined" onClick={()=>{ Elevators.ComplexSiloAdd( qr, type, L, W, D ); setDim(!dim) }} >
             Add row silo
           </Button>
           <Button variant="outlined" onClick={()=>{ Elevators.ComplexSiloClone(); setDim(!dim) }} >
