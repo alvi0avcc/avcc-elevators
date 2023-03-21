@@ -17,7 +17,7 @@ UpdateContext.displayName = 'UpdateContext';
 
 function App(props) {
   const [update, setUpdate] = useState();
-  ElVersion();
+  //ElVersion();
   registerServiceWorker();
 
   return (
@@ -64,8 +64,8 @@ function ElVersion(){
   request.send();
   request.onload = function() {
   fileJson = request.response;
-  //console.log('request=',request)
-  //console.log('requestURL=',requestURL)
-  //console.log('fileJson=',fileJson);
+  console.log('request=',request)
+  console.log('requestURL=',requestURL)
+  console.log('fileJson=',fileJson);
   }
 };

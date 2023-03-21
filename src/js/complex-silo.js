@@ -13,7 +13,7 @@ import TextField from '@mui/material/TextField';
 import { Button, Stack, Divider, Paper } from '@mui/material';
 import * as iolocal from './iolocal';
 import Canvas from './complexsilo_draw';
-import { Draw1 } from './complexsilo_draw';
+import { findComplexSilo } from './complexsilo_draw';
 import * as Dialogs from './dialogs';
 import Grid from '@mui/material/Grid';
 import { styled } from '@mui/material/styles';
@@ -25,6 +25,15 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import { Block } from '@mui/icons-material';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent'
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+
 
 function a11yProps(index) {
   return {
@@ -67,7 +76,8 @@ export default function ComplexSilo() {
             <Button variant="outlined" onClick={()=>{ Elevators.ComplexAdd(); setUpdate( !update ) }} >
                 Add Complex
             </Button>
-            <Button variant="outlined" onClick={()=>{ Elevators.ComplexClone(); setUpdate( !update ) }} >
+            <Button variant="outlined" disabled
+              onClick={()=>{ Elevators.ComplexClone(); setUpdate( !update ) }} >
                 Duplicate Selected Complex
             </Button>
             <Button variant="outlined" onClick={()=>{Elevators.ComplexDel()  ; setUpdate( !update ) }}>
@@ -114,28 +124,56 @@ function ComplexSiloInfo() {
     </Stack>
     <Divider/>
     <ComplexSiloInfoHeaderButtons show={checked} />
-
-      
-
-      
     </>
   );
 
+  function a11yProps(index, index2) {
+    return {
+      id: `silo-tab-${index}${index2}`,
+      'aria-controls': `silo-tabpanel-${index}${index2}`,
+    };
+  }
+
   function ComplexSiloInfoPlan(){
+    let a = Elevators.ComplexSiloList;
+    let b = Elevators.ComplexAll.Silo;
+    let List = [];
+    let List2 = [];
+    if ( b ) {
+          if ( b.length > 0 )
+              for ( let i =0; i < b.length; i++ ) {
+                      List.push( b[i][0].Type );
+              }
+    } 
+    return (
+    <>
+     </>
+     );
     return (
       <>
-
+        <Stack spacing={5} direction= 'column' justifyContent={'space-between'}>
+          {List.map((name, index) => (
+            <>
+            <Stack spacing={2} direction= 'row' justifyContent={'space-evenly'}>
+              {b[index].map((name2, index2, array ) => (
+                <Stack direction= 'column' justifyContent={'center'}>
+                <TextField size='small' style={ { width : 100 } }
+                  key = {index2} label={array[index].Name} {...a11yProps(index, index2)}
+                />
+                <TextField size='small' style={ { width : 100 } }
+                  key = {index2} label={array[index].Type} {...a11yProps(index, index2)}
+                />
+                </Stack>
+              ))}
+            </Stack>
+            </>    
+          ))}
+        </Stack>
       </>
     )
   };
 
-  function ComplexSiloInfoPlan(){
-    return (
-      <>
 
-      </>
-    )
-  };
 
   function ComplexSiloInfoHeaderButtons(props) {
     const [update, setUpdate] = useContext(UpdateContext);
@@ -144,6 +182,8 @@ function ComplexSiloInfo() {
     const [L, setL] = React.useState(6);
     const [W, setW] = React.useState(6);
     const [D, setD] = React.useState(6);
+    const [H, setH] = React.useState(25);
+    const [C, setC] = React.useState(2.5);
     const [type, setType] = React.useState('square');
     const [dimS_show, setDimS_show] = React.useState(true);
     const handleChange = (event) => {
@@ -152,13 +192,59 @@ function ComplexSiloInfo() {
       };
 
     function DrawCanvas(){
+      const [open, setOpen] = React.useState(false);
+      const handleClickOpen = () => { setOpen(true); };
+      const handleClose = () => { setOpen(false); };
+      const [x, setX] = React.useState();
+      const [y, setY] = React.useState();
+      const [SiloInfo, setSiloInfo] = React.useState(Elevators.ComplexAll);
+      const [res, setRes] = React.useState();
+      function Find(){
+        let a = findComplexSilo( x, y )
+        let result  = 'row='+a.row + ' - col=' + a.col;
+        setRes ( result );
+      }
       return (
         <>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', '& > :not(style)': { m: 1, width: 1000, height: 300, }  }}  >
-            <Paper elevation={5} >
+          <Tooltip title={res} >
+            <Paper
+              elevation={10}
+                onMouseMove={ (e)=> { 
+                  setX( e.nativeEvent.offsetX );
+                  setY( e.nativeEvent.offsetY );
+                  Find(); } }
+              onClick={ (e)=>{
+                setX( e.nativeEvent.offsetX );
+                setY( e.nativeEvent.offsetY );
+                console.log('clicked on = ',x,y);
+                setSiloInfo( findComplexSilo( x, y ).result );
+                console.log('SiloInfo = ',SiloInfo);
+                setOpen(true) }}
+              >
               <Canvas/>
             </Paper>
+            </Tooltip>
           </Box>
+          <ComplexSiloInfoPlan/>
+
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle>Silo info</DialogTitle>
+          <DialogContent>
+            <TextField value = {x} />
+            <TextField value = {y} />
+            <TextField value = { findComplexSilo( x, y ).row } />
+            <TextField value = { findComplexSilo( x, y ).col } />
+            <TextField
+              value = { SiloInfo.Name }
+              label="Name" size='small'
+              />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button onClick={handleClose}>Ok</Button>
+          </DialogActions>
+        </Dialog>
         </>
       );
     };
@@ -168,22 +254,25 @@ function ComplexSiloInfo() {
     else
     return (
       <>
-        <Stack direction= 'row' justifyContent={'space-between'} sx={{ p: 1 }} >
-        <TextField
+        <Stack direction= 'row' justifyContent={'center'} sx={{ p: 1 }} >
+          <TextField style={ {width : 130 } } 
             value={Elevators.ComplexDimension.Length}
             label="Complex length (m)" size='small'
             onChange={(e) => { Elevators.setComplexDimension_Length = Number( e.currentTarget.value ); setDim(!dim) }}
           />
-          <TextField
+          <TextField style={ {width : 130 } }
             value={Elevators.ComplexDimension.Width}
             label="Complex width (m)" size='small'
             onChange={(e) => { Elevators.setComplexDimension_Width = Number( e.currentTarget.value ); setDim(!dim) }}
           />
-          <TextField
+          <TextField style={ {width : 130 } }
             value={Elevators.ComplexDimension.Height}
             label="Complex height (m)" size='small'
             onChange={(e) => { Elevators.setComplexDimension_Height = Number( e.currentTarget.value ); setDim(!dim) }}
           />
+          <Button size='small' variant='outlined' disabled
+            onClick={() => { setDim(!dim) }}
+            >Complex Auto size</Button>
         </Stack>
 
         <Stack direction= 'row' justifyContent={'center'} alignItems={'center'} sx={{ p: 1 }} > 
@@ -203,11 +292,18 @@ function ComplexSiloInfo() {
           </FormControl>
 
           <TextField
-            value={qr} sx={{ p: 1 }}
+            value={qr} 
             label="Quantyti in row" size='small' type='number' style={ {  width : 150 } }
             onChange={(e) => { setQR( e.currentTarget.value)  }}
           />
+        </Stack>
 
+        <Stack direction= 'row' justifyContent={'center'} alignItems={'center'} sx={{ p: 1 }} >
+          <TextField id='CSilo_Height'
+            value={ H }
+            label="Height of Silo (m)" size='small' style={ {width : 150 } }
+            onChange={(e) => { setH( e.currentTarget.value )  }}
+          />
           <TextField id='CSilo_L' disabled = { !dimS_show }
             value={ L }
             label="Length of Silo (m)" size='small' style={ {width : 150 } }
@@ -223,17 +319,24 @@ function ComplexSiloInfo() {
             label="Diameter of Silo (m)" size='small' style={ {width : 150 } }
             onChange={(e) => { setD( e.currentTarget.value )  }}
           /> 
-
+          <TextField id='CSilo_Conus'
+            value={ C }
+            label="Conus Height (m)" size='small' style={ {width : 150 } }
+            onChange={(e) => { setC( e.currentTarget.value )  }}
+          />
+          
         </Stack>
 
         <Stack direction= 'row' justifyContent={'space-between'} sx={{ p: 1 }} >
-          <Button variant="outlined" onClick={()=>{ Elevators.ComplexSiloAdd( qr, type, L, W, D ); setDim(!dim) }} >
+          <Button variant="outlined" onClick={()=>{ Elevators.ComplexSiloAdd( qr, type, H, L, W, D, C ); setDim(!dim) }} >
             Add row silo
           </Button>
-          <Button variant="outlined" onClick={()=>{ Elevators.ComplexSiloClone(); setDim(!dim) }} >
+          <Button variant="outlined" disabled
+            onClick={()=>{ Elevators.ComplexSiloClone(); setDim(!dim) }} >
             Clone Selected row silo
           </Button>
-          <Button variant="outlined" onClick={()=>{Elevators.ComplexSiloDel(); setDim(!dim)  }}>
+          <Button variant="outlined"  disabled
+            onClick={()=>{Elevators.ComplexSiloDel(); setDim(!dim)  }}>
             Delele Selected row silo  
           </Button>
         </Stack>

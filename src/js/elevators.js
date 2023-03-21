@@ -125,6 +125,25 @@ class cElevators {
             }
         else return 0;
     }
+    get ComplexSiloList(){
+        let List = [];
+        if ( this.ElevatorsFound > 0 ) {
+            if  ( this.ComplexFound > 0 ) {
+                let ii = this.Elevators[this.Selected].Complex[ this.ComplexSelected ].Silo.length;
+                let data;
+                if ( ii > 0 )
+                    for ( let row =0; row < ii; row++ ) {
+                        let iii = this.Elevators[this.Selected].Complex[ this.ComplexSelected ].Silo[row].length;
+                        if ( iii > 0 )
+                        for ( let i = 0; i < iii; i++ ) {
+                            data = this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[row][i];
+                            List.push( data ); 
+                        } 
+                    }
+            }
+        }
+    return( List )
+    };
     set SetSiloSelected(data){ this.SiloSelected = data };
     set SetComplexSelected(data){ this.ComplexSelected = data };
     set SetComplexSiloSelected(data){ this.ComplexSiloSelected = data };
@@ -272,7 +291,7 @@ class cElevators {
             }
         };
     }
-    ComplexSiloAdd( Quantyti, Type, Length, Width, Diameter ){
+    ComplexSiloAdd( Quantyti, Type, Height, Length, Width, Diameter, Conus_height ){
         console.log('Complex Selected=', this.ComplexSelected);
         console.log('Complex Silo Selected=', this.ComplexSiloSelected);
         if ( Quantyti >= 0 )
@@ -284,6 +303,7 @@ class cElevators {
                     for ( let i = 0; i < Quantyti; i++ ) {
                         this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ].push(new cComplexSilo());
                         this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Type = Type;
+                        this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Dimensions.Height = Height;
                         if ( Type == 'square' ) {
                             this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Dimensions.Length = Length;
                             this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Dimensions.Width = Width;
@@ -293,6 +313,7 @@ class cElevators {
                                 this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Dimensions.Width = null;
                                 this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Dimensions.Diameter = Diameter;
                             }   
+                        this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Dimensions.Conus_height = Conus_height;
                     }
                     this.State = 'Complex Silo added';
                     console.log('Silo added in Complex=', this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo);
