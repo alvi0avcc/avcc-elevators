@@ -40,8 +40,8 @@ function ResponsiveAppBar(props) {
 
   return (
     <AppBar position="static">
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
+      <Container >
+        <Toolbar disableGutters> 
           <Box sx={{ flexGrow: 1 }}>
             <IconButton
               size="large"
@@ -107,7 +107,7 @@ function ResponsiveAppBar(props) {
                   <Typography textAlign="center">{'Export'}</Typography>
                 </MenuItem>
                 <MenuItem key={5} onClick={ () => (
-                  console.log('Elevators ==11== ', Elevators),
+                  console.log('Elevators ==reload info for page== ', Elevators),
                   setUpdate( !update ),
                   handleClickFileMenu()
                   ) }>

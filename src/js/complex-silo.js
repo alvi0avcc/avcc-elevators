@@ -33,6 +33,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import Silo from './silo';
 
 
 function a11yProps(index) {
@@ -194,32 +195,62 @@ function ComplexSiloInfo() {
     function DrawCanvas(){
       const [open, setOpen] = React.useState(false);
       const handleClickOpen = () => { setOpen(true); };
-      const handleClose = () => { setOpen(false); };
+      const handleCloseCancel = () => { setOpen(false); };
+      const handleCloseOk = () => { 
+        //console.log('SiloInfo.result.Name',SiloInfo.result.Name);
+        Elevators.SetComplexSiloName( name, SiloInfo.row, SiloInfo.col ); 
+        setOpen(false);
+      };
+      const [name, setName] = React.useState();
+      const NameChange = (e) => { setName(e.currentTarget.value) };
       const [x, setX] = React.useState();
       const [y, setY] = React.useState();
       const [SiloInfo, setSiloInfo] = React.useState(Elevators.ComplexAll);
       const [res, setRes] = React.useState();
-      function Find(){
+
+      function ToolTipSiloIfo(){
         let a = findComplexSilo( x, y )
-        let result  = 'row='+a.row + ' - col=' + a.col;
+        let result = 'Silo № - '+ a.result.Name;
+        result = result + '  Cargo - ' + a.result.Cargo.Name;
+        result = result + ' Test weight = ' + a.result.Cargo.Natura;
+        result = result + ' Ullage = ' + a.result.Ullage;
+        result  = result + ' row=' + a.row + ' - col=' + a.col;
         setRes ( result );
       }
+
       return (
         <>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', '& > :not(style)': { m: 1, width: 1000, height: 300, }  }}  >
-          <Tooltip title={res} >
+          <Tooltip title={res} arrow placement="bottom"
+          componentsProps={{
+            tooltip: {
+              sx: {
+                fontSize: 15,
+                bgcolor: 'common.black',
+                '& .MuiTooltip-arrow': {
+                  color: 'common.black',
+                },
+              },
+            },
+          }}
+          >
             <Paper
               elevation={10}
                 onMouseMove={ (e)=> { 
                   setX( e.nativeEvent.offsetX );
                   setY( e.nativeEvent.offsetY );
-                  Find(); } }
+                  setSiloInfo( findComplexSilo( x, y ) );
+                  ToolTipSiloIfo(); } }
               onClick={ (e)=>{
                 setX( e.nativeEvent.offsetX );
                 setY( e.nativeEvent.offsetY );
                 console.log('clicked on = ',x,y);
-                setSiloInfo( findComplexSilo( x, y ).result );
+                //let f = findComplexSilo( x, y );
+                //setSiloInfo( f );
+                setSiloInfo( findComplexSilo( x, y ) );
                 console.log('SiloInfo = ',SiloInfo);
+                //setName( f.result.Name );
+                setName( SiloInfo.result.Name );
                 setOpen(true) }}
               >
               <Canvas/>
@@ -228,21 +259,96 @@ function ComplexSiloInfo() {
           </Box>
           <ComplexSiloInfoPlan/>
 
-        <Dialog open={open} onClose={handleClose}>
+        <Dialog open={open} onClose={handleCloseCancel}>
           <DialogTitle>Silo info</DialogTitle>
           <DialogContent>
-            <TextField value = {x} />
-            <TextField value = {y} />
-            <TextField value = { findComplexSilo( x, y ).row } />
-            <TextField value = { findComplexSilo( x, y ).col } />
+            <Stack direction= 'row' justifyContent={'center'} alignItems={'center'} sx={{ p: 1 }}>
+            <TextField
+              value = { name }
+              onChange={ NameChange }
+              label="Silo Name" size='small'
+              />
             <TextField
               value = { SiloInfo.Name }
-              label="Name" size='small'
+              label="Cargo Name" size='small'
+              /> 
+            <TextField
+              value = { SiloInfo.Name }
+              label="Cargo Test Weight (g/l)" size='small'
+              />  
+            </Stack>
+            <FormControl size='small' >
+          <FormLabel id="radio-buttons-group-typeSilo">Type of Silo</FormLabel>
+          <RadioGroup
+            row
+            aria-labelledby="radio-buttons-group-typeSilo"
+            name="adio-buttons-group-typeSilo"
+            value={type}
+            onChange={handleChange} 
+          >
+            <FormControlLabel value="square" control={<Radio size='small'/>} label="square" />
+            <FormControlLabel value="circle" control={<Radio size='small'/>} label="circle" />
+            <FormControlLabel value="star" control={<Radio size='small'/>} label="star" />
+          </RadioGroup>
+          </FormControl>
+
+          <Stack direction= 'row' justifyContent={'center'} alignItems={'center'} sx={{ p: 1 }}>
+            <TextField
+              value = { SiloInfo.Name }
+              label="Height of Silo (m)" size='small'
               />
+            <TextField
+              value = { SiloInfo.Name }
+              label="Length of Silo (m)" size='small'
+              /> 
+            <TextField 
+              value = { SiloInfo.Name }
+              label="Width of Silo (m)" size='small'
+              />  
+            </Stack>
+
+            <Stack direction= 'row' justifyContent={'center'} alignItems={'center'} sx={{ p: 1 }}>
+            <TextField 
+              value = { SiloInfo.Name }
+              label="Reference point (m)" size='small'
+              />
+            <TextField
+              value = { SiloInfo.Name }
+              label="Ullage (m)" size='small'
+              /> 
+            <TextField
+              value = { SiloInfo.Name }
+              label="Diameter of Silo (m)" size='small'
+              />  
+            </Stack>
+
+            <Stack direction= 'row' justifyContent={'center'} alignItems={'center'} sx={{ p: 1 }}>
+            <TextField
+              value = { SiloInfo.Name }
+              label="Split" size='small'
+              />
+            <TextField
+              value = { SiloInfo.Name }
+              label="Linked" size='small'
+              /> 
+            <TextField
+              value = { SiloInfo.Name }
+              label="Use of not" size='small'
+              />  
+            </Stack>
+
+            <Stack direction= 'row' justifyContent={'center'} alignItems={'center'} sx={{ p: 1 }}>
+            <TextField
+              fullWidth
+              value = { SiloInfo.Name }
+              label="Comments" size='small'
+              />
+            </Stack>
+
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-            <Button onClick={handleClose}>Ok</Button>
+            <Button onClick={handleCloseCancel}>Cancel</Button>
+            <Button onClick={handleCloseOk}>Ok</Button>
           </DialogActions>
         </Dialog>
         </>

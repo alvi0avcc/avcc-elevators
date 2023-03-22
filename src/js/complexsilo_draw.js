@@ -52,7 +52,7 @@ const Canvas = props => {
             if ( Complex.Silo[ i ][ ii ].Type == 'square' )
                 ctx.strokeRect( x1, y1, x2, y2 );
                 ctx.font = "12px serif";
-                ctx.fillText("Silo-Name", x1, y1 );
+                ctx.fillText(Complex.Silo[ i ][ ii ].Name, x1, y1 );
                 //ctx.fillText("CargoName", 10+ii*x*z+ii*z*0.5, 20+i*y*z+i*z*0.5);
                 //ctx.fillText("Ullage", 10+ii*x*z+ii*z*0.5, 30+i*y*z+i*z*0.5);
                 //ctx.fillText("Massa", 10+ii*x*z+ii*z*0.5, 40+i*y*z+i*z*0.5);
@@ -108,22 +108,12 @@ export function findComplexSilo( X, Y ){
     if ( Elevators.ComplexSiloFound > 0 ) {
         let info = Elevators.ComplexAll;
         let array_Silo = MeshSilo().Mesh;
-        console.log('MeshSilo=',array_Silo);
         for ( let row = 0; row < array_Silo.length; row++ ) { if ( Y >= array_Silo[row][0] ) { iy = row + 1; } }
         if ( iy > Elevators.ComplexAll.Silo.length-1 ) iy = Elevators.ComplexAll.Silo.length-1;
 
         for ( let col = 1; col < array_Silo[iy].length; col++ ) { if ( X >= array_Silo[iy][col] ) { ix = col ; } }
         if ( ix > Elevators.ComplexAll.Silo[iy].length-1 ) ix = Elevators.ComplexAll.Silo[iy].length-1;
-
-                //if ( row == 0 ) if ( X >= array_Silo[0][col] ) { ix = col };
-                //if ( row > 0 )
-                //    if ( Y >= array_Silo[row][0] ) { 
-                //        iy = row + 1 ;
-                //        if ( X >= array_Silo[row][col] ) { ix = col - 1 };
-                //}
         result = info.Silo[iy][ix];
-        console.log('X, Y =',X,Y);
-        console.log('info.Silo[iy][ix]=',iy,ix);
     }
     return {result, row: iy, col: ix };
 }

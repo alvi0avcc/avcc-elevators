@@ -155,6 +155,10 @@ class cElevators {
         if ( this.ComplexFound > 0 ) return this.Elevators[this.Selected].Complex[this.ComplexSelected].Name
         else return 'empty'
     };
+    SetComplexSiloName (name, col, row){
+        this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[col][row].Name = name;
+    };
+
     get ComplexAll(){
         if ( this.ComplexFound > 0 ) return this.Elevators[this.Selected].Complex[this.ComplexSelected]
         else return null
