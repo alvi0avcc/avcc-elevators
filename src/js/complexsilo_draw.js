@@ -11,7 +11,6 @@ const Canvas = props => {
     let Complex = Elevators.ComplexAll;
     let row     = Complex.Silo.length;
     let items   = 0;
-    console.log('Complex=',Complex);
     //let height = Complex.TotalDimension.height;
     let length = Number( Complex.TotalDimension.Length );
     let width =  Number( Complex.TotalDimension.Width );

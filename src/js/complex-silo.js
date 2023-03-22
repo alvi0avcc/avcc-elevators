@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { UpdateContext } from '../App'
-import { useContext } from 'react';
+import { useContext, useRef } from 'react';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import SettingsTwoToneIcon from '@mui/icons-material/SettingsTwoTone';
@@ -24,7 +24,7 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import { Block } from '@mui/icons-material';
+import { Block, Elevator } from '@mui/icons-material';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent'
@@ -193,35 +193,60 @@ function ComplexSiloInfo() {
       };
 
     function DrawCanvas(){
+      const ref = useRef();
       const [open, setOpen] = React.useState(false);
-      const handleClickOpen = () => { setOpen(true); };
-      const handleCloseCancel = () => { setOpen(false); };
+      const handleClickOpen = () => { setOpen(true); setDialogInfo( siloInfo )};
+      const handleCloseCancel = () => { setOpen(false); setDialogInfo( siloInfo ) };
       const handleCloseOk = () => { 
-        //console.log('SiloInfo.result.Name',SiloInfo.result.Name);
-        Elevators.SetComplexSiloName( name, SiloInfo.row, SiloInfo.col ); 
+        Elevators.SetComplexSiloName( name, siloInfo.row, siloInfo.col ); 
         setOpen(false);
       };
       const [name, setName] = React.useState();
-      const NameChange = (e) => { setName(e.currentTarget.value) };
+      //const [cargo, seCargo] = React.useState();
+      //const cargoChange = (e) => { setCargo(e.currentTarget.value) };
+      const [siloInfo, setSiloInfo] = React.useState( Elevators.ComplexSiloGet() );
+      const [dialogInfo, setDialogInfo] = React.useState( siloInfo );
+      const nameChange = (e) => { setDialogInfo( ...dialogInfo.Name = e.currentTarget.value) };
+      //const [name, setName] = React.useState();
+      //const NameChange = (e) => { setName(e.currentTarget.value) };
+      //const [name, setName] = React.useState();
+      //const NameChange = (e) => { setName(e.currentTarget.value) };
+      //const [name, setName] = React.useState();
+      //const NameChange = (e) => { setName(e.currentTarget.value) };
+      //const [name, setName] = React.useState();
+      //const NameChange = (e) => { setName(e.currentTarget.value) };
+      //const [name, setName] = React.useState();
+      //const NameChange = (e) => { setName(e.currentTarget.value) };
+      //const [name, setName] = React.useState();
+      //const NameChange = (e) => { setName(e.currentTarget.value) };
+      //const [name, setName] = React.useState();
+      //const NameChange = (e) => { setName(e.currentTarget.value) };
+      //const [name, setName] = React.useState();
+      //const NameChange = (e) => { setName(e.currentTarget.value) };
+      //const [name, setName] = React.useState();
+      //const NameChange = (e) => { setName(e.currentTarget.value) };
+      //const [name, setName] = React.useState();
+      //const NameChange = (e) => { setName(e.currentTarget.value) };
+      //const [name, setName] = React.useState();
+      //const NameChange = (e) => { setName(e.currentTarget.value) };
       const [x, setX] = React.useState();
       const [y, setY] = React.useState();
-      const [SiloInfo, setSiloInfo] = React.useState(Elevators.ComplexAll);
-      const [res, setRes] = React.useState();
+      const [textToolTip, setTextToolTip] = React.useState();
 
-      function ToolTipSiloIfo(){
-        let a = findComplexSilo( x, y )
+      function ToolTipSiloInfo( a ){
+        //let a = findComplexSilo( x, y );
         let result = 'Silo № - '+ a.result.Name;
         result = result + '  Cargo - ' + a.result.Cargo.Name;
         result = result + ' Test weight = ' + a.result.Cargo.Natura;
         result = result + ' Ullage = ' + a.result.Ullage;
         result  = result + ' row=' + a.row + ' - col=' + a.col;
-        setRes ( result );
+        setTextToolTip ( result );
       }
 
       return (
         <>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', '& > :not(style)': { m: 1, width: 1000, height: 300, }  }}  >
-          <Tooltip title={res} arrow placement="bottom"
+          <Tooltip title={textToolTip} arrow placement="bottom"
           componentsProps={{
             tooltip: {
               sx: {
@@ -237,21 +262,29 @@ function ComplexSiloInfo() {
             <Paper
               elevation={10}
                 onMouseMove={ (e)=> { 
-                  setX( e.nativeEvent.offsetX );
-                  setY( e.nativeEvent.offsetY );
-                  setSiloInfo( findComplexSilo( x, y ) );
-                  ToolTipSiloIfo(); } }
+                  let bcr = e.target.getBoundingClientRect();
+                  let xx = e.clientX;
+                  let yy = e.clientY;
+                   xx = xx - bcr.x;
+                   yy = yy - bcr.y
+                  //setX( e.nativeEvent.offsetX );
+                  //setY( e.nativeEvent.offsetY );
+                  setSiloInfo( findComplexSilo( xx, yy ) );
+                  //setDialogInfo( siloInfo );
+                  ToolTipSiloInfo( siloInfo );
+                 } }
               onClick={ (e)=>{
-                setX( e.nativeEvent.offsetX );
-                setY( e.nativeEvent.offsetY );
-                console.log('clicked on = ',x,y);
-                //let f = findComplexSilo( x, y );
-                //setSiloInfo( f );
-                setSiloInfo( findComplexSilo( x, y ) );
-                console.log('SiloInfo = ',SiloInfo);
-                //setName( f.result.Name );
-                setName( SiloInfo.result.Name );
-                setOpen(true) }}
+                let bcr = e.target.getBoundingClientRect();
+                let xx = (e.targetTouches) ? e.targetTouches[0].clientX : e.clientX;
+                let yy = (e.targetTouches) ? e.targetTouches[0].clientY : e.clientY;
+                xx = xx - bcr.x;
+                yy = yy - bcr.y
+                //setX( e.nativeEvent.offsetX );
+                //setY( e.nativeEvent.offsetY );
+                setSiloInfo( findComplexSilo( xx, yy ) );
+                //setDialogInfo( siloInfo );
+                handleClickOpen();
+              } }
               >
               <Canvas/>
             </Paper>
@@ -264,16 +297,16 @@ function ComplexSiloInfo() {
           <DialogContent>
             <Stack direction= 'row' justifyContent={'center'} alignItems={'center'} sx={{ p: 1 }}>
             <TextField
-              value = { name }
-              onChange={ NameChange }
+              value = { dialogInfo.result.Name }
+              onChange={ (e)=>{ setDialogInfo(...dialogInfo.Name = e.currentTarget.value ) } }
               label="Silo Name" size='small'
               />
             <TextField
-              value = { SiloInfo.Name }
+              value = { dialogInfo.result.Cargo.Name }
               label="Cargo Name" size='small'
               /> 
             <TextField
-              value = { SiloInfo.Name }
+              value = { dialogInfo.result.Cargo.Natura }
               label="Cargo Test Weight (g/l)" size='small'
               />  
             </Stack>
@@ -294,45 +327,45 @@ function ComplexSiloInfo() {
 
           <Stack direction= 'row' justifyContent={'center'} alignItems={'center'} sx={{ p: 1 }}>
             <TextField
-              value = { SiloInfo.Name }
+              value = { dialogInfo.result.Dimensions.Height }
               label="Height of Silo (m)" size='small'
               />
             <TextField
-              value = { SiloInfo.Name }
+              value = { dialogInfo.result.Dimensions.Length }
               label="Length of Silo (m)" size='small'
               /> 
             <TextField 
-              value = { SiloInfo.Name }
+              value = { dialogInfo.result.Dimensions.Width }
               label="Width of Silo (m)" size='small'
               />  
             </Stack>
 
             <Stack direction= 'row' justifyContent={'center'} alignItems={'center'} sx={{ p: 1 }}>
             <TextField 
-              value = { SiloInfo.Name }
+              value = { dialogInfo.result.Sound }
               label="Reference point (m)" size='small'
               />
             <TextField
-              value = { SiloInfo.Name }
+              value = { dialogInfo.result.Ullage }
               label="Ullage (m)" size='small'
               /> 
             <TextField
-              value = { SiloInfo.Name }
+              value = { dialogInfo.result.Dimensions.Diameter }
               label="Diameter of Silo (m)" size='small'
               />  
             </Stack>
 
             <Stack direction= 'row' justifyContent={'center'} alignItems={'center'} sx={{ p: 1 }}>
             <TextField
-              value = { SiloInfo.Name }
+              value = { dialogInfo.result.Name }
               label="Split" size='small'
               />
             <TextField
-              value = { SiloInfo.Name }
+              value = { dialogInfo.result.linked }
               label="Linked" size='small'
               /> 
             <TextField
-              value = { SiloInfo.Name }
+              value = { dialogInfo.result.Using }
               label="Use of not" size='small'
               />  
             </Stack>
@@ -340,7 +373,7 @@ function ComplexSiloInfo() {
             <Stack direction= 'row' justifyContent={'center'} alignItems={'center'} sx={{ p: 1 }}>
             <TextField
               fullWidth
-              value = { SiloInfo.Name }
+              value = { dialogInfo.result.Comments }
               label="Comments" size='small'
               />
             </Stack>

@@ -163,6 +163,21 @@ class cElevators {
         if ( this.ComplexFound > 0 ) return this.Elevators[this.Selected].Complex[this.ComplexSelected]
         else return null
     };
+    ComplexSiloGet( row, col ){
+        let result;
+        let found = false;
+        result = new cComplexSilo ();
+        if ( ( row || null ) && ( col || null ) ) {
+            if ( this.ComplexFound > 0 ) {
+                if ( this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row, col ] ) {
+                    result =  structuredClone( this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row, col ] );
+                 found = true;
+                }
+            }
+        }
+        return { result, found };
+    };
+
     set SetSiloName(data){ if ( this.SiloFound ) this.Elevators[this.Selected].Silo[this.SiloSelected].Name  = data }
     set SetComplexName(data){ if ( this.ComplexFound ) this.Elevators[this.Selected].Complex[this.ComplexSelected].Name  = data }
     get SiloCargo(){
@@ -261,12 +276,9 @@ class cElevators {
         else return -2;
     }
     get ComplexSiloFound(){
-        console.log('ComplexFound=', this.ComplexFound);
         if ( this.ComplexFound > 0 ) {
             if ( this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo ) {
-                console.log('Silo=', this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo);
                 if ( this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo.length > 0 ) {
-                    console.log('length=', this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo.length );
                     if ( this.ComplexSiloSelected > this.Elevators[this.Selected].Complex[this.ComplexSiloSelected].Silo.length - 1 ) 
                         this.SetComplexSiloSelected = this.Elevators[this.Selected].Complex[this.ComplexSiloSelected].Silo.length - 1
                         return this.Elevators[this.Selected].Complex[this.ComplexSiloSelected].Silo.length;
@@ -281,7 +293,6 @@ class cElevators {
             if ( this.ComplexFound >= 0 ) {
                 this.Elevators[this.Selected].Complex.push(new cComplex());
                 this.State = 'Complex added';
-            console.log('Complex Addded=', this.Elevators[this.Selected].Complex);
             }
         } else alert ('Error adding complex !')
     };
@@ -296,8 +307,6 @@ class cElevators {
         };
     }
     ComplexSiloAdd( Quantyti, Type, Height, Length, Width, Diameter, Conus_height ){
-        console.log('Complex Selected=', this.ComplexSelected);
-        console.log('Complex Silo Selected=', this.ComplexSiloSelected);
         if ( Quantyti >= 0 )
         if ( this.ComplexFound > 0 ) {
             if ( this.ComplexSiloFound == -1 ) ( this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo = [] );
@@ -320,7 +329,6 @@ class cElevators {
                         this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Dimensions.Conus_height = Conus_height;
                     }
                     this.State = 'Complex Silo added';
-                    console.log('Silo added in Complex=', this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo);
                 } else alert ('Error adding silo in complex !')
         }
     };
