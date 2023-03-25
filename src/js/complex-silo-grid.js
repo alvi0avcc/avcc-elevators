@@ -151,6 +151,7 @@ export default function ComplexDataGrid() {
     const handleApplyButton = () => {
         Elevators.ComplexDataChange( apiRef.current.getRowModels() );
       };
+      
 
   return (
     <Box 

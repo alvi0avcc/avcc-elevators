@@ -330,19 +330,36 @@ class cElevators {
 
     ComplexDataChange( ComplexSiloData ){
         let a =  new Map (ComplexSiloData);
-        console.log('ComplexSiloData (a) =',a);
         let b;
         let c = [];
         for (let i = 1; i < a.size+1; i++ ) {
             b = a.get(i);
             c.push( b );
-            console.log('ComplexSiloData (b) =',b.Name  );
-            console.log('ComplexSiloData (el) =',this.Elevators[this.Selected].Complex[ this.ComplexSelected ] );
         }
+        console.log('ComplexSiloData (el) =',this.Elevators[this.Selected].Complex[ this.ComplexSelected ] );
         console.log('ComplexSiloData (c) =',c  );
         //console.log('ComplexSiloData (el) =',this.Elevators[this.Selected].Complex[ this.ComplexSelected ] );
         //console.log('keys (c) =',Object.keys(c[0])  );
         //this.Elevators.Complex[ this.ComplexSelected ] = structuredClone( ComplexSiloData );
+        let silo = [[]];
+        let row = 0;
+        let col = 0;
+        let rowTable = c[ 0 ].row;
+        console.log('rowTable initial= ', rowTable );
+        for ( let i = 0; i < c.length; i++ ) {
+            if ( rowTable != c[ i ].row  ) { 
+                rowTable = c[ i ].row;
+                silo.push([]);
+                row  = silo.length-1;
+                col = 0;
+            }
+            let data  = structuredClone(c[i]);
+            delete data.row;
+            silo[ row ].push(data);
+            col++;
+        };
+        console.log('ComplexSiloData (New Data) =', silo );
+        this.Elevators[this.Selected].Complex[ this.ComplexSelected ].Silo = structuredClone( silo );
     };
 
     SiloClone(){

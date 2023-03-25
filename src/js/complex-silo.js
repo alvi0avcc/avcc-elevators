@@ -107,7 +107,7 @@ function ComplexSiloInfo() {
       <Switch checked={checked}
               onChange={handleChange_ComplexStucture}
               inputProps={{ 'aria-label': 'controlled' }}
-      />} label="Edit Complex structure" />
+      />} label="Complex structure ( edit mode )" />
 
     <Divider/>
 
@@ -118,6 +118,35 @@ function ComplexSiloInfo() {
   );
 
   function ComplexSiloInfoPlan(props) {
+
+    const getRGBC = (perc) => {
+      const color = Math.round(255 - 255 * perc / 100);
+      return `${color}, ${color}, ${color}`;
+    }
+
+    const getTransform1 = (type) => {
+      if ( type == 'star' ) return `rotate(${45}deg)`;
+      else return `rotate(${0}deg)`;
+    }
+    const getTransform2 = (type) => {
+      if ( type == 'star' ) return `rotate(${-45}deg)`;
+      else return `rotate(${0}deg)`;
+    }
+
+    const getForm = (type) => {
+      if ( type == 'circle' ) return `50%`;
+      else return ``;
+    }
+
+    const getSize1 = (type) => {
+      if ( type == 'star' ) return `75%`;
+      else return ``;
+    }
+
+    const getSize2 = (type) => {
+      if ( type == 'star' ) return `125%`;
+      else return ``;
+    }
 
     const [textToolTip, setTextToolTip] = React.useState();
 
@@ -145,19 +174,45 @@ function ComplexSiloInfo() {
         <Stack spacing={1} direction= 'column' >
           {List.map((name, index) => (
             <>
-            <Stack spacing={1} direction= 'row' justifyContent={'space-between'}>
+            <Stack spacing={1} direction= 'row' justifyContent={'center'}>
               {b[index].map((name2, index2, array ) => (
                 <Stack direction= 'column' justifyContent={'center'}>
 
                   <Tooltip title={textToolTip}>
-                  <Paper style={ { height: 100, width : 100 }} elevation={5} >
-                  <span>№-{array[index2].Name}</span>
-
-                    <TextField size='small' label="Ullage (m)"
+                  <Paper
+                    style={{ height: 100, width : 100,
+                    transform: `${getTransform1(array[index2].Type)}`,
+                    scale: `${getSize1(array[index2].Type)}`,
+                    borderRadius: `${getForm(array[index2].Type)}`,
+                    }}
+                    elevation={5} >
+                  <Stack
+                    justifyContent={'center'}
+                    direction='column'
+                    style={ { height: 100, width : 100,
+                    transform: `${getTransform2(array[index2].Type)}`,
+                    scale: `${getSize2(array[index2].Type)}`
+                     } }>  
+                    <Stack 
+                      justifyContent={'center'}
+                      direction='row'>
+                      <span>№-{array[index2].Name}</span>
+                    </Stack >
+                    <Stack 
+                      justifyContent={'center'}
+                      direction='row'>
+                    <TextField 
+                      style={ { width : 80,}}
+                      size='small' label="Ullage (m)"
                       key = {index2} value={array[index2].Ullage} {...a11yProps(index, index2)}
                     />
-
-                  <span>{array[index2].Type}</span>
+                    </Stack >
+                    <Stack 
+                      justifyContent={'center'}
+                      direction='row'>
+                    <span>Cargo-{array[index2].CargoName}</span>
+                    </Stack>
+                  </Stack>
                 </Paper>
                 </Tooltip>
 
