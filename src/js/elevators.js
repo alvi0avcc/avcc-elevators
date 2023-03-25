@@ -13,17 +13,24 @@ class cComplex {
 
 class cComplexSilo {
     constructor() {
-        this.Name        = 'NewSilo';
-        this.Type        = ( 'star', 'square', 'circle' , '' );
-        this.useArea     = true; // расчет по размерам или по площади
-        this.Dimensions  = { Height: 25, Diameter: 3, Length: 3, Width: 3, Area: 0, Conus_height: 2.5 };
-        this.Sound       = 25;
-        this.Ullage      = 0;
+        this.id         ='';
+        this.Name       = 'NewSilo';
+        this.Type       = ( 'star', 'square', 'circle' , '' );
+        this.useArea    = true; // расчет по размерам или по площади
+        this.Height     = 25;
+        this.Length     = 3;
+        this.Width      = 3;
+        this.Diameter   = 3;
+        this.Area       = 0;
+        this.Conus_height  = 2.5;
+        this.Sound      = 25;
+        this.Ullage     = 0;
         this.split      = []; //существует если силос разделен на части
-        this.linked      = ''; //имя связанного силоса
-        this.Cargo       = {Name: '', Natura: 1 };
-        this.Using       = true; // используется или нет
-        this.Comments    = '';
+        this.linked     = ''; //имя связанного силоса
+        this.CargoName  = '';
+        this.CargoTW    = 1;
+        this.Using      = true; // используется или нет
+        this.Comments   = '';
     };
 };
 
@@ -114,16 +121,16 @@ class cElevators {
         else return 0;
     };
     get ComplexSiloFound(){
-        if ( this.ElevatorsFound ) {
-            if ( this.Elevators[this.Selected].ComplexSilo )
-            if ( this.Elevators[this.Selected].ComplexSilo.length > 0 ) { 
-                    if ( this.SiloSelected > this.Elevators[this.Selected].ComplexSilo.length - 1 ) 
-                        this.SetSiloSelected = this.Elevators[this.Selected].ComplexSilo.length -1
-                    return this.Elevators[this.Selected].ComplexSilo.length
+        if ( this.ComplexFound > 0 ) {
+            if ( this.Elevators[this.Selected].Complex )
+            if ( this.Elevators[this.Selected].Complex.length > 0 ) { 
+                    if ( this.SiloSelected > this.Elevators[this.Selected].Complex.length - 1 ) 
+                        this.SetSiloSelected = this.Elevators[this.Selected].Complex.length -1
+                    return this.Elevators[this.Selected].Complex.length
                 }
-                else return 0;
+                else return -1;
             }
-        else return 0;
+        else return -2;
     }
     get ComplexSiloList(){
         let List = [];
@@ -275,18 +282,6 @@ class cElevators {
             }
         else return -2;
     }
-    get ComplexSiloFound(){
-        if ( this.ComplexFound > 0 ) {
-            if ( this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo ) {
-                if ( this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo.length > 0 ) {
-                    if ( this.ComplexSiloSelected > this.Elevators[this.Selected].Complex[this.ComplexSiloSelected].Silo.length - 1 ) 
-                        this.SetComplexSiloSelected = this.Elevators[this.Selected].Complex[this.ComplexSiloSelected].Silo.length - 1
-                        return this.Elevators[this.Selected].Complex[this.ComplexSiloSelected].Silo.length;
-                    } else return 0;    
-            } else return -1;
-            }
-        else return -2;
-    };
     ComplexAdd(){
         if ( this.ElevatorsFound > 0 ) {
             if ( this.ComplexFound == -1 ) ( this.Elevators[this.Selected].Complex = [] );
@@ -316,22 +311,40 @@ class cElevators {
                     for ( let i = 0; i < Quantyti; i++ ) {
                         this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ].push(new cComplexSilo());
                         this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Type = Type;
-                        this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Dimensions.Height = Height;
+                        this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Height = Height;
                         if ( Type == 'square' ) {
-                            this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Dimensions.Length = Length;
-                            this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Dimensions.Width = Width;
-                            this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Dimensions.Diameter = null;
+                            this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Length = Length;
+                            this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Width = Width;
+                            this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Diameter = null;
                         } else {
-                                this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Dimensions.Length = null;
-                                this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Dimensions.Width = null;
-                                this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Dimensions.Diameter = Diameter;
+                                this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Length = null;
+                                this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Width = null;
+                                this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Diameter = Diameter;
                             }   
-                        this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Dimensions.Conus_height = Conus_height;
+                        this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row ][ i ].Conus_height = Conus_height;
                     }
                     this.State = 'Complex Silo added';
                 } else alert ('Error adding silo in complex !')
         }
     };
+
+    ComplexDataChange( ComplexSiloData ){
+        let a =  new Map (ComplexSiloData);
+        console.log('ComplexSiloData (a) =',a);
+        let b;
+        let c = [];
+        for (let i = 1; i < a.size+1; i++ ) {
+            b = a.get(i);
+            c.push( b );
+            console.log('ComplexSiloData (b) =',b.Name  );
+            console.log('ComplexSiloData (el) =',this.Elevators[this.Selected].Complex[ this.ComplexSelected ] );
+        }
+        console.log('ComplexSiloData (c) =',c  );
+        //console.log('ComplexSiloData (el) =',this.Elevators[this.Selected].Complex[ this.ComplexSelected ] );
+        //console.log('keys (c) =',Object.keys(c[0])  );
+        //this.Elevators.Complex[ this.ComplexSelected ] = structuredClone( ComplexSiloData );
+    };
+
     SiloClone(){
         if ( this.ElevatorsFound ) {
             this.Elevators[this.Selected].Silo.push(new cSilo());

@@ -12,10 +12,6 @@ import { Elevators } from './elevators.js';
 import TextField from '@mui/material/TextField';
 import { Button, Stack, Divider, Paper } from '@mui/material';
 import * as iolocal from './iolocal';
-import Canvas from './complexsilo_draw';
-import { findComplexSilo } from './complexsilo_draw';
-import * as Dialogs from './dialogs';
-import Grid from '@mui/material/Grid';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
@@ -24,21 +20,15 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import { Block, Elevator } from '@mui/icons-material';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent'
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 import Silo from './silo';
+import Fade from "@mui/material/Fade";
+import ComplexDataGrid from './complex-silo-grid';
+import Switch from '@mui/material/Switch';
 
 
 function a11yProps(index) {
   return {
-    id: `simple-tab-${index}`,
+    id: `ComplexSiloTabs-${index}`,
     'aria-controls': `simple-tabpanel-${index}`,
   };
 }
@@ -61,14 +51,16 @@ function ComplexSiloTabs() {
               </Tabs>
           </Box>
           <Box sx={{ p: 2, width: '100%' }}>
+
             <ComplexSiloInfo/>
+
           </Box>
       </Box>
       )
       } else return (<><br/>No silos</>);   
 }
 
-export default function ComplexSilo() {
+export default function ComplexSilo() { 
   const [update, setUpdate] = useContext(UpdateContext);
   
     return (
@@ -104,79 +96,91 @@ function ComplexSiloInfo() {
     color: theme.palette.text.secondary,
   }));
 
-  const [checked, setChecked] = React.useState(true);
+  const [checked, setChecked] = React.useState(false);
   const handleChange_ComplexStucture = (event) => {
     setChecked(event.target.checked);
   }
 
   return (
     <>
-    <Stack spacing={5} direction= 'row' justifyContent={'space-between'}>
-      <TextField
-          value={ Elevators.ComplexName } label="Complex Name" sx={{ p: 1 }} size='small'
-          onChange={(e) => { Elevators.SetComplexName = e.currentTarget.value; setUpdate( !update ) }}
-      />
-      <FormControlLabel control={
-              <Checkbox 
-              checked={checked}
+    <FormControlLabel control={
+      <Switch checked={checked}
               onChange={handleChange_ComplexStucture}
-              />
-            } label="Edit Complex structure" />
-    </Stack>
+              inputProps={{ 'aria-label': 'controlled' }}
+      />} label="Edit Complex structure" />
+
     <Divider/>
-    <ComplexSiloInfoHeaderButtons show={checked} />
+
+    <ComplexSiloInfoTable show={checked} />
+    <ComplexSiloInfoPlan show={!checked} />
+    
     </>
   );
 
-  function a11yProps(index, index2) {
-    return {
-      id: `silo-tab-${index}${index2}`,
-      'aria-controls': `silo-tabpanel-${index}${index2}`,
-    };
-  }
+  function ComplexSiloInfoPlan(props) {
 
-  function ComplexSiloInfoPlan(){
-    let a = Elevators.ComplexSiloList;
+    const [textToolTip, setTextToolTip] = React.useState();
+
     let b = Elevators.ComplexAll.Silo;
-    let List = [];
-    let List2 = [];
+    let List = [];//список рядов с типом силосов
     if ( b ) {
           if ( b.length > 0 )
               for ( let i =0; i < b.length; i++ ) {
                       List.push( b[i][0].Type );
               }
     } 
-    return (
-    <>
-     </>
-     );
+
+    function ToolTipSiloInfo( a ){
+      let result = 'Silo № - '+ a.result.Name;
+      result = result + '  Cargo - ' + a.result.Cargo.Name;
+      result = result + ' Test weight = ' + a.result.Cargo.Natura;
+      result = result + ' Ullage = ' + a.result.Ullage;
+      result  = result + ' row=' + a.row + ' - col=' + a.col;
+      setTextToolTip ( result );
+    }
+
+    if ( props.show )
     return (
       <>
-        <Stack spacing={5} direction= 'column' justifyContent={'space-between'}>
+        <Stack spacing={1} direction= 'column' >
           {List.map((name, index) => (
             <>
-            <Stack spacing={2} direction= 'row' justifyContent={'space-evenly'}>
+            <Stack spacing={1} direction= 'row' justifyContent={'space-between'}>
               {b[index].map((name2, index2, array ) => (
                 <Stack direction= 'column' justifyContent={'center'}>
-                <TextField size='small' style={ { width : 100 } }
-                  key = {index2} label={array[index].Name} {...a11yProps(index, index2)}
-                />
-                <TextField size='small' style={ { width : 100 } }
-                  key = {index2} label={array[index].Type} {...a11yProps(index, index2)}
-                />
+
+                  <Tooltip title={textToolTip}>
+                  <Paper style={ { height: 100, width : 100 }} elevation={5} >
+                  <span>№-{array[index2].Name}</span>
+
+                    <TextField size='small' label="Ullage (m)"
+                      key = {index2} value={array[index2].Ullage} {...a11yProps(index, index2)}
+                    />
+
+                  <span>{array[index2].Type}</span>
+                </Paper>
+                </Tooltip>
+
                 </Stack>
               ))}
             </Stack>
             </>    
           ))}
         </Stack>
-      </>
-    )
-  };
 
+      </> 
+      )
+    else return ( <></> );
+  }
 
+  function a11yProps(index, index2) {
+    return {
+      id: `silo-${index}/${index2}`,
+      'aria-controls': `silo-tabpanel-${index}${index2}`,
+    };
+  }
 
-  function ComplexSiloInfoHeaderButtons(props) {
+  function ComplexSiloInfoTable(props) {
     const [update, setUpdate] = useContext(UpdateContext);
     const [qr, setQR] = React.useState(10);
     const [dim, setDim] = React.useState(false);
@@ -191,209 +195,15 @@ function ComplexSiloInfo() {
         if ( event.target.value == 'square' ) { setDimS_show ( true ) } else { setDimS_show ( false ) };
         setType(event.target.value);
       };
-
-    function DrawCanvas(){
-      const ref = useRef();
-      const [open, setOpen] = React.useState(false);
-      const handleClickOpen = () => { setOpen(true); setDialogInfo( siloInfo )};
-      const handleCloseCancel = () => { setOpen(false); setDialogInfo( siloInfo ) };
-      const handleCloseOk = () => { 
-        Elevators.SetComplexSiloName( name, siloInfo.row, siloInfo.col ); 
-        setOpen(false);
-      };
-      const [name, setName] = React.useState();
-      //const [cargo, seCargo] = React.useState();
-      //const cargoChange = (e) => { setCargo(e.currentTarget.value) };
-      const [siloInfo, setSiloInfo] = React.useState( Elevators.ComplexSiloGet() );
-      const [dialogInfo, setDialogInfo] = React.useState( siloInfo );
-      const nameChange = (e) => { setDialogInfo( ...dialogInfo.Name = e.currentTarget.value) };
-      //const [name, setName] = React.useState();
-      //const NameChange = (e) => { setName(e.currentTarget.value) };
-      //const [name, setName] = React.useState();
-      //const NameChange = (e) => { setName(e.currentTarget.value) };
-      //const [name, setName] = React.useState();
-      //const NameChange = (e) => { setName(e.currentTarget.value) };
-      //const [name, setName] = React.useState();
-      //const NameChange = (e) => { setName(e.currentTarget.value) };
-      //const [name, setName] = React.useState();
-      //const NameChange = (e) => { setName(e.currentTarget.value) };
-      //const [name, setName] = React.useState();
-      //const NameChange = (e) => { setName(e.currentTarget.value) };
-      //const [name, setName] = React.useState();
-      //const NameChange = (e) => { setName(e.currentTarget.value) };
-      //const [name, setName] = React.useState();
-      //const NameChange = (e) => { setName(e.currentTarget.value) };
-      //const [name, setName] = React.useState();
-      //const NameChange = (e) => { setName(e.currentTarget.value) };
-      //const [name, setName] = React.useState();
-      //const NameChange = (e) => { setName(e.currentTarget.value) };
-      //const [name, setName] = React.useState();
-      //const NameChange = (e) => { setName(e.currentTarget.value) };
-      const [x, setX] = React.useState();
-      const [y, setY] = React.useState();
-      const [textToolTip, setTextToolTip] = React.useState();
-
-      function ToolTipSiloInfo( a ){
-        //let a = findComplexSilo( x, y );
-        let result = 'Silo № - '+ a.result.Name;
-        result = result + '  Cargo - ' + a.result.Cargo.Name;
-        result = result + ' Test weight = ' + a.result.Cargo.Natura;
-        result = result + ' Ullage = ' + a.result.Ullage;
-        result  = result + ' row=' + a.row + ' - col=' + a.col;
-        setTextToolTip ( result );
-      }
-
-      return (
-        <>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', '& > :not(style)': { m: 1, width: 1000, height: 300, }  }}  >
-          <Tooltip title={textToolTip} arrow placement="bottom"
-          componentsProps={{
-            tooltip: {
-              sx: {
-                fontSize: 15,
-                bgcolor: 'common.black',
-                '& .MuiTooltip-arrow': {
-                  color: 'common.black',
-                },
-              },
-            },
-          }}
-          >
-            <Paper
-              elevation={10}
-                onMouseMove={ (e)=> { 
-                  let bcr = e.target.getBoundingClientRect();
-                  let xx = e.clientX;
-                  let yy = e.clientY;
-                   xx = xx - bcr.x;
-                   yy = yy - bcr.y
-                  //setX( e.nativeEvent.offsetX );
-                  //setY( e.nativeEvent.offsetY );
-                  setSiloInfo( findComplexSilo( xx, yy ) );
-                  //setDialogInfo( siloInfo );
-                  ToolTipSiloInfo( siloInfo );
-                 } }
-              onClick={ (e)=>{
-                let bcr = e.target.getBoundingClientRect();
-                let xx = (e.targetTouches) ? e.targetTouches[0].clientX : e.clientX;
-                let yy = (e.targetTouches) ? e.targetTouches[0].clientY : e.clientY;
-                xx = xx - bcr.x;
-                yy = yy - bcr.y
-                //setX( e.nativeEvent.offsetX );
-                //setY( e.nativeEvent.offsetY );
-                setSiloInfo( findComplexSilo( xx, yy ) );
-                //setDialogInfo( siloInfo );
-                handleClickOpen();
-              } }
-              >
-              <Canvas/>
-            </Paper>
-            </Tooltip>
-          </Box>
-          <ComplexSiloInfoPlan/>
-
-        <Dialog open={open} onClose={handleCloseCancel}>
-          <DialogTitle>Silo info</DialogTitle>
-          <DialogContent>
-            <Stack direction= 'row' justifyContent={'center'} alignItems={'center'} sx={{ p: 1 }}>
-            <TextField
-              value = { dialogInfo.result.Name }
-              onChange={ (e)=>{ setDialogInfo(...dialogInfo.Name = e.currentTarget.value ) } }
-              label="Silo Name" size='small'
-              />
-            <TextField
-              value = { dialogInfo.result.Cargo.Name }
-              label="Cargo Name" size='small'
-              /> 
-            <TextField
-              value = { dialogInfo.result.Cargo.Natura }
-              label="Cargo Test Weight (g/l)" size='small'
-              />  
-            </Stack>
-            <FormControl size='small' >
-          <FormLabel id="radio-buttons-group-typeSilo">Type of Silo</FormLabel>
-          <RadioGroup
-            row
-            aria-labelledby="radio-buttons-group-typeSilo"
-            name="adio-buttons-group-typeSilo"
-            value={type}
-            onChange={handleChange} 
-          >
-            <FormControlLabel value="square" control={<Radio size='small'/>} label="square" />
-            <FormControlLabel value="circle" control={<Radio size='small'/>} label="circle" />
-            <FormControlLabel value="star" control={<Radio size='small'/>} label="star" />
-          </RadioGroup>
-          </FormControl>
-
-          <Stack direction= 'row' justifyContent={'center'} alignItems={'center'} sx={{ p: 1 }}>
-            <TextField
-              value = { dialogInfo.result.Dimensions.Height }
-              label="Height of Silo (m)" size='small'
-              />
-            <TextField
-              value = { dialogInfo.result.Dimensions.Length }
-              label="Length of Silo (m)" size='small'
-              /> 
-            <TextField 
-              value = { dialogInfo.result.Dimensions.Width }
-              label="Width of Silo (m)" size='small'
-              />  
-            </Stack>
-
-            <Stack direction= 'row' justifyContent={'center'} alignItems={'center'} sx={{ p: 1 }}>
-            <TextField 
-              value = { dialogInfo.result.Sound }
-              label="Reference point (m)" size='small'
-              />
-            <TextField
-              value = { dialogInfo.result.Ullage }
-              label="Ullage (m)" size='small'
-              /> 
-            <TextField
-              value = { dialogInfo.result.Dimensions.Diameter }
-              label="Diameter of Silo (m)" size='small'
-              />  
-            </Stack>
-
-            <Stack direction= 'row' justifyContent={'center'} alignItems={'center'} sx={{ p: 1 }}>
-            <TextField
-              value = { dialogInfo.result.Name }
-              label="Split" size='small'
-              />
-            <TextField
-              value = { dialogInfo.result.linked }
-              label="Linked" size='small'
-              /> 
-            <TextField
-              value = { dialogInfo.result.Using }
-              label="Use of not" size='small'
-              />  
-            </Stack>
-
-            <Stack direction= 'row' justifyContent={'center'} alignItems={'center'} sx={{ p: 1 }}>
-            <TextField
-              fullWidth
-              value = { dialogInfo.result.Comments }
-              label="Comments" size='small'
-              />
-            </Stack>
-
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseCancel}>Cancel</Button>
-            <Button onClick={handleCloseOk}>Ok</Button>
-          </DialogActions>
-        </Dialog>
-        </>
-      );
-    };
-
-    if ( !props.show )
-    return ( DrawCanvas() )
-    else
+    
+    if ( props.show )
     return (
       <>
         <Stack direction= 'row' justifyContent={'center'} sx={{ p: 1 }} >
+          <TextField
+            value={ Elevators.ComplexName } label="Complex Name" size='small'
+            onChange={(e) => { Elevators.SetComplexName = e.currentTarget.value; setUpdate( !update ) }}
+          />
           <TextField style={ {width : 130 } } 
             value={Elevators.ComplexDimension.Length}
             label="Complex length (m)" size='small'
@@ -409,9 +219,6 @@ function ComplexSiloInfo() {
             label="Complex height (m)" size='small'
             onChange={(e) => { Elevators.setComplexDimension_Height = Number( e.currentTarget.value ); setDim(!dim) }}
           />
-          <Button size='small' variant='outlined' disabled
-            onClick={() => { setDim(!dim) }}
-            >Complex Auto size</Button>
         </Stack>
 
         <Stack direction= 'row' justifyContent={'center'} alignItems={'center'} sx={{ p: 1 }} > 
@@ -465,9 +272,8 @@ function ComplexSiloInfo() {
           />
           
         </Stack>
-
         <Stack direction= 'row' justifyContent={'space-between'} sx={{ p: 1 }} >
-          <Button variant="outlined" onClick={()=>{ Elevators.ComplexSiloAdd( qr, type, H, L, W, D, C ); setDim(!dim) }} >
+          <Button variant="outlined" onClick={()=>{ Elevators.ComplexSiloAdd( qr, type, H, L, W, D, C ); setDim(!dim); setUpdate(!update) }} >
             Add row silo
           </Button>
           <Button variant="outlined" disabled
@@ -479,8 +285,11 @@ function ComplexSiloInfo() {
             Delele Selected row silo  
           </Button>
         </Stack>
-      <DrawCanvas/>
+
+      <ComplexDataGrid/>
+
       </>
     )
+    else return ( <></> );
   }
 }
