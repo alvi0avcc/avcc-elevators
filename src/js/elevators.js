@@ -16,7 +16,7 @@ class cComplexSilo {
         this.id         ='';
         this.Name       = 'NewSilo';
         this.Type       = ( 'star', 'square', 'circle' , '' );
-        this.useArea    = true; // расчет по размерам или по площади
+        this.useArea    = false; // расчет по размерам или по площади
         this.Height     = 25;
         this.Length     = 3;
         this.Width      = 3;

@@ -19,6 +19,14 @@ export function ElevatorDialogShow (name, index) {
     };
   };
 
+  export function ComplexDialogShow (name, index) {
+    let NewName = "";
+       NewName = prompt("New Name of Complex", name );
+    if ( NewName || "" ) {
+        Elevators.SetComplexName = NewName
+    };
+  };  
+
 export function RoundSqureToDiameter(){
     let d  = Elevators.SiloDimension.Diameter;
     let square;

@@ -24,6 +24,7 @@ import Silo from './silo';
 import Fade from "@mui/material/Fade";
 import ComplexDataGrid from './complex-silo-grid';
 import Switch from '@mui/material/Switch';
+import * as Dialogs from './dialogs';
 
 
 function a11yProps(index) {
@@ -170,7 +171,7 @@ function ComplexSiloInfo() {
 
     if ( props.show )
     return (
-      <>
+      <Box style={ {width : 1100 } } >
         <Stack spacing={1} direction= 'column' >
           {List.map((name, index) => (
             <>
@@ -210,7 +211,7 @@ function ComplexSiloInfo() {
                     <Stack 
                       justifyContent={'center'}
                       direction='row'>
-                    <span>Cargo-{array[index2].CargoName}</span>
+                    <span>{array[index2].CargoName}</span>
                     </Stack>
                   </Stack>
                 </Paper>
@@ -223,7 +224,7 @@ function ComplexSiloInfo() {
           ))}
         </Stack>
 
-      </> 
+      </Box> 
       )
     else return ( <></> );
   }
@@ -257,7 +258,16 @@ function ComplexSiloInfo() {
         <Stack direction= 'row' justifyContent={'center'} sx={{ p: 1 }} >
           <TextField
             value={ Elevators.ComplexName } label="Complex Name" size='small'
-            onChange={(e) => { Elevators.SetComplexName = e.currentTarget.value; setUpdate( !update ) }}
+            InputProps={{ 
+              endAdornment:
+                <IconButton color="primary" aria-label="Edit Complex Name" component="label" onClick={() => {
+                   Dialogs.ComplexDialogShow(Elevators.ComplexName, 0);
+                   setUpdate( !update )
+                    }}>
+                  <Tooltip title="Edit Complex Name">
+                    <SettingsTwoToneIcon />
+                  </Tooltip>
+                </IconButton> }}
           />
           <TextField style={ {width : 130 } } 
             value={Elevators.ComplexDimension.Length}

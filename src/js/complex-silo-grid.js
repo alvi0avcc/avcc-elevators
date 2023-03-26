@@ -3,14 +3,45 @@ import Box from '@mui/material/Box';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { GridApi, useGridApiContext, useGridApiRef } from '@mui/x-data-grid';
 import { Elevators } from './elevators';
-import { Button, Stack } from '@mui/material';
+import { Button, Stack, TextField } from '@mui/material';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+
+
+function TypeEditInputCell(props) {
+    const { id, value, field } = props;
+    const apiRef = useGridApiContext();
+    const handleChange = (event, newValue) => {
+        apiRef.current.setEditCellValue({ id, field, value: newValue.props.value });
+        //apiRef.current.setCe({ id, field });
+    };
+    return (
+      <FormControl fullWidth size='small'>
+              <Select 
+                labelId="grid_type_of_silo "
+                value={value}
+                onChange={handleChange}
+                >
+                <MenuItem value={'square'}>square</MenuItem>
+                <MenuItem value={'circle'}>circle</MenuItem>
+                <MenuItem value={'star'}>star</MenuItem>
+              </Select>
+          </FormControl>
+    );
+  }
+
+  const renderTypeEditInputCell = (params) => {
+    return <TypeEditInputCell {...params} />;
+  };
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 50 },
   {
     field: 'row',
     headerName: 'row',
-    width: 100,
+    width: 50,
     editable: false,
     
   },
@@ -21,124 +52,112 @@ const columns = [
     editable: true,
   },
   {
-    field: 'Type',
-    headerName: 'Type',
-    width: 150,
-    editable: true,
-    renderCell: (params) => {
-        return (
-            <Stack>
-                <span>{params.value}</span>
-                <span>{params.value}</span>
-                <span>{params.value}</span>
-                <span>Your extra text</span>
-            </Stack>
-        );
-    },
-  },
-  {
-    field: 'Height',
-    headerName: 'Height',
-    //type: 'number',
-    width: 110,
-    editable: true,
-  },
-  {
-    field: 'Length',
-    headerName: 'Length',
-    //type: 'number',
-    width: 110,
-    editable: true,
-  },
-  {
-    field: 'Width',
-    headerName: 'Width',
-    //type: 'number',
-    width: 110,
-    editable: true,
-  },
-  {
-    field: 'Diameter',
-    headerName: 'Diameter',
-    //type: 'number',
-    width: 110,
-    editable: true,
-  },
-  {
-    field: 'Conus_height',
-    headerName: 'Conus height',
-    //type: 'number',
-    width: 110,
-    editable: true,
-  },
-  {
-    field: 'Area',
-    headerName: 'Area',
-    //type: 'number',
-    width: 110,
-    editable: true,
-  },
-  {
-    field: 'useArea',
-    headerName: 'useArea',
-    //type: 'number',
-    width: 110,
-    editable: true,
-  },
-  {
-    field: 'Sound',
-    headerName: 'Sound',
-    //type: 'number',
-    width: 110,
-    editable: true,
-  },
-  {
-    field: 'Ullage',
-    headerName: 'Ullage',
-    //type: 'number',
-    width: 110,
-    editable: true,
-  },
-  {
-    field: 'split',
-    headerName: 'split',
-    //type: 'number',
-    width: 110,
-    editable: true,
-  },
-  {
-    field: 'linked',
-    headerName: 'linked',
-    //type: 'number',
-    width: 110,
-    editable: true,
-  },
-  {
     field: 'CargoName',
     headerName: 'Cargo Name',
-    //type: 'number',
-    width: 110,
+    width: 130,
     editable: true,
   },
   {
     field: 'CargoTW',
     headerName: 'Cargo Test Weight',
-    //type: 'number',
-    width: 110,
+    type: 'number',
+    width: 100,
     editable: true,
   },
   {
+    field: 'Type',
+    headerName: 'Type',
+    width: 100,
+    height: 50,
+    editable: true,
+    renderCell: (params) => { return ( <span>{params.value}</span> ); },
+    renderEditCell: renderTypeEditInputCell,
+  },
+  {
+    field: 'Height',
+    headerName: 'Height',
+    type: 'number',
+    width: 80,
+    editable: true,
+  },
+  {
+    field: 'Length',
+    headerName: 'Length',
+    type: 'number',
+    width: 80,
+    editable: true,
+  },
+  {
+    field: 'Width',
+    headerName: 'Width',
+    type: 'number',
+    width: 80,
+    editable: true,
+  },
+  {
+    field: 'Diameter',
+    headerName: 'Diameter',
+    type: 'number',
+    width: 80,
+    editable: true,
+  },
+  {
+    field: 'Conus_height',
+    headerName: 'Conus height',
+    type: 'number',
+    width: 80,
+    editable: true,
+  },
+  {
+    field: 'Area',
+    headerName: 'Area',
+    type: 'number',
+    width: 80,
+    editable: true,
+  },
+  {
+    field: 'useArea',
+    headerName: 'useArea',
+    width: 80,
+    editable: true,
+  },
+  {
+    field: 'Sound',
+    headerName: 'Sound',
+    type: 'number',
+    width: 80,
+    editable: true,
+  },
+  {
+    field: 'Ullage',
+    headerName: 'Ullage',
+    type: 'number',
+    width: 80,
+    editable: true,
+  },
+  {
+    field: 'split',
+    headerName: 'split',
+    width: 80,
+    editable: true,
+  },
+  {
+    field: 'linked',
+    headerName: 'linked',
+    width: 80,
+    editable: true,
+  },
+  
+  {
     field: 'Using',
     headerName: 'Using',
-    //type: 'number',
-    width: 110,
+    width: 80,
     editable: true,
   },
   {
     field: 'Comments',
     headerName: 'Comments',
-    //type: 'number',
-    width: 110,
+    width: 150,
     editable: true,
   },
 ];
@@ -156,7 +175,7 @@ export default function ComplexDataGrid() {
   return (
     <Box 
         sx={{
-        height: 500,
+        height: 600,
         width: '100%',
         '& .grey': {
           backgroundColor: '#b9d5ff91',
@@ -177,18 +196,22 @@ export default function ComplexDataGrid() {
             columns: {
                 columnVisibilityModel: {
                     id: false,
-                    row: false,
                 },
             },
             pagination: {
                 paginationModel: {
-                    pageSize: 100,
+                    pageSize: 25,
                 },
             },
         }}
         pageSizeOptions={[25, 50, 100]}
         checkboxSelection
         disableRowSelectionOnClick
+        isCellEditable={(params) => ( 
+            ( params.row.Type == 'square' && params.field != 'Diameter' ) ||
+            ( params.row.Type == 'circle' &&  params.field != 'Length' && params.field != 'Width'  ) ||
+            ( params.row.Type == 'star' &&  params.field != 'Length' && params.field != 'Width'  )
+            )}
       />
 
         <Stack direction= 'row' justifyContent={'space-between'}  >
@@ -218,7 +241,7 @@ function SiloToGrid() {
                 let silo = complex.Silo[row][col];
                 id++;
                 silo.id = id;
-                silo['row'] = row;
+                silo['row'] = row + 1;
                 result.push( silo );
             }
         }
