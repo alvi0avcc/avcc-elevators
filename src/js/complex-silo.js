@@ -25,6 +25,7 @@ import Fade from "@mui/material/Fade";
 import ComplexDataGrid from './complex-silo-grid';
 import Switch from '@mui/material/Switch';
 import * as Dialogs from './dialogs';
+import clsx from 'clsx';
 
 
 function a11yProps(index) {
@@ -120,11 +121,6 @@ function ComplexSiloInfo() {
 
   function ComplexSiloInfoPlan(props) {
 
-    const getRGBC = (perc) => {
-      const color = Math.round(255 - 255 * perc / 100);
-      return `${color}, ${color}, ${color}`;
-    }
-
     const getTransform1 = (type) => {
       if ( type == 'star' ) return `rotate(${45}deg)`;
       else return `rotate(${0}deg)`;
@@ -169,10 +165,23 @@ function ComplexSiloInfo() {
       setTextToolTip ( result );
     }
 
+    const widthByComplex = (data)=>{
+      let max = 0;
+      for ( let i = 0; i < data.length; i++ )  {
+          if ( max <= data[i].length ) { max = data[i].length };
+        };
+      max = max * ( 110 + 10 );
+      return max;  
+    }
+
     if ( props.show )
     return (
-      <Box style={ {width : 1100 } } >
-        <Stack spacing={1} direction= 'column' >
+      <Box fullWidth style={ { overflow: 'auto' } } >
+        <Stack spacing={1} direction= 'column'
+        style={ {
+          width: widthByComplex(b) ,
+        }}
+        > 
           {List.map((name, index) => (
             <>
             <Stack spacing={1} direction= 'row' justifyContent={'center'}>
@@ -181,16 +190,16 @@ function ComplexSiloInfo() {
 
                   <Tooltip title={textToolTip}>
                   <Paper
-                    style={{ height: 100, width : 100,
+                    style={{ height: 110, width : 110,
                     transform: `${getTransform1(array[index2].Type)}`,
                     scale: `${getSize1(array[index2].Type)}`,
                     borderRadius: `${getForm(array[index2].Type)}`,
                     }}
                     elevation={5} >
                   <Stack
-                    justifyContent={'center'}
+                    justifyContent={'space-between'}
                     direction='column'
-                    style={ { height: 100, width : 100,
+                    style={ { height: 110, width : 110,
                     transform: `${getTransform2(array[index2].Type)}`,
                     scale: `${getSize2(array[index2].Type)}`
                      } }>  
@@ -212,6 +221,11 @@ function ComplexSiloInfo() {
                       justifyContent={'center'}
                       direction='row'>
                     <span>{array[index2].CargoName}</span>
+                    </Stack>
+                    <Stack 
+                      justifyContent={'center'}
+                      direction='row'>
+                    <span>{Elevators.massaComplexSiloGet(index,index2).weight} (MT)</span>
                     </Stack>
                   </Stack>
                 </Paper>

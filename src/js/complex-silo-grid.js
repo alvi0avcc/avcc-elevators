@@ -5,9 +5,14 @@ import { GridApi, useGridApiContext, useGridApiRef } from '@mui/x-data-grid';
 import { Elevators } from './elevators';
 import { Button, Stack, TextField } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
+import Checkbox from '@mui/material/Checkbox';
+import { Square } from '@mui/icons-material';
+import clsx from 'clsx';
+import * as Calc from './calc';
 
 
 function TypeEditInputCell(props) {
@@ -36,6 +41,48 @@ function TypeEditInputCell(props) {
     return <TypeEditInputCell {...params} />;
   };
 
+
+  function getVolume(params) {
+    let type  = params.row.Type;
+    let sound  = params.row.Sound || 0;
+    let ullage  = params.row.Ullage || 0;
+    let height  = params.row.Height || 0;
+    let length  = params.row.Length || 0;
+    let width  = params.row.Width || 0;
+    let diameter  = params.row.Diameter || 0;
+    let conus_height  = params.row.Conus_height || 0;
+    let area  = params.row.Area || 0;
+    let volume;
+    let result = Elevators.volume_mineSilo( type, sound, ullage, height, length, width, diameter, conus_height, area );
+    let err_mes = result.err_mes;
+    if ( err_mes == '' ) { volume = result.volume }
+    else volume = err_mes;
+    return volume;
+  }
+
+  function getMassa(params) {
+    let type  = params.row.Type;
+    let Sound  = params.row.Sound || 0;
+    let Ullage  = params.row.Ullage || 0;
+    let height  = params.row.Height || 0;
+    let length  = params.row.Length || 0;
+    let width  = params.row.Width || 0;
+    let diameter  = params.row.Diameter || 0;
+    let conus_height  = params.row.Conus_height || 0;
+    let area  = params.row.Area || 0;
+    let err_mes;
+    let massa;
+    let tw = params.row.CargoTW || 0;
+    let data = Elevators.volume_mineSilo( type, Sound, Ullage, height, length, width, diameter, conus_height, area );
+    err_mes = data.err_mes;
+    if ( tw <= 0 ) err_mes = err_mes + 'incorrect Test Weight';
+    if ( err_mes == '' ) {
+        massa = ( data.volume * tw / 1000 );
+    } else massa = err_mes;
+    massa = Calc.MyRound( massa, 3 );
+    return massa;
+  }
+
 const columns = [
   { field: 'id', headerName: 'ID', width: 50 },
   {
@@ -43,26 +90,37 @@ const columns = [
     headerName: 'row',
     width: 50,
     editable: false,
-    
   },
   {
     field: 'Name',
     headerName: '№ Name',
     width: 100,
     editable: true,
+    cellClassName: (params) => {
+        if ( params.value == 'NewSilo' || params.value == null ) { return clsx('red'); }
+        return '';
+      },
   },
   {
     field: 'CargoName',
     headerName: 'Cargo Name',
-    width: 130,
+    width: 150,
     editable: true,
+    cellClassName: (params) => {
+        if (  params.value == '' || params.value == null ) { return clsx('red'); };
+        return '';
+      },
   },
   {
     field: 'CargoTW',
-    headerName: 'Cargo Test Weight',
+    headerName: 'Cargo Test Weight (g/l)',
     type: 'number',
-    width: 100,
+    width: 150,
     editable: true,
+    cellClassName: (params) => {
+        if (  params.value <= 1 || params.value == null ) { return clsx('red'); };
+        return '';
+      },
   },
   {
     field: 'Type',
@@ -72,68 +130,109 @@ const columns = [
     editable: true,
     renderCell: (params) => { return ( <span>{params.value}</span> ); },
     renderEditCell: renderTypeEditInputCell,
+    cellClassName: (params) => {
+        if (  params.value == '' || params.value == null ) { return clsx('red'); };
+        return '';
+      },
   },
   {
     field: 'Height',
-    headerName: 'Height',
+    headerName: 'Height (m)',
     type: 'number',
     width: 80,
     editable: true,
+    cellClassName: (params) => {
+        if (  params.value <= 0 || params.value == null ) { return clsx('red'); };
+        return '';
+      },
   },
   {
     field: 'Length',
-    headerName: 'Length',
+    headerName: 'Length (m)',
     type: 'number',
     width: 80,
     editable: true,
+    cellClassName: (params) => {
+        if (  params.value <= 0 || params.value == null ) { return clsx('red'); };
+        return '';
+      },
   },
   {
     field: 'Width',
-    headerName: 'Width',
+    headerName: 'Width (m)',
     type: 'number',
     width: 80,
     editable: true,
+    cellClassName: (params) => {
+        if (  params.value <= 0 || params.value == null ) { return clsx('red'); };
+        return '';
+      },
   },
   {
     field: 'Diameter',
-    headerName: 'Diameter',
+    headerName: 'Diameter (m)',
     type: 'number',
     width: 80,
     editable: true,
+    cellClassName: (params) => {
+        if (  params.value <= 0 || params.value == null ) { return clsx('red'); };
+        return '';
+      },
   },
   {
     field: 'Conus_height',
-    headerName: 'Conus height',
+    headerName: 'Conus height (m)',
     type: 'number',
     width: 80,
     editable: true,
+    cellClassName: (params) => {
+        if (  params.value < 0 || params.value == null ) { return clsx('red'); };
+        if (  params.value == 0  ) { return clsx('yellow'); };
+        return '';
+      },
   },
   {
     field: 'Area',
-    headerName: 'Area',
+    headerName: 'Area (m²)',
     type: 'number',
     width: 80,
     editable: true,
+    cellClassName: (params) => {
+        if (  params.value < 0 || params.value == null ) { return clsx('red'); };
+        if (  params.value == 0  ) { return clsx('yellow'); };
+        return '';
+      },
   },
   {
     field: 'useArea',
-    headerName: 'useArea',
+    headerName: 'use Area',
     width: 80,
+    type: 'boolean',
     editable: true,
   },
   {
     field: 'Sound',
-    headerName: 'Sound',
+    headerName: 'Sound (m)',
     type: 'number',
     width: 80,
     editable: true,
+    cellClassName: (params) => {
+        if (  params.value <= 0 || params.value == null ) { return clsx('red'); };
+        return '';
+      },
   },
   {
     field: 'Ullage',
-    headerName: 'Ullage',
+    headerName: 'Ullage (m)',
     type: 'number',
     width: 80,
     editable: true,
+    cellClassName: (params) => {
+        if (  params.value < 0 || params.value == null ) { return clsx('red'); };
+        if (  params.value == 0  ) { return clsx('yellow'); };
+        if (  params.value > 0  ) { return clsx('lime'); };
+        return '';
+      },
   },
   {
     field: 'split',
@@ -152,12 +251,42 @@ const columns = [
     field: 'Using',
     headerName: 'Using',
     width: 80,
+    type: 'boolean',
     editable: true,
+  },
+  {
+    field: 'Volume',
+    headerName: 'Cargo volume (m³)',
+    width: 150,
+    //type: 'number',
+    editable: false,
+    valueGetter: getVolume,
+    cellClassName: (params) => {
+        if (  params.value < 0 || params.value == null ) { return clsx('red'); };
+        if ( typeof(params.value) != 'number' )  { return clsx('red'); };
+        if (  params.value == 0  ) { return clsx('yellow'); };
+        return '';
+      },
+  },
+  {
+    field: 'Weight',
+    headerName: 'Cargo weight (MT)',
+    width: 150,
+    //type: 'number',
+    editable: false,
+    valueGetter: getMassa,
+    cellClassName: (params) => {
+        if (  params.value < 0 || params.value == null ) { return clsx('red'); };
+        if ( typeof(params.value) != 'number' )  { return clsx('red'); };
+        if (  params.value == 0  ) { return clsx('yellow'); };
+        if (  params.value > 0  ) { return clsx('lime'); };
+        return '';
+      },
   },
   {
     field: 'Comments',
     headerName: 'Comments',
-    width: 150,
+    width: 200,
     editable: true,
   },
 ];
@@ -167,22 +296,117 @@ export default function ComplexDataGrid() {
     const [rows, setRows] = React.useState( SiloToGrid() );
     const apiRef = useGridApiRef();
 
-    const handleApplyButton = () => {
-        Elevators.ComplexDataChange( apiRef.current.getRowModels() );
-      };
-      
+    const handleApplyButton = () => { 
+        Elevators.ComplexDataChange( apiRef.current.getRowModels() ); 
+        setRows( SiloToGrid() );
+    };
 
+    const [selectionModel, setSelectionModel] = React.useState([]);
+    const handleDeleteRow = () => { setRows((rows) => rows.filter((r) => !selectionModel.includes(r.id))); };
+    const onReset = () => { setSelectionModel([]); };
+
+    const [view, setView] = React.useState(false);
+    const handleChange_View = (event) => { 
+        setView(event.target.checked);
+        if ( view == false ) {
+            setColumnVisibility({
+                id: false,
+                Type: false,
+                Height: false,
+                Length: false,
+                Width: false,
+                Diameter: false,
+                Conus_height: false,
+                Area: false,
+                useArea: false,
+                Sound: true,
+                Ullage: true,
+                split: false,
+                linked: false,
+                Using: false,
+                Volume: true,
+                Weight: true,
+                Comments: true,
+            });
+        } else {
+            setColumnVisibility({
+                id: false,
+                Type: true,
+                Height: true,
+                Length: true,
+                Width: true,
+                Diameter: true,
+                Conus_height: true,
+                Area: true,
+                useArea: true,
+                Sound: true,
+                Ullage: true,
+                split: true,
+                linked: true,
+                Using: true,
+                Volume: true,
+                Weight: true,
+                Comments: true,
+            });
+        }
+    };
+
+    const [ColumnVisibility, setColumnVisibility] = React.useState({id: false});
+    
   return (
     <Box 
         sx={{
-        height: 600,
+        height: 500,
         width: '100%',
-        '& .grey': {
-          backgroundColor: '#b9d5ff91',
-          color: '#1a3e72',
-        },
+        '& .grey': { backgroundColor: '#b9d5ff91', color: '#1a3e72', },
+        '& .red': { backgroundColor: 'red', color: '#1a3e72', fontWeight: '600', },
+        '& .yellow': { backgroundColor: 'yellow', color: '#1a3e72', fontWeight: '600', },
+        '& .lime': { backgroundColor: 'lime', color: '#1a3e72', fontWeight: '600', },
       }}
       >
+
+      <Stack direction="row" spacing={1}>
+        <FormControlLabel control={
+              <Checkbox 
+              size="small"
+              checked={view}
+              onChange={handleChange_View}
+              />
+            } label="Simple view" />
+        <Button 
+            size="small" 
+            variant='outlined' 
+            onClick={handleDeleteRow}
+        >
+          Delete selected row
+        </Button>
+        <Button 
+            size="small" 
+            variant='outlined' 
+            onClick={onReset}
+        >
+          Reset selected row
+        </Button>
+        <Button size="small" disabled>
+          Add a row
+        </Button>
+        <Button 
+            size="small"
+            variant="outlined"
+            onClick={()=>{ setRows( SiloToGrid() ) }}
+            >
+            Reject Changes
+          </Button>
+
+          <Button
+            size="small"
+            variant="outlined" 
+            onClick={ handleApplyButton }
+            >
+            Apply Changes  
+          </Button>
+      </Stack>
+
       <DataGrid
         apiRef={apiRef}
         slots={{ toolbar: GridToolbar }}
@@ -206,25 +430,18 @@ export default function ComplexDataGrid() {
         }}
         pageSizeOptions={[25, 50, 100]}
         checkboxSelection
+        onRowSelectionModelChange={setSelectionModel}
+        rowSelectionModel={selectionModel}
+        columnVisibilityModel={ColumnVisibility}
         disableRowSelectionOnClick
         isCellEditable={(params) => ( 
             ( params.row.Type == 'square' && params.field != 'Diameter' ) ||
             ( params.row.Type == 'circle' &&  params.field != 'Length' && params.field != 'Width'  ) ||
             ( params.row.Type == 'star' &&  params.field != 'Length' && params.field != 'Width'  )
             )}
+        showCellVerticalBorder
+        showColumnVerticalBorder
       />
-
-        <Stack direction= 'row' justifyContent={'space-between'}  >
-          <Button variant="outlined"
-           onClick={()=>{ setRows( SiloToGrid() ) }} >
-            Reject Changes
-          </Button>
-
-          <Button variant="outlined" 
-            onClick={ handleApplyButton }>
-            Apply Changes  
-          </Button>
-        </Stack>
 
     </Box>
     

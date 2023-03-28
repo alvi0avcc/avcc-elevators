@@ -1,3 +1,4 @@
+import { Dining } from '@mui/icons-material';
 import * as Calc from './calc';
 
 class cComplex {
@@ -174,10 +175,10 @@ class cElevators {
         let result;
         let found = false;
         result = new cComplexSilo ();
-        if ( ( row || null ) && ( col || null ) ) {
+        if ( ( row != null ) && ( col != null ) ) {
             if ( this.ComplexFound > 0 ) {
-                if ( this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row, col ] ) {
-                    result =  structuredClone( this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[ row, col ] );
+                if ( this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[row][col] ) {
+                    result =  structuredClone( this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[row][col] );
                  found = true;
                 }
             }
@@ -334,18 +335,12 @@ class cElevators {
         let c = [];
         for (let i = 1; i < a.size+1; i++ ) {
             b = a.get(i);
-            c.push( b );
+           if ( b ) { c.push( b ); };
         }
-        console.log('ComplexSiloData (el) =',this.Elevators[this.Selected].Complex[ this.ComplexSelected ] );
-        console.log('ComplexSiloData (c) =',c  );
-        //console.log('ComplexSiloData (el) =',this.Elevators[this.Selected].Complex[ this.ComplexSelected ] );
-        //console.log('keys (c) =',Object.keys(c[0])  );
-        //this.Elevators.Complex[ this.ComplexSelected ] = structuredClone( ComplexSiloData );
         let silo = [[]];
         let row = 0;
         let col = 0;
         let rowTable = c[ 0 ].row;
-        console.log('rowTable initial= ', rowTable );
         for ( let i = 0; i < c.length; i++ ) {
             if ( rowTable != c[ i ].row  ) { 
                 rowTable = c[ i ].row;
@@ -358,7 +353,6 @@ class cElevators {
             silo[ row ].push(data);
             col++;
         };
-        console.log('ComplexSiloData (New Data) =', silo );
         this.Elevators[this.Selected].Complex[ this.ComplexSelected ].Silo = structuredClone( silo );
     };
 
@@ -518,6 +512,122 @@ class cElevators {
         }
         }
         return cargo;    
+    }
+    area_circle( diameter ){
+        let area = 3.14 * Math.sqrt ( diameter / 2, 2 );
+        return area;
+    }
+    volume_cilinder( height, diameter, area ){
+        let volume;
+        if ( area == 0 ){
+            volume = this.area_circle( diameter ) * height;
+        } else {
+            volume = height * area;
+        }
+        return volume;
+    }
+    volume_square( height, length, width, area ){
+        let volume;
+        console.log('volume_square data = ', height, length, width, area);
+        console.log('volume_square area = ', area);
+        if ( area == 0 ){
+            volume = length * width * height;
+        } else {
+            volume = height * area;
+        }
+        console.log('volume_square volume = ', volume);
+        return volume;
+    }
+    volume_conus_circle( height, diameter, area  ){
+        let volume;
+        if ( area == 0 ){
+            volume = 1/3 * this.area_circle( diameter ) * height;
+        }else {
+            volume = height * 1/3*area;
+        }
+        return volume;
+    }
+    volume_conus_square( height, length, width, area ){
+        let volume;
+        if ( area == 0 ){
+            volume = 1/3 * length * width *height;
+        }else {
+            volume = height * 1/3*area;
+        }
+        return volume;
+    }
+    volume_mineSilo_circle( height, diameter, conus_height, area ){
+        let volume = this.volume_cilinder( height, diameter, area ) + this.volume_conus_circle( conus_height, diameter, area );
+        return volume;
+    }
+    volume_mineSilo_square( heigth, length, width, conus_height, area ){
+        let volume = this.volume_square( heigth, length, width, area ) + this.volume_conus_square( conus_height, length, width, area );
+        return volume;
+    }
+    volume_mineSilo_star( height, diameter, conus_height, area ){
+        let volume = 0;
+        return volume;
+    }
+    volume_mineSilo( type, sound, ullage, height, length, width, diameter, conus_height, area ){
+        console.log('voume_mineSilo data = ', type, sound, ullage, height, length, width, diameter, conus_height, area);
+        let volume = 0;
+        let err_mes = '';
+        let wokrHeight = sound - ullage;
+        if ( type != 'square' && type != 'circle' && type !='star' ) err_mes = 'unknown silo type, ';
+        if ( sound <= 0 ) err_mes = err_mes + 'incorrect Sound, ';
+        if ( ullage > sound ) err_mes = err_mes + 'incorrect Ullage, ';
+        if ( height <= 0 ) err_mes = err_mes + 'incorrect Height, ';
+        if ( type == 'square' ){
+            if ( length <= 0 ) err_mes = err_mes + 'incorrect Length, ';
+            if ( width <= 0 ) err_mes = err_mes + 'incorrect Width, ';
+        };
+        if ( type == 'circle' || type == 'star'){
+            if ( diameter <= 0 ) err_mes = err_mes + 'incorrect Diameter, ';
+        };  
+        if ( conus_height < 0 ) err_mes = err_mes + 'incorrect Conus Height, ';
+        if ( area < 0 ) err_mes = err_mes + 'incorrect Area, ';
+
+        if ( wokrHeight > height ) {
+            wokrHeight = height;
+            err_mes = err_mes + '(Sound - Ullage) > Height, '
+        };
+
+
+        if ( type == 'square' ) {
+            volume = this.volume_mineSilo_square( wokrHeight, length, width, conus_height, area );
+        }
+        if ( type == 'circle' ) {
+            volume = this.volume_mineSilo_circle( wokrHeight, diameter, conus_height, area );
+        }
+        if ( type == 'star' ) {
+            volume = this.volume_mineSilo_star( wokrHeight, diameter, conus_height, area );
+        }
+        volume = Calc.MyRound ( volume, 3 );
+    return  {volume, err_mes };
+    }
+    cargo_weight_natura( volume, natura ){ //Natura - GOST (g/l)
+        let massa = volume * natura/1000;
+        massa = Calc.MyRound ( massa, 3 );
+        return massa;
+    }
+    cargo_weight_tw( volume, testWeight ){ //Test Weight - ISO (kg/m3)
+        let massa = volume * testWeight;
+        massa = Calc.MyRound ( massa, 3 );
+        return massa;
+    }
+    massaComplexSiloGet( row, col ){
+        let volume;
+        let weight;
+        let silo = this.ComplexSiloGet(row,col);
+        console.log('silo = ',silo);
+        if ( silo.found ) {
+            silo = silo.result
+            volume = this.volume_mineSilo( silo.Type, silo.Sound, silo.Ullage, silo.Height, silo.Length, silo.Width, silo.Diameter, silo.Conus_height, silo.Area ).volume;
+            volume = Calc.MyRound( volume, 3 );
+            weight = volume * silo.CargoTW / 1000;
+            weight = Calc.MyRound( weight, 3 );
+        } else { volume =0; weight =0; console.log('massaComplexSiloGet = error');}
+        return {volume, weight};
     }
 };
 
