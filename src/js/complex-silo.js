@@ -26,6 +26,7 @@ import ComplexDataGrid from './complex-silo-grid';
 import Switch from '@mui/material/Switch';
 import * as Dialogs from './dialogs';
 import clsx from 'clsx';
+import { ConstructionOutlined } from '@mui/icons-material';
 
 
 function a11yProps(index) {
@@ -145,7 +146,28 @@ function ComplexSiloInfo() {
       else return ``;
     }
 
+    const getSplit = (split) => {
+      if ( split == '' || split == null ) return `none`;
+      else return `block`;
+    }
+
     const [textToolTip, setTextToolTip] = React.useState();
+
+    const [ullageChange, setUllageChange] = React.useState(false);
+    const handleChangeUllage = (event) =>{
+      let ullage = event.currentTarget.value;
+      let id = event.currentTarget.id;
+      //id: `silo-row-${index}/col-${index2}`,
+      let row = id.indexOf("row");
+      let col = id.indexOf("col");
+      let row_txt = id.slice( row+4, col-1);
+      let col_txt = id.slice( col+4 );
+      row = Number(row_txt);
+      col = Number(col_txt);
+      //ullage = Number( ullage );
+      Elevators.ComplexSiloUllageSet( row, col, ullage);
+      setUllageChange(!ullageChange);
+    }
 
     let b = Elevators.ComplexAll.Silo;
     let List = [];//список рядов с типом силосов
@@ -215,6 +237,7 @@ function ComplexSiloInfo() {
                       style={ { width : 80,}}
                       size='small' label="Ullage (m)"
                       key = {index2} value={array[index2].Ullage} {...a11yProps(index, index2)}
+                      onChange={handleChangeUllage}
                     />
                     </Stack >
                     <Stack 
@@ -231,6 +254,50 @@ function ComplexSiloInfo() {
                 </Paper>
                 </Tooltip>
 
+                <Paper
+                    style={{ height: 110, width : 110,
+                    display: `${getSplit(array[index2].split)}`,
+                    transform: `${getTransform1(array[index2].Type)}`,
+                    scale: `${getSize1(array[index2].Type)}`,
+                    borderRadius: `${getForm(array[index2].Type)}`,
+                    }}
+                    elevation={5} >
+                  <Stack
+                    justifyContent={'space-between'}
+                    direction='column'
+                    style={ { height: 110, width : 110,
+                    transform: `${getTransform2(array[index2].Type)}`,
+                    scale: `${getSize2(array[index2].Type)}`
+                     } }>  
+                    <Stack 
+                      justifyContent={'center'}
+                      direction='row'>
+                      <span>№-{array[index2].split}</span>
+                    </Stack >
+                    <Stack 
+                      justifyContent={'center'}
+                      direction='row'>
+                    <TextField 
+                      style={ { width : 80,}}
+                      size='small' label="Ullage (m)"
+                      key = {index2} value={array[index2].Ullage} {...a11yProps(index, index2)}
+                      onChange={handleChangeUllage}
+                    />
+                    </Stack >
+                    <Stack 
+                      justifyContent={'center'}
+                      direction='row'>
+                    <span>{array[index2].CargoName}</span>
+                    </Stack>
+                    <Stack 
+                      justifyContent={'center'}
+                      direction='row'>
+                    <span>{Elevators.massaComplexSiloGet(index,index2).weight} (MT)</span>
+                    </Stack>
+                  </Stack>
+                </Paper>
+
+
                 </Stack>
               ))}
             </Stack>
@@ -245,7 +312,7 @@ function ComplexSiloInfo() {
 
   function a11yProps(index, index2) {
     return {
-      id: `silo-${index}/${index2}`,
+      id: `silo-row-${index}/col-${index2}`,
       'aria-controls': `silo-tabpanel-${index}${index2}`,
     };
   }
@@ -361,7 +428,7 @@ function ComplexSiloInfo() {
           </Button>
           <Button variant="outlined"  disabled
             onClick={()=>{Elevators.ComplexSiloDel(); setDim(!dim)  }}>
-            Delele Selected row silo  
+            Delete Selected row silo  
           </Button>
         </Stack>
 

@@ -355,6 +355,14 @@ class cElevators {
         };
         this.Elevators[this.Selected].Complex[ this.ComplexSelected ].Silo = structuredClone( silo );
     };
+    ComplexSiloUllageSet(row, col, ullage) {
+        let result = false;
+        if ( this.ComplexFound > 0 ) {
+            this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[row][col].Ullage = ullage;
+            result = true;
+        }
+        return result;
+    }
 
     SiloClone(){
         if ( this.ElevatorsFound ) {

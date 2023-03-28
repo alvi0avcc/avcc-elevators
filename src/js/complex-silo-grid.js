@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { GridApi, useGridApiContext, useGridApiRef } from '@mui/x-data-grid';
 import { Elevators } from './elevators';
-import { Button, Stack, TextField } from '@mui/material';
+import { Button, Stack, TextField, Tooltip } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import InputLabel from '@mui/material/InputLabel';
@@ -301,9 +301,34 @@ export default function ComplexDataGrid() {
         setRows( SiloToGrid() );
     };
 
+    const [selectState, setSelectState] = React.useState(true);
+
     const [selectionModel, setSelectionModel] = React.useState([]);
+    const handleSelectionModel = (selectedRows) => {
+        setSelectionModel(selectedRows);
+        if ( selectedRows.length > 0 ) { 
+            setSelectState( false );
+        } else { setSelectState( true ); };
+        
+    }
     const handleDeleteRow = () => { setRows((rows) => rows.filter((r) => !selectionModel.includes(r.id))); };
-    const onReset = () => { setSelectionModel([]); };
+    const onReset = () => { setSelectionModel([]); setSelectState( true );};
+    const handleAddRow = () => {
+        let n = selectionModel.length;
+        let n_max = 0;
+        if ( n > 0 ) {
+            for ( let i = 0; i < n; i++ ) {
+                if ( n_max <= selectionModel[i] ) { n_max = selectionModel[i]; };
+            }
+            let a = structuredClone( rows[n_max-1] );
+            let data = structuredClone( rows );
+            data.splice(n_max, 0, a);
+            for ( let i = 0; i < data.length; i++) {
+                data[i]['id'] = i+1 ;
+            }
+            setRows( data );
+        }
+        };
 
     const [view, setView] = React.useState(false);
     const handleChange_View = (event) => { 
@@ -352,6 +377,7 @@ export default function ComplexDataGrid() {
     };
 
     const [ColumnVisibility, setColumnVisibility] = React.useState({id: false});
+
     
   return (
     <Box 
@@ -377,6 +403,7 @@ export default function ComplexDataGrid() {
             size="small" 
             variant='outlined' 
             onClick={handleDeleteRow}
+            disabled={selectState}
         >
           Delete selected row
         </Button>
@@ -384,12 +411,20 @@ export default function ComplexDataGrid() {
             size="small" 
             variant='outlined' 
             onClick={onReset}
+            disabled={selectState}
         >
           Reset selected row
         </Button>
-        <Button size="small" disabled>
-          Add a row
+        <Tooltip title = 'Add 1 silo after selected' >
+        <Button 
+            size="small"
+            variant="outlined"
+            onClick={handleAddRow}
+            disabled={selectState}
+            >
+          Add silo
         </Button>
+        </Tooltip>
         <Button 
             size="small"
             variant="outlined"
@@ -430,7 +465,7 @@ export default function ComplexDataGrid() {
         }}
         pageSizeOptions={[25, 50, 100]}
         checkboxSelection
-        onRowSelectionModelChange={setSelectionModel}
+        onRowSelectionModelChange={ handleSelectionModel }
         rowSelectionModel={selectionModel}
         columnVisibilityModel={ColumnVisibility}
         disableRowSelectionOnClick
