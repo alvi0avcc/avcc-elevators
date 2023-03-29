@@ -27,6 +27,7 @@ import Switch from '@mui/material/Switch';
 import * as Dialogs from './dialogs';
 import clsx from 'clsx';
 import { ConstructionOutlined } from '@mui/icons-material';
+import { arSA } from '@mui/material/locale';
 
 
 function a11yProps(index) {
@@ -153,22 +154,6 @@ function ComplexSiloInfo() {
 
     const [textToolTip, setTextToolTip] = React.useState();
 
-    const [ullageChange, setUllageChange] = React.useState(false);
-    const handleChangeUllage = (event) =>{
-      let ullage = event.currentTarget.value;
-      let id = event.currentTarget.id;
-      //id: `silo-row-${index}/col-${index2}`,
-      let row = id.indexOf("row");
-      let col = id.indexOf("col");
-      let row_txt = id.slice( row+4, col-1);
-      let col_txt = id.slice( col+4 );
-      row = Number(row_txt);
-      col = Number(col_txt);
-      //ullage = Number( ullage );
-      Elevators.ComplexSiloUllageSet( row, col, ullage);
-      setUllageChange(!ullageChange);
-    }
-
     let b = Elevators.ComplexAll.Silo;
     let List = [];//список рядов с типом силосов
     if ( b ) {
@@ -196,21 +181,30 @@ function ComplexSiloInfo() {
       return max;  
     }
 
-    if ( props.show )
-    return (
-      <Box fullWidth style={ { overflow: 'auto' } } >
-        <Stack spacing={1} direction= 'column'
-        style={ {
-          width: widthByComplex(b) ,
-        }}
-        > 
-          {List.map((name, index) => (
-            <>
-            <Stack spacing={1} direction= 'row' justifyContent={'center'}>
-              {b[index].map((name2, index2, array ) => (
-                <Stack direction= 'column' justifyContent={'center'}>
+    function SiloPaper(props){
+      let array = props.array;
+      let index = props.index;
+      let index2 = props.index2;
 
-                  <Tooltip title={textToolTip}>
+    const [ullageChange, setUllageChange] = React.useState(false);
+    const handleChangeUllage = (event) =>{
+      let ullage = event.currentTarget.value;
+      let id = event.currentTarget.id;
+      //id: `silo-row-${index}/col-${index2}`,
+      let row = id.indexOf("row");
+      let col = id.indexOf("col");
+      let row_txt = id.slice( row+4, col-1);
+      let col_txt = id.slice( col+4 );
+      row = Number(row_txt);
+      col = Number(col_txt);
+      //ullage = Number( ullage );
+      Elevators.ComplexSiloUllageSet( row, col, ullage);
+      setUllageChange(!ullageChange);
+    }
+
+      return (
+      <>
+                <Tooltip title={textToolTip}>
                   <Paper
                     style={{ height: 110, width : 110,
                     transform: `${getTransform1(array[index2].Type)}`,
@@ -296,6 +290,25 @@ function ComplexSiloInfo() {
                     </Stack>
                   </Stack>
                 </Paper>
+      </>
+      )
+    }
+
+    if ( props.show )
+    return (
+      <Box fullWidth style={ { overflow: 'auto' } } >
+        <Stack spacing={1} direction= 'column'
+        style={ {
+          width: widthByComplex(b) ,
+        }}
+        > 
+          {List.map((name, index) => (
+            <>
+            <Stack spacing={1} direction= 'row' justifyContent={'center'}>
+              {b[index].map((name2, index2, array ) => (
+                <Stack direction= 'column' justifyContent={'center'}>
+
+                  <SiloPaper array={array} index={index} index2={index2} />
 
 
                 </Stack>
