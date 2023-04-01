@@ -22,7 +22,6 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Silo from './silo';
 import Fade from "@mui/material/Fade";
-import ComplexDataGrid from './complex-silo-grid';
 import Switch from '@mui/material/Switch';
 import * as Dialogs from './dialogs';
 import clsx from 'clsx';
@@ -500,7 +499,7 @@ function ComplexSiloInfo() {
           </Button>
         </Stack>
 
-      <ComplexDataGrid/>
+      <Table/>
 
       </>
     )
