@@ -1,6 +1,9 @@
 import { Dining } from '@mui/icons-material';
 import * as Calc from './calc';
 
+let SoftVersion = '0.1.0'; 
+let DBlocalVersion = '0.1.0';
+
 class cComplex {
     constructor() {
     this.id     = '';
@@ -15,6 +18,8 @@ class cComplex {
 class cComplexSilo {
     constructor() {
         this.id         ='';
+        this.row        =0;
+        this.col        =0;
         this.Name       = 'NewSilo';
         this.Type       = ( 'star', 'square', 'circle' , '' );
         this.useArea    = false; // расчет по размерам или по площади
@@ -26,7 +31,7 @@ class cComplexSilo {
         this.Conus_height  = 2.5;
         this.Sound      = 25;
         this.Ullage     = 0;
-        this.split      = []; //существует если силос разделен на части
+        this.split      = ''; //существует если силос разделен на части
         this.linked     = ''; //имя связанного силоса
         this.CargoName  = '';
         this.CargoTW    = 1;
@@ -93,6 +98,9 @@ class cElevator {
 
 class cElevators {
     constructor() {
+        this.SoftVersion            = '';
+        this.DBlocalVersion         = '';
+        this.DBVersion              = '';
         this.State                  = "closed";
         this.Selected               = 0;
         this.SiloSelected           = 0;
@@ -168,7 +176,17 @@ class cElevators {
     };
 
     get ComplexAll(){
-        if ( this.ComplexFound > 0 ) return this.Elevators[this.Selected].Complex[this.ComplexSelected]
+        if ( this.ComplexFound > 0 ) {
+            let data = structuredClone( this.Elevators[this.Selected].Complex[this.ComplexSelected] ).Silo;
+        for ( let row=0; row < data.length; row++ ) {
+            for ( let col = 0; col < data[row].length; col++ ) {
+                data[row][col].row = row+1;
+                data[row][col].col = col+1;
+            }
+        }
+        this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo = structuredClone ( data );
+        return this.Elevators[this.Selected].Complex[this.ComplexSelected];
+        }
         else return null
     };
     ComplexSiloGet( row, col ){
@@ -329,8 +347,38 @@ class cElevators {
         }
     };
 
-    ComplexDataChange( ComplexSiloData ){
+    ComplexDataSet( ComplexSiloData ){
+
+        console.log('ComplexSiloData = ',ComplexSiloData);
         let a =  new Map (ComplexSiloData);
+        console.log('ComplexSiloData  (a)= ',a);
+        let b;
+        let data = [];
+        for (let i = 1; i < a.size+1; i++ ) {
+            b = a.get(i);
+           if ( b ) { data.push( b ); };
+        };
+
+        //let data = structuredClone( ComplexSiloData );
+        console.log('structuredClone = ',data);
+        let row = 0;
+        let col = 0;
+        let current_row = 0;
+        let new_data = [[]];
+        for ( let i = 0; i < data.length; i++) {
+            if ( current_row == data[i].row -1 ) {
+                new_data[current_row].push( structuredClone( data[i] ) );
+                delete new_data[current_row][ new_data[current_row].length-1 ].row;
+            } else {
+                current_row = data[i].row -1;
+                new_data.push([]);
+                new_data[current_row].push( structuredClone( data[i] ) );
+                delete new_data[current_row][ new_data[current_row].length-1 ].row;
+            }
+        }
+        this.Elevators[this.Selected].Complex[ this.ComplexSelected ].Silo = structuredClone( new_data );
+        console.log('new_data = ',new_data);
+       /* let a =  new Map (ComplexSiloData);
         let b;
         let c = [];
         for (let i = 1; i < a.size+1; i++ ) {
@@ -353,7 +401,7 @@ class cElevators {
             silo[ row ].push(data);
             col++;
         };
-        this.Elevators[this.Selected].Complex[ this.ComplexSelected ].Silo = structuredClone( silo );
+        this.Elevators[this.Selected].Complex[ this.ComplexSelected ].Silo = structuredClone( silo );*/
     };
     ComplexSiloUllageSet(row, col, ullage) {
         let result = false;
@@ -624,8 +672,8 @@ class cElevators {
         return massa;
     }
     massaComplexSiloGet( row, col ){
-        let volume;
-        let weight;
+        let volume =0;
+        let weight =0;
         let silo = this.ComplexSiloGet(row,col);
         console.log('silo = ',silo);
         if ( silo.found ) {
@@ -635,6 +683,20 @@ class cElevators {
             weight = volume * silo.CargoTW / 1000;
             weight = Calc.MyRound( weight, 3 );
         } else { volume =0; weight =0; console.log('massaComplexSiloGet = error');}
+        return {volume, weight};
+    }
+    massaComplexSilo( silo ){
+        let volume =0;
+        let weight =0;
+        //let silo = this.ComplexSiloGet(0,0);
+        //console.log('silo = ',silo);
+        //if ( silo.found ) {
+        //    silo = silo.result
+        volume = this.volume_mineSilo( silo.Type, silo.Sound, silo.Ullage, silo.Height, silo.Length, silo.Width, silo.Diameter, silo.Conus_height, silo.Area ).volume;
+        volume = Calc.MyRound( volume, 3 );
+        weight = volume * silo.CargoTW / 1000;
+        weight = Calc.MyRound( weight, 3 );
+        //} else { volume =0; weight =0; console.log('massaComplexSiloGet = error');}
         return {volume, weight};
     }
 };

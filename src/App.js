@@ -8,7 +8,7 @@ import ElevatorTab from './js/elevator-tab.js';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import { Button } from '@mui/material';
-import { Label } from '@mui/icons-material';
+import { Elevator, Label } from '@mui/icons-material';
 import LocalServiceWorkerRegister from './js/sw-register';
 import registerServiceWorker from './js/sw-register';
 
@@ -17,7 +17,6 @@ UpdateContext.displayName = 'UpdateContext';
 
 function App(props) {
   const [update, setUpdate] = useState();
-  //ElVersion();
   registerServiceWorker();
 
   return (

@@ -8,6 +8,7 @@ export let ElevatorOpened = false; // Local BD Opened/Closed
 export let FileSel = React.createRef();
 let FileWork;
 let ElevatorKey = ''; //ключ текущего элеватора в localStorage
+
 export let ElevatorList = [];
 export let WarehouseList = [];
 export let PileList = [];

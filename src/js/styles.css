@@ -1,0 +1,72 @@
+.App {
+    font-family: sans-serif;
+    text-align: center;
+  }
+
+  
+  .grey { background-color: #b9d5ff91;
+    color: #1a3e72
+  }
+  .red { background-color: red;
+    color: #1a3e72;
+    font-weight: 600 
+  }
+  .yellow { background-color: yellow;
+    color:#1a3e72;
+    font-weight: 600 }
+  .lime { background-color: lime;
+    color: #1a3e72;
+    font-weight: 600
+     }
+  .myTable {
+            color:black;
+            border-collapse : separate;
+            border-style :  solid;
+            border-width : 1px;
+            border-color : grey;
+          }
+  .myHide {
+            display: none;
+          }
+  .myTableSide {
+            position: relative;
+            transform: translateY(100%) rotate(-90deg);
+            width:20px;
+            border: none;
+            outline: none;
+            color:black;
+            border-style :  none;
+            border-width : 1px;
+            border-color : grey;
+            white-space: nowrap;
+          }
+  .myInput {
+                outline: none;
+                border: none;
+                background-color: transparent;
+             }
+  .myInputShort {
+            max-width: 50px;
+            outline: none;
+            border: none;
+            background-color: transparent;
+             }
+  .myInputLong {
+            width: 200px;
+            outline: none;
+            border: none;
+            background-color: transparent;
+            }
+  .myOutput {
+            min-width: 150px;
+            color:black;
+            border-collapse : separate;
+            border-style :  solid;
+            border-width : 1px;
+            border-color : grey
+            }
+  .mySelect {
+                outline: none;
+                border: none;
+                background-color: transparent;
+  }

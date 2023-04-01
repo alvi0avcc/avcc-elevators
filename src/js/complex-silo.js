@@ -26,9 +26,7 @@ import ComplexDataGrid from './complex-silo-grid';
 import Switch from '@mui/material/Switch';
 import * as Dialogs from './dialogs';
 import clsx from 'clsx';
-import { ConstructionOutlined } from '@mui/icons-material';
-import { arSA } from '@mui/material/locale';
-
+import Table from './complex_silo_table';
 
 function a11yProps(index) {
   return {
@@ -174,10 +172,14 @@ function ComplexSiloInfo() {
 
     const widthByComplex = (data)=>{
       let max = 0;
+      let split;
       for ( let i = 0; i < data.length; i++ )  {
-          if ( max <= data[i].length ) { max = data[i].length };
+          split = 0; 
+          for ( let ii = 0; ii < data[i].length; ii++ ) { if ( data[i][ii].split != '' ) { split++ }; };
+          if ( max <= (data[i].length - split/2) ) { max = data[i].length - split/2 };
         };
       max = max * ( 110 + 10 );
+      console.log('split = ',split);
       return max;  
     }
 
@@ -185,27 +187,41 @@ function ComplexSiloInfo() {
       let array = props.array;
       let index = props.index;
       let index2 = props.index2;
+      let index3 = index2 + 1; //used if .split is present
 
-    const [ullageChange, setUllageChange] = React.useState(false);
-    const handleChangeUllage = (event) =>{
-      let ullage = event.currentTarget.value;
-      let id = event.currentTarget.id;
-      //id: `silo-row-${index}/col-${index2}`,
-      let row = id.indexOf("row");
-      let col = id.indexOf("col");
-      let row_txt = id.slice( row+4, col-1);
-      let col_txt = id.slice( col+4 );
-      row = Number(row_txt);
-      col = Number(col_txt);
-      //ullage = Number( ullage );
-      Elevators.ComplexSiloUllageSet( row, col, ullage);
-      setUllageChange(!ullageChange);
-    }
+      if ( array[index2].split != '' ) {
+        if ( array[index2 +1] ) {
+          if ( array[index2 +1].split == '' ) return (<></>);
+          if ( array[index2].Name != array[index2 +1].split ) return (<></>);
+        };
+      };
+
+
+    function ShowSilo(){
+      const [ullageChange, setUllageChange] = React.useState(false);
+      const handleChangeUllage = (event) =>{
+          let ullage = event.currentTarget.value;
+          let id = event.currentTarget.id;
+          //id: `silo-row-${index}/col-${index2}`,
+          let row = id.indexOf("row");
+          let col = id.indexOf("col");
+          let row_txt = id.slice( row+4, col-1);
+          let col_txt = id.slice( col+4 );
+          row = Number(row_txt);
+          col = Number(col_txt);
+          Elevators.ComplexSiloUllageSet( row, col, ullage);
+          setUllageChange(!ullageChange);
+        }
+        let splitName = '';
+        if ( typeof(array[index2].split) == 'string' ) { splitName = array[index2].split; };
+        if ( typeof(array[index2].split) == 'object' ) { splitName = ''; };
+        let res =-1;
+        if ( splitName != '' )  res = array.findIndex(array => array.Name == splitName );
+        if ( splitName != '' && res != index2 ) return ( <></> );
 
       return (
       <>
-                <Tooltip title={textToolTip}>
-                  <Paper
+          <Paper
                     style={{ height: 110, width : 110,
                     transform: `${getTransform1(array[index2].Type)}`,
                     scale: `${getSize1(array[index2].Type)}`,
@@ -242,31 +258,63 @@ function ComplexSiloInfo() {
                     <Stack 
                       justifyContent={'center'}
                       direction='row'>
-                    <span>{Elevators.massaComplexSiloGet(index,index2).weight} (MT)</span>
+                      <span>{Elevators.massaComplexSiloGet(index,index2).weight} (MT)</span>
                     </Stack>
                   </Stack>
-                </Paper>
-                </Tooltip>
+          </Paper>
+      </>
+    );
+    };
 
+    function ShowSplit(){
+      const [ullageChange2, setUllageChange2] = React.useState(false);
+      const handleChangeUllage2 = (event) =>{
+      let ullage = event.currentTarget.value;
+      let id = event.currentTarget.id;
+      //id: `silo-row-${index}/col-${index2}`,
+      let row = id.indexOf("row");
+      let col = id.indexOf("col");
+      let row_txt = id.slice( row+4, col-1);
+      let col_txt = id.slice( col+4 );
+      row = Number(row_txt);
+      col = Number(col_txt);
+      Elevators.ComplexSiloUllageSet( row, col, ullage);
+      setUllageChange2(!ullageChange2);
+    }
+
+
+      if ( array[index2].split == '' ) { return (<></>); }
+      else {
+        if ( array[index2 +1] ) {
+          if ( array[index2 +1].split == '' ) return (<></>);
+          let splitName = '';
+          if ( typeof(array[index2].split) == 'string' ) { splitName = array[index2].split; };
+          if ( typeof(array[index2].split) == 'object' ) { splitName = ''; };
+          let res = array.findIndex(array => array.Name == splitName );
+          if ( res < index2 && res != -1 ) return ( <></> );
+        };
+      };
+
+      return (
+            <>
                 <Paper
                     style={{ height: 110, width : 110,
-                    display: `${getSplit(array[index2].split)}`,
-                    transform: `${getTransform1(array[index2].Type)}`,
-                    scale: `${getSize1(array[index2].Type)}`,
-                    borderRadius: `${getForm(array[index2].Type)}`,
+                    transform: `${getTransform1(array[index3].Type)}`,
+                    scale: `${getSize1(array[index3].Type)}`,
+                    borderRadius: `${getForm(array[index3].Type)}`,
                     }}
                     elevation={5} >
                   <Stack
                     justifyContent={'space-between'}
                     direction='column'
                     style={ { height: 110, width : 110,
-                    transform: `${getTransform2(array[index2].Type)}`,
-                    scale: `${getSize2(array[index2].Type)}`
+                    transform: `${getTransform2(array[index3].Type)}`,
+                    scale: `${getSize2(array[index3].Type)}`
                      } }>  
                     <Stack 
                       justifyContent={'center'}
                       direction='row'>
-                      <span>№-{array[index2].split}</span>
+                      <span>№-{array[index3].Name}</span>
                     </Stack >
                     <Stack 
                       justifyContent={'center'}
@@ -274,22 +322,32 @@ function ComplexSiloInfo() {
                     <TextField 
                       style={ { width : 80,}}
                       size='small' label="Ullage (m)"
-                      key = {index2} value={array[index2].Ullage} {...a11yProps(index, index2)}
-                      onChange={handleChangeUllage}
+                      key = {index3} value={array[index3].Ullage} {...a11yProps(index, index3)}
+                      onChange={handleChangeUllage2}
                     />
                     </Stack >
                     <Stack 
                       justifyContent={'center'}
                       direction='row'>
-                    <span>{array[index2].CargoName}</span>
+                    <span>{array[index3].CargoName}</span>
                     </Stack>
                     <Stack 
                       justifyContent={'center'}
                       direction='row'>
-                    <span>{Elevators.massaComplexSiloGet(index,index2).weight} (MT)</span>
+                      <span>{Elevators.massaComplexSiloGet(index,index3).weight} (MT)</span>
                     </Stack>
                   </Stack>
                 </Paper>
+            </>
+            );
+    }
+
+      return (
+      <>
+        <Stack direction= 'column' justifyContent={'center'}>
+          <ShowSilo/>
+          <ShowSplit/>
+        </Stack>
       </>
       )
     }
@@ -306,12 +364,9 @@ function ComplexSiloInfo() {
             <>
             <Stack spacing={1} direction= 'row' justifyContent={'center'}>
               {b[index].map((name2, index2, array ) => (
-                <Stack direction= 'column' justifyContent={'center'}>
 
-                  <SiloPaper array={array} index={index} index2={index2} />
+              <SiloPaper array={array} index={index} index2={index2} />
 
-
-                </Stack>
               ))}
             </Stack>
             </>    
