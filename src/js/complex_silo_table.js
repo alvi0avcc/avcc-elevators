@@ -17,11 +17,15 @@ let data_initial = [[]];
 data_initial = structuredClone( Elevators.ComplexAll.Silo );
 data_initial = [].concat(...data_initial);
 
-const [ data, setData ] =  React.useState(data_initial);
-const [ show, setShow ] = React.useState(false);
+let data_table = structuredClone( data_initial );
+let result;
+
+const [ data, setData ] = React.useState(data_initial);
+const [ show, setShow ] = React.useState(true);
     const handleChange_Show = (event) => { setShow(event.target.checked); };
     const handleApplyButton = () => { 
-        //Elevators.ComplexDataSet( rows );
+        //console.log('data_table = ',data_table);
+        Elevators.ComplexDataSet( data_table );
         //Elevators.ComplexDataSet( apiRef.current.getRowModels() ); 
         //setRows( SiloToGrid() );
     };
@@ -90,8 +94,401 @@ const [ show, setShow ] = React.useState(false);
             }
     };
 
-let data_table = structuredClone( data );
-let result;
+
+
+function SiloSelected(props){
+    let item = props.item;
+    let row = props.row;
+    const [value, setValue] = React.useState(false);
+    const changeSiloSelected = (e) => { 
+        setValue(e.target.checked);
+    };
+
+    return (
+        <>
+        <input
+        //class = 'myTableSide'
+        type="checkbox"
+        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
+        label={ `SiloSelected-row ${row}`}
+        checked={value}
+        onChange={changeSiloSelected}
+        />
+        </>
+    )
+}
+
+function SiloName(props){
+    let item = props.item;
+    let row = props.row;
+    const [value, setValue] = React.useState(item.Name);
+    const changeSiloName = (e) => { 
+        setValue(e.target.value);
+        data_table[row].Name=e.target.value;
+    };
+
+    return (
+        <>
+        <input
+        className={clsx( 'myInputShort' )}
+        type="text"
+        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
+        label={ `SiloName-row ${row}`}
+        value={value}
+        onChange={changeSiloName}
+        />
+        </>
+    )
+}
+
+function CargoName(props){
+    let item = props.item;
+    let row = props.row;
+    const [value, setValue] = React.useState(item.CargoName);
+    const changeCargoName = (e) => { 
+        setValue(e.target.value);
+        data_table[row].CargoName=e.target.value;
+    };
+
+    return (
+        <>
+        <input
+        class = 'myInput'
+        type="text"
+        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
+        label={ `CargoName-row ${row}`}
+        value={value}
+        onChange={changeCargoName}
+        />
+        </>
+    )
+}
+
+function CargoTW(props){
+    let item = props.item;
+    let row = props.row;
+    const [value, setValue] = React.useState(item.CargoTW);
+    const changeCargoTW = (e) => { 
+        setValue(e.target.value);
+        data_table[row].CargoTW=e.target.value;
+    };
+
+    return (
+        <>
+        <input
+        class = 'myInputShort'
+        type="text"
+        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
+        label={ `CargoTW-row ${row}`}
+        value={value}
+        onChange={changeCargoTW}
+        />
+        </>
+    )
+}
+
+function SiloType(props){
+    let item = props.item;
+    let row = props.row;
+    const [value, setValue] = React.useState(item.Type);
+    const changeType = (e) => { 
+        setValue(e.target.value);
+        data_table[row].Type=e.target.value;
+    };
+
+    return (
+        <>
+        <select 
+        class = 'mySelect'
+        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
+        label={ `SiloType-row ${row}`}
+        value={value}
+        onChange={changeType}
+        >
+            <option value="square">square</option>
+            <option value="circle" selected>circle</option>
+            <option value="star">star</option>
+        </select>
+        </>
+    )
+}
+
+function SiloHeight(props){
+    let item = props.item;
+    let row = props.row;
+    const [value, setValue] = React.useState(item.Height);
+    const changeHeight = (e) => { 
+        setValue(e.target.value);
+        data_table[row].Height=e.target.value;
+    };
+
+    return (
+        <>
+        <input
+        className={clsx( 'myInputShort' )}
+        type="text"
+        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
+        label={ `SiloHeight-row ${row}`}
+        value={value}
+        onChange={changeHeight}
+        />
+        </>
+    )
+}
+
+function SiloLength(props){
+    let item = props.item;
+    let row = props.row;
+    const [value, setValue] = React.useState(item.Length);
+    const changeLength = (e) => { 
+        setValue(e.target.value);
+        data_table[row].Length=e.target.value;
+    };
+
+    return (
+        <>
+        <input
+        class = 'myInputShort'
+        type="text"
+        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
+        label={ `SiloLength-row ${row}`}
+        value={value}
+        onChange={changeLength}
+        />
+        </>
+    )
+}
+
+function SiloWidth(props){
+    let item = props.item;
+    let row = props.row;
+    const [value, setValue] = React.useState(item.Width);
+    const changeWidth= (e) => { 
+        setValue(e.target.value);
+        data_table[row].Width=e.target.value;
+    };
+
+    return (
+        <>
+        <input
+        class = 'myInputShort'
+        type="text"
+        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
+        label={ `SiloWidth-row ${row}`}
+        value={value}
+        onChange={changeWidth}
+        />
+        </>
+    )
+}
+
+function SiloDiameter(props){
+    let item = props.item;
+    let row = props.row;
+    const [value, setValue] = React.useState(item.Diameter);
+    const changeDiameter= (e) => { 
+        setValue(e.target.value);
+    };
+
+    return (
+        <>
+        <input
+        class = 'myInputShort'
+        type="text"
+        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
+        label={ `SiloDiameter-row ${row}`}
+        value={value}
+        onChange={changeDiameter}
+        />
+        </>
+    )
+}
+
+function SiloConusHeight(props){
+    let item = props.item;
+    let row = props.row;
+    const [value, setValue] = React.useState(item.Conus_height);
+    const changeConusHeight= (e) => { 
+        setValue(e.target.value);
+        data_table[row].Conus_height=e.target.value;
+    };
+
+    return (
+        <>
+        <input
+        class = 'myInputShort'
+        type="text"
+        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
+        label={ `SiloConusHeight-row ${row}`}
+        value={value}
+        onChange={changeConusHeight}
+        />
+        </>
+    )
+}
+
+function UseArea(props){
+    let item = props.item;
+    let row = props.row;
+    const [value, setValue] = React.useState(false);
+    const changeUseArea = (e) => { 
+        setValue(e.target.checked);
+        data_table[row].useArea=e.target.checked;
+    };
+
+    return (
+        <>
+        <input
+        //class = 'myTableSide'
+        type="checkbox"
+        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
+        label={ `UseArea-row ${row}`}
+        checked={value}
+        onChange={changeUseArea}
+        />
+        </>
+    )
+}
+
+function SiloArea(props){
+    let item = props.item;
+    let row = props.row;
+    const [value, setValue] = React.useState(item.Area);
+    const changeArea= (e) => { 
+        setValue(e.target.value);
+        data_table[row].Area=e.target.value;
+    };
+
+    return (
+        <>
+        <input
+        class = 'myInputShort'
+        type="text"
+        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
+        label={ `SiloArea-row ${row}`}
+        value={value}
+        onChange={changeArea}
+        />
+        </>
+    )
+}
+
+function SiloSound(props){
+    let item = props.item;
+    let row = props.row;
+    const [value, setValue] = React.useState(item.Sound);
+    const changeSound= (e) => { 
+        setValue(e.target.value);
+        data_table[row].Sound=e.target.value;
+    };
+
+    return (
+        <>
+        <input
+        class = 'myInputShort'
+        type="text"
+        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
+        label={ `SiloSound-row ${row}`}
+        value={value}
+        onChange={changeSound}
+        />
+        </>
+    )
+}
+
+function SiloUllage(props){
+    let item = props.item;
+    let row = props.row;
+    const [value, setValue] = React.useState(item.Ullage);
+    const changeUllage= (e) => { 
+        setValue(e.target.value);
+        data_table[row].Ullage=e.target.value;
+    };
+
+    return (
+        <>
+        <input
+        class = 'myInputShort'
+        type="text"
+        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
+        label={ `SiloUllage-row ${row}`}
+        value={value}
+        onChange={changeUllage}
+        />
+        </>
+    )
+}
+
+function SiloSplit(props){
+    let item = props.item;
+    let row = props.row;
+    const [value, setValue] = React.useState(item.split);
+    const changeSplit= (e) => { 
+        setValue(e.target.value);
+        data_table[row].split=e.target.value;
+    };
+
+    return (
+        <>
+        <input
+        class = 'myInputShort'
+        type="text"
+        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
+        label={ `SiloSplit-row ${row}`}
+        value={value}
+        onChange={changeSplit}
+        />
+        </>
+    )
+}
+
+function SiloUsing(props){
+    let item = props.item;
+    let row = props.row;
+    const [value, setValue] = React.useState(item.Using);
+    const changeUsing = (e) => { 
+        setValue(e.target.checked);
+        data_table[row].Using=e.target.checked;
+    };
+
+    return (
+        <>
+        <input
+        //class = 'myTableSide'
+        type="checkbox"
+        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
+        label={ `SiloUsing-row ${row}`}
+        checked={value} 
+        onChange={changeUsing}
+        />
+        </>
+    )
+}
+
+function SiloComments(props){
+    let item = props.item;
+    let row = props.row;
+    const [value, setValue] = React.useState(item.Comments);
+    const changeComments= (e) => { 
+        setValue(e.target.value);
+        data_table[row].Comments=e.target.value;
+    };
+
+    return (
+        <>
+        <input
+        class = 'myInputLong'
+        type="text"
+        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
+        label={ `SiloComments-row ${row}`}
+        value={value}
+        onChange={changeComments}
+        />
+        </>
+    )
+}
+
+
 return (
     <>
     <Stack direction="row" spacing={1}>
@@ -101,7 +498,7 @@ return (
               checked={show}
               onChange={handleChange_Show}
               />
-            } label="Simple view" />
+            } label="Full view" />
         <Button 
             size="small" 
             variant='outlined' 
@@ -139,7 +536,12 @@ return (
         <Button 
             size="small"
             variant="outlined"
-            //onClick={()=>{ setRows( SiloToGrid() ) }}
+            onClick={()=>{ 
+                data_initial = structuredClone( Elevators.ComplexAll.Silo );
+                data_initial = [].concat(...data_initial);
+                setData( data_initial );
+                console.log('data_initial = ',data);    
+            }}
             >
             Reject Changes
           </Button>
@@ -217,379 +619,13 @@ return (
 )
 }
 
-function SiloSelected(props){
-    let item = props.item;
-    let row = props.row;
-    const [value, setValue] = React.useState(false);
-    const changeSiloSelected = (e) => { 
-        setValue(e.target.checked);
-    };
-
-    return (
-        <>
-        <input
-        //class = 'myTableSide'
-        type="checkbox"
-        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
-        label={ `SiloSelected-row ${row}`}
-        checked={value}
-        onChange={changeSiloSelected}
-        />
-        </>
-    )
-}
-
-function SiloName(props){
-    let item = props.item;
-    let row = props.row;
-    const [value, setValue] = React.useState(item.Name);
-    const changeSiloName = (e) => { 
-        setValue(e.target.value);
-    };
-
-    return (
-        <>
-        <input
-        className={clsx( 'myInputShort' )}
-        type="text"
-        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
-        label={ `SiloName-row ${row}`}
-        value={value}
-        onChange={changeSiloName}
-        />
-        </>
-    )
-}
-
-function CargoName(props){
-    let item = props.item;
-    let row = props.row;
-    const [value, setValue] = React.useState(item.CargoName);
-    const changeCargoName = (e) => { 
-        setValue(e.target.value);
-    };
-
-    return (
-        <>
-        <input
-        class = 'myInput'
-        type="text"
-        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
-        label={ `CargoName-row ${row}`}
-        value={value}
-        onChange={changeCargoName}
-        />
-        </>
-    )
-}
-
-function CargoTW(props){
-    let item = props.item;
-    let row = props.row;
-    const [value, setValue] = React.useState(item.CargoTW);
-    const changeCargoTW = (e) => { 
-        setValue(e.target.value);
-    };
-
-    return (
-        <>
-        <input
-        class = 'myInputShort'
-        type="text"
-        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
-        label={ `CargoTW-row ${row}`}
-        value={value}
-        onChange={changeCargoTW}
-        />
-        </>
-    )
-}
-
-function SiloType(props){
-    let item = props.item;
-    let row = props.row;
-    const [value, setValue] = React.useState(item.Type);
-    const changeType = (e) => { 
-        setValue(e.target.value);
-    };
-
-    return (
-        <>
-        <select 
-        class = 'mySelect'
-        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
-        label={ `SiloType-row ${row}`}
-        value={value}
-        onChange={changeType}
-        >
-            <option value="square">square</option>
-            <option value="circle" selected>circle</option>
-            <option value="star">star</option>
-        </select>
-        </>
-    )
-}
-
-function SiloHeight(props){
-    let item = props.item;
-    let row = props.row;
-    const [value, setValue] = React.useState(item.Height);
-    const changeHeight = (e) => { 
-        setValue(e.target.value);
-    };
-
-    return (
-        <>
-        <input
-        className={clsx( 'myInputShort' )}
-        type="text"
-        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
-        label={ `SiloHeight-row ${row}`}
-        value={value}
-        onChange={changeHeight}
-        />
-        </>
-    )
-}
-
-function SiloLength(props){
-    let item = props.item;
-    let row = props.row;
-    const [value, setValue] = React.useState(item.Length);
-    const changeLength = (e) => { 
-        setValue(e.target.value);
-    };
-
-    return (
-        <>
-        <input
-        class = 'myInputShort'
-        type="text"
-        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
-        label={ `SiloLength-row ${row}`}
-        value={value}
-        onChange={changeLength}
-        />
-        </>
-    )
-}
-
-function SiloWidth(props){
-    let item = props.item;
-    let row = props.row;
-    const [value, setValue] = React.useState(item.Width);
-    const changeWidth= (e) => { 
-        setValue(e.target.value);
-    };
-
-    return (
-        <>
-        <input
-        class = 'myInputShort'
-        type="text"
-        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
-        label={ `SiloWidth-row ${row}`}
-        value={value}
-        onChange={changeWidth}
-        />
-        </>
-    )
-}
-
-function SiloDiameter(props){
-    let item = props.item;
-    let row = props.row;
-    const [value, setValue] = React.useState(item.Diameter);
-    const changeDiameter= (e) => { 
-        setValue(e.target.value);
-    };
-
-    return (
-        <>
-        <input
-        class = 'myInputShort'
-        type="text"
-        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
-        label={ `SiloDiameter-row ${row}`}
-        value={value}
-        onChange={changeDiameter}
-        />
-        </>
-    )
-}
-
-function SiloConusHeight(props){
-    let item = props.item;
-    let row = props.row;
-    const [value, setValue] = React.useState(item.Conus_height);
-    const changeConusHeight= (e) => { 
-        setValue(e.target.value);
-    };
-
-    return (
-        <>
-        <input
-        class = 'myInputShort'
-        type="text"
-        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
-        label={ `SiloConusHeight-row ${row}`}
-        value={value}
-        onChange={changeConusHeight}
-        />
-        </>
-    )
-}
-
-function UseArea(props){
-    let item = props.item;
-    let row = props.row;
-    const [value, setValue] = React.useState(false);
-    const changeUseArea = (e) => { 
-        setValue(e.target.checked);
-    };
-
-    return (
-        <>
-        <input
-        //class = 'myTableSide'
-        type="checkbox"
-        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
-        label={ `UseArea-row ${row}`}
-        checked={value}
-        onChange={changeUseArea}
-        />
-        </>
-    )
-}
-
-function SiloArea(props){
-    let item = props.item;
-    let row = props.row;
-    const [value, setValue] = React.useState(item.Area);
-    const changeArea= (e) => { 
-        setValue(e.target.value);
-    };
-
-    return (
-        <>
-        <input
-        class = 'myInputShort'
-        type="text"
-        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
-        label={ `SiloArea-row ${row}`}
-        value={value}
-        onChange={changeArea}
-        />
-        </>
-    )
-}
-
-function SiloSound(props){
-    let item = props.item;
-    let row = props.row;
-    const [value, setValue] = React.useState(item.Sound);
-    const changeSound= (e) => { 
-        setValue(e.target.value);
-    };
-
-    return (
-        <>
-        <input
-        class = 'myInputShort'
-        type="text"
-        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
-        label={ `SiloSound-row ${row}`}
-        value={value}
-        onChange={changeSound}
-        />
-        </>
-    )
-}
-
-function SiloUllage(props){
-    let item = props.item;
-    let row = props.row;
-    const [value, setValue] = React.useState(item.Ullage);
-    const changeUllage= (e) => { 
-        setValue(e.target.value);
-    };
-
-    return (
-        <>
-        <input
-        class = 'myInputShort'
-        type="text"
-        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
-        label={ `SiloUllage-row ${row}`}
-        value={value}
-        onChange={changeUllage}
-        />
-        </>
-    )
-}
-
-function SiloSplit(props){
-    let item = props.item;
-    let row = props.row;
-    const [value, setValue] = React.useState(item.split);
-    const changeSplit= (e) => { 
-        setValue(e.target.value);
-    };
-
-    return (
-        <>
-        <input
-        class = 'myInputShort'
-        type="text"
-        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
-        label={ `SiloSplit-row ${row}`}
-        value={value}
-        onChange={changeSplit}
-        />
-        </>
-    )
-}
-
-function SiloUsing(props){
-    let item = props.item;
-    let row = props.row;
-    const [value, setValue] = React.useState(item.Using);
-    const changeUsing = (e) => { 
-        setValue(e.target.checked);
-    };
-
-    return (
-        <>
-        <input
-        //class = 'myTableSide'
-        type="checkbox"
-        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
-        label={ `SiloUsing-row ${row}`}
-        checked={value} 
-        onChange={changeUsing}
-        />
-        </>
-    )
-}
-
-function SiloComments(props){
-    let item = props.item;
-    let row = props.row;
-    const [value, setValue] = React.useState(item.Comments);
-    const changeComments= (e) => { 
-        setValue(e.target.value);
-    };
-
-    return (
-        <>
-        <input
-        class = 'myInputLong'
-        type="text"
-        id = { `row-${item.row-1}`+`/col-${item.col-1}` }
-        label={ `SiloComments-row ${row}`}
-        value={value}
-        onChange={changeComments}
-        />
-        </>
-    )
+function ParseID (props){
+      //id: `silo-row-${index}/col-${index2}`,
+      let row = props.indexOf("row");
+      let col = props.indexOf("col");
+      let row_txt = props.slice( row+4, col-1);
+      let col_txt = props.slice( col+4 );
+      row = Number(row_txt);
+      col = Number(col_txt);
+return ( {row, col} );
 }

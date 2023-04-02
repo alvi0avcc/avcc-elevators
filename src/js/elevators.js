@@ -350,58 +350,30 @@ class cElevators {
     ComplexDataSet( ComplexSiloData ){
 
         console.log('ComplexSiloData = ',ComplexSiloData);
-        let a =  new Map (ComplexSiloData);
-        console.log('ComplexSiloData  (a)= ',a);
-        let b;
-        let data = [];
-        for (let i = 1; i < a.size+1; i++ ) {
-            b = a.get(i);
-           if ( b ) { data.push( b ); };
-        };
+        //let a =  new Map (ComplexSiloData);
+        //console.log('ComplexSiloData  (a)= ',a);
+        //let b;
+        //let data = [];
+        //for (let i = 1; i < a.size+1; i++ ) {
+        //    b = a.get(i);
+        //   if ( b ) { data.push( b ); };
+        //};
 
-        //let data = structuredClone( ComplexSiloData );
+        let data = structuredClone( ComplexSiloData );
         console.log('structuredClone = ',data);
         let row = 0;
         let col = 0;
         let current_row = 0;
         let new_data = [[]];
         for ( let i = 0; i < data.length; i++) {
-            if ( current_row == data[i].row -1 ) {
-                new_data[current_row].push( structuredClone( data[i] ) );
-                delete new_data[current_row][ new_data[current_row].length-1 ].row;
-            } else {
+            if ( current_row != data[i].row -1 ) {
                 current_row = data[i].row -1;
                 new_data.push([]);
-                new_data[current_row].push( structuredClone( data[i] ) );
-                delete new_data[current_row][ new_data[current_row].length-1 ].row;
             }
+            new_data[current_row].push( structuredClone( data[i] ) );
         }
         this.Elevators[this.Selected].Complex[ this.ComplexSelected ].Silo = structuredClone( new_data );
         console.log('new_data = ',new_data);
-       /* let a =  new Map (ComplexSiloData);
-        let b;
-        let c = [];
-        for (let i = 1; i < a.size+1; i++ ) {
-            b = a.get(i);
-           if ( b ) { c.push( b ); };
-        }
-        let silo = [[]];
-        let row = 0;
-        let col = 0;
-        let rowTable = c[ 0 ].row;
-        for ( let i = 0; i < c.length; i++ ) {
-            if ( rowTable != c[ i ].row  ) { 
-                rowTable = c[ i ].row;
-                silo.push([]);
-                row  = silo.length-1;
-                col = 0;
-            }
-            let data  = structuredClone(c[i]);
-            delete data.row;
-            silo[ row ].push(data);
-            col++;
-        };
-        this.Elevators[this.Selected].Complex[ this.ComplexSelected ].Silo = structuredClone( silo );*/
     };
     ComplexSiloUllageSet(row, col, ullage) {
         let result = false;
