@@ -349,7 +349,7 @@ class cElevators {
 
     ComplexDataSet( ComplexSiloData ){
 
-        console.log('ComplexSiloData = ',ComplexSiloData);
+        console.log('for uppdate ComplexSiloData = ',ComplexSiloData);
         //let a =  new Map (ComplexSiloData);
         //console.log('ComplexSiloData  (a)= ',a);
         //let b;
@@ -657,9 +657,10 @@ class cElevators {
         } else { volume =0; weight =0; console.log('massaComplexSiloGet = error');}
         return {volume, weight};
     }
-    massaComplexSilo( silo ){
+    massaComplexSilo( dataTable, row ){
         let volume =0;
         let weight =0;
+        let silo = structuredClone ( dataTable[row] );
         //let silo = this.ComplexSiloGet(0,0);
         //console.log('silo = ',silo);
         //if ( silo.found ) {
