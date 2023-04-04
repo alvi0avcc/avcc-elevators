@@ -3,7 +3,7 @@ import { Elevators } from './elevators.js';
 import { BorderStyle, ConstructionOutlined, People } from '@mui/icons-material';
 import "./styles.css";
 import clsx from "clsx";
-import { Box, Button, Stack, TextField, Tooltip } from '@mui/material';
+import { Box, Button, Stack, TextField, Tooltip, colors } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import InputLabel from '@mui/material/InputLabel';
@@ -168,7 +168,10 @@ return (
             <th className={clsx( show ? 'myTable' : 'myHide' )}><div className={clsx( 'myTableSide' )}>columns</div></th>
             <th className={clsx( 'myTable' )}>№ Name</th>
             <th className={clsx( 'myTable' )}>Cargo Name</th>
-            <th className={clsx( 'myTable' )}>Cargo Test Weight (g/l)</th>
+            <th className={clsx( 'myTable' )}>
+                Cargo Test Weight <br/>
+                <span className='TableTW_dstu'>(g/l)</span><br/>
+                <span className='TableTW_iso'>(kg/hL)</span> </th>
             <th className={clsx( 'myTable' )}>Type</th>
             <th className={clsx( 'myTable' )}>split</th>
             <th className={clsx( 'myTable' )}>linked</th>
@@ -178,8 +181,8 @@ return (
             <th className={clsx( show ? 'myTable' : 'myHide' )}>Width (m)</th>
             <th className={clsx( show ? 'myTable' : 'myHide' )}>Diameter (m)</th>
             <th className={clsx( show ? 'myTable' : 'myHide' )}>Conus height (m)</th>
-            <th className={clsx( show ? 'myTable' : 'myHide' )}><div className={clsx( 'myTableSide' )} >use Area</div></th>
-            <th className={clsx( show ? 'myTable' : 'myHide' )}>Area (m²)</th>
+            <th className={clsx( show ? 'myTable' : 'myHide' )}>Calculated Area (m²)</th>
+            <th className={clsx( show ? 'myTable' : 'myHide' )}>Official Area (m²)</th>
             <th className={clsx( 'myTable' )}>Sound (m)</th>
             <th className={clsx( 'myTable' )}>Ullage (m)</th>
             <th className={clsx( 'myOutput' )}>Cargo volume (m³)</th>
@@ -273,7 +276,7 @@ function TableRow(props){
         const [value_W, setValue_W] = React.useState(item.Width);
         const [value_D, setValue_D] = React.useState(item.Diameter);
         const [value_C, setValue_C] = React.useState(item.Conus_height);
-        const [value_uA, setValue_uA] = React.useState(item.useArea);
+        //const [value_uA, setValue_uA] = React.useState(item.useArea);
         const [value_A, setValue_A] = React.useState(item.Area);
         const [value_S, setValue_S] = React.useState(item.Sound);
         const [value_U, setValue_U] = React.useState(item.Ullage);
@@ -338,11 +341,11 @@ function TableRow(props){
             data_table_new[row].Conus_height=e.target.value;
             setValue_VM( Elevators.massaComplexSilo( data_table_new, row ) );
         };
-        const changeUArea = (e) => { 
+        /*const changeUArea = (e) => { 
             setValue_uA(e.target.value);
             data_table_new[row].useArea=e.target.value;
             setValue_VM( Elevators.massaComplexSilo( data_table_new, row ) );
-        };
+        };*/
         const changeArea = (e) => { 
             setValue_A(e.target.value);
             data_table_new[row].Area=e.target.value;
@@ -361,7 +364,7 @@ function TableRow(props){
     
         return (
             <>
-            <td className={value.length > 0 ? 'myTable' : 'myTableEmptyError' } >
+            <td className={value_SN.length > 0 ? 'myTable' : 'myTableEmptyError' } >
             <input
             className={clsx( 'myInputShort' )}
             type="text"
@@ -372,7 +375,7 @@ function TableRow(props){
             />
             </td>
 
-            <td className={value.length > 0 ? 'myTable' : 'myTableEmptyWarning' } >
+            <td className={value_CN.length > 0 ? 'myTable' : 'myTableEmptyWarning' } >
             <input
             className = 'myInput'
             type="text"
@@ -383,9 +386,9 @@ function TableRow(props){
             />
             </td>
 
-            <td className={clsx( 'myTable' )}>
+            <td className={clsx( value_TW >  10 ? 'myTable' : 'TableTW_error')}>
             <input
-            class = 'myInputShort'
+            className={ clsx( value_TW > 100 ? 'TableTW_dstu' : 'TableTW_iso' )}
             type="number"
             id = { `row-${item.row-1}`+`/col-${item.col-1}` }
             label={ `CargoTW-row ${row}`}
@@ -468,7 +471,7 @@ function TableRow(props){
             className={clsx( 'myInputShort' )}
             type="number"
             id = { `row-${item.row-1}`+`/col-${item.col-1}` }
-            label={ `SiloHeight-row ${row}`}
+            label={ `SiloWidth-row ${row}`}
             value={value_W}
             onChange={changeWidth}
             />
@@ -479,7 +482,7 @@ function TableRow(props){
             className={clsx( 'myInputShort' )}
             type="number"
             id = { `row-${item.row-1}`+`/col-${item.col-1}` }
-            label={ `SiloHeight-row ${row}`}
+            label={ `SiloDiameter-row ${row}`}
             value={value_D}
             onChange={changeDiameter}
             />
@@ -490,21 +493,18 @@ function TableRow(props){
             className={clsx( 'myInputShort' )}
             type="number"
             id = { `row-${item.row-1}`+`/col-${item.col-1}` }
-            label={ `SiloHeight-row ${row}`}
+            label={ `SiloConus-row ${row}`}
             value={value_C}
             onChange={changeConus}
             />
             </td>
 
             <td className={clsx( show ? 'myTable' : 'myHide' )}>
-            <input
-            className={clsx( 'myInputShort' )}
-            type="number"
+            <span
             id = { `row-${item.row-1}`+`/col-${item.col-1}` }
-            label={ `SiloHeight-row ${row}`}
-            value={value_uA}
-            onChange={changeUArea}
-            />
+            label={ `SiloCalcArea-row ${row}`}>
+            {Elevators.ComplexSiloArea( value_T, value_L, value_W, value_D )}
+            </span>
             </td>
 
             <td className={clsx( show ? 'myTable' : 'myHide' )}>
@@ -512,7 +512,7 @@ function TableRow(props){
             className={clsx( 'myInputShort' )}
             type="number"
             id = { `row-${item.row-1}`+`/col-${item.col-1}` }
-            label={ `SiloHeight-row ${row}`}
+            label={ `SiloArea-row ${row}`}
             value={value_A}
             onChange={changeArea}
             />
@@ -523,7 +523,7 @@ function TableRow(props){
             className={clsx( 'myInputShort' )}
             type="number"
             id = { `row-${item.row-1}`+`/col-${item.col-1}` }
-            label={ `SiloHeight-row ${row}`}
+            label={ `SiloSound-row ${row}`}
             value={value_S}
             onChange={changeSound}
             />
@@ -534,7 +534,7 @@ function TableRow(props){
             className={clsx( 'myInputShort' )}
             type="number"
             id = { `row-${item.row-1}`+`/col-${item.col-1}` }
-            label={ `SiloHeight-row ${row}`}
+            label={ `SiloUllage-row ${row}`}
             value={value_U}
             onChange={changeUllage}
             />
@@ -544,14 +544,14 @@ function TableRow(props){
             <span
             id = { `Volume-row-${row}` }
             label={ `SiloVolume-row ${item.row}`}
-            >{value_VM.volume}</span>
+            >{value_VM.err_mes == '' ? value_VM.volume : value_VM.err_mes}</span>
             </td>
 
             <td className={clsx( 'myTable' )}>
             <span
             id = { `Weight-row-${row}` }
             label={ `SiloWeight-row ${item.row}`}
-            >{value_VM.weight}</span>
+            >{value_VM.err_mes == '' ? value_VM.weight : value_VM.err_mes}</span>
             </td>
             </>
         )
