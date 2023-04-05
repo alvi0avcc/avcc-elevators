@@ -47,10 +47,17 @@ function ElevatorSelectMenu () {
                 ))}
               </Select>
           </FormControl>
+          <Button onClick={()=>{
+            Elevators.AddElevator();
+            Elevators.State = 'add new Elevator';
+            setUpdate( !update ) }}
+            style={ {width : 180, height : 40 } }
+            variant='outlined'>
+            New Elevator</Button>
           <Button onClick={()=>{Elevators.ElevatorClone()  ; setUpdate( !update ) }}
             style={ {width : 180, height : 40 } }
             variant='outlined'>
-            Duplicate Elevator</Button>
+            Clone Elevator</Button>
           <Button onClick={()=>{Elevators.ElevatorDel()  ; setUpdate( !update ) }}
             style={ {width : 180, height : 40 } }
             variant='outlined'>

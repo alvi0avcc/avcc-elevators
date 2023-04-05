@@ -182,8 +182,8 @@ function SiloTotalInfo(){
         <Box>
         {Elevators.SiloTotalInfo.map((name, index ) => (
                     <TextField
-                      style={ { width : 500 } }
-                      size='small' key = {index} label={name[0]+' - '+name[1]+' = '+name[2]+' MT'} 
+                      style={ { width : 300 } }
+                      size='small' key = {index} value={'№ '+name[0]+' - '+name[1]+' = '+name[2]+' MT'} 
                     />))}
         </Box>
     )
@@ -194,8 +194,8 @@ function SiloCargoInfo(){
         <Box>
         {Elevators.SiloCargoInfo.map((name, index ) => (
                     <TextField
-                      style={ { width : 500 } }
-                      size='small' key = {index} label={name[0]+' = '+name[1]+' MT'} 
+                      style={ { width : 300 } }
+                      size='small' key = {index} value={name[0]+' = '+name[1]+' MT'} 
                     />))}
         </Box>
     )

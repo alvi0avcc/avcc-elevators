@@ -15,11 +15,11 @@ export let PileList = [];
 export function NewElevator(props) {
     if ( localStorage.getItem("Elevator") ) { 
         Elevators.AddElevator();
-        Elevators.State = 'changed';
+        Elevators.State = 'add new Elevator';
         console.log("New Empty Elevator Added !")
     } else {
         Elevators.AddElevator();
-        Elevators.State = 'changed';
+        Elevators.State = 'created new Elevator';
         localStorage.setItem( "Elevator" , JSON.stringify(Elevators.Elevators));
         console.log("New Empty Elevator Created !")
         };
@@ -43,7 +43,8 @@ export function OpenElevator() {
     if ( data ) { data = JSON.parse(data) }
     else {
             data = null;
-            alert ("Локальная БД пуста!")
+            alert ("Local DataBase is empty! A new database will be created.")
+            NewElevator();
         }
     return( data );
 };

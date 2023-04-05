@@ -536,6 +536,51 @@ class cElevators {
             for ( let ii = 0; ii < cargo_filter[i].length; ii++ ) {
                 m = m + cargo_filter[i][ii][2];
             }
+            m = Calc.MyRound( m , 3);
+            cargo.push( [ cargo_filter[i][0][1], m ] )
+        }
+        }
+        return cargo;    
+    }
+    get ComplexTotalInfo(){
+        let data = [[]];
+        let cargos  = [];
+        let massa = 0;
+        if ( this.ComplexFound ) {
+            data = structuredClone( this.ComplexAll.Silo );
+            data = [].concat(...data);
+            console.log('ComplexTotalInfo - data = ',data);
+            let ii = data.length;
+            for ( let i = 0; i < ii ; i++ ) { 
+                    if ( data[i].CargoName && data[i].Using ) {
+                        massa = this.massaComplexSilo( data, i ).weight;
+                        cargos.push ( [ data[i].Name, data[i].CargoName, massa ] );
+                    }
+            };
+        }
+        return cargos;
+    }
+    get ComplexCargoInfo(){
+        let cargo = [];
+        if ( this.ComplexFound ) {
+            let data = this.ComplexTotalInfo;
+            let cargo_name = new Set();
+            let q;
+            for (let i = 0; i < data.length; i++) {
+                cargo_name.add( data[i][1] );
+            }
+            cargo_name = Array.from(cargo_name);
+            let cargo_filter =[];
+            for ( let ii = 0; ii < cargo_name.length; ii++ ) {
+                q = data.filter( ([n, cargo, m]) => cargo == cargo_name[ii] );
+                cargo_filter.push(q); 
+            }
+        for ( let i = 0; i < cargo_filter.length; i++) {
+            let m = 0;
+            for ( let ii = 0; ii < cargo_filter[i].length; ii++ ) {
+                m = m + cargo_filter[i][ii][2];
+            }
+            m = Calc.MyRound( m , 3);
             cargo.push( [ cargo_filter[i][0][1], m ] )
         }
         }

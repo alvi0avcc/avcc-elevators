@@ -10,10 +10,10 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import { Elevators } from './elevators.js';
 import TextField from '@mui/material/TextField';
-import { Button, Stack, Divider, Paper } from '@mui/material';
+import { Box, Button, Stack, Divider, Paper } from '@mui/material';
 import * as iolocal from './iolocal';
+import ComplexSiloTotal from './complex-silo-total';
 import { styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
@@ -66,13 +66,13 @@ export default function ComplexSilo() {
   
     return (
       <>
-      <Stack spacing={5} direction= 'row' divider={<Divider orientation="vertical" flexItem />} justifyContent={'space-between'}>
+      <Stack spacing={1} direction= 'row' divider={<Divider orientation="vertical" flexItem />} justifyContent={'space-between'}>
             <Button variant="outlined" onClick={()=>{ Elevators.ComplexAdd(); setUpdate( !update ) }} >
                 Add Complex
             </Button>
             <Button variant="outlined" disabled
               onClick={()=>{ Elevators.ComplexClone(); setUpdate( !update ) }} >
-                Duplicate Selected Complex
+                Clone Selected Complex
             </Button>
             <Button variant="outlined" onClick={()=>{Elevators.ComplexDel()  ; setUpdate( !update ) }}>
                 Delele Selected Complex
@@ -114,6 +114,8 @@ function ComplexSiloInfo() {
 
     <ComplexSiloInfoTable show={checked} />
     <ComplexSiloInfoPlan show={!checked} />
+    
+    <ComplexSiloTotal/>
     
     </>
   );
@@ -209,6 +211,7 @@ function ComplexSiloInfo() {
           row = Number(row_txt);
           col = Number(col_txt);
           Elevators.ComplexSiloUllageSet( row, col, ullage);
+          array[index2].Ullage = event.currentTarget.value;
           setUllageChange(!ullageChange);
         }
         let splitName = '';
@@ -243,7 +246,7 @@ function ComplexSiloInfo() {
                       justifyContent={'center'}
                       direction='row'>
                     <TextField 
-                      style={ { width : 80,}}
+                      style={ { width : 80}}
                       size='small' label="Ullage (m)"
                       key = {index2} value={array[index2].Ullage} {...a11yProps(index, index2)}
                       onChange={handleChangeUllage}
@@ -278,6 +281,7 @@ function ComplexSiloInfo() {
       row = Number(row_txt);
       col = Number(col_txt);
       Elevators.ComplexSiloUllageSet( row, col, ullage);
+      array[index3].Ullage = event.currentTarget.value;
       setUllageChange2(!ullageChange2);
     }
 
@@ -371,7 +375,6 @@ function ComplexSiloInfo() {
             </>    
           ))}
         </Stack>
-
       </Box> 
       )
     else return ( <></> );
