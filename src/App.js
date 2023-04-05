@@ -1,16 +1,18 @@
 import React from 'react';
 import {useEffect, useState} from "react";
 import { useContext } from 'react';
-import MenuApp from './js/menuapp.js';
+//import MenuApp from './js/menuapp.js';
+import TopHeader from './js/top_header.js';
 import ElevatorMenu from './js/menu-elevator.js';
 import { Elevators } from './js/elevators.js';
 import ElevatorTab from './js/elevator-tab.js';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
-import { Button } from '@mui/material';
+import { Button, ButtonGroup, Box } from '@mui/material';
 import { Elevator, Label } from '@mui/icons-material';
 import LocalServiceWorkerRegister from './js/sw-register';
 import registerServiceWorker from './js/sw-register';
+import FileMenuButton from './js/file_menu.js';
 
 export const UpdateContext = React.createContext(false);
 UpdateContext.displayName = 'UpdateContext';
@@ -20,7 +22,7 @@ function App(props) {
   registerServiceWorker();
 
   return (
-    <div>
+    <>
     <UpdateContext.Provider value={ [update, setUpdate] }>
       <link rel="manifest" href="manifest.json" />
       <meta name="mobile-web-app-capable" content="yes" />
@@ -29,12 +31,13 @@ function App(props) {
       <meta name="apple-mobile-web-app-title" content="PWA Workshop" />
       <meta name="msapplication-starturl" content="/index.html" />
       <meta name="viewport" content="initial-scale=1, width=device-width" />
-      <MenuApp />
-      <ElevatorMenu />
-    </UpdateContext.Provider>
+      <Box sx={{ width: 'fullWidth' }}>
+        <TopHeader/>
+        <FileMenuButton/>
+        <ElevatorMenu />
+        <Divider/>
 
-    <Divider/>
-    <Stack
+      <Stack
       direction={'row'}
       justifyContent={'space-around'}
       divider={<Divider orientation="vertical" flexItem />} >
@@ -50,7 +53,10 @@ function App(props) {
         Legal Notices</Button>
     </Stack>
     <Divider/>
-    </div>
+    
+    </Box>
+    </UpdateContext.Provider>
+    </>
   );
 } export default App;
 

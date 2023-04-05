@@ -20,7 +20,7 @@ import '@fontsource/roboto/300.css';
 import { red } from '@mui/material/colors';
 import { getPath } from '@mui/system';
 import TextField from '@mui/material/TextField';
-import {FileInputButton, WarehouseToJSON} from './iolocal.js';
+//import {FileInputButton, WarehouseToJSON} from './iolocal.js';
 import {FileJSON} from './iolocal.js';
 import { ElevatorOutlined } from '@mui/icons-material';
 import Tooltip from '@mui/material/Tooltip';
@@ -76,9 +76,9 @@ function WarehouseSelect(props) {
     );
   }
 
-function ButtonInput(props) {return ( <FileInputButton/> ); }
+//function ButtonInput(props) {return ( <FileInputButton/> ); }
 
-function MenuUpper(props) { 
+/*function MenuUpper(props) { 
    return(
     <Stack spacing={1} direction="column">
         <Stack spacing={5} direction="row" justifyContent="center" alignItems="center">
@@ -95,7 +95,7 @@ function MenuUpper(props) {
       <WarehouseSelect/>
     </Stack>
    ) 
-} export {MenuUpper};
+} export {MenuUpper};*/
 
 //function InputDataArea(props){
 //  const [value_dx1, set_dx1] = useState(Warehouse.Piles[WareNameSelected].dx1 ?? "");

@@ -6,7 +6,6 @@ import MenuItem from '@mui/material/MenuItem';
 
 export let ElevatorOpened = false; // Local BD Opened/Closed
 export let FileSel = React.createRef();
-let FileWork;
 let ElevatorKey = ''; //ключ текущего элеватора в localStorage
 
 export let ElevatorList = [];
@@ -67,7 +66,7 @@ function ExportWarehouse(props) {
     );
 } export {ExportWarehouse};
 
-export function FileInputButton(props) {
+/*export function FileInputButton(props) {
     console.log('import file');
     return (
         <MenuItem variant="text" component="label" >
@@ -75,15 +74,14 @@ export function FileInputButton(props) {
             <input ref={FileSel} hidden accept=".json" type="file" onChange={() => {FileImport()}}/>
         </MenuItem> 
     );
-    };   
+    }; */  
 
 export async function FileImport(props) {
-
-    FileWork = FileSel.current.files[0];
+    let FileWork = props;
     let FileJSON = null;
     let file = await new Promise((resolve) => {
             let reader = new FileReader();
-            reader.onload = function() { resolve(reader.result) };  
+            reader.onload = (e)=> { resolve(reader.result) };  
             reader.readAsText(FileWork); 
         });
     let original = fromBinary( file );
