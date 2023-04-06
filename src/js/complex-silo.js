@@ -27,6 +27,7 @@ import * as Dialogs from './dialogs';
 import clsx from 'clsx';
 import Table from './complex_silo_table';
 
+
 function a11yProps(index) {
   return {
     id: `ComplexSiloTabs-${index}`,
@@ -70,7 +71,7 @@ export default function ComplexSilo() {
             <Button variant="outlined" onClick={()=>{ Elevators.ComplexAdd(); setUpdate( !update ) }} >
                 Add Complex
             </Button>
-            <Button variant="outlined" disabled
+            <Button variant="outlined"
               onClick={()=>{ Elevators.ComplexClone(); setUpdate( !update ) }} >
                 Clone Selected Complex
             </Button>
@@ -88,6 +89,8 @@ export default function ComplexSilo() {
 
 function ComplexSiloInfo() {
   const [update, setUpdate] = useContext(UpdateContext);
+  const [updateSiloTotal, setUpdateSiloTotal] = React.useState();
+
   const [value, setValue] = React.useState(false);
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -112,16 +115,22 @@ function ComplexSiloInfo() {
 
     <Divider/>
 
-    <ComplexSiloInfoTable show={checked} />
-    <ComplexSiloInfoPlan show={!checked} />
+      <ComplexSiloInfoTable show={checked} />
+      <ComplexSiloInfoPlan show={!checked} />
     
-    <ComplexSiloTotal/>
-    
+      <Divider/>
+        <ComplexSiloTotal name={Elevators.ComplexName} />
+      <br/>
+      <Divider/>
     </>
   );
 
   function ComplexSiloInfoPlan(props) {
 
+    const getMargin = (type) => {
+      if ( type == 'star' ) return `-20px`;
+      else return `0`;
+    }
     const getTransform1 = (type) => {
       if ( type == 'star' ) return `rotate(${45}deg)`;
       else return `rotate(${0}deg)`;
@@ -225,6 +234,8 @@ function ComplexSiloInfo() {
       <>
           <Paper
                     style={{ height: 110, width : 110,
+                    marginTop: `${getMargin(array[index2].Type)}`,
+                    marginBottom: `${getMargin(array[index2].Type)}`,
                     transform: `${getTransform1(array[index2].Type)}`,
                     scale: `${getSize1(array[index2].Type)}`,
                     borderRadius: `${getForm(array[index2].Type)}`,
@@ -358,14 +369,14 @@ function ComplexSiloInfo() {
     if ( props.show )
     return (
       <Box fullWidth style={ { overflow: 'auto' } } >
-        <Stack spacing={1} direction= 'column'
+        <Stack spacing={1} direction= 'column' 
         style={ {
           width: widthByComplex(b) ,
         }}
         > 
           {List.map((name, index) => (
             <>
-            <Stack spacing={1} direction= 'row' justifyContent={'center'}>
+            <Stack spacing={1} direction= 'row' justifyContent={'center'} >
               {b[index].map((name2, index2, array ) => (
 
               <SiloPaper array={array} index={index} index2={index2} />

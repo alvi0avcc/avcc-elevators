@@ -310,6 +310,15 @@ class cElevators {
             }
         } else alert ('Error adding complex !')
     };
+    ComplexClone(){
+        if ( this.ElevatorsFound > 0 ) {
+            if ( this.ComplexFound == -1 ) ( this.Elevators[this.Selected].Complex = [] );
+            if ( this.ComplexFound >= 0 ) {
+                this.Elevators[this.Selected].Complex.push( structuredClone( this.Elevators[this.Selected].Complex[this.ComplexSelected] ) );
+                this.State = 'Complex clonned';
+            }
+        } else alert ('Error clone complex !')
+    };
     ComplexDel(){
         if ( this.ComplexFound > 0 ) {
             let message = 'Are you sure you want to remove Silo - ' + this.ComplexName +'?';
@@ -542,7 +551,7 @@ class cElevators {
         }
         return cargo;    
     }
-    get ComplexTotalInfo(){
+    get ComplexKorpusTotalInfo(){
         let data = [[]];
         let cargos  = [];
         let massa = 0;
@@ -559,6 +568,63 @@ class cElevators {
             };
         }
         return cargos;
+    }
+    get ComplexTotalInfo(){
+        let dataTotal = [];
+        let data = [];
+        let cargos  = [];
+        let massa = 0;
+        if ( this.ElevatorsFound ) {
+            dataTotal = structuredClone( this.Elevators[this.Selected].Complex );
+            for ( let ii = 0; ii < dataTotal.length; ii++  ) {
+                //let complexName = this.Elevators[this.Selected].Complex[ii].Name;
+                let complex = structuredClone(dataTotal[ii].Silo);
+                console.log('ComplexTotalInfo (complex)= ',complex);
+                //for ( let c = 0; c < complex.length; c++ ) {
+                //    for (let cc = 0; cc < complex[c].length; cc++ ){
+                //        complex[c][cc].ComplexName = complexName;
+                //    }
+                //}
+                data = data.concat(complex);
+                console.log('ComplexTotalInfo (!)= ',data);
+            }
+            data = [].concat(...data);
+            console.log('ComplexTotalInfo (!data)= ',data);
+            let ii = data.length;
+            for ( let i = 0; i < ii ; i++ ) { 
+                if ( data[i].CargoName && data[i].Using ) {
+                    massa = this.massaComplexSilo( data, i ).weight;
+                    cargos.push ( [ data[i].Name, data[i].CargoName, massa ] );
+                }
+            };
+        }
+        return cargos;
+    }
+    get ComplexKorpusCargoInfo(){
+        let cargo = [];
+        if ( this.ComplexFound ) {
+            let data = this.ComplexKorpusTotalInfo;
+            let cargo_name = new Set();
+            let q;
+            for (let i = 0; i < data.length; i++) {
+                cargo_name.add( data[i][1] );
+            }
+            cargo_name = Array.from(cargo_name);
+            let cargo_filter =[];
+            for ( let ii = 0; ii < cargo_name.length; ii++ ) {
+                q = data.filter( ([n, cargo, m]) => cargo == cargo_name[ii] );
+                cargo_filter.push(q); 
+            }
+        for ( let i = 0; i < cargo_filter.length; i++) {
+            let m = 0;
+            for ( let ii = 0; ii < cargo_filter[i].length; ii++ ) {
+                m = m + cargo_filter[i][ii][2];
+            }
+            m = Calc.MyRound( m , 3);
+            cargo.push( [ cargo_filter[i][0][1], m ] )
+        }
+        }
+        return cargo;    
     }
     get ComplexCargoInfo(){
         let cargo = [];
