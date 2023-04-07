@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { UpdateContext } from '../App'
-import { useContext, useRef } from 'react';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import SettingsTwoToneIcon from '@mui/icons-material/SettingsTwoTone';
@@ -63,7 +62,7 @@ function ComplexSiloTabs() {
 }
 
 export default function ComplexSilo() { 
-  const [update, setUpdate] = useContext(UpdateContext);
+  const [update, setUpdate] = React.useContext(UpdateContext);
   
     return (
       <>
@@ -87,8 +86,8 @@ export default function ComplexSilo() {
     );
 };
 
-function ComplexSiloInfo() {
-  const [update, setUpdate] = useContext(UpdateContext);
+function ComplexSiloInfo(props) {
+  
   const [updateSiloTotal, setUpdateSiloTotal] = React.useState();
 
   const [value, setValue] = React.useState(false);
@@ -104,6 +103,7 @@ function ComplexSiloInfo() {
   const handleChange_ComplexStucture = (event) => {
     setChecked(event.target.checked);
   }
+  
 
   return (
     <>
@@ -119,13 +119,13 @@ function ComplexSiloInfo() {
       <ComplexSiloInfoPlan show={!checked} />
     
       <Divider/>
-        <ComplexSiloTotal name={Elevators.ComplexName} />
+        <ComplexSiloTotal/>
       <br/>
       <Divider/>
     </>
   );
 
-  function ComplexSiloInfoPlan(props) {
+  function ComplexSiloInfoPlan(propsPlan) {
 
     const getMargin = (type) => {
       if ( type == 'star' ) return `-20px`;
@@ -193,10 +193,10 @@ function ComplexSiloInfo() {
       return max;  
     }
 
-    function SiloPaper(props){
-      let array = props.array;
-      let index = props.index;
-      let index2 = props.index2;
+    function SiloPaper(propsPaper){
+      let array = propsPaper.array;
+      let index = propsPaper.index;
+      let index2 = propsPaper.index2;
       let index3 = index2 + 1; //used if .split is present
 
       if ( array[index2].split != '' ) {
@@ -207,7 +207,7 @@ function ComplexSiloInfo() {
       };
 
 
-    function ShowSilo(){
+    function ShowSilo(propsSilo){
       const [ullageChange, setUllageChange] = React.useState(false);
       const handleChangeUllage = (event) =>{
           let ullage = event.currentTarget.value;
@@ -279,7 +279,7 @@ function ComplexSiloInfo() {
     );
     };
 
-    function ShowSplit(){
+    function ShowSplit(propsSplit){
       const [ullageChange2, setUllageChange2] = React.useState(false);
       const handleChangeUllage2 = (event) =>{
       let ullage = event.currentTarget.value;
@@ -294,6 +294,7 @@ function ComplexSiloInfo() {
       Elevators.ComplexSiloUllageSet( row, col, ullage);
       array[index3].Ullage = event.currentTarget.value;
       setUllageChange2(!ullageChange2);
+      propsSplit.callback(true);
     }
 
 
@@ -366,7 +367,7 @@ function ComplexSiloInfo() {
       )
     }
 
-    if ( props.show )
+    if ( propsPlan.show )
     return (
       <Box fullWidth style={ { overflow: 'auto' } } >
         <Stack spacing={1} direction= 'column' 
@@ -399,7 +400,7 @@ function ComplexSiloInfo() {
   }
 
   function ComplexSiloInfoTable(props) {
-    const [update, setUpdate] = useContext(UpdateContext);
+    const [update, setUpdate] = React.useContext(UpdateContext);
     const [qr, setQR] = React.useState(10);
     const [dim, setDim] = React.useState(false);
     const [L, setL] = React.useState(6);
@@ -513,7 +514,7 @@ function ComplexSiloInfo() {
           </Button>
         </Stack>
 
-      <Table/>
+      <Table callback={(data)=> props.callback(data) } />
 
       </>
     )

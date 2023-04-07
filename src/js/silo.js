@@ -116,7 +116,12 @@ function SiloInfo(){
                 <TextField value={ Elevators.SiloCargo.Name } label="Cargo" sx={{ p: 1 }} onChange={ChangeCargoName} size='small' />
             </Stack>
             <Stack direction= 'row'>
-                <TextField value={ Elevators.SiloCargo.Natura } label="Test Weight (g/l)" sx={{ p: 1 }} onChange={ChangeCargoNatura} size='small' />
+                <TextField 
+                  value={ Elevators.SiloCargo.Natura }
+                  label={ Elevators.SiloCargo.Natura > 100 ? "Test Weight (g/l)" : "Test Weight (Kg/hL)" }
+                  sx={{ p: 1 }}
+                  onChange={ChangeCargoNatura}
+                  size='small' />
                 <TextField style={{ backgroundColor: 'whitesmoke' }} value={ Elevators.SiloUllage } label="Ullage (m)" sx={{ p: 1 }} onChange={ChangeUllage} size='small' />
             </Stack>
             <Stack direction= 'row'>

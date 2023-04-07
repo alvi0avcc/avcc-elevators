@@ -1,18 +1,16 @@
 import * as React from 'react';
-import { UpdateContext } from '../App'
-import { useContext, useRef } from 'react';
 import { Box, Button, Stack, Divider, Paper, TextField } from '@mui/material';
 import { Elevators } from './elevators.js';
 
 export default function ComplexSilKorpusTotal (props) {
-    const [update, setUpdate] =  React.useState(true);
-
+    let ComplexName = Elevators.ComplexName;
+    const[update,setUpdate] = React.useState(true);
     return (
         <>
         <br/>
         <Box>
-        <span>Summary information on Complex: <strong>{props.name}</strong> </span>
-        <Button variant='outlined' onClick={ ()=>{ setUpdate(!update) } }>Update Info</Button>
+        <span>Summary information on Complex: <strong>{ComplexName}</strong> </span>
+        <Button variant='outlined' onClick={ ()=> { setUpdate(!update) } }>Update</Button>
         <br/>
         <ComplexKorpusTotalInfo/>
         <br/>

@@ -250,7 +250,10 @@ class cElevators {
     }
     get SiloMass(){
         let m = 0;
-        if ( this.SiloFound ) { m = this.SiloVolume * Number( this.SiloCargo.Natura ) / 1000 };
+        if ( this.SiloFound )
+            if ( this.SiloCargo.Natura > 100 ) {
+                m = this.SiloVolume * Number( this.SiloCargo.Natura ) / 1000;
+            } else m = this.SiloVolume * Number( this.SiloCargo.Natura ) / 100;
         m = Calc.MyRound( m, 3 );
         return Number( m );
     }

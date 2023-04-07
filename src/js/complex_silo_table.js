@@ -12,7 +12,7 @@ import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 import ComplexSiloTotal from './complex-silo-total';
 
-export default function Table(props) {
+export default function Table( propsTable ) {
 
 let data_initial = [[]];
 data_initial = structuredClone( Elevators.ComplexAll.Silo );
@@ -28,6 +28,7 @@ const [ show, setShow ] = React.useState(true);
     const handleChange_Show = (event) => { setShow(event.target.checked); };
     const handleApplyButton = () => { 
         Elevators.ComplexDataSet( data_table_new );
+        propsTable.callback(true);
         //setData_table( data_table_new );
     };
 
@@ -146,7 +147,8 @@ return (
                 data_initial = structuredClone( Elevators.ComplexAll.Silo );
                 data_initial = [].concat(...data_initial);
                 setData_table( data_initial );
-                console.log('data_initial = ',data_initial);    
+                console.log('data_initial = ',data_initial); 
+                propsTable.callback(true);   
             }}
             >
             Update Table
@@ -172,7 +174,7 @@ return (
             <th className={clsx( 'myTable' )}>
                 Cargo Test Weight <br/>
                 <span className='TableTW_dstu'>(g/l)</span><br/>
-                <span className='TableTW_iso'>(kg/hL)</span> </th>
+                <span className='TableTW_iso'>(Kg/hL)</span> </th>
             <th className={clsx( 'myTable' )}>Type</th>
             <th className={clsx( 'myTable' )}>split</th>
             <th className={clsx( 'myTable' )}>linked</th>
@@ -184,7 +186,7 @@ return (
             <th className={clsx( show ? 'myTable' : 'myHide' )}>Conus height (m)</th>
             <th className={clsx( show ? 'myTable' : 'myHide' )}>Calculated Area (m²)</th>
             <th className={clsx( show ? 'myTable' : 'myHide' )}>Official Area (m²)</th>
-            <th className={clsx( 'myTable' )}>Sound (m)</th>
+            <th className={clsx( 'myTable' )}>Reference Point (m)</th>
             <th className={clsx( 'myTable' )}>Ullage (m)</th>
             <th className={clsx( 'myOutput' )}>Cargo volume (m³)</th>
             <th className={clsx( 'myOutput' )}>Cargo weight (MT)</th>
