@@ -378,11 +378,13 @@ class cElevators {
         let current_row = 0;
         let new_data = [[]];
         for ( let i = 0; i < data.length; i++) {
+            console.log('current_row  =',current_row);
+            console.log('data[i].row -1 = ',data[i].row -1);
             if ( current_row != data[i].row -1 ) {
                 current_row = data[i].row -1;
                 new_data.push([]);
             }
-            new_data[current_row].push( structuredClone( data[i] ) );
+            new_data[new_data.length-1].push( structuredClone( data[i] ) );
         }
         this.Elevators[this.Selected].Complex[ this.ComplexSelected ].Silo = structuredClone( new_data );
         console.log('new_data = ',new_data);

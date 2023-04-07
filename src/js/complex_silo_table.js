@@ -14,11 +14,14 @@ import ComplexSiloTotal from './complex-silo-total';
 
 export default function Table( propsTable ) {
 
-let data_initial = [[]];
+let data_initial = [];
 data_initial = structuredClone( Elevators.ComplexAll.Silo );
 data_initial = [].concat(...data_initial);
 const [ data_table, setData_table ] = React.useState(structuredClone( data_initial ));
 let data_table_new = structuredClone( data_table );
+let selectedRows = [];//выделенные строки
+const [selectState, setSelectState] = React.useState(true);
+
 
 function TableStructure(props){
 
@@ -28,11 +31,10 @@ const [ show, setShow ] = React.useState(true);
     const handleChange_Show = (event) => { setShow(event.target.checked); };
     const handleApplyButton = () => { 
         Elevators.ComplexDataSet( data_table_new );
-        propsTable.callback(true);
         //setData_table( data_table_new );
     };
 
-    const [selectState, setSelectState] = React.useState(true);
+    //const [selectState, setSelectState] = React.useState(true);
 
     const [selectionModel, setSelectionModel] = React.useState([]);
     const handleSelectionModel = (selectedRows) => {
@@ -43,57 +45,86 @@ const [ show, setShow ] = React.useState(true);
         
     }
     const handleDeleteRow = () => { 
-        let del = structuredClone( selectionModel );
-        //let data = structuredClone( rows );
-        del.sort( (a, b) => b - a );
-        for ( let i=0; i<del.length; i++ ) {
-            //data.splice( del[i]-1, 1 );
-        }
-        setSelectionModel([]);
-        setSelectState( true );
-        //setRows( data );
-     };
-    const onReset = () => { setSelectionModel([]); setSelectState( true );};
-    const handleAddRow = () => {
-        let n = selectionModel.length;
-        let n_max = 0;
-        if ( n > 0 ) {
-            for ( let i = 0; i < n; i++ ) {
-                if ( n_max <= selectionModel[i] ) { n_max = selectionModel[i]; };
+        let names = '';
+        if ( selectedRows.length > 0 )
+        {
+            let data = structuredClone( data_table_new );
+            let del = structuredClone( selectedRows );
+            del.sort( (a, b) => b - a );
+            for ( let i=del.length-1; i >= 0; i-- ) {
+                names=names+data[ del[i]-1 ].Name+',';
             }
-            //let a = structuredClone( rows[n_max-1] );
-            //let data = structuredClone( rows );
-            //data.splice(n_max, 0, a);
-            //for ( let i = 0; i < data.length; i++) {
-            //    data[i]['id'] = i+1 ;
-           // }
-            //setRows( data );
-        }
+            if ( window.confirm('Silos will be removed: '+names) ) {
+                for ( let i=0; i<del.length; i++ ) {
+                    data.splice( del[i]-1, 1 );
+                }
+                console.log('after delete = ',data);
+                data_table_new = structuredClone( data );
+                Elevators.ComplexDataSet( data_table_new );
+                data_initial = structuredClone( Elevators.ComplexAll.Silo );
+                data_initial = [].concat(...data_initial);
+                setData_table( data_initial );
+            };
+        } else alert('Select rows to delete.');
+     };
+    //const onReset = () => { setSelectionModel([]); setSelectState( true );};
+    const handleAddRow = () => {
+        let n = 0;
+        let newSilo = {};
+        let data = structuredClone( data_table_new );
+        if ( selectedRows.length == 0 ) {
+            if ( window.confirm('The new silo will be added at the end or select the silo after which to insert a new one.') ){
+                //доавить новый силос
+                n = data.length;
+                newSilo = structuredClone( data[ data.length-1 ] );
+                newSilo.Name = 'NewSilo';
+                data.push( newSilo );
+            } else return;
+        };
+        if ( selectedRows.length >= 1 ) {
+            let sel = structuredClone( selectedRows );
+            sel.sort( (a, b) => a - b );
+            if ( selectedRows.length > 1 )
+                if ( window.confirm('Several silos have been selected. The new one will be added after:') ) {
+                    // запомнить номер добавления
+                    n = sel[ sel.length-1 ];
+                    } else return;
+            if ( selectedRows.length == 1 ) {
+                // запомнить номер добавления
+                n = sel[ 0 ];
+                }
+            //доавить новый силос
+            newSilo = structuredClone( data[n-1] );
+            newSilo.Name = '1111';
+            data.splice(n, 0, newSilo);
+        };
+        //обновить таблицу и базу
+        data_table_new = structuredClone( data );
+        Elevators.ComplexDataSet( data_table_new );
+        data_initial = structuredClone( Elevators.ComplexAll.Silo );
+        data_initial = [].concat(...data_initial);
+        setData_table( data_initial );
         };
 
     const handleSplitSilo = () => {
-            let nn = selectionModel.length;
-            let n;
-            let x;
-            let a;
-            if ( nn > 0 ) {
-                //let data = structuredClone( rows );
-                for ( let i = 0; i < nn; i++ ) {
-                    n = selectionModel[i] - 1;
-                    //a = structuredClone( rows[n] );
-                    //x = data.findIndex( item => item.Name == a.Name );
-                    a.split = a.Name;
-                    a.Name = a.Name + '/2';
-                    //data.splice(x+1, 0, a);
-                    //data[x].split = data[x].Name;
-                }
-                //for ( let i = 0; i < data.length; i++) {
-                //    data[i]['id'] = i+1 ;
-               // }
-                setSelectionModel([]);
-                setSelectState( true );
-                //setRows( data );
+        let n = 0;
+        let newSilo = {};
+        let data = structuredClone( data_table_new );
+        if ( selectedRows.length == 0 ) { alert('Choose a silo for splitting.'); return;}
+        if ( selectedRows.length > 0 ) { 
+            for ( let i = 0; i < selectedRows.length; i++ ) {
+                n = selectedRows[i];
+                data[n-1].split = data[n-1].Name;
+                newSilo = structuredClone( data[n-1] );
+                newSilo.Name = newSilo.Name+'/2';
+                data.splice(n, 0, newSilo);
             }
+        }
+        data_table_new = structuredClone( data );
+        Elevators.ComplexDataSet( data_table_new );
+        data_initial = structuredClone( Elevators.ComplexAll.Silo );
+        data_initial = [].concat(...data_initial);
+        setData_table( data_initial );
     };
 
 return (
@@ -110,24 +141,15 @@ return (
             size="small" 
             variant='outlined' 
             onClick={handleDeleteRow}
-            disabled={selectState}
+            //disabled={selectState}
         >
           Delete selected row
-        </Button>
-        <Button 
-            size="small" 
-            variant='outlined' 
-            onClick={onReset}
-            disabled={selectState}
-        >
-          Reset selected row
         </Button>
         <Tooltip title = 'Add 1 silo after selected' >
         <Button 
             size="small"
             variant="outlined"
             onClick={handleAddRow}
-            disabled={selectState}
             >
           Add silo
         </Button>
@@ -136,7 +158,6 @@ return (
             size="small"
             variant="outlined"
             onClick={handleSplitSilo}
-            disabled={selectState}
             >
           Split Silo
         </Button>
@@ -148,7 +169,6 @@ return (
                 data_initial = [].concat(...data_initial);
                 setData_table( data_initial );
                 console.log('data_initial = ',data_initial); 
-                propsTable.callback(true);   
             }}
             >
             Update Table
@@ -217,6 +237,16 @@ function TableRow(props){
         const [value, setValue] = React.useState(false);
         const changeSiloSelected = (e) => { 
             setValue(e.target.checked);
+            let current = selectedRows.indexOf(row+1);
+            if ( current >= 0 ) { selectedRows.splice(current, 1); }
+                else selectedRows.push(row+1);
+            //if ( selectedRows.length > 0 ) {
+            //    setSelectState(false);
+            //} else setSelectState(true);
+            
+            console.log('selected row= ',row+1 );
+            console.log('selected current= ',current );
+            console.log('selected selectedRows= ',row, selectedRows);
         };
     
         return (
