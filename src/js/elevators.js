@@ -34,7 +34,7 @@ class cComplexSilo {
         this.split      = ''; //существует если силос разделен на части
         this.linked     = ''; //имя связанного силоса
         this.CargoName  = '';
-        this.CargoTW    = 1;
+        this.CargoTW    = 0;
         this.Using      = true; // используется или нет
         this.Comments   = '';
     };
@@ -740,7 +740,7 @@ class cElevators {
         let err_mes = '';
         let wokrHeight = sound - ullage;
         if ( type != 'square' && type != 'circle' && type !='star' ) err_mes = 'unknown silo type, ';
-        if ( sound <= 0 ) err_mes = err_mes + 'incorrect Sound, ';
+        if ( sound <= 0 ) err_mes = err_mes + 'incorrect Ref.Point, ';
         if ( ullage > sound || ullage < 0 ) err_mes = err_mes + 'incorrect Ullage, ';
         if ( height <= 0 ) err_mes = err_mes + 'incorrect Height, ';
         if ( type == 'square' ){
@@ -755,7 +755,7 @@ class cElevators {
 
         if ( wokrHeight > height ) {
             wokrHeight = height;
-            err_mes = err_mes + '(Sound - Ullage) > Height, '
+            err_mes = err_mes + '(Ref.Point - Ullage) > Height, '
         };
 
         if ( area == null || area =='' || area == 0 ) {

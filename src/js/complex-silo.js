@@ -145,6 +145,23 @@ function ComplexSiloInfo(props) {
       else return ``;
     }
 
+    const getState = (state) => {
+      let stateColor = '';
+      if ( !state.CargoName ) return stateColor = 'yellow';
+      if ( state.Ullage < 0 ) return stateColor = 'red';
+      if ( state.Sound-state.Ullage > state.Height ) return stateColor = 'red';
+      if ( state.Sound-state.Ullage < 0 ) return stateColor = 'red';
+      if ( !state.Using) return stateColor = 'grey';  
+      return stateColor;  
+    }
+
+    const getStateUllage = (state) => {
+      let stateColor = '';
+      if ( !state.Using) return stateColor = '';
+      if ( state.Ullage == 0 ) return stateColor = 'yellow';
+      return stateColor;  
+    }
+
     const getSize1 = (type) => {
       if ( type == 'star' ) return `75%`;
       else return ``;
@@ -211,7 +228,7 @@ function ComplexSiloInfo(props) {
       const [ullageChange, setUllageChange] = React.useState(false);
       const handleChangeUllage = (event) =>{
           let ullage = event.currentTarget.value;
-          let id = event.currentTarget.id;
+          let id = event.currentTarget.id;  
           //id: `silo-row-${index}/col-${index2}`,
           let row = id.indexOf("row");
           let col = id.indexOf("col");
@@ -239,6 +256,7 @@ function ComplexSiloInfo(props) {
                     transform: `${getTransform1(array[index2].Type)}`,
                     scale: `${getSize1(array[index2].Type)}`,
                     borderRadius: `${getForm(array[index2].Type)}`,
+                    background: `${getState(array[index2])}`,
                     }}
                     elevation={5} >
                   <Stack
@@ -251,27 +269,28 @@ function ComplexSiloInfo(props) {
                     <Stack 
                       justifyContent={'center'}
                       direction='row'>
-                      <span>№-{array[index2].Name}</span>
+                      <span><strong>№-{array[index2].Name}</strong></span>
                     </Stack >
                     <Stack 
                       justifyContent={'center'}
                       direction='row'>
                     <TextField 
-                      style={ { width : 80}}
+                      style={ { width : 80, background: `${getStateUllage(array[index2])}`}}
                       size='small' label="Ullage (m)"
                       key = {index2} value={array[index2].Ullage} {...a11yProps(index, index2)}
+                      disabled={ array[index2].Using ? false : true }
                       onChange={handleChangeUllage}
                     />
                     </Stack >
                     <Stack 
                       justifyContent={'center'}
                       direction='row'>
-                    <span>{array[index2].CargoName}</span>
+                    <span><strong>{array[index2].CargoName}</strong></span>
                     </Stack>
                     <Stack 
                       justifyContent={'center'}
                       direction='row'>
-                      <span>{Elevators.massaComplexSiloGet(index,index2).weight} (MT)</span>
+                      <span><strong>{Elevators.massaComplexSiloGet(index,index2).weight} (MT)</strong></span>
                     </Stack>
                   </Stack>
           </Paper>
@@ -317,6 +336,7 @@ function ComplexSiloInfo(props) {
                     transform: `${getTransform1(array[index3].Type)}`,
                     scale: `${getSize1(array[index3].Type)}`,
                     borderRadius: `${getForm(array[index3].Type)}`,
+                    background: `${getState(array[index3])}`,
                     }}
                     elevation={5} >
                   <Stack
@@ -329,7 +349,7 @@ function ComplexSiloInfo(props) {
                     <Stack 
                       justifyContent={'center'}
                       direction='row'>
-                      <span>№-{array[index3].Name}</span>
+                      <span><strong>№-{array[index3].Name}</strong></span>
                     </Stack >
                     <Stack 
                       justifyContent={'center'}
@@ -339,17 +359,18 @@ function ComplexSiloInfo(props) {
                       size='small' label="Ullage (m)"
                       key = {index3} value={array[index3].Ullage} {...a11yProps(index, index3)}
                       onChange={handleChangeUllage2}
+                      disabled={ array[index3].Using ? false : true }
                     />
                     </Stack >
                     <Stack 
                       justifyContent={'center'}
                       direction='row'>
-                    <span>{array[index3].CargoName}</span>
+                    <span><strong>{array[index3].CargoName}</strong></span>
                     </Stack>
                     <Stack 
                       justifyContent={'center'}
                       direction='row'>
-                      <span>{Elevators.massaComplexSiloGet(index,index3).weight} (MT)</span>
+                      <span><strong>{Elevators.massaComplexSiloGet(index,index3).weight} (MT)</strong></span>
                     </Stack>
                   </Stack>
                 </Paper>
