@@ -53,11 +53,9 @@ function ComplexSiloTabs() {
                   <Tab key = {index} label={name} {...a11yProps(index)}/>))}
               </Tabs>
           </Box>
-          <Box sx={{ p: 2, width: '100%' }}>
 
-            <ComplexSiloInfo/>
+          <ComplexSiloInfo/>
 
-          </Box>
       </Box>
       )
       } else return (<><br/>No silos</>);   
@@ -68,19 +66,30 @@ export default function ComplexSilo() {
   
     return (
       <>
-      <Stack spacing={1} direction= 'row' divider={<Divider orientation="vertical" flexItem />} justifyContent={'space-between'}>
-            <Button variant="outlined" onClick={()=>{ Elevators.ComplexAdd(); setUpdate( !update ) }} >
-                Add Complex
+      <Stack direction= 'row' justifyContent={'space-between'} style={{ marginLeft: -10 }}>
+            <Button
+              variant="outlined"
+              style={{ fontSize: 12 }}
+              onClick={()=>{ Elevators.ComplexAdd(); setUpdate( !update ) }} >
+                Add
             </Button>
-            <Button variant="outlined"
+            <Button
+              variant="outlined"
+              style={{ fontSize: 12 }}
               onClick={()=>{ Elevators.ComplexClone(); setUpdate( !update ) }} >
-                Clone Selected Complex
+                Clone
             </Button>
-            <Button variant="outlined" onClick={()=>{Elevators.ComplexDel()  ; setUpdate( !update ) }}>
-                Delele Selected Complex
+            <Button
+              variant="outlined" 
+              style={{ fontSize: 12 }}
+              onClick={()=>{Elevators.ComplexDel()  ; setUpdate( !update ) }}>
+                Delete
             </Button>
-            <Button variant="outlined" onClick={()=>{iolocal.SaveElevator() ; setUpdate( !update ) }}>
-                Save All    
+            <Button 
+              variant="outlined" 
+              style={{ fontSize: 12 }}
+              onClick={()=>{iolocal.SaveElevator() ; setUpdate( !update ) }}>
+                Save 
             </Button>
         </Stack>
         <ComplexSiloTabs/>
@@ -111,11 +120,10 @@ function ComplexSiloInfo(props) {
     <>
     <FormControlLabel control={
       <Switch checked={checked}
+              size='small'
               onChange={handleChange_ComplexStucture}
               inputProps={{ 'aria-label': 'controlled' }}
       />} label="Complex structure ( edit mode )" />
-
-    <Divider/>
 
       <ComplexSiloInfoTable show={checked} />
       <ComplexSiloInfoPlan show={!checked} />
@@ -442,84 +450,109 @@ function ComplexSiloInfo(props) {
     if ( props.show )
     return (
       <>
-      <div className='block'>
-        <Stack direction= 'row' justifyContent={'center'} alignItems={'center'} sx={{ p: 1 }} > 
+      <div className='block' style={{ marginLeft: -10, marginRight: -10 }}>
+        <div> 
+          <Stack direction='row' marginBottom={1}>
+          <IconButton
+            color="primary"
+            aria-label="Edit Complex Name"
+            component="label"
+            onClick={() => { Dialogs.ComplexDialogShow(Elevators.ComplexName, 0); setUpdate( !update ) }}>
+              <Tooltip title="Edit Complex Name">
+                <SettingsTwoToneIcon />
+              </Tooltip>
+          </IconButton>
 
-          <IconButton color="primary" aria-label="Edit Complex Name" component="label" onClick={() => {
-                        Dialogs.ComplexDialogShow(Elevators.ComplexName, 0);
-                        setUpdate( !update )
-                         }}>
-                       <Tooltip title="Edit Complex Name">
-                         <SettingsTwoToneIcon />
-                       </Tooltip>
-                     </IconButton>
-
-          <Stack direction='column'>
-          <label
-            for="type-silo-select"
-            style={{ fontSize: '0.8rem' }}
-            >Type of Silo:</label>
-          <select
-            name="type-silo"
-            id="type-silo-select"
-            value={type}
-            onChange={handleChange}
-            >
+          <Stack direction='column' width={80}>
+            <label
+              for="type-silo-select"
+              style={{ fontSize: '0.8rem' }}
+              >Type of Silo:</label>
+            <select
+              name="type-silo"
+              id="type-silo-select"
+              value={type}
+              onChange={handleChange}
+              >
               <option value="square">square</option>
               <option value="circle">circle</option>
               <option value="star">star</option>
-          </select>
+            </select>
           </Stack>
 
+          </Stack>
           <TextField
+            style={{ width : 120, marginBottom: 5 }}
+            fullWidth
             value={qr} 
-            label="Quantyti in row" size='small' type='number' style={ {  width : 150 } }
+            label="Quantyti in row" size='small' type='number' 
             onChange={(e) => { setQR( e.currentTarget.value)  }}
           />
 
           <TextField id='CSilo_Height'
+            style={{ width : 120, marginBottom: 5 }}
+            fullWidth
             value={ H }
-            label="Height of Silo (m)" size='small' style={ {width : 150 } }
+            label="Height (m)" size='small'
             onChange={(e) => { setH( e.currentTarget.value )  }}
           />
           <TextField id='CSilo_L' disabled = { !dimS_show }
+            style={{ width : 120, marginBottom: 5 }}
+            fullWidth
             value={ L }
-            label="Length of Silo (m)" size='small' style={ {width : 150 } }
+            label="Length (m)" size='small'
             onChange={(e) => { setL( e.currentTarget.value )  }}
           />
           <TextField id='CSilo_W' disabled = { !dimS_show }
+            style={{ width : 120, marginBottom: 5 }}
+            fullWidth
             value={ W }
-            label="Width of Silo (m)" size='small' style={ {width : 150 } }
+            label="Width (m)" size='small'
             onChange={(e) => { setW( e.currentTarget.value )  }}
           />
           <TextField id='CSilo_D' disabled = { dimS_show }
+            style={{ width : 120, marginBottom: 5 }}
+            fullWidth
             value={ D }
-            label="Diameter of Silo (m)" size='small' style={ {width : 150 } }
+            label="Diameter (m)" size='small'
             onChange={(e) => { setD( e.currentTarget.value )  }}
           /> 
           <TextField id='CSilo_Conus'
+            style={{ width : 120, marginBottom: 5 }}
+            fullWidth
             value={ C }
-            label="Conus Height (m)" size='small' style={ {width : 150 } }
+            label="Conus Height (m)" size='small'
             onChange={(e) => { setC( e.currentTarget.value )  }}
           />
           
-        </Stack>
+        </div>
+
         <Stack direction= 'row' justifyContent={'space-between'} sx={{ p: 1 }} >
-          <Button variant="outlined" onClick={()=>{ Elevators.ComplexSiloAdd( qr, type, H, L, W, D, C ); setDim(!dim); setUpdate(!update) }} >
-            Add row silo
+          <Button
+            variant="outlined" 
+            style={{ fontSize: 12 }}
+            onClick={()=>{ Elevators.ComplexSiloAdd( qr, type, H, L, W, D, C ); setDim(!dim); setUpdate(!update) }} >
+            Add row
           </Button>
-          <Button variant="outlined" disabled
+          <Button 
+            variant="outlined"
+            disabled
+            style={{ fontSize: 12 }}
             onClick={()=>{ Elevators.ComplexSiloClone(); setDim(!dim) }} >
-            Clone Selected row silo
+            Clone row
           </Button>
-          <Button variant="outlined"  disabled
+          <Button 
+            variant="outlined"  
+            disabled
+            style={{ fontSize: 12 }}
             onClick={()=>{Elevators.ComplexSiloDel(); setDim(!dim)  }}>
-            Delete Selected row silo  
+            Delete row 
           </Button>
         </Stack>
       </div>
-      <Table callback={(data)=> props.callback(data) } />
-
+      <div className='block' style={{ marginLeft: -10, marginRight: -10 }}>
+        <Table callback={(data)=> props.callback(data) } />
+      </div>
       </>
     )
     else return ( <></> );

@@ -14,30 +14,34 @@ const handleImport = (e)=>{
 }
     return (
     <>
-    <Stack height={25} style={{ margin: 3 }} direction={'row'} justifyContent={'space-between'}>
-        <Stack  spacing={1} direction={'row'} divider={<Divider orientation="vertical" flexItem />} >
+    <Stack height={25} style={{ margin: 3 }} direction={'row'} justifyContent={'space-between'} >
+        <Stack  spacing={1} direction={'row'} >
             <Button variant='outlined'
-            onClick={ () => ( 
+                style={{ width: 60, fontSize: 12}}
+                onClick={ () => ( 
                 Elevators.setElevators =  iolocal.OpenElevator() ,
                 setUpdate( !update )
                 ) }
             >Open</Button>
             <Button variant='outlined'
-            onClick={ () => ( 
+                style={{ width: 60, fontSize: 12}}
+                onClick={ () => ( 
                 iolocal.SaveElevator()
                 )}
             >Save</Button>
         </Stack>
         
-        <Stack spacing={1} direction={'row'} divider={<Divider orientation="vertical" flexItem />} >
+        <Stack spacing={1} direction={'row'}  >
 
             <Button variant='outlined' component="label"
+                style={{ width: 60, fontSize: 12}}
                 >Import
                 <input hidden accept=".json" type="file" onChange={handleImport}/>
             </Button>
 
             <Button variant='outlined'
-            onClick={ () => (
+                style={{ width: 60, fontSize: 12}}
+                onClick={ () => (
                 iolocal.ExportWarehouse()
                 ) }
             >Export</Button>

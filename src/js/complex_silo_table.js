@@ -130,7 +130,6 @@ const [ show, setShow ] = React.useState(true);
 
 return (
     <>
-    <Stack direction="row" spacing={1}>
         <FormControlLabel control={
               <Checkbox 
               size="small"
@@ -138,13 +137,15 @@ return (
               onChange={handleChange_Show}
               />
             } label="Full view" />
+
+    <div>
         <Button 
             size="small" 
             variant='outlined' 
             onClick={handleDeleteRow}
             //disabled={selectState}
         >
-          Delete selected row
+          Delete
         </Button>
         <Tooltip title = 'Add 1 silo after selected' >
         <Button 
@@ -152,7 +153,7 @@ return (
             variant="outlined"
             onClick={handleAddRow}
             >
-          Add silo
+          Add
         </Button>
         </Tooltip>
         <Button 
@@ -160,7 +161,7 @@ return (
             variant="outlined"
             onClick={handleSplitSilo}
             >
-          Split Silo
+          Split
         </Button>
         <Button 
             size="small"
@@ -172,7 +173,7 @@ return (
                 console.log('data_initial = ',data_initial); 
             }}
             >
-            Update Table
+            Update
           </Button>
 
           <Button
@@ -180,9 +181,9 @@ return (
             variant="outlined" 
             onClick={ handleApplyButton }
             >
-            Apply Changes  
+            Apply  
           </Button>
-    </Stack>
+    </div>
     <Box sx={{ height: 500, width: '100%', overflow: 'auto' }} >
     <table className='myTable'>
         <tr style={{ height: 90 }}>

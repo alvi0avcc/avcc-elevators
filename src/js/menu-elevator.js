@@ -29,40 +29,61 @@ function ElevatorSelectMenu () {
     const [ElevatorName, SetElevatorName] = useState("");
 
     const handleChangeElevator = (event) => {
-            SetElevatorName(event.target.value);
-        };
+      Elevators.setSelected = event.target.selectedIndex;
+      SetElevatorName(event.target.value);
+      setUpdate ( !update );
+      };
     const handleClickElevatorMenu = (event, index) => {
             Elevators.setSelected = index;
+            console.log('handleClickElevatorMenu2 = ',event);
+            //SetElevatorName(event.target.value);
             setUpdate ( !update )
         }
     return (
-      <Stack direction= 'row' justifyContent={'space-between'} sx={{ p: 1 }} >
-      <FormControl fullWidth size='small' style={ {width : 500 } }>
-            <InputLabel  >Elevator Name</InputLabel> 
-              <Select value={Elevators.ElevatorsName+' - '+Elevators.ElevatorsDate} label="Elevator Name" onChange = {handleChangeElevator} >
+      <div
+      className='block'
+      style={{ padding: 7 }}
+      >
+        <div>
+          <div
+            className='block'
+            style={{  height: 32, maxWidth: 300  }}
+            fullWidth
+            >
+            <label 
+            style={{ width: 100, fontSize: '0.8rem', marginTop: -12, backgroundColor: 'white' }}
+            >Selected Elevator</label>
+            <select 
+              style={{ borderStyle: 'none' }}
+              value={Elevators.ElevatorsName + ' - ' + Elevators.ElevatorsDate}
+              onChange = {handleChangeElevator}
+              >
                 {Elevators.ElevatorList.map((name, index ) => (
-                  <MenuItem key={index+1} value={ name } onClick={ (event) => { handleClickElevatorMenu(event, index) }}>
+                  <option key={index+1} value={ name }>
                   { index+1 + ". " +  name}
-                  </MenuItem>
+                  </option>
                 ))}
-              </Select>
-          </FormControl>
+            </select>
+          </div>
+          <div style={{ padding: 2 }}>
           <Button onClick={()=>{
             Elevators.AddElevator();
             Elevators.State = 'add new Elevator';
             setUpdate( !update ) }}
-            style={ {width : 180, height : 40 } }
+            style={ {width : 101, height : 30 } }
             variant='outlined'>
-            New Elevator</Button>
+            New</Button>
           <Button onClick={()=>{Elevators.ElevatorClone()  ; setUpdate( !update ) }}
-            style={ {width : 180, height : 40 } }
+            style={ {width : 101, height : 30 } }
             variant='outlined'>
-            Clone Elevator</Button>
+            Clone</Button>
           <Button onClick={()=>{Elevators.ElevatorDel()  ; setUpdate( !update ) }}
-            style={ {width : 180, height : 40 } }
+            style={ {width : 101, height : 30 } }
             variant='outlined'>
-            Delete Elevator</Button>
-          </Stack>
+            Delete</Button>
+          </div>
+          </div>
+      </div>
     );
   };
 
@@ -77,11 +98,17 @@ function ElevatorMenuBase(){
   return (
     <>
       <ElevatorSelectMenu/>
-      <TextField
+      <div
+      className='block'
+      style={{ paddingTop: 8 }}
+      >
+      <div style={{ padding: 7 }}>
+            <TextField
+              style={{ maxWidth: 305, marginBottom: 6}}
               size='small'
+              fullWidth
               value={ Elevators.ElevatorsName }
               label="Elevator Name"
-              sx={{ p: 1 }}
               InputProps={{ 
                 endAdornment:
                   <IconButton color="primary" aria-label="Edit Elevator Name" component="label" onClick={() => {
@@ -94,21 +121,25 @@ function ElevatorMenuBase(){
                   </IconButton> }}
             />
             <TextField
+              style={{ maxWidth: 305}}
+              fullWidth
               size='small'
               onChange={ (e) => { Elevators.setDate = e.currentTarget.value; setUpdate( !update ) } }
               value={ Elevators.ElevatorsDate }
               label="Inspection date"
-              sx={{ p: 1 }}
               type = 'date'
             />
+            </div>
             <FormControlLabel control={
               <Checkbox 
+              size='small'
               checked={checked}
               onChange={handleChange_ElDet}
               />
             } label="Show Elevator Details" />
             
             <ElevatorMenuDetail show={checked}/>
+      </div>
     </>
   )
 }
@@ -119,71 +150,73 @@ function ElevatorMenuDetail(props){
   if ( !props.show ) return (<></>)
   else
 return (
-  <>
+  <div
+  style={{ padding: 2, margin: 5}}
+  >
             <TextField
               size='small'
               onChange={ (e) => { Elevators.setAdress = e.currentTarget.value; setUpdate( !update ) } }
               value={ Elevators.ElevatorAdress }
               label="Elevator address"
-              fullWidth 
-              sx={{ p: 1 }}
+              fullWidth
             />
-            <br/>
             <TextField
               size='small'
               onChange={ (e) => { Elevators.setOwner = e.currentTarget.value; setUpdate( !update ) } }
               value={Elevators.ElevatorOwner}
               label="Elevator owner"
-              sx={{ p: 1 }}
+              fullWidth
+              style={{ marginTop: 7 }}
             />
             <TextField
               size='small'
               onChange={ (e) => { Elevators.setClient = e.currentTarget.value; setUpdate( !update ) } }
               value={Elevators.ElevatorClient}
               label="Client by deposit"
-              sx={{ p: 1 }}
+              fullWidth
+              style={{ marginTop: 7 }}
             />
-            <br/>
             <TextField
               size='small'
               onChange={ (e) => { Elevators.setContactName = e.currentTarget.value; setUpdate( !update ) } }
               value={Elevators.ElevatorContactName}
               label="Contact"
-              sx={{ p: 1 }}
+              fullWidth
+              style={{ marginTop: 7 }}
             />
             <TextField
               size='small'
               onChange={ (e) => { Elevators.setContactPosition = e.currentTarget.value; setUpdate( !update ) } }
               value={Elevators.ElevatorContactPosition}
               label="Position"
-              sx={{ p: 1 }}
+              fullWidth
+              style={{ marginTop: 7 }}
             />
             <TextField
               size='small'
               onChange={ (e) => { Elevators.setContactPhone = e.currentTarget.value; setUpdate( !update ) } }
               value={Elevators.ElevatorContactPhone}
               label="Phone"
-              sx={{ p: 1 }}
+              fullWidth
+              style={{ marginTop: 7 }}
             />
-            <br/>
             <TextField
               size='small'
               onChange={ (e) => { Elevators.setInspectorName = e.currentTarget.value; setUpdate( !update ) } }
               value={Elevators.ElevatorInspectorName}
               label="Inspector"
               fullWidth
-              sx={{ p: 1 }}
+              style={{ marginTop: 7 }}
             />
-            <br/>
             <TextField
               size='small'
               onChange={ (e) => { Elevators.setComments = e.currentTarget.value; setUpdate( !update ) } }
               value={Elevators.ElevatorComments}
               label="Comments"
               fullWidth
-              sx={{ p: 1 }}
+              style={{ marginTop: 7 }}
             />
-  </>
+  </div>
 )
 }
 
