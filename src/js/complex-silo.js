@@ -25,6 +25,7 @@ import Switch from '@mui/material/Switch';
 import * as Dialogs from './dialogs';
 import clsx from 'clsx';
 import Table from './complex_silo_table';
+import { tab } from '@testing-library/user-event/dist/tab';
 
 
 function a11yProps(index) {
@@ -37,6 +38,7 @@ function a11yProps(index) {
 
 function ComplexSiloTabs() {
   const [value, setValue] = React.useState(0);
+  const [update, setUpdate] = React.useContext(UpdateContext);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -48,7 +50,7 @@ function ComplexSiloTabs() {
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
               <Tabs value={value} onChange={handleChange} variant="scrollable" scrollButtons="auto" allowScrollButtonsMobile aria-label="ComplexSilo Tabs">
                   {Elevators.ComplexList.map((name, index ) => (
-                  <Tab key = {index} label={name} {...a11yProps(index)} />))}
+                  <Tab key = {index} label={name} {...a11yProps(index)}/>))}
               </Tabs>
           </Box>
           <Box sx={{ p: 2, width: '100%' }}>
@@ -318,6 +320,7 @@ function ComplexSiloInfo(props) {
 
 
       if ( array[index2].split == '' ) { return (<></>); }
+      if ( !array[index3] ) { return (<></>); }
       else {
         if ( array[index2 +1] ) {
           if ( array[index2 +1].split == '' ) return (<></>);
@@ -439,61 +442,41 @@ function ComplexSiloInfo(props) {
     if ( props.show )
     return (
       <>
-        <Stack direction= 'row' justifyContent={'center'} sx={{ p: 1 }} >
-          <TextField
-            value={ Elevators.ComplexName } label="Complex Name" size='small'
-            InputProps={{ 
-              endAdornment:
-                <IconButton color="primary" aria-label="Edit Complex Name" component="label" onClick={() => {
-                   Dialogs.ComplexDialogShow(Elevators.ComplexName, 0);
-                   setUpdate( !update )
-                    }}>
-                  <Tooltip title="Edit Complex Name">
-                    <SettingsTwoToneIcon />
-                  </Tooltip>
-                </IconButton> }}
-          />
-          <TextField style={ {width : 130 } } 
-            value={Elevators.ComplexDimension.Length}
-            label="Complex length (m)" size='small'
-            onChange={(e) => { Elevators.setComplexDimension_Length = Number( e.currentTarget.value ); setDim(!dim) }}
-          />
-          <TextField style={ {width : 130 } }
-            value={Elevators.ComplexDimension.Width}
-            label="Complex width (m)" size='small'
-            onChange={(e) => { Elevators.setComplexDimension_Width = Number( e.currentTarget.value ); setDim(!dim) }}
-          />
-          <TextField style={ {width : 130 } }
-            value={Elevators.ComplexDimension.Height}
-            label="Complex height (m)" size='small'
-            onChange={(e) => { Elevators.setComplexDimension_Height = Number( e.currentTarget.value ); setDim(!dim) }}
-          />
-        </Stack>
-
+      <div className='block'>
         <Stack direction= 'row' justifyContent={'center'} alignItems={'center'} sx={{ p: 1 }} > 
-          <FormControl>
-          <FormLabel id="radio-buttons-group-typeSilo">Type of Silo</FormLabel>
-          <RadioGroup
-            row
-            aria-labelledby="radio-buttons-group-typeSilo"
-            name="adio-buttons-group-typeSilo"
+
+          <IconButton color="primary" aria-label="Edit Complex Name" component="label" onClick={() => {
+                        Dialogs.ComplexDialogShow(Elevators.ComplexName, 0);
+                        setUpdate( !update )
+                         }}>
+                       <Tooltip title="Edit Complex Name">
+                         <SettingsTwoToneIcon />
+                       </Tooltip>
+                     </IconButton>
+
+          <Stack direction='column'>
+          <label
+            for="type-silo-select"
+            style={{ fontSize: '0.8rem' }}
+            >Type of Silo:</label>
+          <select
+            name="type-silo"
+            id="type-silo-select"
             value={type}
-            onChange={handleChange} 
-          >
-            <FormControlLabel value="square" control={<Radio size='small'/>} label="square" />
-            <FormControlLabel value="circle" control={<Radio size='small'/>} label="circle" />
-            <FormControlLabel value="star" control={<Radio size='small'/>} label="star" />
-          </RadioGroup>
-          </FormControl>
+            onChange={handleChange}
+            >
+              <option value="square">square</option>
+              <option value="circle">circle</option>
+              <option value="star">star</option>
+          </select>
+          </Stack>
 
           <TextField
             value={qr} 
             label="Quantyti in row" size='small' type='number' style={ {  width : 150 } }
             onChange={(e) => { setQR( e.currentTarget.value)  }}
           />
-        </Stack>
 
-        <Stack direction= 'row' justifyContent={'center'} alignItems={'center'} sx={{ p: 1 }} >
           <TextField id='CSilo_Height'
             value={ H }
             label="Height of Silo (m)" size='small' style={ {width : 150 } }
@@ -534,7 +517,7 @@ function ComplexSiloInfo(props) {
             Delete Selected row silo  
           </Button>
         </Stack>
-
+      </div>
       <Table callback={(data)=> props.callback(data) } />
 
       </>

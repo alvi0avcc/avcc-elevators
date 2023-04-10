@@ -95,7 +95,7 @@ const [ show, setShow ] = React.useState(true);
                 }
             //доавить новый силос
             newSilo = structuredClone( data[n-1] );
-            newSilo.Name = '1111';
+            newSilo.Name = 'NewSilo';
             data.splice(n, 0, newSilo);
         };
         //обновить таблицу и базу
@@ -111,7 +111,8 @@ const [ show, setShow ] = React.useState(true);
         let newSilo = {};
         let data = structuredClone( data_table_new );
         if ( selectedRows.length == 0 ) { alert('Choose a silo for splitting.'); return;}
-        if ( selectedRows.length > 0 ) { 
+        if ( selectedRows.length > 1 ) { alert('Choose only one silo for splitting.'); return;}
+        if ( selectedRows.length == 1 ) { 
             for ( let i = 0; i < selectedRows.length; i++ ) {
                 n = selectedRows[i];
                 data[n-1].split = data[n-1].Name;
@@ -183,15 +184,15 @@ return (
           </Button>
     </Stack>
     <Box sx={{ height: 500, width: '100%', overflow: 'auto' }} >
-    <table className={clsx( 'myTable' )}>
+    <table className='myTable'>
         <tr style={{ height: 90 }}>
-            <th className={clsx( show ? 'myTable' : 'myHide' )}>№</th>
-            <th className={clsx( 'myTable' )}><div className={clsx( 'myTableSide' )}>Selected</div></th>
-            <th className={clsx( show ? 'myTable' : 'myHide' )}><div className={clsx( 'myTableSide' )}>rows</div></th>
-            <th className={clsx( show ? 'myTable' : 'myHide' )}><div className={clsx( 'myTableSide' )}>columns</div></th>
-            <th className={clsx( 'myTable' )}>№ Name</th>
-            <th className={clsx( 'myTable' )}>Cargo Name</th>
-            <th className={clsx( 'myTable' )}>
+            <th className={show ? 'myTable' : 'myHide' }>№</th>
+            <th className='myTable'><div className= 'myTableSide'>Selected</div></th>
+            <th className={show ? 'myTable' : 'myHide'}><div className='myTableSide'>rows</div></th>
+            <th className={ show ? 'myTable' : 'myHide' }><div className='myTableSide'>columns</div></th>
+            <th className='myTable'>№ Name</th>
+            <th className='myTable'>Cargo Name</th>
+            <th className='myTable'>
                 Cargo Test Weight <br/>
                 <span className='TableTW_dstu'>(g/l)</span><br/>
                 <span className='TableTW_iso'>(Kg/hL)</span> </th>
@@ -206,7 +207,7 @@ return (
             <th className={clsx( show ? 'myTable' : 'myHide' )}>Conus height (m)</th>
             <th className={clsx( show ? 'myTable' : 'myHide' )}>Calculated Area (m²)</th>
             <th className={clsx( show ? 'myTable' : 'myHide' )}>Official Area (m²)</th>
-            <th className={clsx( 'myTable' )}>Reference Point (m)</th>
+            <th className={'myTable'} style={{ maxWidth: 75 }}>Measuring Point (m)</th>
             <th className={clsx( 'myTable' )}>Ullage (m)</th>
             <th className={clsx( 'myOutput' )}>Cargo volume (m³)</th>
             <th className={clsx( 'myOutput' )}>Cargo weight (MT)</th>
@@ -240,20 +241,12 @@ function TableRow(props){
             let current = selectedRows.indexOf(row+1);
             if ( current >= 0 ) { selectedRows.splice(current, 1); }
                 else selectedRows.push(row+1);
-            //if ( selectedRows.length > 0 ) {
-            //    setSelectState(false);
-            //} else setSelectState(true);
-            
-            console.log('selected row= ',row+1 );
-            console.log('selected current= ',current );
-            console.log('selected selectedRows= ',row, selectedRows);
         };
     
         return (
             <>
-            <td className={clsx( 'myTable' )}> 
+            <td className='myTable'> 
             <input
-            //class = 'myTableSide'
             type="checkbox"
             id = { `row-${item.row-1}`+`/col-${item.col-1}` }
             label={ `SiloSelected-row ${row}`}
@@ -272,13 +265,11 @@ function TableRow(props){
         const changeComments= (e) => { 
             setValue(e.target.value);
             data_table_new[row].Comments=e.target.value;
-            //changeValue(e.target.value);
-            //changeValue={() => handleClick(0)};
         };
     
         return (
             <>
-            <td className={clsx( 'myTable' )}>
+            <td className='myTable'>
             <input
             class = 'myInputLong'
             type="text"
@@ -296,7 +287,7 @@ function TableRow(props){
     function SiloDimension(props){
         let item = props.item;
         let row = props.row;
-        const [value, setValue] = React.useState(item.Height);
+        //const [value, setValue] = React.useState(item.Height);
         const [value_SN, setValue_SN] = React.useState(item.Name);
         const [value_CN, setValue_CN] = React.useState(item.CargoName);
         const [value_TW, setValue_TW] = React.useState(item.CargoTW);
@@ -394,12 +385,43 @@ function TableRow(props){
             data_table_new[row].Ullage=e.target.value;
             setValue_VM( Elevators.massaComplexSilo( data_table_new, row ) );
         };
+
+        const getStateName = (name) => {
+            let styleName = 'myTable';
+            let names = data_table_new.filter(item => item.Name == name );
+            if ( name.length == 0 ) { styleName =  'myTable'+' '+'myError' }
+            if ( names.length > 1 ) { styleName =  'myTable'+' '+'myWarning' }
+            return styleName;
+          }
+        
+          const getStateTW = (tw) => {
+            let styleName = '';
+            if ( tw > 100 ) { styleName =  'TableTW_dstu' }
+                else { styleName =  'TableTW_iso' };
+            if ( tw < 10 ) { styleName = 'TableTW_error'};
+            return styleName;
+          }
+
+          const getStateDimSquare = (type, value) => {
+            let styleName = '';
+            if ( type == 'square' ) { styleName =  'myInputShort' }
+                else { styleName =  'myInputShortDisabled' };
+            return styleName;
+          }
+
+          const getStateDimDiameter = (type, value) => {
+            let styleName = '';
+            if ( type != 'square' ) { styleName =  'myInputShort' }
+                else { styleName =  'myInputShortDisabled' };
+            return styleName;
+          }
     
         return (
             <>
-            <td className={value_SN.length > 0 ? 'myTable' : 'myTableEmptyError' } >
+            <td className={ getStateName(value_SN) } >
             <input
-            className={clsx( 'myInputShort' )}
+            className='myInputShort'
+            style={{ fontWeight: 'bold' }}
             type="text"
             id = { `row-${item.row-1}`+`/col-${item.col-1}` }
             label={ `SiloName-row ${row}`}
@@ -419,9 +441,9 @@ function TableRow(props){
             />
             </td>
 
-            <td className={clsx( value_TW >  10 ? 'myTable' : 'TableTW_error')}>
+            <td className={ value_TW >  10 ? 'myTable' : 'myTable myError'}>
             <input
-            className={ clsx( value_TW > 100 ? 'TableTW_dstu' : 'TableTW_iso' )}
+            className={ getStateTW(value_TW) }
             type="number"
             id = { `row-${item.row-1}`+`/col-${item.col-1}` }
             label={ `CargoTW-row ${row}`}
@@ -444,7 +466,7 @@ function TableRow(props){
             </select>
             </td>
 
-            <td className={clsx( 'myTable' )}>
+            <td className='myTable'>
             <input
             class = 'myInputShort'
             type="text"
@@ -455,7 +477,7 @@ function TableRow(props){
             />
             </td>
 
-            <td className={clsx( 'myTable' )}>
+            <td className='myTable'>
             <input
             class = 'myInputShort'
             type="text"
@@ -477,9 +499,9 @@ function TableRow(props){
             />
             </td>            
 
-            <td className={clsx( show ? 'myTable' : 'myHide' )}>
+            <td className={ show ? 'myTable' : 'myHide' }>
             <input
-            className={clsx( 'myInputShort' )}
+            className={ 'myInputShort' }
             type="number"
             id = { `row-${item.row-1}`+`/col-${item.col-1}` }
             label={ `SiloHeight-row ${row}`}
@@ -488,9 +510,10 @@ function TableRow(props){
             />
             </td>
 
-            <td className={clsx( show ? 'myTable' : 'myHide' )}>
+            <td className={ (show ? 'myTable' : 'myHide')+( value_T != 'square' ? ' myDisabled' : '' ) }>
             <input
-            className={clsx( 'myInputShort' )}
+            className={getStateDimSquare(value_T, value_L)}
+            disabled={ value_T == 'square' ? false : true }
             type="number"
             id = { `row-${item.row-1}`+`/col-${item.col-1}` }
             label={ `SiloLength-row ${row}`}
@@ -499,9 +522,10 @@ function TableRow(props){
             />
             </td>
 
-            <td className={clsx( show ? 'myTable' : 'myHide' )}>
+            <td className={ (show ? 'myTable' : 'myHide')+( value_T != 'square' ? ' myDisabled' : '' ) }>
             <input
-            className={clsx( 'myInputShort' )}
+            className={getStateDimSquare(value_T, value_W)}
+            disabled={ value_T == 'square' ? false : true }
             type="number"
             id = { `row-${item.row-1}`+`/col-${item.col-1}` }
             label={ `SiloWidth-row ${row}`}
@@ -510,9 +534,11 @@ function TableRow(props){
             />
             </td>
 
-            <td className={clsx( show ? 'myTable' : 'myHide' )}>
+            <td className={ (show ? 'myTable' : 'myHide')+( value_T == 'square' ? ' myDisabled' : '' ) }>
             <input
-            className={clsx( 'myInputShort' )}
+            className={getStateDimDiameter(value_T, value_D)}
+            style={{ maxWidth: 65 }}
+            disabled={ value_T == 'square' ? true : false }
             type="number"
             id = { `row-${item.row-1}`+`/col-${item.col-1}` }
             label={ `SiloDiameter-row ${row}`}
@@ -551,9 +577,10 @@ function TableRow(props){
             />
             </td>
 
-            <td className={clsx( 'myTable' )}>
+            <td className='myTable'>
             <input
-            className={clsx( 'myInputShort' )}
+            className='myInput'
+            style={{ maxWidth: 75 }}
             type="number"
             id = { `row-${item.row-1}`+`/col-${item.col-1}` }
             label={ `SiloSound-row ${row}`}
@@ -562,18 +589,20 @@ function TableRow(props){
             />
             </td>
 
-            <td className={clsx( 'myTable' )}>
+            <td className={'myTable'} style={{ background: 'lime' }}>
+            <strong>
             <input
-            className={clsx( 'myInputShort' )}
+            className={'myInputUllage' }
             type="number"
             id = { `row-${item.row-1}`+`/col-${item.col-1}` }
             label={ `SiloUllage-row ${row}`}
             value={value_U}
             onChange={changeUllage}
             />
+            </strong>
             </td>
 
-            <td className={clsx( 'myTable' )}>
+            <td className={'myTable'}>
             <span
             id = { `Volume-row-${row}` }
             label={ `SiloVolume-row ${item.row}`}
@@ -584,6 +613,7 @@ function TableRow(props){
             <span
             id = { `Weight-row-${row}` }
             label={ `SiloWeight-row ${item.row}`}
+            style={{ fontWeight: 'bold' }}
             >{value_VM.err_mes == '' ? value_VM.weight : value_VM.err_mes}</span>
             </td>
             </>

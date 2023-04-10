@@ -742,7 +742,7 @@ class cElevators {
         let err_mes = '';
         let wokrHeight = sound - ullage;
         if ( type != 'square' && type != 'circle' && type !='star' ) err_mes = 'unknown silo type, ';
-        if ( sound <= 0 ) err_mes = err_mes + 'incorrect Ref.Point, ';
+        if ( sound <= 0 ) err_mes = err_mes + 'incorrect Measuring Point, ';
         if ( ullage > sound || ullage < 0 ) err_mes = err_mes + 'incorrect Ullage, ';
         if ( height <= 0 ) err_mes = err_mes + 'incorrect Height, ';
         if ( type == 'square' ){
@@ -757,7 +757,7 @@ class cElevators {
 
         if ( wokrHeight > height ) {
             wokrHeight = height;
-            err_mes = err_mes + '(Ref.Point - Ullage) > Height, '
+            err_mes = err_mes + '(Measuring Point - Ullage) > Height, '
         };
 
         if ( area == null || area =='' || area == 0 ) {
@@ -830,6 +830,7 @@ class cElevators {
             weight = volume * silo.CargoTW / 1000;      //DSTU
         } else weight = volume * silo.CargoTW / 100;   //ISO
         weight = Calc.MyRound( weight, 3 );
+        if ( silo.CargoTW < 10 ) { err_mes = err_mes + 'incorrect Test Weight, ' };
         //} else { volume =0; weight =0; console.log('massaComplexSiloGet = error');}
         return {volume, weight, err_mes };
     }
