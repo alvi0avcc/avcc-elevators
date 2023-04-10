@@ -8,9 +8,11 @@ export default function ComplexSilKorpusTotal (props) {
     return (
         <>
         <br/>
-        <Box>
-        <span>Summary information on Complex: <strong>{ComplexName}</strong> </span>
-        <Button variant='outlined' onClick={ ()=> { setUpdate(!update) } }>Update</Button>
+        <div className='block' style={{ marginLeft: -20, marginRight: -15 }}>
+            <div>
+                <span>Summary information on Complex: <strong>{ComplexName}</strong> </span>
+                <Button size='small' variant='outlined' onClick={ ()=> { setUpdate(!update) } }>Update</Button>
+            </div>
         <br/>
         <ComplexKorpusTotalInfo/>
         <br/>
@@ -19,7 +21,7 @@ export default function ComplexSilKorpusTotal (props) {
         <span>Summary information on <strong>Complex</strong>.</span>
         <br/>
         <ComplexCargoInfo/>
-        </Box>
+        </div>
         </>
     );
 }
@@ -29,7 +31,7 @@ function ComplexKorpusTotalInfo(){
         <Box>
         {Elevators.ComplexKorpusTotalInfo.map((name, index ) => (
                     <TextField
-                      style={ { width : 300 } }
+                      style={ { width : 260 } }
                       size='small' key = {index} value={'№ '+name[0]+' - '+name[1]+' = '+name[2]+' MT'} 
                     />))}
         </Box>
@@ -41,7 +43,7 @@ function ComplexKorpusCargoInfo(){
         <Box>
         {Elevators.ComplexKorpusCargoInfo.map((name, index ) => (
                     <TextField
-                      style={ { width : 300 } }
+                      style={ { width : 260 } }
                       size='small' key = {index} value={name[0]+' = '+name[1]+' MT'} 
                     />))}
         </Box>
@@ -53,7 +55,7 @@ function ComplexTotalInfo(){
         <Box>
         {Elevators.ComplexTotalInfo.map((name, index ) => (
                     <TextField
-                      style={ { width : 300 } }
+                      style={ { width : 260 } }
                       size='small' key = {index} value={'№ '+name[0]+' - '+name[1]+' = '+name[2]+' MT'} 
                     />))}
         </Box>
@@ -65,7 +67,7 @@ function ComplexCargoInfo(){
         <Box>
         {Elevators.ComplexCargoInfo.map((name, index ) => (
                     <TextField
-                      style={ { width : 300 } }
+                      style={ { width : 260 } }
                       size='small' key = {index} value={name[0]+' = '+name[1]+' MT'} 
                     />))}
         </Box>

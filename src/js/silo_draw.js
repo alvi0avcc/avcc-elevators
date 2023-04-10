@@ -76,6 +76,7 @@ const Canvas = props => {
     ctx.strokeStyle  = 'black';
     ctx.lineWidth = 2;
     ctx.strokeRect(  400/2-d*z/2 - 5*z , 260, (d+10)*z, 4*z )
+    if ( h3 > 0  ) {
     // bottom conus
     ctx.strokeStyle  = 'blue';
     ctx.beginPath();
@@ -105,6 +106,7 @@ const Canvas = props => {
     ctx.lineTo( 20 , 260 + h3 * z );
     ctx.lineTo( 20+5 , 260 + h3 * z - 15);
     ctx.stroke();
+    }
   }
   
   useEffect(() => {

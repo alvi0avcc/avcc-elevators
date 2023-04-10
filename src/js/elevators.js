@@ -252,7 +252,8 @@ class cElevators {
                 v2 = 1 / 3  * 3.14 * ( sound  - ullage  - h1 ) * ( Math.pow( r1, 2) + r1 * r2 + Math.pow( r2, 2 ) );
             }
             if ( h3 > 0 ) {
-
+                r2 = Math.sqrt( out / 3.14 );
+                v3 = 1 / 3  * 3.14 * h3 * ( Math.pow( r1, 2) + r1 * r2 + Math.pow( r2, 2 ) );
             } else v3 = 0;
             v = v1 + v2 + v3;
             v = Calc.MyRound( v, 3 );

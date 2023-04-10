@@ -130,8 +130,10 @@ function SiloInfo(){
     return(
         <>
         <Stack direction= 'row'>
-            <Stack>
-            <Stack direction= 'row'>
+            <Stack
+            style={{ border: '1px solid #1976d2', borderRadius: 4, marginLeft: -35 }}
+            >
+            <Stack direction= 'row' style={{ marginTop: 7 }}>
                 <TextField value={ Elevators.SiloName } label="Name" sx={{ p: 1 }} onChange={ChangeName} size='small' /> 
                 <TextField value={ Elevators.SiloCargo.Name } label="Cargo" sx={{ p: 1 }} onChange={ChangeCargoName} size='small' />
             </Stack>
@@ -194,15 +196,14 @@ function SiloInfo(){
                 </Box>
             </Stack>
         </Stack>
-        <Divider/>
-        <Box>
+        <div className='block' style={{ marginLeft: -35, marginRight: -5 }}>
             Summary information on silos:
             <br/>
             <SiloTotalInfo/>
             <br/>
             <br/>
             <SiloCargoInfo/>
-        </Box>
+        </div>
         </>
     )
 }
@@ -212,7 +213,8 @@ function SiloTotalInfo(){
         <Box>
         {Elevators.SiloTotalInfo.map((name, index ) => (
                     <TextField
-                      style={ { width : 300 } }
+                      style={ { width : 260 } }
+                      multiline
                       size='small' key = {index} value={'№ '+name[0]+' - '+name[1]+' = '+name[2]+' MT'} 
                     />))}
         </Box>
@@ -224,7 +226,8 @@ function SiloCargoInfo(){
         <Box>
         {Elevators.SiloCargoInfo.map((name, index ) => (
                     <TextField
-                      style={ { width : 300 } }
+                      style={ { width : 260 } }
+                      multiline
                       size='small' key = {index} value={name[0]+' = '+name[1]+' MT'} 
                     />))}
         </Box>

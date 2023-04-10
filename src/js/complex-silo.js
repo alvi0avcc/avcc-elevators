@@ -366,7 +366,7 @@ function ComplexSiloInfo(props) {
                       justifyContent={'center'}
                       direction='row'>
                     <TextField 
-                      style={ { width : 80,}}
+                      style={ { width : 80, background: `${getStateUllage(array[index3])}`}}
                       size='small' label="Ullage (m)"
                       key = {index3} value={array[index3].Ullage} {...a11yProps(index, index3)}
                       onChange={handleChangeUllage2}
