@@ -43,9 +43,13 @@ class cComplexSilo {
 class cSilo {
     constructor() {
         this.Name       = 'NewSilo';
-        this.Dimensions = {Diameter: 0, h1: 0, h2: 0, Sound: 0 };
+        this.Dimensions = {Diameter: 0, h1: 0, h2: 0, h3: 0, out: 0, Sound: 0 };
+        // h1 = Silo cylinder height
+        // h2 = Roof cone height
+        // h3 = Bottom cone height
+        // out = area of bottom out
         this.Ullage     = 0;
-        this.Cargo      = {Name: '', Natura: 1 };
+        this.Cargo      = {Name: '', Natura: 0 };
         this.Comments   = ''
     }
 };
@@ -215,6 +219,8 @@ class cElevators {
     set SetSiloDimension_D (data ){ if ( this.SiloFound ) this.Elevators[this.Selected].Silo[this.SiloSelected].Dimensions.Diameter  = data }
     set SetSiloDimension_h1 (data ){ if ( this.SiloFound ) this.Elevators[this.Selected].Silo[this.SiloSelected].Dimensions.h1  = data }
     set SetSiloDimension_h2 (data ){ if ( this.SiloFound ) this.Elevators[this.Selected].Silo[this.SiloSelected].Dimensions.h2  = data }
+    set SetSiloDimension_h3 (data ){ if ( this.SiloFound ) this.Elevators[this.Selected].Silo[this.SiloSelected].Dimensions.h3  = data }
+    set SetSiloDimension_out (data ){ if ( this.SiloFound ) this.Elevators[this.Selected].Silo[this.SiloSelected].Dimensions.out  = data }
     set SetSiloDimension_Sound (data ){ if ( this.SiloFound ) this.Elevators[this.Selected].Silo[this.SiloSelected].Dimensions.Sound  = data }
     set SetSiloUllage (data ){ if ( this.SiloFound ) this.Elevators[this.Selected].Silo[this.SiloSelected].Ullage  = data }
     get SiloDimension(){
@@ -232,9 +238,11 @@ class cElevators {
             let r2;
             let h1       = Number( this.SiloDimension.h1 );
             let h2       = Number( this.SiloDimension.h2 );
+            let h3       = Number( this.SiloDimension.h3 );
+            let out       = Number( this.SiloDimension.out );
             let sound   = Number( this.SiloDimension.Sound );
             let ullage  = Number( this.SiloUllage );
-            let v1 = 0, v2 = 0;
+            let v1 = 0, v2 = 0, v3 =0 ;
             if ( ( sound - ullage ) <= h1 ) {
                 v1 = 3.14 * Math.pow ( r1, 2 ) * ( sound - ullage )
             }
@@ -243,7 +251,10 @@ class cElevators {
                 r2 = r1  * ( h2 -  ( sound - ullage - h1 ) ) / h2;
                 v2 = 1 / 3  * 3.14 * ( sound  - ullage  - h1 ) * ( Math.pow( r1, 2) + r1 * r2 + Math.pow( r2, 2 ) );
             }
-            v = v1 + v2;
+            if ( h3 > 0 ) {
+
+            } else v3 = 0;
+            v = v1 + v2 + v3;
             v = Calc.MyRound( v, 3 );
         }
         return Number( v );

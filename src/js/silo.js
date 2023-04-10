@@ -52,18 +52,30 @@ export default function Silo(){
     const [update, setUpdate] = useContext(UpdateContext);
     return (
         <>
-        <Stack spacing={5} direction= 'row' divider={<Divider orientation="vertical" flexItem />} justifyContent={'space-between'}>
-            <Button variant="outlined" onClick={()=>{ Elevators.SiloAdd(); setUpdate( !update ) }} >
-                Add Silo
+        <Stack direction= 'row' justifyContent={'space-between'} style={{ margin: -10 }}>
+            <Button
+              variant="outlined"
+              size='small'
+              onClick={()=>{ Elevators.SiloAdd(); setUpdate( !update ) }} >
+                Add
             </Button>
-            <Button variant="outlined" onClick={()=>{ Elevators.SiloClone(); setUpdate( !update ) }} >
-                Duplicate Selected Silo
+            <Button
+              variant="outlined" 
+              size='small'
+              onClick={()=>{ Elevators.SiloClone(); setUpdate( !update ) }} >
+                Clone
             </Button>
-            <Button variant="outlined" onClick={()=>{Elevators.SiloDel()  ; setUpdate( !update ) }}>
-                Delele Selected Silo
+            <Button 
+              variant="outlined"
+              size='small' 
+              onClick={()=>{Elevators.SiloDel()  ; setUpdate( !update ) }}>
+                Delete
             </Button>
-            <Button variant="outlined" onClick={()=>{iolocal.SaveElevator() ; setUpdate( !update ) }}>
-                Save All    
+            <Button 
+              variant="outlined" 
+              size='small'
+              onClick={()=>{iolocal.SaveElevator() ; setUpdate( !update ) }}>
+                Save    
             </Button>
         </Stack>
         <SiloTabs/>
@@ -95,10 +107,18 @@ function SiloInfo(){
         Elevators.SetSiloDimension_h1 = event.target.value;
         setValue(!value)
       };
-    const Changeh = (event) => {
+    const Changeh2 = (event) => {
         Elevators.SetSiloDimension_h2 = event.target.value;
         setValue(!value)
       };
+    const Changeh3 = (event) => {
+        Elevators.SetSiloDimension_h3 = event.target.value;
+        setValue(!value)
+      };
+    const ChangeOut = (event) => {
+        Elevators.SetSiloDimension_out = event.target.value;
+        setValue(!value)
+      };  
     const ChangeSound = (event) => {
         Elevators.SetSiloDimension_Sound = event.target.value;
         setValue(!value)
@@ -142,9 +162,14 @@ function SiloInfo(){
                 <TextField value={ Elevators.SiloDimension.h1 } label="Silo cylinder height (m)" sx={{ p: 1 }} onChange={ChangeH} size='small' />
             </Stack>
             <Stack direction= 'row'>
-                <TextField value={ Elevators.SiloDimension.h2 } label="Roof cone height (m)" sx={{ p: 1 }} onChange={Changeh} size='small' />
+                <TextField value={ Elevators.SiloDimension.h2 } label="Roof cone height (m)" sx={{ p: 1 }} onChange={Changeh2} size='small' />
                 <TextField value={ Elevators.SiloDimension.Sound } label="Measuring point level (m)" sx={{ p: 1 }} onChange={ChangeSound} size='small' />
             </Stack>
+            <Stack direction= 'row'>
+              <TextField value={ Elevators.SiloDimension.h3 } label="Bottom cone height (m)" sx={{ p: 1 }} onChange={Changeh3} size='small' />
+              <TextField value={ Elevators.SiloDimension.out } label="Area of bottom out (m²)" sx={{ p: 1 }} onChange={ChangeOut} size='small' />
+            </Stack>
+
             <Stack direction= 'row'>
                 <TextField value={ Elevators.SiloVolume } label="Сargo volume (m³)" sx={{ p: 1 }} size='small' />
                 <TextField style={{ backgroundColor: 'whitesmoke' }} value={ Elevators.SiloMass } label="Cargo weight (MT)" sx={{ p: 1 }} size='small' />
@@ -159,7 +184,7 @@ function SiloInfo(){
                     '& > :not(style)': {
                      m: 1,
                     width: 400,
-                    height: 265,
+                    height: 320,
                     },
                      }}
                 >
