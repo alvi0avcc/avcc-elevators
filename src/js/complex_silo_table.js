@@ -318,7 +318,7 @@ function TableRow(props){
         };
         const changeCargoTW = (e) => { 
             setValue_TW(e.target.value);
-            data_table_new[row].CargoTW=e.target.value;
+            data_table_new[row].CargoTW=Number(e.target.value);
             setValue_VM( Elevators.massaComplexSilo( data_table_new, row ) );
         };
         const changeSiloType = (e) => { 
@@ -343,27 +343,27 @@ function TableRow(props){
         };
         const changeHeight = (e) => { 
             setValue_H(e.target.value);
-            data_table_new[row].Height=e.target.value;
+            data_table_new[row].Height=Number(e.target.value);
             setValue_VM( Elevators.massaComplexSilo( data_table_new, row ) );
         };
         const changeLength = (e) => { 
             setValue_L(e.target.value);
-            data_table_new[row].Length=e.target.value;
+            data_table_new[row].Length=Number(e.target.value);
             setValue_VM( Elevators.massaComplexSilo( data_table_new, row ) );
         };
         const changeWidth= (e) => { 
             setValue_W(e.target.value);
-            data_table_new[row].Width=e.target.value;
+            data_table_new[row].Width=Number(e.target.value);
             setValue_VM( Elevators.massaComplexSilo( data_table_new, row ) );
         };
         const changeDiameter = (e) => { 
             setValue_D(e.target.value);
-            data_table_new[row].Diameter=e.target.value;
+            data_table_new[row].Diameter=Number(e.target.value);
             setValue_VM( Elevators.massaComplexSilo( data_table_new, row ) );
         };
         const changeConus = (e) => { 
             setValue_C(e.target.value);
-            data_table_new[row].Conus_height=e.target.value;
+            data_table_new[row].Conus_height=Number(e.target.value);
             setValue_VM( Elevators.massaComplexSilo( data_table_new, row ) );
         };
         /*const changeUArea = (e) => { 
@@ -373,17 +373,17 @@ function TableRow(props){
         };*/
         const changeArea = (e) => { 
             setValue_A(e.target.value);
-            data_table_new[row].Area=e.target.value;
+            data_table_new[row].Area=Number(e.target.value);
             setValue_VM( Elevators.massaComplexSilo( data_table_new, row ) );
         };
         const changeSound = (e) => { 
             setValue_S(e.target.value);
-            data_table_new[row].Sound=e.target.value;
+            data_table_new[row].Sound=Number(e.target.value);
             setValue_VM( Elevators.massaComplexSilo( data_table_new, row ) );
         };
         const changeUllage = (e) => { 
             setValue_U(e.target.value);
-            data_table_new[row].Ullage=e.target.value;
+            data_table_new[row].Ullage=Number(e.target.value);
             setValue_VM( Elevators.massaComplexSilo( data_table_new, row ) );
         };
 

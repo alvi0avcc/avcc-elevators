@@ -755,7 +755,7 @@ class cElevators {
         let wokrHeight = sound - ullage;
         if ( type != 'square' && type != 'circle' && type !='star' ) err_mes = 'unknown silo type, ';
         if ( sound <= 0 ) err_mes = err_mes + 'incorrect Measuring Point, ';
-        if ( ullage > sound || ullage < 0 ) err_mes = err_mes + 'incorrect Ullage, ';
+        if ( ullage > sound || ullage < 0) err_mes = err_mes + 'incorrect Ullage, ';
         if ( height <= 0 ) err_mes = err_mes + 'incorrect Height, ';
         if ( type == 'square' ){
             if ( length <= 0 ) err_mes = err_mes + 'incorrect Length, ';

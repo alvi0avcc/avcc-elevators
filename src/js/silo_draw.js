@@ -16,7 +16,7 @@ const Canvas = props => {
     let ullage = Number( Elevators.SiloUllage );
     let z      = 1; //zoom
     if ( (h1+h2) >= d ) {
-         z =  ( ctx.canvas.height - 40 )  / ( h1 + h2 );
+         z =  ( ctx.canvas.height - 60 )  / ( h1 + h2 );
         }
         else { 
             z = ( ctx.canvas.height -40 ) /  d ; 

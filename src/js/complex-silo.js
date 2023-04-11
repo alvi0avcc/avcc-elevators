@@ -240,13 +240,13 @@ function ComplexSiloInfo(props) {
           let ullage = event.currentTarget.value;
           let id = event.currentTarget.id;  
           //id: `silo-row-${index}/col-${index2}`,
-          let row = id.indexOf("row");
-          let col = id.indexOf("col");
+          let row = Number(id.indexOf("row"));
+          let col = Number(id.indexOf("col"));
           let row_txt = id.slice( row+4, col-1);
           let col_txt = id.slice( col+4 );
           row = Number(row_txt);
           col = Number(col_txt);
-          Elevators.ComplexSiloUllageSet( row, col, ullage);
+          Elevators.ComplexSiloUllageSet( row, col, Number(ullage));
           array[index2].Ullage = event.currentTarget.value;
           setUllageChange(!ullageChange);
         }
@@ -531,7 +531,7 @@ function ComplexSiloInfo(props) {
           <Button
             variant="outlined" 
             style={{ fontSize: 12 }}
-            onClick={()=>{ Elevators.ComplexSiloAdd( qr, type, H, L, W, D, C ); setDim(!dim); setUpdate(!update) }} >
+            onClick={()=>{ Elevators.ComplexSiloAdd( Number(qr), type, Number(H), Number(L), Number(W), Number(D), Number(C) ); setDim(!dim); setUpdate(!update) }} >
             Add row
           </Button>
           <Button 

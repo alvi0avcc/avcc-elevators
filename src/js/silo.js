@@ -96,35 +96,35 @@ function SiloInfo(){
         setValue(!value)
       };
     const ChangeCargoNatura = (event) => {
-        Elevators.SetSiloCargoNatura = event.target.value;
+      if ( event.target.value >= 0 ) { Elevators.SetSiloCargoNatura = Number(event.target.value); }
         setValue(!value)
       }; 
     const ChangeDiam = (event) => {
-        Elevators.SetSiloDimension_D = event.target.value;
+      if ( event.target.value >= 0 ) { Elevators.SetSiloDimension_D = Number(event.target.value); }
         setValue(!value)
       };
     const ChangeH = (event) => {
-        Elevators.SetSiloDimension_h1 = event.target.value;
+      if ( event.target.value >= 0 ) { Elevators.SetSiloDimension_h1 = Number(event.target.value); }
         setValue(!value)
       };
     const Changeh2 = (event) => {
-        Elevators.SetSiloDimension_h2 = event.target.value;
+      if ( event.target.value >= 0 ) { Elevators.SetSiloDimension_h2 = Number(event.target.value); }
         setValue(!value)
       };
     const Changeh3 = (event) => {
-        Elevators.SetSiloDimension_h3 = event.target.value;
+      if ( event.target.value >= 0 ) { Elevators.SetSiloDimension_h3 = Number(event.target.value); }
         setValue(!value)
       };
     const ChangeOut = (event) => {
-        Elevators.SetSiloDimension_out = event.target.value;
+        if ( event.target.value >= 0 ) { Elevators.SetSiloDimension_out = Number(event.target.value); };
         setValue(!value)
       };  
     const ChangeSound = (event) => {
-        Elevators.SetSiloDimension_Sound = event.target.value;
+      if ( event.target.value >= 0 ) { Elevators.SetSiloDimension_Sound = Number(event.target.value); }
         setValue(!value)
       };
     const ChangeUllage = (event) => {
-        Elevators.SetSiloUllage = event.target.value;
+        Elevators.SetSiloUllage = Number(event.target.value);
         setValue(!value)
       }; 
     return(
@@ -134,22 +134,44 @@ function SiloInfo(){
             style={{ border: '1px solid #1976d2', borderRadius: 4, marginLeft: -35 }}
             >
             <Stack direction= 'row' style={{ marginTop: 7 }}>
-                <TextField value={ Elevators.SiloName } label="Name" sx={{ p: 1 }} onChange={ChangeName} size='small' /> 
-                <TextField value={ Elevators.SiloCargo.Name } label="Cargo" sx={{ p: 1 }} onChange={ChangeCargoName} size='small' />
+                <TextField
+                  value={ Elevators.SiloName }
+                  label="Name" 
+                  sx={{ p: 1 }}
+                  style={ Elevators.SiloName == '' || Elevators.SiloName == null  ? {backgroundClip: 'content-box', backgroundColor: 'red'} :  {backgroundColor: ''} }
+                  onChange={ChangeName} 
+                  size='small' /> 
+                <TextField 
+                  value={ Elevators.SiloCargo.Name } 
+                  label="Cargo" 
+                  sx={{ p: 1 }}
+                  style={ Elevators.SiloCargo.Name == '' || Elevators.SiloCargo.Name == null  ? {backgroundClip: 'content-box', backgroundColor: 'yellow'} :  {backgroundColor: ''} } 
+                  onChange={ChangeCargoName} 
+                  size='small' />
             </Stack>
             <Stack direction= 'row'>
                 <TextField 
                   value={ Elevators.SiloCargo.Natura }
                   label={ Elevators.SiloCargo.Natura > 100 ? "Test Weight (g/l)" : "Test Weight (Kg/hL)" }
+                  style={ Elevators.SiloCargo.Natura <= 10   ? {backgroundClip: 'content-box', backgroundColor: 'red'} :  {backgroundColor: ''} } 
                   sx={{ p: 1 }}
                   onChange={ChangeCargoNatura}
+                  type='number'
                   size='small' />
-                <TextField style={{ backgroundColor: 'whitesmoke' }} value={ Elevators.SiloUllage } label="Ullage (m)" sx={{ p: 1 }} onChange={ChangeUllage} size='small' />
+                <TextField 
+                  value={ Elevators.SiloUllage } 
+                  style={ Elevators.SiloUllage <= 0   ? {backgroundClip: 'content-box', backgroundColor: 'yellow'} :  {backgroundClip: 'content-box', backgroundColor: 'whitesmoke'} }
+                  label="Ullage (m)" 
+                  sx={{ p: 1 }} 
+                  type='number'
+                  onChange={ChangeUllage} 
+                  size='small' />
             </Stack>
             <Stack direction= 'row'>
                 <TextField 
-                  style={ { width : 210 } }
+                  style={ Elevators.SiloDimension.Diameter <= 0   ? {width : 210, backgroundClip: 'content-box', backgroundColor: 'red'} :  {width : 210, backgroundClip: 'content-box', backgroundColor: ''} }
                   value={ Elevators.SiloDimension.Diameter } label="Diameter (m)" sx={{ p: 1 }} onChange={ChangeDiam} size='small'
+                  type='number'
                   InputProps={{ 
                     endAdornment:
                       <IconButton color="primary" aria-label="Calculate Diameter from Area" component="label" onClick={() => {
@@ -161,20 +183,65 @@ function SiloInfo(){
                         </Tooltip>
                       </IconButton> }}
                   />
-                <TextField value={ Elevators.SiloDimension.h1 } label="Silo cylinder height (m)" sx={{ p: 1 }} onChange={ChangeH} size='small' />
+                <TextField 
+                  value={ Elevators.SiloDimension.h1 } 
+                  label="Silo cylinder height (m)" 
+                  style={ Elevators.SiloDimension.h1 <= 0   ? {backgroundClip: 'content-box', backgroundColor: 'red'} :  { backgroundClip: 'content-box', backgroundColor: ''} }
+                  sx={{ p: 1 }} 
+                  onChange={ChangeH} 
+                  type='number'
+                  size='small' />
             </Stack>
             <Stack direction= 'row'>
-                <TextField value={ Elevators.SiloDimension.h2 } label="Roof cone height (m)" sx={{ p: 1 }} onChange={Changeh2} size='small' />
-                <TextField value={ Elevators.SiloDimension.Sound } label="Measuring point level (m)" sx={{ p: 1 }} onChange={ChangeSound} size='small' />
+                <TextField 
+                  value={ Elevators.SiloDimension.h2 } 
+                  style={ Elevators.SiloDimension.h2 < 0   ? {backgroundClip: 'content-box', backgroundColor: 'red'} :  { backgroundClip: 'content-box', backgroundColor: ''} }
+                  label="Roof cone height (m)" 
+                  type='number'
+                  sx={{ p: 1 }} 
+                  onChange={Changeh2} 
+                  size='small' />
+                <TextField 
+                  value={ Elevators.SiloDimension.Sound }
+                  style={ Elevators.SiloDimension.Sound <= 0   ? {backgroundClip: 'content-box', backgroundColor: 'red'} :  { backgroundClip: 'content-box', backgroundColor: ''} } 
+                  label="Measuring point level (m)" 
+                  type='number'
+                  sx={{ p: 1 }} 
+                  onChange={ChangeSound} 
+                  size='small' />
             </Stack>
             <Stack direction= 'row'>
-              <TextField value={ Elevators.SiloDimension.h3 } label="Bottom cone height (m)" sx={{ p: 1 }} onChange={Changeh3} size='small' />
-              <TextField value={ Elevators.SiloDimension.out } label="Area of bottom out (m²)" sx={{ p: 1 }} onChange={ChangeOut} size='small' />
+              <TextField 
+                value={ Elevators.SiloDimension.h3 } 
+                style={ Elevators.SiloDimension.h3 <= 0   ? {backgroundClip: 'content-box', backgroundColor: 'yellow'} :  { backgroundClip: 'content-box', backgroundColor: ''} }
+                label="Bottom cone height (m)" 
+                type='number'
+                sx={{ p: 1 }} 
+                onChange={Changeh3} 
+                size='small' />
+              <TextField 
+                value={ Elevators.SiloDimension.out } 
+                style={ Elevators.SiloDimension.out <= 0   ? {backgroundClip: 'content-box', backgroundColor: 'yellow'} :  { backgroundClip: 'content-box', backgroundColor: ''} }
+                label="Area of bottom out (m²)" 
+                type='number'
+                sx={{ p: 1 }} 
+                onChange={ChangeOut} 
+                size='small' />
             </Stack>
 
             <Stack direction= 'row'>
-                <TextField value={ Elevators.SiloVolume } label="Сargo volume (m³)" sx={{ p: 1 }} size='small' />
-                <TextField style={{ backgroundColor: 'whitesmoke' }} value={ Elevators.SiloMass } label="Cargo weight (MT)" sx={{ p: 1 }} size='small' />
+                <TextField 
+                  value={ Elevators.SiloVolume } 
+                  style={ Elevators.SiloVolume < 0 || Elevators.SiloVolume == null ? {backgroundClip: 'content-box', backgroundColor: 'yellow'} :  { backgroundClip: 'content-box', backgroundColor: ''} }
+                  label="Сargo volume (m³)" 
+                  sx={{ p: 1 }} 
+                  size='small' />
+                <TextField 
+                  value={ Elevators.SiloMass } 
+                  style={ Elevators.SiloMass <= 0 || Elevators.SiloMass == null ? {backgroundClip: 'content-box', backgroundColor: 'yellow'} :  { backgroundClip: 'content-box', backgroundColor: 'whitesmoke' } }
+                  label="Cargo weight (MT)" 
+                  sx={{ p: 1 }} 
+                  size='small' />
             </Stack>
             </Stack>
 
