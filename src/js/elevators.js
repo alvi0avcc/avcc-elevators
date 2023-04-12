@@ -70,11 +70,11 @@ class cPile {
 
 class cWarehouse {
     constructor() {
-    this.id      = '';    
-    this.Name        = '';
-    this.Dimensions  = {Length: 0, Width: 0, Height: 0 };
+    this.id          = '';    
+    this.Name        = 'NewWarehouse';
+    this.Dimensions  = { Length: 0, Width: 0, Height: 0, Conus_height: 0, Conus_L: 0, Conus_W: 0, Conus_X: 0, Conus_Y: 0, };
     this.Pile        = [];
-    this.Cargo       = {Name: '', Natura: 1 };
+    this.Cargo       = {Name: '', Natura: 0 };
     this.Comments    = ''
     }
 };
@@ -133,6 +133,18 @@ class cElevators {
             }
         else return 0;
     };
+    get FloorFound(){
+        if ( this.ElevatorsFound ) {
+            if ( this.Elevators[this.Selected].Warehouse )
+            if ( this.Elevators[this.Selected].Warehouse.length > 0 ) { 
+                    if ( this.SiloSelected > this.Elevators[this.Selected].Warehouse.length - 1 ) 
+                        this.SetSiloSelected = this.Elevators[this.Selected].Warehouse.length -1
+                    return this.Elevators[this.Selected].Warehouse.length
+                }
+                else return 0;
+            }
+        else return 0;
+    };
     get ComplexSiloFound(){
         if ( this.ComplexFound > 0 ) {
             if ( this.Elevators[this.Selected].Complex )
@@ -165,6 +177,7 @@ class cElevators {
     return( List )
     };
     set SetSiloSelected(data){ this.SiloSelected = data };
+    set SetFloorSelected(data){ this.WarehouseSelected = data };
     set SetComplexSelected(data){ this.ComplexSelected = data };
     set SetComplexSiloSelected(data){ this.ComplexSiloSelected = data };
     get SiloName(){
@@ -173,6 +186,10 @@ class cElevators {
     };
     get ComplexName(){
         if ( this.ComplexFound > 0 ) return this.Elevators[this.Selected].Complex[this.ComplexSelected].Name
+        else return 'empty'
+    };
+    get FloorName(){
+        if ( this.FloorFound > 0 ) return this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Name
         else return 'empty'
     };
     SetComplexSiloName (name, col, row){
@@ -210,6 +227,7 @@ class cElevators {
 
     set SetSiloName(data){ if ( this.SiloFound ) this.Elevators[this.Selected].Silo[this.SiloSelected].Name  = data }
     set SetComplexName(data){ if ( this.ComplexFound ) this.Elevators[this.Selected].Complex[this.ComplexSelected].Name  = data }
+    set SetFloorName(data){ if ( this.FloorFound ) this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Name  = data }
     get SiloCargo(){
         if ( this.SiloFound ) return this.Elevators[this.Selected].Silo[this.SiloSelected].Cargo
         else return ''
@@ -270,8 +288,9 @@ class cElevators {
         return Number( m );
     }
     get SiloList(){
+        let List = [];
         if ( this.SiloFound) {
-            let List = [];
+            
             let ii = this.Elevators[this.Selected].Silo.length;
             let data;
             if (ii > 0 ) {    
@@ -280,9 +299,44 @@ class cElevators {
                     List.push( data );
                 }
             }
-            return(
-                List
-            )}
+        }
+        return( List );
+    }
+    get FloorList(){
+        let List = [];
+        if ( this.FloorFound) {
+            let ii = this.Elevators[this.Selected].Warehouse.length;
+            let data;
+            if (ii > 0 ) {    
+                for( let i =0 ; i < ii ; i++){
+                    data = this.Elevators[this.Selected].Warehouse[i].Name;
+                    List.push( data );
+                }
+            }
+            }
+        return( List );
+    }
+    get FloorCurrent(){
+        let result;
+        if ( this.FloorFound) { result = structuredClone( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected] ); }
+        return( result );
+    }
+    get FloorCurrentDimensions(){
+        let result;
+        if ( this.FloorFound) { result = structuredClone( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Dimensions ); }
+        return( result );
+    }
+    setFloorDimensions ( Length , Width , Height , Conus_height , Conus_L , Conus_W , Conus_X , Conus_Y ){
+        if ( this.FloorFound ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Dimensions.Length = Number(Length);
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Dimensions.Width = Number(Width);
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Dimensions.Height = Number(Height);
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Dimensions.Conus_height = Number(Conus_height);
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Dimensions.Conus_L = Number(Conus_L);
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Dimensions.Conus_W = Number(Conus_W);
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Dimensions.Conus_X = Number(Conus_X);
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Dimensions.Conus_Y = Number(Conus_Y);
+        } 
     }
     get ComplexList(){
         let List = [];
@@ -303,6 +357,12 @@ class cElevators {
             this.Elevators[this.Selected].Silo.push(new cSilo());
             this.State = 'Silo added';
         } else alert ('Error adding silo !')
+    }
+    FloorAdd(){
+        if ( this.ElevatorsFound > 0 ) {
+            this.Elevators[this.Selected].Warehouse.push(new cWarehouse());
+            this.State = 'Warehouse added';
+        } else alert ('Error adding warehouse !')
     }
     get ComplexFound(){
         if ( this.ElevatorsFound ) {
@@ -334,6 +394,15 @@ class cElevators {
             }
         } else alert ('Error clone complex !')
     };
+    FloorClone(){
+        if ( this.ElevatorsFound > 0 ) {
+            if ( this.FloorFound == -1 ) ( this.Elevators[this.Selected].Warehouse = [] );
+            if ( this.FloorFound >= 0 ) {
+                this.Elevators[this.Selected].Warehouse.push( structuredClone( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected] ) );
+                this.State = 'Warehouse clonned';
+            }
+        } else alert ('Error clone warehouse !')
+    };
     ComplexDel(){
         if ( this.ComplexFound > 0 ) {
             let message = 'Are you sure you want to remove Silo - ' + this.ComplexName +'?';
@@ -341,6 +410,16 @@ class cElevators {
                 this.Elevators[this.Selected].Complex.splice( this.ComplexSelected, 1 );
                 if ( this.ComplexSelected > this.ComplexFound - 1 ) this.ComplexSelected = this.ComplexFound -1 ;
                 if ( this.ComplexSelected < 0 ) this.SetComplexSelected = 0;
+            }
+        };
+    }
+    FloorDel(){
+        if ( this.FloorFound > 0 ) {
+            let message = 'Are you sure you want to remove Warehouse - ' + this.FloorName +'?';
+            if ( window.confirm( message ) ) {
+                this.Elevators[this.Selected].Warehouse.splice( this.WarehouseSelected, 1 );
+                if ( this.WarehouseSelected > this.FloorFound - 1 ) this.WarehouseSelected = this.FloorFound -1 ;
+                if ( this.WarehouseSelected < 0 ) this.SetFloorSelected = 0;
             }
         };
     }

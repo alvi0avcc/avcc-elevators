@@ -25,7 +25,15 @@ export function ElevatorDialogShow (name, index) {
     if ( NewName || "" ) {
         Elevators.SetComplexName = NewName
     };
-  };  
+  }; 
+  
+  export function FloorDialogShow (name, index) {
+    let NewName = "";
+       NewName = prompt("New Name of Warehouse", name );
+    if ( NewName || "" ) {
+        Elevators.SetFloorName = NewName
+    };
+  };
 
 export function RoundSqureToDiameter(){
     let d  = Elevators.SiloDimension.Diameter;
