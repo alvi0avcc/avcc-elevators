@@ -46,7 +46,7 @@ const FloorViewCanvas = props => {
     const draw = (gl) => {
 
         // Инициализация данных
-                    let vertexBuffer = gl.createBuffer();
+        let vertexBuffer = gl.createBuffer();
 
                     let vertices = [0, 0, 0,
                                     0, 10, 0,
@@ -70,9 +70,9 @@ const FloorViewCanvas = props => {
         far — максимальное расстояние до объектов, которые будут видны.*/
 
         let cameraMatrix = mat4.create();
-        //mat4.perspective(cameraMatrix, 1, 1, 0.1, 1000);
-        mat4.ortho(cameraMatrix, 0, 100, 0, 100, 0.1, 1000);
-        mat4.translate(cameraMatrix, cameraMatrix, [50, 50, -100]);
+        mat4.perspective(cameraMatrix, 1, 1, 0.1, 1000);
+        //mat4.ortho(cameraMatrix, 0, 100, 0, 100, 0.1, 1000);
+        mat4.translate(cameraMatrix, cameraMatrix, [0, 0, -50]);
 
         // Создадим единичную матрицу положения куба
         let cubeMatrix = mat4.create();
@@ -165,7 +165,7 @@ const FloorViewCanvas = props => {
             gl.uniformMatrix4fv(uCube, false, cubeMatrix);
             gl.uniformMatrix4fv(uCamera, false, cameraMatrix);
         
-            //gl.drawArrays(gl.TRIANGLES, 0, 36);
+            gl.drawArrays(gl.TRIANGLES, 0, 24);
             //gl.drawArrays(gl.LINE_LOOP, 0, 4);
             //gl.drawArrays(gl.LINE_LOOP, 4, 4);
             //gl.drawArrays(gl.LINE_LOOP, 8, 4);
