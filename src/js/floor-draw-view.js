@@ -84,8 +84,19 @@ const FloorViewCanvas = props => {
         gl.viewport(0, 0, 400, 400);
 
        // Инициализация шейдеров
-        const vertexShaderSource =
+       /* const vertexShaderSource =
             `attribute vec3 a_position;
+            attribute vec3 a_color;
+            uniform mat4 u_cube;
+            uniform mat4 u_camera;
+            varying vec3 v_color;
+            void main(void) {
+                v_color = a_color;
+                gl_Position = u_camera * u_cube * vec4(a_position, 1.0);
+            }`;*/
+
+        const vertexShaderSource =
+           `attribute vec3 a_position;
             attribute vec3 a_color;
             uniform mat4 u_cube;
             uniform mat4 u_camera;
@@ -95,15 +106,26 @@ const FloorViewCanvas = props => {
                 gl_Position = u_camera * u_cube * vec4(a_position, 1.0);
             }`;
 
+        /*const vertexShaderSource =
+            `attribute vec4 position;
+                void main() {
+                    gl_Position = position;
+                    }`;*/
+
         //Use the createShader function from the example above
         const vertexShader = createShader(gl, vertexShaderSource, gl.VERTEX_SHADER);
 
-        const fragmentShaderSource =
+        /*const fragmentShaderSource =
             `precision mediump float;
             varying vec3 v_color;
             void main(void) {
                 gl_FragColor = vec4(v_color.rgb, 1.0);
-            }`;
+            }`;*/
+
+        const fragmentShaderSource = 
+            `void main() {
+                gl_FragColor = vec4(0.0,  0.0,  1.0,  1.0);
+                }`;
 
         //Use the createShader function from the example above
         const fragmentShader = createShader( gl, fragmentShaderSource, gl.FRAGMENT_SHADER );
@@ -165,11 +187,12 @@ const FloorViewCanvas = props => {
             gl.uniformMatrix4fv(uCube, false, cubeMatrix);
             gl.uniformMatrix4fv(uCamera, false, cameraMatrix);
         
-            gl.drawArrays(gl.TRIANGLES, 0, 24);
-            //gl.drawArrays(gl.LINE_LOOP, 0, 4);
-            //gl.drawArrays(gl.LINE_LOOP, 4, 4);
-            //gl.drawArrays(gl.LINE_LOOP, 8, 4);
-            //gl.drawArrays(gl.LINE_LOOP, 12, 4);
+            //gl.drawArrays(gl.TRIANGLES, 0, 24);
+            //gl.drawElements(gl.LINE_LOOP, 36, gl.UNSIGNED_SHORT, 0);
+            gl.drawArrays(gl.LINE_LOOP, 0, 4);
+            gl.drawArrays(gl.LINE_LOOP, 4, 4);
+            gl.drawArrays(gl.LINE_LOOP, 8, 4);
+            gl.drawArrays(gl.LINE_LOOP, 12, 4);
         
             lastRenderTime = time;
 
