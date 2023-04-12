@@ -56,7 +56,7 @@ const FloorViewCanvas = props => {
                                     0, 0, 10,
                                     0, 10, 10,
                                     10, 10, 10,
-                                    10, 0, 10,
+                                    10, 0, 10
                                     ];
 
         //vertices = data_draw;
@@ -167,7 +167,7 @@ const FloorViewCanvas = props => {
         
             //l.drawArrays(gl.TRIANGLES, 0, 36);
             gl.drawArrays(gl.LINE_LOOP, 0, 4);
-            gl.drawArrays(gl.LINE_LOOP, 4, 4);
+            //gl.drawArrays(gl.LINE_LOOP, 4, 4);
             //gl.drawArrays(gl.LINE_LOOP, 8, 4);
             //gl.drawArrays(gl.LINE_LOOP, 12, 4);
         
