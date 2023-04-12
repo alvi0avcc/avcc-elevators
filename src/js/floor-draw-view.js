@@ -180,9 +180,9 @@ const FloorViewCanvas = props => {
             gl.enableVertexAttribArray(aPosition);
             gl.vertexAttribPointer(aPosition, 3, gl.FLOAT, false, 0, 0);
         
-            gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-            gl.enableVertexAttribArray(aColor);
-            gl.vertexAttribPointer(aColor, 3, gl.FLOAT, false, 0, 0);
+            //gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+            //gl.enableVertexAttribArray(aColor);
+            //gl.vertexAttribPointer(aColor, 3, gl.FLOAT, false, 0, 0);
         
             gl.uniformMatrix4fv(uCube, false, cubeMatrix);
             gl.uniformMatrix4fv(uCamera, false, cameraMatrix);
