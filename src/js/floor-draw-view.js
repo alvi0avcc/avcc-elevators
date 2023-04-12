@@ -10,6 +10,7 @@ import { mat4 } from 'gl-matrix';
 
 const FloorViewCanvas = props => {
 
+    
     const canvasRef = useRef(null)
 
     let data = Elevators.FloorCurrentDimensions;

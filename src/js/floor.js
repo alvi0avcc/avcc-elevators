@@ -71,14 +71,25 @@ function FloorHeader(propsHeader){
 function FloorSize(propsSize){
     const [value, setValue] = React.useState(false);
 
-    let Length = Elevators.FloorCurrentDimensions.Length;
-    let Width = Elevators.FloorCurrentDimensions.Width;
-    let Height = Elevators.FloorCurrentDimensions.Height;
-    let Conus_height = Elevators.FloorCurrentDimensions.Conus_height;
-    let Conus_L = Elevators.FloorCurrentDimensions.Conus_L;
-    let Conus_W = Elevators.FloorCurrentDimensions.Conus_W;
-    let Conus_X = Elevators.FloorCurrentDimensions.Conus_X;
-    let Conus_Y = Elevators.FloorCurrentDimensions.Conus_Y;
+    let Length = 0;
+    let Width = 0;
+    let Height = 0;
+    let Conus_height = 0;
+    let Conus_L = 0;
+    let Conus_W = 0;
+    let Conus_X = 0;
+    let Conus_Y = 0;
+
+    if ( Elevators.FloorFound ) {
+        Length = Elevators.FloorCurrentDimensions.Length;
+        Width = Elevators.FloorCurrentDimensions.Width;
+        Height = Elevators.FloorCurrentDimensions.Height;
+        Conus_height = Elevators.FloorCurrentDimensions.Conus_height;
+        Conus_L = Elevators.FloorCurrentDimensions.Conus_L;
+        Conus_W = Elevators.FloorCurrentDimensions.Conus_W;
+        Conus_X = Elevators.FloorCurrentDimensions.Conus_X;
+        Conus_Y = Elevators.FloorCurrentDimensions.Conus_Y;
+    };
 
     const Length_Change = (event) => {
         Length = event.target.value;
@@ -140,7 +151,7 @@ function FloorSize(propsSize){
         size='small'
         label='Длина'
         type='number'
-        value={Elevators.FloorCurrentDimensions.Length}
+        value={Length}
         onChange={ Length_Change }
         ></TextField>
 
@@ -149,7 +160,7 @@ function FloorSize(propsSize){
         size='small'
         label='Ширина'
         type='number'
-        value={Elevators.FloorCurrentDimensions.Width}
+        value={Width}
         onChange={ Width_Change }
         ></TextField>
 
@@ -158,7 +169,7 @@ function FloorSize(propsSize){
         size='small'
         label='Высота'
         type='number'
-        value={Elevators.FloorCurrentDimensions.Height}
+        value={Height}
         onChange={ Height_Change }
         ></TextField>
 
@@ -167,7 +178,7 @@ function FloorSize(propsSize){
         size='small'
         label='Глубина нижнего конуса'
         type='number'
-        value={Elevators.FloorCurrentDimensions.Conus_height}
+        value={Conus_height}
         onChange={ Conus_height_Change }
         ></TextField>
 
@@ -176,7 +187,7 @@ function FloorSize(propsSize){
         size='small'
         label='длина окна нижнего конуса'
         type='number'
-        value={Elevators.FloorCurrentDimensions.Conus_L}
+        value={Conus_L}
         onChange={ Conus_L_Change }
         ></TextField>
 
@@ -185,7 +196,7 @@ function FloorSize(propsSize){
         size='small'
         label='ширина окна нижнего конуса'
         type='number'
-        value={Elevators.FloorCurrentDimensions.Conus_W}
+        value={Conus_W}
         onChange={ Conus_W_Change }
         ></TextField>
 
@@ -194,7 +205,7 @@ function FloorSize(propsSize){
         size='small'
         label='X нижнего конуса'
         type='number'
-        value={Elevators.FloorCurrentDimensions.Conus_X}
+        value={Conus_X}
         onChange={ Conus_X_Change }
         ></TextField>
 
@@ -203,13 +214,13 @@ function FloorSize(propsSize){
         size='small'
         label='Y нижнего конуса'
         type='number'
-        value={Elevators.FloorCurrentDimensions.Conus_Y}
+        value={Conus_Y}
         onChange={ Conus_Y_Change }
         ></TextField>
 
         </div>
             <div className='block'>
-                <FloorViewCanvas/>
+                { Elevators.FloorFound ?  <FloorViewCanvas/> : '' }
             </div>
         </div>
 
