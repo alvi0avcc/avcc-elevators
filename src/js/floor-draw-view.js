@@ -59,7 +59,7 @@ const FloorViewCanvas = props => {
                                     10, 0, 10
                                     ];
 
-        //vertices = data_draw;
+        vertices = data_draw;
         // матрица перспективы
 
         /*Метод mat4.perspective(matrix, fov, aspect, near, far) принимает пять параметров:
