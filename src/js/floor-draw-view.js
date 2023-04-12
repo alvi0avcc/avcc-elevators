@@ -49,17 +49,17 @@ const FloorViewCanvas = props => {
                     let vertexBuffer = gl.createBuffer();
 
                     let vertices = [0, 0, 0,
-                                    0, 1, 0,
-                                    1, 1, 0,
-                                    1, 0, 0,
+                                    0, 10, 0,
+                                    10, 10, 0,
+                                    10, 0, 0,
                                     
-                                    0, 0, 1,
-                                    0, 1, 1,
-                                    1, 1, 1,
-                                    1, 0, 1,
+                                    0, 0, 10,
+                                    0, 10, 10,
+                                    10, 10, 10,
+                                    10, 0, 10,
                                     ];
 
-        vertices = data_draw;
+        //vertices = data_draw;
         // матрица перспективы
 
         /*Метод mat4.perspective(matrix, fov, aspect, near, far) принимает пять параметров:
@@ -168,8 +168,8 @@ const FloorViewCanvas = props => {
             //l.drawArrays(gl.TRIANGLES, 0, 36);
             gl.drawArrays(gl.LINE_LOOP, 0, 4);
             gl.drawArrays(gl.LINE_LOOP, 4, 4);
-            gl.drawArrays(gl.LINE_LOOP, 8, 4);
-            gl.drawArrays(gl.LINE_LOOP, 12, 4);
+            //gl.drawArrays(gl.LINE_LOOP, 8, 4);
+            //gl.drawArrays(gl.LINE_LOOP, 12, 4);
         
             lastRenderTime = time;
 
