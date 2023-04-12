@@ -165,8 +165,8 @@ const FloorViewCanvas = props => {
             gl.uniformMatrix4fv(uCube, false, cubeMatrix);
             gl.uniformMatrix4fv(uCamera, false, cameraMatrix);
         
-            //l.drawArrays(gl.TRIANGLES, 0, 36);
-            gl.drawArrays(gl.LINE_LOOP, 0, 4);
+            //gl.drawArrays(gl.TRIANGLES, 0, 36);
+            //gl.drawArrays(gl.LINE_LOOP, 0, 4);
             //gl.drawArrays(gl.LINE_LOOP, 4, 4);
             //gl.drawArrays(gl.LINE_LOOP, 8, 4);
             //gl.drawArrays(gl.LINE_LOOP, 12, 4);
