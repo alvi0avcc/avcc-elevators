@@ -17,7 +17,12 @@ const FloorViewCanvas = props => {
     let Length = data.Length;
     let Width = data.Width;
     let Height = data.Height;
-    let data_draw = [   -Length/2, -Width/2, -Height/2,
+    let Conus_height = data.Conus_height;
+    let Conus_L = data.Conus_L;
+    let Conus_W = data.Conus_W;
+    let Conus_X = data.Conus_X;
+    let Conus_Y = data.Conus_Y;
+    /*let data_draw = [   -Length/2, -Width/2, -Height/2,
                         -Length/2, -Width/2, Height/2,
                         -Length/2, Width/2, Height/2,
                         -Length/2, Width/2, -Height/2,
@@ -36,7 +41,57 @@ const FloorViewCanvas = props => {
                         -Length/2, Width/2, Height/2,
                         Length/2, Width/2, Height/2,
                         Length/2, -Width/2, Height/2
-                    ];
+                    ];*/
+    // Korpus                
+    let korpus_draw = [-Length/2, -Height/2, -Width/2,
+                    -Length/2, -Height/2, Width/2,
+                    -Length/2, Height/2, Width/2,
+                    -Length/2, Height/2, -Width/2,
+
+                    Length/2, -Height/2, -Width/2,
+                    Length/2, -Height/2, Width/2,
+                    Length/2, Height/2, Width/2,
+                    Length/2, Height/2, -Width/2,
+
+                    -Length/2, -Height/2, -Width/2,
+                    -Length/2, Height/2, -Width/2,
+                    Length/2, Height/2, -Width/2,
+                    Length/2, -Height/2, -Width/2,
+
+                    -Length/2, -Height/2 ,Width/2,
+                    -Length/2, Height/2, Width/2,
+                    Length/2, Height/2, Width/2,
+                    Length/2, -Height/2, Width/2
+                ];
+    // Head                
+    let head_up = Height/3;
+    let head_draw = [-Length/2, Height/2, -Width/2,
+                    -Length/2, Height/2 + head_up, 0,
+                    Length/2, Height/2 + head_up, 0,
+                    Length/2, Height/2, -Width/2,
+
+                    -Length/2, Height/2, Width/2,
+                    -Length/2, Height/2 + head_up, 0,
+                    Length/2, Height/2 + head_up, 0,
+                    Length/2, Height/2, Width/2,
+                ];
+    // Bottom Conus                
+    let conus_draw = [-Length/2, -Height/2, Width/2,
+                     Length/2, -Height/2, Width/2,
+                    -Length/2 + Conus_X + Conus_L/2 , -Height/2 - Conus_height, -Width/2 + Conus_Y + Conus_W/2,
+                    -Length/2 + Conus_X - Conus_L/2 , -Height/2 - Conus_height, -Width/2 + Conus_Y + Conus_W/2,
+
+                    -Length/2, -Height/2, -Width/2,
+                     Length/2, -Height/2, -Width/2,
+                    -Length/2 + Conus_X + Conus_L/2 , -Height/2 - Conus_height, -Width/2 + Conus_Y - Conus_W/2,
+                    -Length/2 + Conus_X - Conus_L/2 , -Height/2 - Conus_height, -Width/2 + Conus_Y - Conus_W/2,
+
+                    -Length/2 + Conus_X - Conus_L/2 , -Height/2 - Conus_height, -Width/2 + Conus_Y + Conus_W/2,
+                    -Length/2 + Conus_X + Conus_L/2 , -Height/2 - Conus_height, -Width/2 + Conus_Y + Conus_W/2,
+                    -Length/2 + Conus_X + Conus_L/2 , -Height/2 - Conus_height, -Width/2 + Conus_Y - Conus_W/2,
+                    -Length/2 + Conus_X - Conus_L/2 , -Height/2 - Conus_height, -Width/2 + Conus_Y - Conus_W/2,
+                ];
+
     let zoom = 1/Length;
     /*data_draw[0] = ;
     data_draw[0] = ;
@@ -48,18 +103,8 @@ const FloorViewCanvas = props => {
         // Инициализация данных
         let vertexBuffer = gl.createBuffer();
 
-                    let vertices = [0, 0, 0,
-                                    0, 10, 0,
-                                    10, 10, 0,
-                                    10, 0, 0,
-                                    
-                                    0, 0, 10,
-                                    0, 10, 10,
-                                    10, 10, 10,
-                                    10, 0, 10
-                                    ];
+        let vertices = korpus_draw.concat(head_draw, conus_draw);
 
-        vertices = data_draw;
         // матрица перспективы
 
         /*Метод mat4.perspective(matrix, fov, aspect, near, far) принимает пять параметров:
@@ -151,6 +196,8 @@ const FloorViewCanvas = props => {
             
             let aPosition = gl.getAttribLocation(program, 'a_position');
             let aColor = gl.getAttribLocation(program, 'a_color');
+
+            mat4.rotateX(cubeMatrix, cubeMatrix, -3.14/4);
 //----------------------------------------------------------------------
         function render() {
             // Запрашиваем рендеринг на следующий кадр
@@ -160,12 +207,14 @@ const FloorViewCanvas = props => {
             var time = Date.now();
             var dt = lastRenderTime - time;
         
+            // Вращаем куб относительно оси X
+            //mat4.rotateX(cubeMatrix, cubeMatrix, -3.14/4);
             // Вращаем куб относительно оси Y
             mat4.rotateY(cubeMatrix, cubeMatrix, dt / 2000);
             // Вращаем куб относительно оси Z
-            mat4.rotateZ(cubeMatrix, cubeMatrix, dt / 2000);
+            //mat4.rotateZ(cubeMatrix, cubeMatrix, dt / 2000);
             // Вращаем куб относительно оси X
-            //mat4.rotateX(cubeMatrix, cubeMatrix, dt / 1000);
+            //mat4.rotateX(cubeMatrix, cubeMatrix, 1);
         
             // Очищаем сцену, закрашивая её в белый цвет
             gl.clearColor(1.0, 1.0, 1.0, 1.0);
@@ -189,10 +238,19 @@ const FloorViewCanvas = props => {
         
             //gl.drawArrays(gl.TRIANGLES, 0, 24);
             //gl.drawElements(gl.LINE_LOOP, 36, gl.UNSIGNED_SHORT, 0);
+
+            //korpus
             gl.drawArrays(gl.LINE_LOOP, 0, 4);
             gl.drawArrays(gl.LINE_LOOP, 4, 4);
             gl.drawArrays(gl.LINE_LOOP, 8, 4);
             gl.drawArrays(gl.LINE_LOOP, 12, 4);
+            //head
+            gl.drawArrays(gl.LINE_LOOP, 16, 4);
+            gl.drawArrays(gl.LINE_LOOP, 20, 4);
+            //conus
+            gl.drawArrays(gl.LINE_LOOP, 24, 4);
+            gl.drawArrays(gl.LINE_LOOP, 28, 4);
+            gl.drawArrays(gl.LINE_LOOP, 31, 4);
         
             lastRenderTime = time;
 
