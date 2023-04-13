@@ -11,7 +11,7 @@ export default function Floor(){
     return (
         <div>
             <FloorHeader updateState={update} callback={(data)=> setUpdate( data ) }/>
-            <FloorSize updateState={update} callback={(data)=> setUpdate( data ) }/>
+            { Elevators.FloorFound ?  <FloorSize updateState={update} callback={(data)=> setUpdate( data ) }/> : '' }
         </div>
     )
 };
@@ -31,7 +31,6 @@ function FloorHeader(propsHeader){
       Elevators.SetFloorSelected = newValueTabFloor;
       propsHeader.callback( !propsHeader.updateState );
     };
-        
 
     return (
         <>
@@ -39,22 +38,24 @@ function FloorHeader(propsHeader){
             <Button 
                 variant='outlined'
                 size='small'
-                onClick={ ()=>( Elevators.FloorAdd(), setUpdateFloor(!updateFloor) ) }
+                onClick={ (e)=>( Elevators.FloorAdd(), setUpdateFloor(!updateFloor), propsHeader.callback( !propsHeader.updateState ) ) }
                 >Add</Button>
             <Button 
                 variant='outlined'
+                disabled = { Elevators.FloorFound ? false : true }
                 size='small'
-                onClick={()=>{ Elevators.FloorClone(); setUpdateFloor( !updateFloor ) }}
+                onClick={()=>( Elevators.FloorClone(), setUpdateFloor(!updateFloor), propsHeader.callback( !propsHeader.updateState ) )}
                 >Clone</Button>
             <Button
                 variant='outlined'
+                disabled = { Elevators.FloorFound ? false : true }
                 size='small'
-                onClick={()=>{ Elevators.FloorDel(); setUpdateFloor( !updateFloor ) }}
+                onClick={()=>( Elevators.FloorDel(), setUpdateFloor(!updateFloor), propsHeader.callback( !propsHeader.updateState ) )}
                 >Delete</Button>
             <Button 
                 variant='outlined'
                 size='small'
-                onClick={()=>{iolocal.SaveElevator() ; setUpdateFloor( !updateFloor ) }}
+                onClick={()=>( iolocal.SaveElevator(), setUpdateFloor(!updateFloor) )}
                 >Save</Button>
         </div>
             <div sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -136,7 +137,10 @@ function FloorSize(propsSize){
         <>
         <div style={{ display: 'flex', flexDirection: 'row' }}>
 
-        <div className='block'>
+        <div 
+            className='block'
+            style={{ minWidth: 150 }}
+            >
         <IconButton
             color="primary"
             aria-label="Edit Complex Name"
