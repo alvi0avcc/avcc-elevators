@@ -8,6 +8,11 @@ select {
     color: currentColor;
     background: none;
 }
+.inputPile {
+  color: currentColor;
+  background: none;
+  width: 80px;
+}
 .block {
   border: 1px solid #1976d2;
   border-radius: 4px;
@@ -17,6 +22,12 @@ select {
   flex-direction: column;
   color: currentColor;
   background: none;
+}
+.rowPile {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 220px;
 }
 /* Style the tab */
 .tab {

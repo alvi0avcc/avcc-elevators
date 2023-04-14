@@ -3,11 +3,6 @@ import { Elevators } from './elevators.js';
 //import { Matrix4 } from 'three';
 import { mat4 } from 'gl-matrix';
 
-
-
-
-
-
 const FloorViewCanvas = props => {
 
     
@@ -22,26 +17,7 @@ const FloorViewCanvas = props => {
     let Conus_W = data.Conus_W;
     let Conus_X = data.Conus_X;
     let Conus_Y = data.Conus_Y;
-    /*let data_draw = [   -Length/2, -Width/2, -Height/2,
-                        -Length/2, -Width/2, Height/2,
-                        -Length/2, Width/2, Height/2,
-                        -Length/2, Width/2, -Height/2,
 
-                        Length/2, -Width/2, -Height/2,
-                        Length/2, -Width/2, Height/2,
-                        Length/2, Width/2, Height/2,
-                        Length/2, Width/2, -Height/2,
-
-                        -Length/2, -Width/2, -Height/2,
-                        -Length/2, Width/2, -Height/2,
-                        Length/2, Width/2, -Height/2,
-                        Length/2, -Width/2, -Height/2,
-
-                        -Length/2, -Width/2 ,Height/2,
-                        -Length/2, Width/2, Height/2,
-                        Length/2, Width/2, Height/2,
-                        Length/2, -Width/2, Height/2
-                    ];*/
     // Korpus                
     let korpus_draw = [-Length/2, -Height/2, -Width/2,
                     -Length/2, -Height/2, Width/2,

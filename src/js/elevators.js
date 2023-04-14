@@ -56,15 +56,16 @@ class cSilo {
 
 class cPile {
     constructor() {
-            this.id      = '';
-            this.dx1 = 21.76;
-            this.dy1 = 18.02;
-            this.dh1 = 0.6;
-            this.dx2 = 17.82;
-            this.dy2 = 18.02;
-            this.dh2 = 3.06;
-            this.ux  = 11.03;
-            this.uy  = 2.84
+            this.id     = '';
+            this.Name   = '';
+            this.type   = true; // true = base level Pile , false = upper level Pile
+            this.purpose = true; //add or remove volume
+            this.X      = 0; // location
+            this.Y      = 0;
+            this.Height = 1;//Height of Pile
+            this.Base   = { length: 5, width: 5, r1: 1, r1t: true, r2: 1, r2t: true, r3: 1, r3t: true, r4: 1, r4t: true,}; //base plane
+            // r1 - corner radius; r1t - true = round, false = line
+            this.Top    = { length: 1, width: 1, r1: 1, r1t: true, r2: 1, r2t: true, r3: 1, r3t: true, r4: 1, r4t: true,}; //upper plane
         }
     }
 
@@ -109,6 +110,7 @@ class cElevators {
         this.Selected               = 0;
         this.SiloSelected           = 0;
         this.WarehouseSelected      = 0;
+        this.PileSelected           = 0;
         this.ComplexSelected        = 0;
         this.ComplexSiloSelected    = 0;
         this.Elevators              = []
@@ -137,9 +139,21 @@ class cElevators {
         if ( this.ElevatorsFound ) {
             if ( this.Elevators[this.Selected].Warehouse )
             if ( this.Elevators[this.Selected].Warehouse.length > 0 ) { 
-                    if ( this.SiloSelected > this.Elevators[this.Selected].Warehouse.length - 1 ) 
-                        this.SetSiloSelected = this.Elevators[this.Selected].Warehouse.length -1
+                    if ( this.WarehouseSelected > this.Elevators[this.Selected].Warehouse.length - 1 ) 
+                        this.WarehouseSelected = this.Elevators[this.Selected].Warehouse.length -1
                     return this.Elevators[this.Selected].Warehouse.length
+                }
+                else return 0;
+            }
+        else return 0;
+    };
+    get PileFound(){
+        if ( this.FloorFound ) {
+            if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile )
+            if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile.length > 0 ) { 
+                    if ( this.PileSelected > this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile.length - 1 ) 
+                        this.PileSelected = this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile.length -1
+                    return this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile.length
                 }
                 else return 0;
             }
@@ -316,6 +330,27 @@ class cElevators {
             }
         return( List );
     }
+    get PilesList(){
+        let List = [];
+        if ( this.PileFound) {
+            let ii = this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile.length;
+            let data;
+            if (ii > 0 ) {    
+                for( let i =0 ; i < ii ; i++){
+                    data = this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[i].Name;
+                    List.push( data );
+                }
+            }
+            }
+        return( List );
+    }
+    PileGet( index ){
+        let result;
+        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] ) {
+            result =structuredClone( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] );
+            }
+        return( result );
+    }
     get FloorCurrent(){
         let result;
         if ( this.FloorFound) { result = structuredClone( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected] ); }
@@ -336,6 +371,38 @@ class cElevators {
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Dimensions.Conus_W = Number(Conus_W);
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Dimensions.Conus_X = Number(Conus_X);
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Dimensions.Conus_Y = Number(Conus_Y);
+        } 
+    }
+    setPile ( index, Name , type , purpose , X , Y , Height ,
+            Base_length, Base_width, Base_r1, Base_r1t, Base_r2, Base_r2t, Base_r3, Base_r3t, Base_r4, Base_r4t,
+            Top_length, Top_width, Top_r1, Top_r1t, Top_r2, Top_r2t, Top_r3, Top_r3t, Top_r4, Top_r4t, ){
+        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Name = Name;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].type = type;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].purpose = purpose;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].X = X;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Y = Y;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Height = Height;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Base.length = Base_length;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Base.width = Base_width;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Base.r1 = Base_r1;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Base.r1t = Base_r1t;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Base.r2 = Base_r2;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Base.r2t = Base_r2t;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Base.r3 = Base_r3;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Base.r3t = Base_r3t;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Base.r4 = Base_r4;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Base.r4t = Base_r4t;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.length = Top_length;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.width = Top_width;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.r1 = Top_r1;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.r1t = Top_r1t;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.r2 = Top_r2;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.r2t = Top_r2t;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.r3 = Top_r3;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.r3t = Top_r3t;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.r4 = Top_r4;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.r4t = Top_r4t;
         } 
     }
     get ComplexList(){
@@ -363,6 +430,12 @@ class cElevators {
             this.Elevators[this.Selected].Warehouse.push(new cWarehouse());
             this.State = 'Warehouse added';
         } else alert ('Error adding warehouse !')
+    }
+    PileAdd(){
+        if ( this.FloorFound > 0 ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile.push(new cPile());
+            this.State = 'PIle added';
+        } else alert ('Error adding pile !')
     }
     get ComplexFound(){
         if ( this.ElevatorsFound ) {
