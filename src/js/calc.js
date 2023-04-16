@@ -70,7 +70,42 @@ export function SphereToDecartArr ( arr=[], tetta, gamma ){
         if ( !gamma ) gamma = arr[i+2];
         result = result.concat( SphereToDecart ( arr[i], tetta, gamma ));
     }
-    return result;
+return result;
+}
+
+export function Corner_Line_( x1, y1, x2, y2, y ){
+    let x = ( x2 - x1 ) * ( y - y1 ) / ( y2 - y1 ) + x1;
+return x;
+}
+
+export function Corner_Line_arr( x1, y1, x2, y2, z, count ){
+    let xyz_arr = [];
+    let y = 0;
+    for ( let i = 0 ; i <= count; i++ ) {
+        y = y1 + ( y2 - y1 ) / count * i;
+        xyz_arr = xyz_arr.concat( [ Corner_Line_( x1, y1, x2, y2, y ), y, z, 1 ] );
+    }
+return xyz_arr;
+}
+
+function Corner_Arc( r, angle ){
+    let x = r * Math.cos( angle );
+    let y = r * Math.sin( angle );
+return {x,y};
+}
+
+export function Corner_Arc_arr( x1, y1, x2, y2, r, z, count, section ){
+    let xyz_arr = [];
+    let x = 0; 
+    let y = 0;
+    let angle = 0;
+    let xy;
+    for ( let i = 0 ; i <= count; i++ ) {
+        angle = ( section -1 ) * 3.14/2 - 3.14/2 / count * i;
+        xy = Corner_Arc( r, angle );
+        xyz_arr = xyz_arr.concat( xy.x + x1, xy.y + y2, z, 1 );
+    }
+return xyz_arr;
 }
 
 export function Mass(w) {

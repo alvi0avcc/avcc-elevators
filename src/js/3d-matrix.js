@@ -1,12 +1,19 @@
+import { CommentsDisabledOutlined } from "@mui/icons-material";
 
 //------------------------------------------------------------------------------------------------
 export let identityMatrix = [ 1, 0, 0, 0,
-                       0, 1, 0, 0, 
-                       0, 0, 1, 0, 
-                       0, 0, 0, 1 ];
+                              0, 1, 0, 0, 
+                              0, 0, 1, 0, 
+                              0, 0, 0, 1 ];
+//------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------
+let ZeroMatrix = [0, 0, 0, 1,
+                  0, 0, 0, 1, 
+                  0, 0, 0, 1, 
+                  0, 0, 0, 1 ];
 //------------------------------------------------------------------------------------------------
 
-export function translationMatrix( x, y, z){
+export function getTranslationMatrix( x, y, z){
   let result = [ 1, 0, 0, 0,
                  0, 1, 0, 0, 
                  0, 0, 1, 0, 
@@ -16,7 +23,7 @@ export function translationMatrix( x, y, z){
 
 //------------------------------------------------------------------------------------------------
 
-export function scaleMatrix( x, y, z){
+export function getScaleMatrix( x, y, z){
   let result = [x, 0, 0, 0, 
                 0, y, 0, 0, 
                 0, 0, z, 0, 
@@ -24,7 +31,7 @@ export function scaleMatrix( x, y, z){
   return result;
 }
 //------------------------------------------------------------------------------------------------
-export function RotationX(angle) {
+export function getRotation_X(angle) {
   const rad = Math.PI / 180 * angle;
   let result =[1, 0, 0, 0,
               0, Math.cos(rad), -Math.sin(rad), 0,
@@ -33,7 +40,7 @@ export function RotationX(angle) {
   return result;
 }
 
-export function RotationY(angle) {
+export function getRotation_Y(angle) {
   const rad = Math.PI / 180 * angle;
   let result =[Math.cos(rad), 0, Math.sin(rad), 0,
               0, 1, 0, 0,
@@ -43,7 +50,7 @@ export function RotationY(angle) {
   return result;
 }
 
-export function RotationZ(angle) {
+export function getRotation_Z(angle) {
   const rad = Math.PI / 180 * angle;
   let result =[Math.cos(rad), -Math.sin(rad), 0, 0,
               Math.sin(rad), Math.cos(rad), 0, 0,
@@ -98,8 +105,6 @@ export function multiplyMatrixAndPoint(matrix, point) {
 //matrixB • matrixA    Multiplying two matrices
 export function multiplyMatrices(matrixA, matrixB) {
   // Slice the second matrix up into rows
-  //console.log('matrixA= ', matrixA  );
-  //console.log('matrixB= ', matrixB  );
   let row0 = [matrixB[0], matrixB[1], matrixB[2], matrixB[3]];
   let row1 = [matrixB[4], matrixB[5], matrixB[6], matrixB[7]];
   let row2 = [matrixB[8], matrixB[9], matrixB[10], matrixB[11]];
@@ -132,6 +137,7 @@ export function multiplyMatrices(matrixA, matrixB) {
   ];
 }
 //------------------------------------------------------------------------------------------------
+
 export function multiply(a, b) {
   const m = [
     [0, 0, 0, 0],
@@ -152,9 +158,100 @@ export function multiply(a, b) {
   return m;
 }
 //------------------------------------------------------------------------------------------------
-
-
-
+export function MoveMatrix( matrix, dx, dy, dz ){
+  let result  = multiplyMatrices( getTranslationMatrix( dx, dy, dz ), matrix );
+  return result;
+}
+//------------------------------------------------------------------------------------------------
+export function MoveMatrixAny(matrix, dx, dy, dz) {
+  let point = new Array(4);
+  let result = [];
+  for ( let i = 0; i < matrix.length; i=i+4 ) {
+    point[0] = matrix[i];
+    point[1] = matrix[i+1];
+    point[2] = matrix[i+2];
+    point[3] = matrix[i+3];
+    result = result.concat( multiplyMatrixAndPoint( getTranslationMatrix( dx, dy, dz ), point ) );
+  };
+  return result;
+}
+  //------------------------------------------------------------------------------------------------
+export function ScaleMatrix( matrix, dx, dy, dz ){
+  let result  = multiplyMatrices( getScaleMatrix( dx, dy, dz ), matrix );
+  return result;
+}
+//------------------------------------------------------------------------------------------------
+export function ScaleMatrixAny1zoom(matrix, zoom) {
+  return ScaleMatrixAny(matrix, zoom, zoom, zoom);
+}
+//------------------------------------------------------------------------------------------------
+export function ScaleMatrixAny(matrix, dx, dy, dz) {
+  let point = new Array(4);
+  let result = [];
+  for ( let i = 0; i < matrix.length; i=i+4 ) {
+    point[0] = matrix[i];
+    point[1] = matrix[i+1];
+    point[2] = matrix[i+2];
+    point[3] = matrix[i+3];
+    result = result.concat( multiplyMatrixAndPoint( getScaleMatrix( dx, dy, dz ), point ) );
+  };
+  return result;
+}
+//------------------------------------------------------------------------------------------------
+export function RotateMatrix_X( matrix, angle ){
+  let result  = multiplyMatrices( getRotation_X( angle ), matrix );
+  return result;
+}
+//------------------------------------------------------------------------------------------------
+export function RotateMatrix_X_any(matrix, angle) {
+  let point = new Array(4);
+  let result = [];
+  for ( let i = 0; i < matrix.length; i=i+4 ) {
+    point[0] = matrix[i];
+    point[1] = matrix[i+1];
+    point[2] = matrix[i+2];
+    point[3] = matrix[i+3];
+    result = result.concat( multiplyMatrixAndPoint( getRotation_X( angle ), point ) );
+  };
+  return result;
+}
+//------------------------------------------------------------------------------------------------
+export function RotateMatrix_Y( matrix, angle ){
+  let result  = multiplyMatrices( getRotation_Y( angle ), matrix );
+  return result;
+}
+//------------------------------------------------------------------------------------------------
+export function RotateMatrix_Y_any( matrix, angle ){
+  let point = new Array(4);
+  let result = [];
+  for ( let i = 0; i < matrix.length; i=i+4 ) {
+    point[0] = matrix[i];
+    point[1] = matrix[i+1];
+    point[2] = matrix[i+2];
+    point[3] = matrix[i+3];
+    result = result.concat( multiplyMatrixAndPoint( getRotation_Y( angle ), point ) );
+  };
+  return result;
+}
+//------------------------------------------------------------------------------------------------
+export function RotateMatrix_Z( matrix, angle ){
+  let result  = multiplyMatrices( getRotation_Z( angle ), matrix );
+  return result;
+}
+//------------------------------------------------------------------------------------------------
+export function RotateMatrix_Z_any(matrix, angle) {
+  let point = new Array(4);
+  let result = [];
+  for ( let i = 0; i < matrix.length; i=i+4 ) {
+    point[0] = matrix[i];
+    point[1] = matrix[i+1];
+    point[2] = matrix[i+2];
+    point[3] = matrix[i+3];
+    result = result.concat( multiplyMatrixAndPoint( getRotation_Z( angle ), point ) );
+  };
+  return result;
+}
+//------------------------------------------------------------------------------------------------
 
 class Vector {
   x = 0;

@@ -2,6 +2,10 @@
     font-family: sans-serif;
     text-align: center;
   }
+hr {
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
 select {
     padding: 2px 5px;
     cursor: pointer;
