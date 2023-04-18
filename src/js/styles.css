@@ -31,7 +31,7 @@ select {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  width: 220px;
+  width: 250px;
 }
 /* Style the tab */
 .tab {

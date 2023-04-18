@@ -296,225 +296,135 @@ function Pile(propsPile){
 
     const ChangeName = (event) => {
         pile.Name = event.target.value;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
+        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
+            pile.Height, pile.Box_Heights,
+            pile.Base.length, pile.Base.width,
+            pile.Top.length, pile.Top.width,
+            pile.Tension_Base, pile.Tension_Volume );
         setValue(!value);
     };
     const ChangeType = (event) => {
         pile.type = event.target.value;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
+        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
+            pile.Height, pile.Box_Heights,
+            pile.Base.length, pile.Base.width,
+            pile.Top.length, pile.Top.width,
+            pile.Tension_Base, pile.Tension_Volume );
+        setValue(!value);
+    };
+    const ChangeTypeLocation = (event) => {
+        pile.type_location = event.target.value;
+        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
+            pile.Height, pile.Box_Heights,
+            pile.Base.length, pile.Base.width,
+            pile.Top.length, pile.Top.width,
+            pile.Tension_Base, pile.Tension_Volume );
         setValue(!value);
     };
     const ChangePurpose = (event) => {
         pile.purpose = event.target.value;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, 
-            pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, 
-            pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
+        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
+            pile.Height, pile.Box_Heights,
+            pile.Base.length, pile.Base.width,
+            pile.Top.length, pile.Top.width,
+            pile.Tension_Base, pile.Tension_Volume );
         setValue(!value);
     };
     const ChangeX = (event) => {
         pile.X = event.target.value;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
+        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
+            pile.Height, pile.Box_Heights,
+            pile.Base.length, pile.Base.width,
+            pile.Top.length, pile.Top.width,
+            pile.Tension_Base, pile.Tension_Volume );
         setValue(!value);
     };
     const ChangeY = (event) => {
         pile.Y = event.target.value;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
+        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
+            pile.Height, pile.Box_Heights,
+            pile.Base.length, pile.Base.width,
+            pile.Top.length, pile.Top.width,
+            pile.Tension_Base, pile.Tension_Volume );
+        setValue(!value);
+    };
+    const ChangeAngle = (event) => {
+        pile.angle = event.target.value;
+        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
+            pile.Height, pile.Box_Heights,
+            pile.Base.length, pile.Base.width,
+            pile.Top.length, pile.Top.width,
+            pile.Tension_Base, pile.Tension_Volume );
         setValue(!value);
     };
     const ChangeHeight = (event) => {
         pile.Height = event.target.value;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
+        if ( pile.Height <= 0 ) pile.Height = 0.01;
+        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
+            pile.Height, pile.Box_Heights,
+            pile.Base.length, pile.Base.width,
+            pile.Top.length, pile.Top.width,
+            pile.Tension_Base, pile.Tension_Volume );
         setValue(!value);
     };
     const ChangeBase_length = (event) => {
         pile.Base.length = event.target.value;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
+        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
+            pile.Height, pile.Box_Heights,
+            pile.Base.length, pile.Base.width,
+            pile.Top.length, pile.Top.width,
+            pile.Tension_Base, pile.Tension_Volume );
         setValue(!value);
     };
     const ChangeBase_width = (event) => {
         pile.Base.width = event.target.value;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
+        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
+            pile.Height, pile.Box_Heights,
+            pile.Base.length, pile.Base.width,
+            pile.Top.length, pile.Top.width,
+            pile.Tension_Base, pile.Tension_Volume );
         setValue(!value);
     };
-    const ChangeBase_r1 = (event) => {
-        pile.Base.r1 = event.target.value;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
+    const ChangeTensionBase = (event) => {
+        pile.Tension_Base = event.target.value;
+        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
+            pile.Height, pile.Box_Heights,
+            pile.Base.length, pile.Base.width,
+            pile.Top.length, pile.Top.width,
+            pile.Tension_Base, pile.Tension_Volume );
         setValue(!value);
     };
-    const ChangeBase_r1t = (event) => {
-        pile.Base.r1t = event.target.value;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
-        setValue(!value);
-    };
-    const ChangeBase_r2 = (event) => {
-        pile.Base.r2 = event.target.value;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
-        setValue(!value);
-    };
-    const ChangeBase_r2t = (event) => {
-        pile.Base.r2t = event.target.value;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
-        setValue(!value);
-    };
-    const ChangeBase_r3 = (event) => {
-        pile.Base.r3 = event.target.value;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
-        setValue(!value);
-    };
-    const ChangeBase_r3t = (event) => {
-        pile.Base.r3t = event.target.value;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
-        setValue(!value);
-    };
-    const ChangeBase_r4 = (event) => {
-        pile.Base.r4 = event.target.value;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
-        setValue(!value);
-    };
-    const ChangeBase_r4t = (event) => {
-        pile.Base.r4t = event.target.value;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
+    const ChangeTensionVolume = (event) => {
+        pile.Tension_Volume = event.target.value;
+        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
+            pile.Height, pile.Box_Heights,
+            pile.Base.length, pile.Base.width,
+            pile.Top.length, pile.Top.width,
+            pile.Tension_Base, pile.Tension_Volume );
         setValue(!value);
     };
     const ChangeTop_length = (event) => {
         pile.Top.length = event.target.value;
         pile.Top.length_left =  ( Number( pile.Base.length ) - Number( pile.Top.length ) ) / 2 ;
         pile.Top.length_right = pile.Top.length_left;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
-        setValue(!value);
-    };
-    const ChangeTop_length_left = (event) => {
-        pile.Top.length_left = event.target.value;
-        pile.Top.length = Number( pile.Base.length ) - ( Number( pile.Top.length_left ) + Number( pile.Top.length_right ) );
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
-        setValue(!value);
-    };
-    const ChangeTop_length_right = (event) => {
-        pile.Top.length_right = event.target.value;
-        pile.Top.length = Number( pile.Base.length ) - ( Number( pile.Top.length_left ) + Number( pile.Top.length_right ) );
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
+        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
+            pile.Height, pile.Box_Heights,
+            pile.Base.length, pile.Base.width,
+            pile.Top.length, pile.Top.width,
+            pile.Tension_Base, pile.Tension_Volume );
         setValue(!value);
     };
     const ChangeTop_width = (event) => {
         pile.Top.width = event.target.value;
         pile.Top.width_front =  ( Number( pile.Base.width ) - Number( pile.Top.width ) ) / 2 ;
         pile.Top.width_aft = pile.Top.width_front;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
+        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
+            pile.Height, pile.Box_Heights,
+            pile.Base.length, pile.Base.width,
+            pile.Top.length, pile.Top.width,
+            pile.Tension_Base, pile.Tension_Volume );
         setValue(!value);
     };
-    const ChangeTop_width_front = (event) => {
-        pile.Top.width_front = event.target.value;
-        pile.Top.width = Number( pile.Base.width ) - ( Number( pile.Top.width_front ) + Number( pile.Top.width_aft ) );
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
-        setValue(!value);
-    };
-    const ChangeTop_width_aft = (event) => {
-        pile.Top.width_aft = event.target.value;
-        pile.Top.width = Number( pile.Base.width ) - ( Number( pile.Top.width_front ) + Number( pile.Top.width_aft ) );
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
-        setValue(!value);
-    };
-    const ChangeTop_r1 = (event) => {
-        pile.Top.r1 = event.target.value;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
-        setValue(!value);
-    };
-    const ChangeTop_r1t = (event) => {
-        pile.Top.r1t = event.target.value;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
-        setValue(!value);
-    };
-    const ChangeTop_r2 = (event) => {
-        pile.Top.r2 = event.target.value;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
-        setValue(!value);
-    };
-    const ChangeTop_r2t = (event) => {
-        pile.Top.r2t = event.target.value;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
-        setValue(!value);
-    };
-    const ChangeTop_r3 = (event) => {
-        pile.Top.r3 = event.target.value;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
-        setValue(!value);
-    };
-    const ChangeTop_r3t = (event) => {
-        pile.Top.r3t = event.target.value;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
-        setValue(!value);
-    };
-    const ChangeTop_r4 = (event) => {
-        pile.Top.r4 = event.target.value;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
-        setValue(!value);
-    };
-    const ChangeTop_r4t = (event) => {
-        pile.Top.r4t = event.target.value;
-        Elevators.setPile ( index, pile.Name , pile.type , pile.purpose , pile.X , pile.Y , pile.Height ,
-            pile.Base.length, pile.Base.width, pile.Base.r1, pile.Base.r1t, pile.Base.r2, pile.Base.r2t, pile.Base.r3, pile.Base.r3t, pile.Base.r4, pile.Base.r4t,
-            pile.Top.length, pile.Top.length_left, pile.Top.length_right, pile.Top.width, pile.Top.width_front, pile.Top.width_aft, pile.Top.r1, pile.Top.r1t, pile.Top.r2, pile.Top.r2t, pile.Top.r3, pile.Top.r3t, pile.Top.r4, pile.Top.r4t );
-        setValue(!value);
-    }; 
-    
 
     return (
         <div className='block' style={{ flexDirection: 'row', height: 545 }}>
@@ -553,12 +463,24 @@ function Pile(propsPile){
                 />
             </div>
             <div className='rowPile'>
-                <label>Placement Level:</label>
+                <label>Pile type:</label>
                 <select 
                     className='inputPile' 
                     style={{ width: 87 }}
                     value = { pile.type }
                     onChange={ ChangeType }
+                    >
+                        <option value='box'>Box</option>
+                        <option value='pile'>Pile</option>
+                </select>
+            </div>
+            <div className='rowPile'>
+                <label>Placement Level:</label>
+                <select 
+                    className='inputPile' 
+                    style={{ width: 87 }}
+                    value = { pile.type_location }
+                    onChange={ ChangeTypeLocation }
                     >
                         <option value='true'>Botoom</option>
                         <option value='false'>Upper</option>
@@ -572,8 +494,8 @@ function Pile(propsPile){
                     value = {pile.purpose}
                     onChange={ ChangePurpose }
                     >
-                        <option value='true'>Add</option>
-                        <option value='false'>Remove</option>
+                        <option value='add'>Add</option>
+                        <option value='remove'>Remove</option>
                 </select>
             </div>
             <div><hr/></div>
@@ -585,10 +507,14 @@ function Pile(propsPile){
                 <label>Location Y:</label>
                 <input className='inputPile' type ='number' value = {pile.Y} onChange={ ChangeY }/>
             </div>
+            <div className='rowPile'>
+                <label>Orientation (angle):</label>
+                <input className='inputPile' type ='number' value = {pile.angle} onChange={ ChangeAngle }/>
+            </div>
             <div><hr/></div>
             <div className='rowPile'>
                 <label><strong>Height:</strong></label>
-                <input className='inputPile' type ='number' value = {pile.Height} onChange={ ChangeHeight }/>
+                <input className='inputPile' type ='number' min="0.01" step='0.01' value = {pile.Height} onChange={ ChangeHeight }/>
             </div>
 
             <div><hr/></div>
@@ -596,165 +522,51 @@ function Pile(propsPile){
 
             <div className='rowPile'>
                 <div className='rowPile'>
-                <label style={{ width: 40 }}>left:</label>
-                <input className='inputPile' type ='number' style={{ width: 50 }}
-                    value = {pile.Top.length_left} onChange={ ChangeTop_length_left }/>
-                </div>
-
-                <div className='rowPile'>
-                <label style={{ width: 50 }}>length:</label>
-                <input className='inputPile' type ='number' style={{ width: 50 }}
+                <label>length:</label>
+                <input className='inputPile' type ='number' min={0.01} step={0.01}
                     value = {pile.Top.length} onChange={ ChangeTop_length }/>
                 </div>
-
-                <div className='rowPile'>
-                <label style={{ width: 40 }}>right:</label>
-                <input className='inputPile' type ='number' style={{ width: 50 }}
-                    value = {pile.Top.length_right} onChange={ ChangeTop_length_right }/>
-                </div>
             </div>
 
             <div className='rowPile'>
                 <div className='rowPile'>
-                <label style={{ width: 40 }}>front:</label>
-                <input className='inputPile' type ='number' style={{ width: 50 }}
-                    value = {pile.Top.width_front} onChange={ ChangeTop_width_front }/>
-                </div>
-                <div className='rowPile'>
-                <label style={{ width: 50 }}>width:</label>
-                <input className='inputPile' type ='number' style={{ width: 50 }}
+                <label>width:</label>
+                <input className='inputPile' type ='number' min={0.01} step={0.01}
                     value = {pile.Top.width} onChange={ ChangeTop_width }/>
                 </div>
-                <div className='rowPile'>
-                <label style={{ width: 40 }}>aft:</label>
-                <input className='inputPile' type ='number' style={{ width: 50 }}
-                    value = {pile.Top.width_aft} onChange={ ChangeTop_width_aft }/>
-                </div>
             </div>
-
-            <div className='rowPile'>
-                <label style={{ color: 'magenta' }}>Corner 1:</label>
-                <input className='inputPile' type ='number' value = {pile.Top.r1} onChange={ ChangeTop_r1 }/>
-                <select 
-                    className='inputPile' 
-                    style={{ width: 60 }}
-                    value = {pile.Top.r1t}
-                    onChange={ ChangeTop_r1t }
-                    >
-                        <option value='true'>Arc</option>
-                        <option value='false'>Line</option>
-                </select>
-            </div>
-            <div className='rowPile'>
-                <label style={{ color: 'green' }}>Corner 2:</label>
-                <input className='inputPile' type ='number' value = {pile.Top.r2} onChange={ ChangeTop_r2 }/>
-                <select 
-                    className='inputPile' 
-                    style={{ width: 60 }}
-                    value = {pile.Top.r2t}
-                    onChange={ ChangeTop_r2t }
-                    >
-                        <option value='true'>Arc</option>
-                        <option value='false'>Line</option>
-                </select>
-            </div>
-            <div className='rowPile'>
-                <label style={{ color: 'purple' }}>Corner 3:</label>
-                <input className='inputPile' type ='number' value = {pile.Top.r3} onChange={ ChangeTop_r3 }/>
-                <select 
-                    className='inputPile' 
-                    style={{ width: 60 }}
-                    value = {pile.Top.r3t}
-                    onChange={ ChangeTop_r3t }
-                    >
-                        <option value='true'>Arc</option>
-                        <option value='false'>Line</option>
-                </select>
-            </div>
-            <div className='rowPile'>
-                <label style={{ color: 'red' }}>Corner 4:</label>
-                <input className='inputPile' type ='number' value = {pile.Top.r4} onChange={ ChangeTop_r4 }/>
-                <select 
-                    className='inputPile' 
-                    style={{ width: 60 }}
-                    value = {pile.Top.r4t}
-                    onChange={ ChangeTop_r4t }
-                    >
-                        <option value='true'>Arc</option>
-                        <option value='false'>Line</option>
-                </select>
-            </div>
+           
             <div><hr/></div>
             <label style={{ color: 'black' }}><strong>Base contur:</strong></label>
 
             <div className='rowPile'>
                 <label>length:</label>
-                <input className='inputPile' type ='number' value = {pile.Base.length} onChange={ ChangeBase_length }/>
+                <input className='inputPile' type ='number' min={0.01} step={0.01} value = {pile.Base.length} onChange={ ChangeBase_length }/>
             </div>
             <div className='rowPile'>
                 <label>width:</label>
-                <input className='inputPile' type ='number' value = {pile.Base.width} onChange={ ChangeBase_width }/>
+                <input className='inputPile' type ='number' min={0.01} step={0.01} value = {pile.Base.width} onChange={ ChangeBase_width }/>
             </div>
-            <div className='rowPile'>
-                <label style={{ color: 'magenta' }}>Corner 1:</label>
-                <input className='inputPile' type ='number' value = {pile.Base.r1} onChange={ ChangeBase_r1 }/>
-                <select 
-                    className='inputPile' 
-                    style={{ width: 60 }}
-                    value = {pile.Base.r1t}
-                    onChange={ ChangeBase_r1t }
-                    >
-                        <option value='true'>Arc</option>
-                        <option value='false'>Line</option>
-                </select>
+            <div className='rowPile' style={{ width: 300 }}>
+                <label style={{ width: 120 }}>Tension Base:</label>
+                <input className='inputPile' style={{ width: 50 }} type ='number' min="0" max="1.5" step="0.01" value = {pile.Tension_Base} onChange={ ChangeTensionBase }/>
+                <input className='inputPile' style={{ width: 100 }}type ='range' min="0" max="1.5" step="0.01" value = {pile.Tension_Base} onChange={ ChangeTensionBase }/>
             </div>
-            <div className='rowPile'>
-                <label style={{ color: 'green' }}>Corner 2:</label>
-                <input className='inputPile' type ='number' value = {pile.Base.r2} onChange={ ChangeBase_r2 }/>
-                <select 
-                    className='inputPile' 
-                    style={{ width: 60 }}
-                    value = {pile.Base.r2t}
-                    onChange={ ChangeBase_r2t }
-                    >
-                        <option value='true'>Arc</option>
-                        <option value='false'>Line</option>
-                </select>
+            <div className='rowPile' style={{ width: 300 }}>
+                <label style={{ width: 120 }}>Tension Volume:</label>
+                <input className='inputPile' style={{ width: 50 }} type ='number' min="0.01" max="1" step="0.01" value = {pile.Tension_Volume} onChange={ ChangeTensionVolume }/>
+                <input className='inputPile' style={{ width: 100 }}type ='range' min="0.01" max="1" step="0.01" value = {pile.Tension_Volume} onChange={ ChangeTensionVolume }/>
             </div>
-            <div className='rowPile'>
-                <label style={{ color: 'purple' }}>Corner 3:</label>
-                <input className='inputPile' type ='number' value = {pile.Base.r3} onChange={ ChangeBase_r3 }/>
-                <select 
-                    className='inputPile' 
-                    style={{ width: 60 }}
-                    value = {pile.Base.r3t}
-                    onChange={ ChangeBase_r3t }
-                    >
-                        <option value='true'>Arc</option>
-                        <option value='false'>Line</option>
-                </select>
+
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'end' }}>
+                <Button 
+                    variant='outlined'
+                    size='small'
+                    style={{ height: 25 }}
+                    onClick={()=>( iolocal.SaveElevator() )}
+                    >Save
+                </Button>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-            <div className='rowPile'>
-                <label style={{ color: 'red' }}>Corner 4:</label>
-                <input className='inputPile' type ='number' value = {pile.Base.r4} onChange={ ChangeBase_r4 }/>
-                <select 
-                    className='inputPile' 
-                    style={{ width: 60 }}
-                    value = {pile.Base.r4t}
-                    onChange={ ChangeBase_r4t }
-                    >
-                        <option value='true'>Arc</option>
-                        <option value='false'>Line</option>
-                </select>
-        </div>
-            <Button 
-                variant='outlined'
-                size='small'
-                style={{ height: 25 }}
-                onClick={()=>( iolocal.SaveElevator() )}
-                >Save</Button>
-        </div>
         </div>
 
         <div className='block' style={{ width: '100%' }}>

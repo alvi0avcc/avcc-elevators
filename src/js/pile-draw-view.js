@@ -3,7 +3,10 @@ import { Elevators } from './elevators.js';
 import { Isometric, IsometricArr, Matrix, DecartToSphereArr, SphereToDecartArr } from './calc.js';
 import { mat4 } from 'gl-matrix';
 import * as Calc from './calc.js';
+import { getCurvePoints, drawLines, drawCurve, getPoint, drawPoint, drawPoints, getSlice, drawSlice, drawContur, getContur, getPoints_by_Y, interpolation } from './spline.js';
 import { MoveMatrix, MoveMatrixAny, RotateMatrix_X, RotateMatrix_X_any, RotateMatrix_Y, RotateMatrix_Y_any, RotateMatrix_Z, RotateMatrix_Z_any, ScaleMatrix, ScaleMatrixAny, ScaleMatrixAny1zoom } from './3d-matrix.js';
+
+
 
 const PileViewCanvas = props => {
   
@@ -25,7 +28,9 @@ const PileViewCanvas = props => {
     let l = Number(pile.Base.length);
     let w = Number(pile.Base.width);
     let h = Number(pile.Height);
-    let c1 = Number(pile.Base.r1);
+    let Tension_Base = Number( pile.Tension_Base );
+    let Tension_Volume = Number( pile.Tension_Volume );
+    /*let c1 = Number(pile.Base.r1);
     let c2 = Number(pile.Base.r2);
     let c3 = Number(pile.Base.r3);
     let c4 = Number(pile.Base.r4);
@@ -45,9 +50,9 @@ const PileViewCanvas = props => {
     let y6 =  y5;
     let y7 =  w/2 - c4;
     let y8 = -w/2 + c1;
-    let z1 = -h/2;
+    let z1 = -h/2;*/
 
-    let base = [ x1, y1, z1, 1,
+    /*let base = [ x1, y1, z1, 1,
                  x2, y2, z1, 1,
                  x3, y3, z1, 1,
                  x4, y4, z1, 1, 
@@ -55,7 +60,12 @@ const PileViewCanvas = props => {
                  x6, y6, z1, 1,
                  x7, y7, z1, 1,
                  x8, y8, z1, 1
-                ];
+                ];*/
+
+    let Points_level = [  -l/2,    0, 
+                               0, -w/2, 
+                             l/2,    0, 
+                               0,  w/2 ];
 
      let ll = Number(pile.Top.length);
      let l_left = Number(pile.Top.length_left);
@@ -63,7 +73,7 @@ const PileViewCanvas = props => {
      let ww = Number(pile.Top.width);
      let w_front = Number(pile.Top.width_front);
      let w_aft = Number(pile.Top.width_aft);
-     let cc1 = Number(pile.Top.r1);
+     /*let cc1 = Number(pile.Top.r1);
      let cc2 = Number(pile.Top.r2);
      let cc3 = Number(pile.Top.r3);
      let cc4 = Number(pile.Top.r4);
@@ -83,9 +93,9 @@ const PileViewCanvas = props => {
      let yy6 =  yy5;
      let yy7 =  w/2 - w_front - cc4;
      let yy8 = -w/2 + w_aft + cc1;
-     let zz1 = h/2;
+     let zz1 = h/2;*/
 
-    let top = [ xx1, yy1, zz1, 1,
+    /*let top = [ xx1, yy1, zz1, 1,
                 xx2, yy2, zz1, 1,
                 xx3, yy3, zz1, 1,
                 xx4, yy4, zz1, 1, 
@@ -93,9 +103,20 @@ const PileViewCanvas = props => {
                 xx6, yy6, zz1, 1,
                 xx7, yy7, zz1, 1,
                 xx8, yy8, zz1, 1
-                ];
+                ];*/
+
+let Points_contur_L = [ -l/2, 0, 
+                       -ll/2, h, 
+                        ll/2, h, 
+                        l/2,  0 ];
+
+let Points_contur_W = [ -w/2, 0, 
+                        -ww/2, h, 
+                         ww/2, h, 
+                         w/2,  0 ];
+
 //-------------------------------------Corner 1
-    let corner_b = [];
+   /* let corner_b = [];
     let corner_t = [];
     if ( pile.Base.r1t == 'true' ) {
             //arc
@@ -122,16 +143,19 @@ const PileViewCanvas = props => {
     corner_t  = RotateMatrix_Z_any( corner_t, 0 );
     corner_t  = MoveMatrixAny( corner_t, x_center, y_center, 0 );
 
-    ctx.strokeStyle  = 'magenta';
+   /* ctx.strokeStyle  = 'magenta';
+    ctx.fillStyle   = 'magenta';
+    ctx.font = "18px serif";
     ctx.beginPath();
+    ctx.fillText("Corner 1", corner_b[12], corner_b[13]);
     for ( let i = 4; i < corner_b.length; i=i+4 ){
         ctx.moveTo( corner_b[i-4], corner_b[i+1-4] ); ctx.lineTo( corner_b[i], corner_b[i+1] );  
         ctx.lineTo( corner_t[i], corner_t[i+1] ); ctx.lineTo( corner_t[i-4], corner_t[i+1-4] ); 
     }
-    ctx.stroke();
+    ctx.stroke();*/
 //-------------------------------------
 //-------------------------------------Corner 2
-if ( pile.Base.r2t == 'true' ) {
+/*if ( pile.Base.r2t == 'true' ) {
         //arc
         corner_b = Calc.Corner_Arc_arr( base[4], base[5], base[8], base[9], pile.Base.r2, z1, 5, 1 );
 }else {
@@ -156,16 +180,20 @@ corner_t  = RotateMatrix_Y_any( corner_t, frameCount/4 );
 corner_t  = RotateMatrix_Z_any( corner_t, 0 );
 corner_t  = MoveMatrixAny( corner_t, x_center, y_center, 0 );
 
-ctx.strokeStyle  = 'green';
+/*ctx.strokeStyle  = 'green';
+ctx.fillStyle   = 'green';
+ctx.font = "18px serif";
+ctx.beginPath();
+ctx.fillText("Corner 2", corner_b[12], corner_b[13]);
 ctx.beginPath();
 for ( let i = 0; i < corner_b.length; i=i+4 ){
     ctx.moveTo( corner_b[i-4], corner_b[i+1-4] ); ctx.lineTo( corner_b[i], corner_b[i+1] );  
     ctx.lineTo( corner_t[i], corner_t[i+1] ); ctx.lineTo( corner_t[i-4], corner_t[i+1-4] );   
 }
-ctx.stroke();
+ctx.stroke();*/
 //-------------------------------------
 //-------------------------------------Corner 3
-if ( pile.Base.r3t == 'true' ) {
+/*if ( pile.Base.r3t == 'true' ) {
     //arc
     corner_b = Calc.Corner_Arc_arr( base[16], base[17], base[12], base[13], pile.Base.r3, z1, 5, 2 );
 }else {
@@ -190,16 +218,20 @@ corner_t  = RotateMatrix_Y_any( corner_t, frameCount/4 );
 corner_t  = RotateMatrix_Z_any( corner_t, 0 );
 corner_t  = MoveMatrixAny( corner_t, x_center, y_center, 0 );
 
-ctx.strokeStyle  = 'purple';
+/*ctx.strokeStyle  = 'purple';
+ctx.fillStyle   = 'purple';
+ctx.font = "18px serif";
+ctx.beginPath();
+ctx.fillText("Corner 3", corner_b[12], corner_b[13]);
 ctx.beginPath();
 for ( let i = 0; i < corner_b.length; i=i+4 ){
     ctx.moveTo( corner_b[i-4], corner_b[i+1-4] ); ctx.lineTo( corner_b[i], corner_b[i+1] );  
     ctx.lineTo( corner_t[i], corner_t[i+1] ); ctx.lineTo( corner_t[i-4], corner_t[i+1-4] );   
 }
-ctx.stroke();
+ctx.stroke();*/
 //-------------------------------------
 //-------------------------------------Corner 4
-if ( pile.Base.r4t == 'true' ) {
+/*if ( pile.Base.r4t == 'true' ) {
     //arc
     corner_b = Calc.Corner_Arc_arr( base[20], base[21], base[24], base[25], pile.Base.r4, z1, 5, 3 );
 }else {
@@ -224,16 +256,20 @@ corner_t  = RotateMatrix_Y_any( corner_t, frameCount/4 );
 corner_t  = RotateMatrix_Z_any( corner_t, 0 );
 corner_t  = MoveMatrixAny( corner_t, x_center, y_center, 0 );
 
-ctx.strokeStyle  = 'red';
+/*ctx.strokeStyle  = 'red';
+ctx.fillStyle   = 'red';
+ctx.font = "18px serif";
+ctx.beginPath();
+ctx.fillText("Corner 4", corner_b[12], corner_b[13]);
 ctx.beginPath();
 for ( let i = 0; i < corner_b.length; i=i+4 ){
     ctx.moveTo( corner_b[i-4], corner_b[i+1-4] ); ctx.lineTo( corner_b[i], corner_b[i+1] );  
     ctx.lineTo( corner_t[i], corner_t[i+1] ); ctx.lineTo( corner_t[i-4], corner_t[i+1-4] );   
 }
-ctx.stroke();
+ctx.stroke();*/
 //-------------------------------------
                
-    base  = ScaleMatrixAny1zoom( base, zoom );
+   /* base  = ScaleMatrixAny1zoom( base, zoom );
     base  = RotateMatrix_X_any( base, -100 );
     base  = RotateMatrix_Y_any( base, frameCount/4 );
     base  = RotateMatrix_Z_any( base, 0 );
@@ -244,9 +280,9 @@ ctx.stroke();
     top  = RotateMatrix_X_any( top, -100 );
     top  = RotateMatrix_Y_any( top, frameCount/4 );
     top  = RotateMatrix_Z_any( top, 0 );
-    top  = MoveMatrixAny( top, x_center, y_center, 0 );
+    top  = MoveMatrixAny( top, x_center, y_center, 0 );*/
 
-    ctx.strokeStyle  = 'black';
+   /* ctx.strokeStyle  = 'black';
     ctx.beginPath();
     ctx.moveTo( base[0], base[1] ); ctx.lineTo( base[4], base[5] );
     ctx.moveTo( base[8], base[9] ); ctx.lineTo( base[12], base[13] );
@@ -260,9 +296,9 @@ ctx.stroke();
     ctx.moveTo( top[8], top[9] ); ctx.lineTo( top[12], top[13] );
     ctx.moveTo( top[16], top[17] ); ctx.lineTo( top[20], top[21] );
     ctx.moveTo( top[24], top[25] ); ctx.lineTo( top[28], top[29] );
-    ctx.stroke();
+    ctx.stroke();*/
 
-    for ( let i = 0; i < base.length; i=i+4) {
+    /*for ( let i = 0; i < base.length; i+=4) {
         if ( i == 0 || i == 28 ) ctx.strokeStyle  = 'magenta';
         if ( i == 4 || i == 8 ) ctx.strokeStyle  = 'green';
         if ( i == 12 || i == 16 ) ctx.strokeStyle  = 'purple';
@@ -270,10 +306,54 @@ ctx.stroke();
         ctx.beginPath();
         ctx.moveTo( base[i], base[i+1] );ctx.lineTo( top[i], top[i+1] );
         ctx.stroke();
-    };
-
-  }
+    };*/
+// bottom text
+    ctx.fillStyle   = 'black';
+    ctx.font = "18px serif";
+    ctx.fillText( Elevators.volume_Pile_base(props.index), 25, ctx.canvas.height - 25 );
   
+// splines
+    ctx.strokeStyle  = 'blue';
+
+    let tension = Tension_Base;
+    let step = 10;
+
+    let slices;
+    let slice_step = 10;
+    for ( let i = 0; i <= slice_step; i ++ ){
+        slices = getSlice( h/slice_step*i, Points_level, Tension_Base, Tension_Volume, true, step, Points_contur_L, Points_contur_W );
+        slices  = MoveMatrixAny( slices, 0, 0, -h/2 );
+        slices  = ScaleMatrixAny1zoom( slices, zoom );
+        slices  = RotateMatrix_X_any( slices, -100 );
+        slices  = RotateMatrix_Y_any( slices, frameCount/4 );
+        slices  = RotateMatrix_Z_any( slices, 0 );
+        slices  = MoveMatrixAny( slices, x_center, y_center, 0 );
+        drawSlice( ctx, slices );
+    }
+
+    let contur;
+    tension = Tension_Volume; //contur by length
+        contur  = getContur( Points_contur_L, tension, false, step );    
+        contur  = MoveMatrixAny( contur, 0, 0, -h/2 );
+        contur  = ScaleMatrixAny1zoom( contur, zoom );
+        contur  = RotateMatrix_X_any( contur, -100 );
+        contur  = RotateMatrix_Y_any( contur, frameCount/4 );
+        //contur  = RotateMatrix_Z_any( contur, 0 );
+        contur  = MoveMatrixAny( contur, x_center, y_center, 0 );
+        drawSlice( ctx, contur );
+    tension = Tension_Volume; //contur by widht
+        contur  = getContur( Points_contur_W, tension, false, step ); 
+        contur  = RotateMatrix_Z_any( contur, 90 )   
+        contur  = MoveMatrixAny( contur, 0, 0, -h/2 );
+        contur  = ScaleMatrixAny1zoom( contur, zoom );
+        contur  = RotateMatrix_X_any( contur, -100 );
+        contur  = RotateMatrix_Y_any( contur, frameCount/4 );
+       // contur  = RotateMatrix_Z_any( contur, 0 );
+        contur  = MoveMatrixAny( contur, x_center, y_center, 0 );
+        drawSlice( ctx, contur );
+
+    }
+
   useEffect(() => {
     
     const canvas = canvasRef.current

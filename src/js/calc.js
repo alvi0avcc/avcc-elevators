@@ -1,4 +1,3 @@
-
 export function MyRound(value, decimal){
     let MyPow;
     let result;

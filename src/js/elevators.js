@@ -58,14 +58,21 @@ class cPile {
     constructor() {
             this.id     = '';
             this.Name   = '';
-            this.type   = 'true'; // true = base level Pile , false = upper level Pile
-            this.purpose = 'true'; //add or remove volume
+            this.type   =  ( 'box', 'pile' );
+            this.type_location   = 'true'; // true = base level Pile , false = upper level Pile
+            this.purpose = ( 'remove', 'add' ); //add or remove volume
             this.X      = 0; // location
             this.Y      = 0;
+            this.angle  = 0;
             this.Height = 10;//Height of Pile
-            this.Base   = { length: 30, width: 30, r1: 5, r1t: 'true', r2: 5, r2t: 'true', r3: 5, r3t: 'true', r4: 5, r4t: 'true'}; //base plane
+            this.Box_Heights = {h1: 1, h2: 1, h3: 1, h4: 1};
+            //this.Base   = { length: 30, width: 30, r1: 5, r1t: 'true', r2: 5, r2t: 'true', r3: 5, r3t: 'true', r4: 5, r4t: 'true'}; //base plane
+            this.Base   = { length: 30, width: 30 }; //base plane
             // r1 - corner radius; r1t - true = round, false = line
-            this.Top    = { length: 15, length_left: 7.5, length_right: 7.5, width: 15, width_front: 7.5, width_aft: 7.5, r1: 3, r1t: 'true', r2: 3, r2t: 'true', r3: 3, r3t: 'true', r4: 3, r4t: 'true'}; //upper plane
+            //this.Top    = { length: 15, length_left: 7.5, length_right: 7.5, width: 15, width_front: 7.5, width_aft: 7.5, r1: 3, r1t: 'true', r2: 3, r2t: 'true', r3: 3, r3t: 'true', r4: 3, r4t: 'true'}; //upper plane
+            this.Top    = { length: 15, width: 15 }; //upper plane
+            this.Tension_Base = 1;
+            this.Tension_Volume = 0.5;
         }
     }
 
@@ -373,40 +380,23 @@ class cElevators {
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Dimensions.Conus_Y = Number(Conus_Y);
         } 
     }
-    setPile ( index, Name , type , purpose , X , Y , Height ,
-            Base_length, Base_width, Base_r1, Base_r1t, Base_r2, Base_r2t, Base_r3, Base_r3t, Base_r4, Base_r4t,
-            Top_length, Top_length_left, Top_length_right, Top_width, Top_width_front, Top_width_aft, Top_r1, Top_r1t, Top_r2, Top_r2t, Top_r3, Top_r3t, Top_r4, Top_r4t, ){
+    setPile ( index, Name, type, type_location, purpose, X, Y, angle, Height, Box_Heights, Base_length, Base_width, Top_length, Top_width, Tension_Base, Tension_Volume ){
         if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] ) {
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Name = Name;
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].type = type ;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].type_location = type_location;
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].purpose = purpose;
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].X = Number( X );
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Y = Number( Y );
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].angle = Number( angle );
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Height = Number( Height );
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Box_Heights = Number( Box_Heights );
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Base.length = Number( Base_length );
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Base.width = Number( Base_width );
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Base.r1 = Number( Base_r1 );
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Base.r1t = Base_r1t;
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Base.r2 = Number( Base_r2 );
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Base.r2t = Base_r2t;
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Base.r3 = Number( Base_r3 );
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Base.r3t = Base_r3t ;
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Base.r4 = Number( Base_r4 );
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Base.r4t = Base_r4t ;
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.length = Number( Top_length );
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.length_left = Number( Top_length_left );
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.length_right = Number( Top_length_right );
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.width = Number( Top_width );
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.width_front = Number( Top_width_front );
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.width_aft = Number( Top_width_aft );
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.r1 = Number( Top_r1 );
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.r1t = Top_r1t ;
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.r2 = Number( Top_r2 );
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.r2t = Top_r2t;
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.r3 = Number( Top_r3 );
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.r3t = Top_r3t;
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.r4 = Number( Top_r4 );
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.r4t = Top_r4t ;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Tension_Base = Number( Tension_Base );
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Tension_Volume = Number( Tension_Volume );
         } 
     }
     get ComplexList(){
@@ -981,6 +971,14 @@ class cElevators {
         area = Calc.MyRound ( area, 3 );
     return area;
     }
+
+    volume_Pile_base( index  ){
+        let pile = this.PileGet(index);
+        let volume = 'Pile № '+ index + ' Volume = test volume (m3)';
+        
+        return volume;
+    }
+
     massaComplexSiloGet( row, col ){
         let volume =0;
         let weight =0;
@@ -1001,10 +999,6 @@ class cElevators {
         let volume =0;
         let weight =0;
         let silo = structuredClone ( dataTable[row] );
-        //let silo = this.ComplexSiloGet(0,0);
-        //console.log('silo = ',silo);
-        //if ( silo.found ) {
-        //    silo = silo.result
         result = this.volume_mineSilo( silo.Type, silo.Sound, silo.Ullage, silo.Height, silo.Length, silo.Width, silo.Diameter, silo.Conus_height, silo.Area );
         volume = result.volume;
         err_mes = result.err_mes;
@@ -1014,7 +1008,6 @@ class cElevators {
         } else weight = volume * silo.CargoTW / 100;   //ISO
         weight = Calc.MyRound( weight, 3 );
         if ( silo.CargoTW < 10 ) { err_mes = err_mes + 'incorrect Test Weight, ' };
-        //} else { volume =0; weight =0; console.log('massaComplexSiloGet = error');}
         return {volume, weight, err_mes };
     }
 };
