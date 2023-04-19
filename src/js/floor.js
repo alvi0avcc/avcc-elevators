@@ -518,7 +518,7 @@ function Pile(propsPile){
             </div>
 
             <div><hr/></div>
-            <label style={{ color: 'blue' }}><strong>Top contur:</strong></label>
+            <label style={{ color: 'red' }}><strong>Top contur:</strong></label>
 
             <div className='rowPile'>
                 <div className='rowPile'>
@@ -537,7 +537,7 @@ function Pile(propsPile){
             </div>
            
             <div><hr/></div>
-            <label style={{ color: 'black' }}><strong>Base contur:</strong></label>
+            <label style={{ color: 'magenta' }}><strong>Base contur:</strong></label>
 
             <div className='rowPile'>
                 <label>length:</label>

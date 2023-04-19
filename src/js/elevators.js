@@ -66,10 +66,7 @@ class cPile {
             this.angle  = 0;
             this.Height = 10;//Height of Pile
             this.Box_Heights = {h1: 1, h2: 1, h3: 1, h4: 1};
-            //this.Base   = { length: 30, width: 30, r1: 5, r1t: 'true', r2: 5, r2t: 'true', r3: 5, r3t: 'true', r4: 5, r4t: 'true'}; //base plane
             this.Base   = { length: 30, width: 30 }; //base plane
-            // r1 - corner radius; r1t - true = round, false = line
-            //this.Top    = { length: 15, length_left: 7.5, length_right: 7.5, width: 15, width_front: 7.5, width_aft: 7.5, r1: 3, r1t: 'true', r2: 3, r2t: 'true', r3: 3, r3t: 'true', r4: 3, r4t: 'true'}; //upper plane
             this.Top    = { length: 15, width: 15 }; //upper plane
             this.Tension_Base = 1;
             this.Tension_Volume = 0.5;

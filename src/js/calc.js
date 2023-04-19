@@ -107,6 +107,11 @@ export function Corner_Arc_arr( x1, y1, x2, y2, r, z, count, section ){
 return xyz_arr;
 }
 
+export function interpolation( y , x1,y1, x2,y2 ){
+    let x = ( x2 - x1 ) * ( y - y1 ) / ( y2 - y1 ) + x1;
+return x;
+}
+
 export function Mass(w) {
         let S_Osnovaniya;
         let S_Vershini;

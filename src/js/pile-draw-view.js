@@ -3,9 +3,10 @@ import { Elevators } from './elevators.js';
 import { Isometric, IsometricArr, Matrix, DecartToSphereArr, SphereToDecartArr } from './calc.js';
 import { mat4 } from 'gl-matrix';
 import * as Calc from './calc.js';
+import cPile from './pile_class.js'
 import { getCurvePoints, drawLines, drawCurve, getPoint, drawPoint, drawPoints, getSlice, drawSlice, drawContur, getContur, getPoints_by_Y, interpolation } from './spline.js';
 import { MoveMatrix, MoveMatrixAny, RotateMatrix_X, RotateMatrix_X_any, RotateMatrix_Y, RotateMatrix_Y_any, RotateMatrix_Z, RotateMatrix_Z_any, ScaleMatrix, ScaleMatrixAny, ScaleMatrixAny1zoom } from './3d-matrix.js';
-
+import { draw_PLine_3D } from './draw.js';
 
 
 const PileViewCanvas = props => {
@@ -13,6 +14,9 @@ const PileViewCanvas = props => {
   const canvasRef = useRef(null);
 
   let pile = Elevators.PileGet( props.index );
+  let gPile = new cPile();
+  let numOfSegments = 10;
+  gPile.set_Initial_Data_Complex ( pile, numOfSegments );//initialisation Pile
 
   const draw = (ctx, frameCount) => {
 
@@ -30,37 +34,7 @@ const PileViewCanvas = props => {
     let h = Number(pile.Height);
     let Tension_Base = Number( pile.Tension_Base );
     let Tension_Volume = Number( pile.Tension_Volume );
-    /*let c1 = Number(pile.Base.r1);
-    let c2 = Number(pile.Base.r2);
-    let c3 = Number(pile.Base.r3);
-    let c4 = Number(pile.Base.r4);
-    let x1 = -l/2 + c1;
-    let x2 =  l/2 - c2;
-    let x3 =  l/2;
-    let x4 =  x3;
-    let x5 =  l/2 - c3;
-    let x6 = -l/2 + c4;
-    let x7 = -l/2;
-    let x8 =  x7;
-    let y1 = -w/2;
-    let y2 =  y1;
-    let y3 = -w/2 + c2;
-    let y4 =  w/2 - c3;
-    let y5 =  w/2;
-    let y6 =  y5;
-    let y7 =  w/2 - c4;
-    let y8 = -w/2 + c1;
-    let z1 = -h/2;*/
-
-    /*let base = [ x1, y1, z1, 1,
-                 x2, y2, z1, 1,
-                 x3, y3, z1, 1,
-                 x4, y4, z1, 1, 
-                 x5, y5, z1, 1,
-                 x6, y6, z1, 1,
-                 x7, y7, z1, 1,
-                 x8, y8, z1, 1
-                ];*/
+    
 
     let Points_level = [  -l/2,    0, 
                                0, -w/2, 
@@ -73,37 +47,7 @@ const PileViewCanvas = props => {
      let ww = Number(pile.Top.width);
      let w_front = Number(pile.Top.width_front);
      let w_aft = Number(pile.Top.width_aft);
-     /*let cc1 = Number(pile.Top.r1);
-     let cc2 = Number(pile.Top.r2);
-     let cc3 = Number(pile.Top.r3);
-     let cc4 = Number(pile.Top.r4);
-     let xx1 = -l/2 + l_left + cc1;
-     let xx2 =  l/2 - l_right - cc2;
-     let xx3 =  l/2 - l_right;
-     let xx4 =  xx3;
-     let xx5 =  l/2 - l_right - cc3;
-     let xx6 = -l/2 + l_left + cc4;
-     let xx7 = -l/2 + l_left;
-     let xx8 =  xx7;
-     let yy1 = -w/2 + w_aft;
-     let yy2 =  yy1;
-     let yy3 = -w/2  + w_aft + cc2;
-     let yy4 =  w/2 - w_front - cc3;
-     let yy5 =  w/2 - w_front;
-     let yy6 =  yy5;
-     let yy7 =  w/2 - w_front - cc4;
-     let yy8 = -w/2 + w_aft + cc1;
-     let zz1 = h/2;*/
-
-    /*let top = [ xx1, yy1, zz1, 1,
-                xx2, yy2, zz1, 1,
-                xx3, yy3, zz1, 1,
-                xx4, yy4, zz1, 1, 
-                xx5, yy5, zz1, 1,
-                xx6, yy6, zz1, 1,
-                xx7, yy7, zz1, 1,
-                xx8, yy8, zz1, 1
-                ];*/
+     
 
 let Points_contur_L = [ -l/2, 0, 
                        -ll/2, h, 
@@ -320,29 +264,31 @@ ctx.stroke();*/
 
     let slices;
     let slice_step = 10;
+
     for ( let i = 0; i <= slice_step; i ++ ){
-        slices = getSlice( h/slice_step*i, Points_level, Tension_Base, Tension_Volume, true, step, Points_contur_L, Points_contur_W );
+       // slices = getSlice( h/slice_step*i, Points_level, Tension_Base, Tension_Volume, true, step, Points_contur_L, Points_contur_W );
+        //slices = gPile.get_Slice_Base( Number(pile.Height) / slice_step * i ); 
+        slices = gPile.get_Slice_Base( h / slice_step * i );
         slices  = MoveMatrixAny( slices, 0, 0, -h/2 );
         slices  = ScaleMatrixAny1zoom( slices, zoom );
         slices  = RotateMatrix_X_any( slices, -100 );
         slices  = RotateMatrix_Y_any( slices, frameCount/4 );
         slices  = RotateMatrix_Z_any( slices, 0 );
         slices  = MoveMatrixAny( slices, x_center, y_center, 0 );
-        drawSlice( ctx, slices );
+        draw_PLine_3D( ctx, slices );
     }
 
-    let contur;
-    tension = Tension_Volume; //contur by length
-        contur  = getContur( Points_contur_L, tension, false, step );    
+    let contur = gPile.get_Contur_Arc_Length;
         contur  = MoveMatrixAny( contur, 0, 0, -h/2 );
         contur  = ScaleMatrixAny1zoom( contur, zoom );
         contur  = RotateMatrix_X_any( contur, -100 );
         contur  = RotateMatrix_Y_any( contur, frameCount/4 );
         //contur  = RotateMatrix_Z_any( contur, 0 );
         contur  = MoveMatrixAny( contur, x_center, y_center, 0 );
-        drawSlice( ctx, contur );
-    tension = Tension_Volume; //contur by widht
-        contur  = getContur( Points_contur_W, tension, false, step ); 
+        draw_PLine_3D( ctx, contur );
+
+        //contur by widht*/
+        contur  = gPile.get_Contur_Arc_Widht; 
         contur  = RotateMatrix_Z_any( contur, 90 )   
         contur  = MoveMatrixAny( contur, 0, 0, -h/2 );
         contur  = ScaleMatrixAny1zoom( contur, zoom );
@@ -350,7 +296,7 @@ ctx.stroke();*/
         contur  = RotateMatrix_Y_any( contur, frameCount/4 );
        // contur  = RotateMatrix_Z_any( contur, 0 );
         contur  = MoveMatrixAny( contur, x_center, y_center, 0 );
-        drawSlice( ctx, contur );
+        draw_PLine_3D( ctx, contur );
 
     }
 
