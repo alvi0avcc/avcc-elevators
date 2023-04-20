@@ -18,6 +18,17 @@ export function draw_PLine_3D(ctx, points ) {
     ctx.stroke();
 }
 
+export function draw_PLine_3D_between(ctx, points1, points2 ) {
+    ctx.beginPath();
+    //ctx.moveTo(points[0], points[1]);
+    for( let i=0; i < points1.length; i+=4 ) {
+        //ctx.moveTo(points1[0], points1[1]);
+        ctx.moveTo(points1[i], points1[i+1]);
+        ctx.lineTo(points2[i], points2[i+1]);
+    }
+    ctx.stroke();
+}
+
 export function drawCurve(ctx, points, tension, isClosed, numOfSegments, showPoints) {
     ctx.beginPath();
     draw_PLine(ctx, getCurvePoints(points, tension, isClosed, numOfSegments));

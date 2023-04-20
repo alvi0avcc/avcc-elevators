@@ -1,5 +1,5 @@
-import { getCurvePoints, getPoints_by_Y } from './spline.js'; // spline
-import { interpolation } from './calc.js';
+import { getCurvePoints, getPoints_by_Y, get_Max_Y_3D } from './spline.js'; // spline
+import { interpolation, MyRound, Volume_Pillers } from './calc.js';
 
 export default class cPile{
     constructor() {
@@ -181,5 +181,23 @@ get_Slice_Base( level ) {
     }
     return xyz;
 }
+
+get get_Volume(){
+    let max = get_Max_Y_3D( this.get_Contur_Arc_Length )-0.001;
+    let slice_step = 20;
+    let slices1, slices2;
+    let volume = 0;
+    for ( let i = 0; i < slice_step; i ++ ){
+        slices1 = this.get_Slice_Base( max / slice_step * i );
+        slices2 = this.get_Slice_Base( max / slice_step * (i+1) );
+        for ( let j = 0; j < slices1.length-4; j+=4 ) {
+            volume = volume + Volume_Pillers( slices1[j],slices1[1+j],slices1[2+j], slices2[j],slices2[1+j],slices2[2+j], slices2[4+j],slices2[5+j],slices2[6+j], slices1[4+j],slices1[5+j],slices1[6+j] );
+        
+        }
+    }
+    volume = MyRound( volume, 3 );
+    return volume;
+}
+
 
 };//class

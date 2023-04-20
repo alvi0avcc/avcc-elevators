@@ -4,9 +4,9 @@ import { Isometric, IsometricArr, Matrix, DecartToSphereArr, SphereToDecartArr }
 import { mat4 } from 'gl-matrix';
 import * as Calc from './calc.js';
 import cPile from './pile_class.js'
-import { getCurvePoints, drawLines, drawCurve, getPoint, drawPoint, drawPoints, getSlice, drawSlice, drawContur, getContur, getPoints_by_Y, interpolation } from './spline.js';
+import { get_Max_Y_3D, getCurvePoints, drawLines, drawCurve, getPoint, drawPoint, drawPoints, getSlice, drawSlice, drawContur, getContur, getPoints_by_Y, interpolation } from './spline.js';
 import { MoveMatrix, MoveMatrixAny, RotateMatrix_X, RotateMatrix_X_any, RotateMatrix_Y, RotateMatrix_Y_any, RotateMatrix_Z, RotateMatrix_Z_any, ScaleMatrix, ScaleMatrixAny, ScaleMatrixAny1zoom } from './3d-matrix.js';
-import { draw_PLine_3D } from './draw.js';
+import { draw_PLine_3D, draw_PLine_3D_between } from './draw.js';
 
 
 const PileViewCanvas = props => {
@@ -254,29 +254,51 @@ ctx.stroke();*/
 // bottom text
     ctx.fillStyle   = 'black';
     ctx.font = "18px serif";
-    ctx.fillText( Elevators.volume_Pile_base(props.index), 25, ctx.canvas.height - 25 );
+    //ctx.fillText( Elevators.volume_Pile_base(props.index), 25, ctx.canvas.height - 25 );
+    ctx.fillText( 'Pile № '+ props.index + ' Volume = '+ gPile.get_Volume +' (m3)', 25, ctx.canvas.height - 25 );
   
 // splines
-    ctx.strokeStyle  = 'blue';
-
-    let tension = Tension_Base;
-    let step = 10;
 
     let slices;
-    let slice_step = 10;
+    let slices_old;
+    let slice_step = 20;
+    let max = get_Max_Y_3D( gPile.get_Contur_Arc_Length )-0.001;
 
     for ( let i = 0; i <= slice_step; i ++ ){
-       // slices = getSlice( h/slice_step*i, Points_level, Tension_Base, Tension_Volume, true, step, Points_contur_L, Points_contur_W );
-        //slices = gPile.get_Slice_Base( Number(pile.Height) / slice_step * i ); 
-        slices = gPile.get_Slice_Base( h / slice_step * i );
+        slices = gPile.get_Slice_Base( max / slice_step * i );
         slices  = MoveMatrixAny( slices, 0, 0, -h/2 );
         slices  = ScaleMatrixAny1zoom( slices, zoom );
         slices  = RotateMatrix_X_any( slices, -100 );
         slices  = RotateMatrix_Y_any( slices, frameCount/4 );
         slices  = RotateMatrix_Z_any( slices, 0 );
         slices  = MoveMatrixAny( slices, x_center, y_center, 0 );
-        draw_PLine_3D( ctx, slices );
+        ctx.strokeStyle  = 'blue';
+        if ( i == 0 ) ctx.strokeStyle  = 'magenta';
+        //if ( i == slice_step ) ctx.strokeStyle  = 'red';
+        if ( i == 0 ) { ctx.lineWidth = 2; draw_PLine_3D( ctx, slices ); }
+        //if ( i == 0 || i == slice_step ) { ctx.lineWidth = 2; draw_PLine_3D( ctx, slices ); }
+        if ( i > 0) { 
+            ctx.strokeStyle  = 'blue';
+            ctx.lineWidth = 0.5;
+            if ( i != 0 & i != slice_step ) draw_PLine_3D( ctx, slices );
+            draw_PLine_3D_between( ctx, slices, slices_old );
+        }
+        slices_old = slices.slice(0);
+
     }
+
+        slices  = gPile.get_Slice_Base( h );
+        slices  = MoveMatrixAny( slices, 0, 0, -h/2 );
+        slices  = ScaleMatrixAny1zoom( slices, zoom );
+        slices  = RotateMatrix_X_any( slices, -100 );
+        slices  = RotateMatrix_Y_any( slices, frameCount/4 );
+        slices  = RotateMatrix_Z_any( slices, 0 );
+        slices  = MoveMatrixAny( slices, x_center, y_center, 0 );
+        ctx.strokeStyle  = 'red';
+        ctx.lineWidth = 2;
+        draw_PLine_3D( ctx, slices ); 
+
+
 
     let contur = gPile.get_Contur_Arc_Length;
         contur  = MoveMatrixAny( contur, 0, 0, -h/2 );
@@ -285,6 +307,8 @@ ctx.stroke();*/
         contur  = RotateMatrix_Y_any( contur, frameCount/4 );
         //contur  = RotateMatrix_Z_any( contur, 0 );
         contur  = MoveMatrixAny( contur, x_center, y_center, 0 );
+        ctx.strokeStyle  = 'blue'
+        ctx.lineWidth = 1;
         draw_PLine_3D( ctx, contur );
 
         //contur by widht*/
@@ -296,6 +320,7 @@ ctx.stroke();*/
         contur  = RotateMatrix_Y_any( contur, frameCount/4 );
        // contur  = RotateMatrix_Z_any( contur, 0 );
         contur  = MoveMatrixAny( contur, x_center, y_center, 0 );
+        ctx.lineWidth = 1;
         draw_PLine_3D( ctx, contur );
 
     }
