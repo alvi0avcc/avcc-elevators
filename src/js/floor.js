@@ -554,8 +554,8 @@ function Pile(propsPile){
             </div>
             <div className='rowPile' style={{ width: 300 }}>
                 <label style={{ width: 120 }}>Tension Volume:</label>
-                <input className='inputPile' style={{ width: 50 }} type ='number' min="0.01" max="1" step="0.01" value = {pile.Tension_Volume} onChange={ ChangeTensionVolume }/>
-                <input className='inputPile' style={{ width: 100 }}type ='range' min="0.01" max="1" step="0.01" value = {pile.Tension_Volume} onChange={ ChangeTensionVolume }/>
+                <input className='inputPile' style={{ width: 50 }} type ='number' min="0" max="1" step="0.01" value = {pile.Tension_Volume} onChange={ ChangeTensionVolume }/>
+                <input className='inputPile' style={{ width: 100 }}type ='range' min="0" max="1" step="0.01" value = {pile.Tension_Volume} onChange={ ChangeTensionVolume }/>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'end' }}>

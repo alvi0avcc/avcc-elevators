@@ -262,7 +262,7 @@ ctx.stroke();*/
     let slices;
     let slices_old;
     let slice_step = 20;
-    let max = get_Max_Y_3D( gPile.get_Contur_Arc_Length )-0.001;
+    let max = get_Max_Y_3D( gPile.get_Contur_Arc_Length );
 
     for ( let i = 0; i <= slice_step; i ++ ){
         slices = gPile.get_Slice_Base( max / slice_step * i );
