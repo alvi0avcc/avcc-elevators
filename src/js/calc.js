@@ -108,7 +108,10 @@ return xyz_arr;
 }
 
 export function interpolation( y , x1,y1, x2,y2 ){
-    let x = ( x2 - x1 ) * ( y - y1 ) / ( y2 - y1 ) + x1;
+    let x = 0;
+    if ( y == y1 ) return x1;
+    if ( y == y2 ) return x2;
+    x = ( x2 - x1 ) * ( y - y1 ) / ( y2 - y1 ) + x1;
 return x;
 }
 

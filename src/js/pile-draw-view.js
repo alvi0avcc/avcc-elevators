@@ -261,17 +261,23 @@ ctx.stroke();*/
 
     let slices;
     let slices_old;
-    let slice_step = 20;
-    let max = get_Max_Y_3D( gPile.get_Contur_Arc_Length );
+    let slice_step = 50;
+    let max = get_Max_Y_3D( gPile.get_Contur_Arc_Length ) - 0.0001;
+    let level = 0;
 
     for ( let i = 0; i <= slice_step; i ++ ){
-        slices = gPile.get_Slice_Base( max / slice_step * i );
+        level = max / slice_step * i;
+        //console.log('max = ',max);
+        //console.log('level 1 = ',level );
+        slices = gPile.get_Slice_Base( level );
+        //console.log('slices = ',slices );
         slices  = MoveMatrixAny( slices, 0, 0, -h/2 );
         slices  = ScaleMatrixAny1zoom( slices, zoom );
         slices  = RotateMatrix_X_any( slices, -100 );
         slices  = RotateMatrix_Y_any( slices, frameCount/4 );
-        slices  = RotateMatrix_Z_any( slices, 0 );
+        //slices  = RotateMatrix_Z_any( slices, 0 );
         slices  = MoveMatrixAny( slices, x_center, y_center, 0 );
+        //console.log('slices 2 = ',slices );
         ctx.strokeStyle  = 'blue';
         if ( i == 0 ) ctx.strokeStyle  = 'magenta';
         //if ( i == slice_step ) ctx.strokeStyle  = 'red';
@@ -285,8 +291,7 @@ ctx.stroke();*/
         }
         slices_old = slices.slice(0);
 
-    }
-
+    };
         slices  = gPile.get_Slice_Base( h );
         slices  = MoveMatrixAny( slices, 0, 0, -h/2 );
         slices  = ScaleMatrixAny1zoom( slices, zoom );
@@ -296,9 +301,7 @@ ctx.stroke();*/
         slices  = MoveMatrixAny( slices, x_center, y_center, 0 );
         ctx.strokeStyle  = 'red';
         ctx.lineWidth = 2;
-        draw_PLine_3D( ctx, slices ); 
-
-
+        draw_PLine_3D( ctx, slices );
 
     let contur = gPile.get_Contur_Arc_Length;
         contur  = MoveMatrixAny( contur, 0, 0, -h/2 );
@@ -311,7 +314,7 @@ ctx.stroke();*/
         ctx.lineWidth = 1;
         draw_PLine_3D( ctx, contur );
 
-        //contur by widht*/
+        //contur by widht
         contur  = gPile.get_Contur_Arc_Widht; 
         contur  = RotateMatrix_Z_any( contur, 90 )   
         contur  = MoveMatrixAny( contur, 0, 0, -h/2 );

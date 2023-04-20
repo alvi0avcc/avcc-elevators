@@ -14,7 +14,7 @@ export default class cPile{
         this.Base_Width  = 30; //base plane
         this.Top_Length  = 15; //upper plane
         this.Top_Width   = 15; //upper plane
-        this.Tension_Base = 1;
+        this.Tension_Base = 0.835;
         this.Tension_Volume = 0.5;
         this.numOfSegments = 10; // quantity spline segments
         //calculated input data
@@ -162,11 +162,16 @@ get_Slice_Base( level ) {
     let xyz = [];
     let contur_L = this.Length_Arc_Points;
     let contur_W = this.Widht_Arc_Points;
+    //console.log('level 2 = ',level);
     let xy_L = getPoints_by_Y( level , contur_L );
     let xy_W = getPoints_by_Y( level , contur_W );
+    //console.log('xy_L = ',xy_L);
+    //console.log('xy_W = ',xy_W);
     let x1 = interpolation( level , xy_L[0][0], xy_L[0][1], xy_L[0][2], xy_L[0][3] );
     let x2 = interpolation( level , xy_W[0][0], xy_W[0][1], xy_W[0][2], xy_W[0][3] );
-    let points = [];;
+    //console.log('x1 = ',x1 );
+    //console.log('x2 = ',x2 );
+    let points = [];
     points[0] = -x1;//l
     points[1] = 0;
     points[2] = 0;
@@ -176,15 +181,17 @@ get_Slice_Base( level ) {
     points[6] = 0;
     points[7] = x2;//w
     let xy = getCurvePoints( points, this.Tension_Base, true, this.numOfSegments );
+    //console.log('getCurvePoints (xy) = ',xy );
     for ( let i = 0; i < xy.length; i+=2 ){
         xyz = xyz.concat( [ xy[i], xy[i+1], level, 1 ] );
     }
+    //console.log('getCurvePoints (xyz) = ',xyz );
     return xyz;
 }
 
 get get_Volume(){
-    let max = get_Max_Y_3D( this.get_Contur_Arc_Length )-0.001;
-    let slice_step = 20;
+    let max = get_Max_Y_3D( this.get_Contur_Arc_Length ) - 0.0001;
+    let slice_step = 50;
     let slices1, slices2;
     let volume = 0;
     for ( let i = 0; i < slice_step; i ++ ){
@@ -195,6 +202,8 @@ get get_Volume(){
         
         }
     }
+    //console.log('slices1 = ', slices1);
+
     volume = MyRound( volume, 3 );
     return volume;
 }

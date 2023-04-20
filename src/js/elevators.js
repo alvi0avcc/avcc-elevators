@@ -68,7 +68,7 @@ class cPile {
             this.Box_Heights = {h1: 1, h2: 1, h3: 1, h4: 1};
             this.Base   = { length: 30, width: 30 }; //base plane
             this.Top    = { length: 15, width: 15 }; //upper plane
-            this.Tension_Base = 1;
+            this.Tension_Base = 0.835;
             this.Tension_Volume = 0.5;
         }
     }
