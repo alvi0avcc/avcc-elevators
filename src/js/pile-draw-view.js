@@ -368,7 +368,7 @@ ctx.stroke();*/
             type="range" id="horizontal_Z" name="horizontal_Z"
             min={-180} max={180}
             defaultValue={-10}
-            onChange={ changeAngleZ }
+            onChange={ changeAngleX }
             />
 
     <div style={{ display: 'flex', flexDirection: 'row', height: 440 }}>
@@ -376,6 +376,7 @@ ctx.stroke();*/
         <canvas ref={canvasRef} {...props} style={{ width: '100%', height: '100%' }}/>
         <input 
             class='inputRangeVertical'
+            disabled
             type="range" id="vertical_X" name="vertical_X"
             min={-180} max={180}
             defaultValue={-70}
@@ -385,28 +386,28 @@ ctx.stroke();*/
         <div className='block' style={{ marginLeft: -35, padding: 1 }} >
             <button
                 className='myButtonRound'
-                onClick={ ()=> { pile.angle_X = 0; pile.angle_Y = 0; pile.angle_Z = 0; } }
+                onClick={ ()=> { pile.angle_X = 0; pile.angle_Y = 0; pile.angle_Z = 0; Elevators.setAngleView( props.index, pile.angle_X, pile.angle_Y, pile.angle_Z ); } }
                 >
                 U
             </button>
 
             <button 
                 className='myButtonRound'
-                onClick={ ()=> { pile.angle_X = -90; pile.angle_Y = 0; pile.angle_Z = 0; } }
+                onClick={ ()=> { pile.angle_X = -90; pile.angle_Y = 0; pile.angle_Z = 0; Elevators.setAngleView( props.index, pile.angle_X, pile.angle_Y, pile.angle_Z ); } }
                 >
                 F
             </button>
 
             <button 
                 className='myButtonRound'
-                onClick={ ()=> { pile.angle_X = -90; pile.angle_Y = 90; pile.angle_Z = 0; } }
+                onClick={ ()=> { pile.angle_X = -90; pile.angle_Y = 90; pile.angle_Z = 0; Elevators.setAngleView( props.index, pile.angle_X, pile.angle_Y, pile.angle_Z ); } }
                 >
                 S
             </button>
             
             <button 
                 className='myButtonRound'
-                onClick={ ()=> { pile.angle_X = -70; pile.angle_Y = 15; pile.angle_Z = -10; } }
+                onClick={ ()=> { pile.angle_X = -70; pile.angle_Y = 15; pile.angle_Z = -10; Elevators.setAngleView( props.index, pile.angle_X, pile.angle_Y, pile.angle_Z ); } }
                 >
                 3d
             </button>
