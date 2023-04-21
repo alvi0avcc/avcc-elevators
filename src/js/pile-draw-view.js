@@ -364,7 +364,7 @@ ctx.stroke();*/
   return (
   <div>
         <input 
-            style={{ width: '95%' }}
+            style={{ width: '95%', marginLeft: 30 }}
             type="range" id="horizontal_Z" name="horizontal_Z"
             min={-180} max={180}
             defaultValue={-10}
@@ -384,7 +384,7 @@ ctx.stroke();*/
             />
     </div>
         <input 
-            style={{ width: '95%' }}
+            style={{ width: '95%', marginLeft: 30 }}
             type="range" id="horizontal_Y" name="horizontal_Y"
             min={-180} max={180}
             //step={5}

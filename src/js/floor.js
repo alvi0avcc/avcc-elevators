@@ -16,7 +16,9 @@ export default function Floor(){
 
             <div
                 className='block'
-                style={{ display: `${ Elevators.FloorFound ? 'block' : 'none' }`, marginTop: 10 }}
+                style={{ display: `${ Elevators.FloorFound ? 'block' : 'none' }`,
+                minWidth: 1000,
+                marginTop: 10 }}
                 >
                 <PilesHeader updateState={update} callback={(data)=> setUpdate( data ) }/>
                 { Elevators.PileFound > 0 ?  <Piles updateState={update} callback={(data)=> setUpdate( data ) }/> : '' }
@@ -246,11 +248,14 @@ function PilesHeader(propsPilesHeader){
     const [updatePiles, setUpdatePiles] = React.useState(true);
     return (
         <>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
             <div style={{ width: 40, marginTop: -15, backgroundColor: 'white', backgroundClip: 'content-box' }}>
                 <span>Piles</span>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+            <div
+                style={{
+                    display: ( Elevators.PileFound ? 'none' : 'flex' ),
+                    flexDirection: 'row', justifyContent: 'space-between' }}>
             <Button 
                 variant='outlined'
                 size='small'
@@ -439,37 +444,49 @@ function Pile(propsPile){
     };
 
     return (
-        <div className='block' style={{ flexDirection: 'row', height: 500 }}>
-        <div className='block' style={{ width: 425 }}>
+        <div className='block' style={{ flexDirection: 'row', height: 530 }}>
+        <div className='block' style={{ width: 300 }}>
+
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+
                 <label><strong>index: {propsPile.index}</strong></label>
 
             <div>
-                <Button 
-                    variant='outlined'
-                    size='small'
+                <div className='tooltip'>
+                <button 
+                    className='myButtonRound'
                     onClick={ (e)=>( Elevators.PileAdd(), propsPile.callback( !propsPile.updateState ) ) }
-                >Add</Button>
+                >+</button>
+                <span class="tooltiptext">Add Pile</span>
+                </div>
 
-                <Button 
-                    variant='outlined'
-                    size='small'
+                <div className='tooltip'>
+                <button 
+                    className='myButtonRound'
                     onClick={()=>( Elevators.PileClone(index), propsPile.callback( !propsPile.updateState ) )}
-                >Clone</Button>
+                >++</button>
+                <span class="tooltiptext">Clone Pile</span>
+                </div>
             </div>
 
-                <Button
-                    variant='outlined'
+            <div className='tooltip'>
+                <button
+                    className='myButtonRound'
                     disabled = { Elevators.FloorFound ? false : true }
-                    size='small'
                     onClick={()=>( Elevators.PileDel( index ), propsPile.callback( !propsPile.updateState ) )}
-                >Delete</Button>
+                >-</button>
+                <span class="tooltiptext">Delete current Pile</span>
             </div>
-            <div className='rowPile' style={{ width: 302 }}>
+
+            </div>
+
+            <div><hr/></div>
+
+            <div className='rowPile' style={{ width: 250 }}>
                 <label>name:</label>
                 <input 
                     className='inputPile' 
-                    style={{ width: 250 }}
+                    style={{ width: 180 }}
                     value = {pile.Name}
                     onChange={ ChangeName }
                 />
@@ -559,16 +576,20 @@ function Pile(propsPile){
                 <label>width:</label>
                 <input className='inputPile' type ='number' min={0.01} step={0.01} value = {pile.Base.width} onChange={ ChangeBase_width }/>
             </div>
-            <div className='rowPile' style={{ width: 300 }}>
+
+            <div className='rowPile' >
                 <label style={{ width: 120 }}>Tension Base:</label>
-                <input className='inputPile' style={{ width: 50 }} type ='number' min="0" max="1.5" step="0.01" value = {pile.Tension_Base} onChange={ ChangeTensionBase }/>
-                <input className='inputPile' style={{ width: 100 }}type ='range' min="0" max="1.5" step="0.01" value = {pile.Tension_Base} onChange={ ChangeTensionBase }/>
+                <input className='inputPile' type ='number' min="0" max="1.5" step="0.01" value = {pile.Tension_Base} onChange={ ChangeTensionBase }/>
             </div>
-            <div className='rowPile' style={{ width: 300 }}>
+            <input className='inputPile' style={{ width: '97%' }}type ='range' min="0" max="1.5" step="0.01" value = {pile.Tension_Base} onChange={ ChangeTensionBase }/>
+
+            <div className='rowPile' >
                 <label style={{ width: 120 }}>Tension Volume:</label>
-                <input className='inputPile' style={{ width: 50 }} type ='number' min="0" max="1" step="0.01" value = {pile.Tension_Volume} onChange={ ChangeTensionVolume }/>
-                <input className='inputPile' style={{ width: 100 }}type ='range' min="0" max="1" step="0.01" value = {pile.Tension_Volume} onChange={ ChangeTensionVolume }/>
+                <input className='inputPile'  type ='number' min="0" max="1" step="0.01" value = {pile.Tension_Volume} onChange={ ChangeTensionVolume }/>
             </div>
+            <input className='inputPile' style={{ width: '97%' }}type ='range' min="0" max="1" step="0.01" value = {pile.Tension_Volume} onChange={ ChangeTensionVolume }/>
+
+            <div><hr/></div>
 
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'end' }}>
                 <Button 

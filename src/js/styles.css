@@ -22,7 +22,20 @@ input[type="range"] {
   background: #d3d3d3;
   outline: none;
   margin-top: 11px;
+  margin-bottom: 11px;
   cursor: pointer;
+}
+
+.myButtonRound{
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  border: 1px solid #1976d2;
+  background-color: transparent;
+  color: #1976d2;
+}
+.myButtonRound:hover {
+  background-color: whitesmoke;
 }
 
 .inputRangeVertical {
@@ -30,11 +43,10 @@ input[type="range"] {
   transform: translate(-50%, 210px ) rotate(-90deg);
   width: 440px;
   position: absolute;
-  left: 96%;
+  margin-left: 15px ;
 }
 
 .inputPile {
-  color: currentColor;
   background: none;
   width: 80px;
 }
@@ -222,4 +234,43 @@ input[type="range"] {
   border: none;
   background-color: red;
   max-width: 50px;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  white-space: nowrap;
+  width: auto;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -15px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: calc( -50% + 10px );
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
 }
