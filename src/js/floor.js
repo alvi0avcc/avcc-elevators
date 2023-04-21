@@ -288,11 +288,23 @@ function Piles(propsPiles){
 
 function Pile(propsPile){
     const [valuePile, setValuePile] = React.useState(0);
-    //const [updatePile, setUpdatePile] = React.useState(true);
+
     let index = propsPile.index;
     let pile = Elevators.PileGet( index );
 
     const [value, setValue] = React.useState(false);
+
+   /* const changeAngleX = (event) => {
+        pile.angle_X = event.target.value;
+        Elevators.setAngleView( index, pile.angle_X, pile.angle_Y, pile.angle_Z );
+        setValue(!value);
+    };*/
+
+    /*const changeAngleY = (event) => {
+        pile.angle_Y = event.target.value;
+        Elevators.setAngleView( index, pile.angle_X, pile.angle_Y, pile.angle_Z );
+        setValue(!value);
+    };*/
 
     const ChangeName = (event) => {
         pile.Name = event.target.value;
@@ -427,7 +439,7 @@ function Pile(propsPile){
     };
 
     return (
-        <div className='block' style={{ flexDirection: 'row', height: 545 }}>
+        <div className='block' style={{ flexDirection: 'row', height: 500 }}>
         <div className='block' style={{ width: 425 }}>
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                 <label><strong>index: {propsPile.index}</strong></label>
@@ -570,7 +582,7 @@ function Pile(propsPile){
         </div>
 
         <div className='block' style={{ width: '100%' }}>
-            { Elevators.FloorFound ?  <PileViewCanvas index={index}/> : '' }
+            { Elevators.FloorFound ?  <PileViewCanvas index={index} /> : '' }
         </div>
 
         </div>

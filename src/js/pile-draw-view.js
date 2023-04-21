@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { Elevators } from './elevators.js';
 import { Isometric, IsometricArr, Matrix, DecartToSphereArr, SphereToDecartArr } from './calc.js';
-import { mat4 } from 'gl-matrix';
+//import { mat4 } from 'gl-matrix';
 import * as Calc from './calc.js';
 import cPile from './pile_class.js'
 import { get_Max_Y_3D, getCurvePoints, drawLines, drawCurve, getPoint, drawPoint, drawPoints, getSlice, drawSlice, drawContur, getContur, getPoints_by_Y, interpolation } from './spline.js';
@@ -10,10 +10,36 @@ import { draw_PLine_3D, draw_PLine_3D_between } from './draw.js';
 
 
 const PileViewCanvas = props => {
+
+    //const [value, setValue] = React.useState(true);
+
+    const changeAngleX = (event) => {
+        pile.angle_X = event.target.value;
+        Elevators.setAngleView( props.index, pile.angle_X, pile.angle_Y, pile.angle_Z );
+        //setValue(!value);
+    };
+
+    const changeAngleY = (event) => {
+        pile.angle_Y = event.target.value;
+        Elevators.setAngleView( props.index, pile.angle_X, pile.angle_Y, pile.angle_Z );
+        //setValue(!value);
+    };
+
+    const changeAngleZ = (event) => {
+        pile.angle_Z = event.target.value;
+        Elevators.setAngleView( props.index, pile.angle_X, pile.angle_Y, pile.angle_Z );
+        //setValue(!value);
+    };
   
   const canvasRef = useRef(null);
 
   let pile = Elevators.PileGet( props.index );
+  //let angle_X = -70;
+  //let angle_Y = 15;
+  //let angle_Z = -10;
+  if ( pile.angle_X == undefined ) pile.angle_X =-70;
+  if ( pile.angle_Y == undefined ) pile.angle_Y =15;
+  if ( pile.angle_Z == undefined ) pile.angle_Z =-10;
   let gPile = new cPile();
   let numOfSegments = 10;
   gPile.set_Initial_Data_Complex ( pile, numOfSegments );//initialisation Pile
@@ -34,12 +60,6 @@ const PileViewCanvas = props => {
     let h = Number(pile.Height);
     let Tension_Base = Number( pile.Tension_Base );
     let Tension_Volume = Number( pile.Tension_Volume );
-    
-
-    let Points_level = [  -l/2,    0, 
-                               0, -w/2, 
-                             l/2,    0, 
-                               0,  w/2 ];
 
      let ll = Number(pile.Top.length);
      let l_left = Number(pile.Top.length_left);
@@ -48,17 +68,6 @@ const PileViewCanvas = props => {
      let w_front = Number(pile.Top.width_front);
      let w_aft = Number(pile.Top.width_aft);
      
-
-let Points_contur_L = [ -l/2, 0, 
-                       -ll/2, h, 
-                        ll/2, h, 
-                        l/2,  0 ];
-
-let Points_contur_W = [ -w/2, 0, 
-                        -ww/2, h, 
-                         ww/2, h, 
-                         w/2,  0 ];
-
 //-------------------------------------Corner 1
    /* let corner_b = [];
     let corner_t = [];
@@ -261,7 +270,7 @@ ctx.stroke();*/
 
     let slices;
     let slices_old;
-    let slice_step = 50;
+    let slice_step = 25;
     let max = get_Max_Y_3D( gPile.get_Contur_Arc_Length ) - 0.0001;
     let level = 0;
 
@@ -273,9 +282,10 @@ ctx.stroke();*/
         //console.log('slices = ',slices );
         slices  = MoveMatrixAny( slices, 0, 0, -h/2 );
         slices  = ScaleMatrixAny1zoom( slices, zoom );
-        slices  = RotateMatrix_X_any( slices, -100 );
-        slices  = RotateMatrix_Y_any( slices, frameCount/4 );
-        //slices  = RotateMatrix_Z_any( slices, 0 );
+        slices  = RotateMatrix_X_any( slices, pile.angle_X );
+        //slices  = RotateMatrix_Y_any( slices, frameCount/4 );
+        slices  = RotateMatrix_Y_any( slices, pile.angle_Y );
+        slices  = RotateMatrix_Z_any( slices, pile.angle_Z );
         slices  = MoveMatrixAny( slices, x_center, y_center, 0 );
         //console.log('slices 2 = ',slices );
         ctx.strokeStyle  = 'blue';
@@ -295,9 +305,9 @@ ctx.stroke();*/
         slices  = gPile.get_Slice_Base( h );
         slices  = MoveMatrixAny( slices, 0, 0, -h/2 );
         slices  = ScaleMatrixAny1zoom( slices, zoom );
-        slices  = RotateMatrix_X_any( slices, -100 );
-        slices  = RotateMatrix_Y_any( slices, frameCount/4 );
-        slices  = RotateMatrix_Z_any( slices, 0 );
+        slices  = RotateMatrix_X_any( slices, pile.angle_X );
+        slices  = RotateMatrix_Y_any( slices, pile.angle_Y );
+        slices  = RotateMatrix_Z_any( slices, pile.angle_Z );
         slices  = MoveMatrixAny( slices, x_center, y_center, 0 );
         ctx.strokeStyle  = 'red';
         ctx.lineWidth = 2;
@@ -306,9 +316,9 @@ ctx.stroke();*/
     let contur = gPile.get_Contur_Arc_Length;
         contur  = MoveMatrixAny( contur, 0, 0, -h/2 );
         contur  = ScaleMatrixAny1zoom( contur, zoom );
-        contur  = RotateMatrix_X_any( contur, -100 );
-        contur  = RotateMatrix_Y_any( contur, frameCount/4 );
-        //contur  = RotateMatrix_Z_any( contur, 0 );
+        contur  = RotateMatrix_X_any( contur, pile.angle_X );
+        contur  = RotateMatrix_Y_any( contur, pile.angle_Y );
+        contur  = RotateMatrix_Z_any( contur, pile.angle_Z );
         contur  = MoveMatrixAny( contur, x_center, y_center, 0 );
         ctx.strokeStyle  = 'blue'
         ctx.lineWidth = 1;
@@ -319,9 +329,9 @@ ctx.stroke();*/
         contur  = RotateMatrix_Z_any( contur, 90 )   
         contur  = MoveMatrixAny( contur, 0, 0, -h/2 );
         contur  = ScaleMatrixAny1zoom( contur, zoom );
-        contur  = RotateMatrix_X_any( contur, -100 );
-        contur  = RotateMatrix_Y_any( contur, frameCount/4 );
-       // contur  = RotateMatrix_Z_any( contur, 0 );
+        contur  = RotateMatrix_X_any( contur, pile.angle_X );
+        contur  = RotateMatrix_Y_any( contur, pile.angle_Y );
+        contur  = RotateMatrix_Z_any( contur, pile.angle_Z );
         contur  = MoveMatrixAny( contur, x_center, y_center, 0 );
         ctx.lineWidth = 1;
         draw_PLine_3D( ctx, contur );
@@ -330,9 +340,9 @@ ctx.stroke();*/
 
   useEffect(() => {
     
-    const canvas = canvasRef.current
-    const { width, height } = canvas.getBoundingClientRect()
-    canvas.height = 545;
+    const canvas = canvasRef.current;
+    const { width, height } = canvas.getBoundingClientRect();
+    canvas.height = height;
     canvas.width = width;
     const context = canvas.getContext('2d')
     let frameCount = 0
@@ -351,7 +361,39 @@ ctx.stroke();*/
     }
   }, [draw])
   
-  return <canvas ref={canvasRef} {...props}/>
+  return (
+  <div>
+        <input 
+            style={{ width: '95%' }}
+            type="range" id="horizontal_Z" name="horizontal_Z"
+            min={-180} max={180}
+            defaultValue={-10}
+            onChange={ changeAngleZ }
+            />
+
+    <div style={{ display: 'flex', flexDirection: 'row', height: 440 }}>
+        
+        <canvas ref={canvasRef} {...props} style={{ width: '100%', height: '100%' }}/>
+        <input 
+            class='inputRangeVertical'
+            type="range" id="vertical_X" name="vertical_X"
+            min={-180} max={180}
+            defaultValue={-70}
+            //value={pile.angle_X}
+            onChange={ changeAngleX }
+            />
+    </div>
+        <input 
+            style={{ width: '95%' }}
+            type="range" id="horizontal_Y" name="horizontal_Y"
+            min={-180} max={180}
+            //step={5}
+            defaultValue={15}
+            //value={angle_Y}
+            onChange={ changeAngleY }
+            />
+  </div>
+  )
 }
 
 export default PileViewCanvas;

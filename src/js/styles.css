@@ -6,12 +6,33 @@ hr {
   margin-top: 2px;
   margin-bottom: 2px;
 }
+
 select {
     padding: 2px 5px;
     cursor: pointer;
     color: currentColor;
     background: none;
 }
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 2px;
+  border-radius: 5px;
+  background: #d3d3d3;
+  outline: none;
+  margin-top: 11px;
+  cursor: pointer;
+}
+
+.inputRangeVertical {
+  margin-left: -10px;
+  transform: translate(-50%, 210px ) rotate(-90deg);
+  width: 440px;
+  position: absolute;
+  left: 96%;
+}
+
 .inputPile {
   color: currentColor;
   background: none;

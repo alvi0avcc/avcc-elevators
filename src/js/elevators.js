@@ -70,6 +70,9 @@ class cPile {
             this.Top    = { length: 15, width: 15 }; //upper plane
             this.Tension_Base = 0.835;
             this.Tension_Volume = 0.5;
+            this.angle_X = -70;
+            this.angle_Y = 15;
+            this.angle_Z = -10;
         }
     }
 
@@ -395,6 +398,13 @@ class cElevators {
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Tension_Base = Number( Tension_Base );
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Tension_Volume = Number( Tension_Volume );
         } 
+    }
+    setAngleView( index, angle_X, angle_Y, angle_Z ){
+        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].angle_X = angle_X;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].angle_Y = angle_Y;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].angle_Z = angle_Z;
+        };
     }
     get ComplexList(){
         let List = [];
