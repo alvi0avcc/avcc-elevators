@@ -382,6 +382,35 @@ ctx.stroke();*/
             //value={pile.angle_X}
             onChange={ changeAngleX }
             />
+        <div className='block' style={{ marginLeft: -35, padding: 1 }} >
+            <button
+                className='myButtonRound'
+                onClick={ ()=> { pile.angle_X = 0; pile.angle_Y = 0; pile.angle_Z = 0; } }
+                >
+                U
+            </button>
+
+            <button 
+                className='myButtonRound'
+                onClick={ ()=> { pile.angle_X = -90; pile.angle_Y = 0; pile.angle_Z = 0; } }
+                >
+                F
+            </button>
+
+            <button 
+                className='myButtonRound'
+                onClick={ ()=> { pile.angle_X = -90; pile.angle_Y = 90; pile.angle_Z = 0; } }
+                >
+                S
+            </button>
+            
+            <button 
+                className='myButtonRound'
+                onClick={ ()=> { pile.angle_X = -70; pile.angle_Y = 15; pile.angle_Z = -10; } }
+                >
+                3d
+            </button>
+        </div>
     </div>
         <input 
             style={{ width: '95%', marginLeft: 30 }}

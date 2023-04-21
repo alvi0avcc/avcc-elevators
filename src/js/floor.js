@@ -456,7 +456,7 @@ function Pile(propsPile){
                 <button 
                     className='myButtonRound'
                     onClick={ (e)=>( Elevators.PileAdd(), propsPile.callback( !propsPile.updateState ) ) }
-                >+</button>
+                >A</button>
                 <span class="tooltiptext">Add Pile</span>
                 </div>
 
@@ -464,7 +464,7 @@ function Pile(propsPile){
                 <button 
                     className='myButtonRound'
                     onClick={()=>( Elevators.PileClone(index), propsPile.callback( !propsPile.updateState ) )}
-                >++</button>
+                >C</button>
                 <span class="tooltiptext">Clone Pile</span>
                 </div>
             </div>
@@ -474,7 +474,7 @@ function Pile(propsPile){
                     className='myButtonRound'
                     disabled = { Elevators.FloorFound ? false : true }
                     onClick={()=>( Elevators.PileDel( index ), propsPile.callback( !propsPile.updateState ) )}
-                >-</button>
+                >D</button>
                 <span class="tooltiptext">Delete current Pile</span>
             </div>
 

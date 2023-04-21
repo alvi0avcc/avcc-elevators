@@ -29,6 +29,7 @@ input[type="range"] {
 .myButtonRound{
   border-radius: 50%;
   width: 25px;
+  margin: 3px;
   height: 25px;
   border: 1px solid #1976d2;
   background-color: transparent;
