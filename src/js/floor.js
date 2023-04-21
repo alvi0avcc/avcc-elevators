@@ -444,7 +444,7 @@ function Pile(propsPile){
     };
 
     return (
-        <div className='block' style={{ flexDirection: 'row', height: 540 }}>
+        <div className='block' style={{ flexDirection: 'row', height: 550 }}>
         <div className='block' style={{ width: 300 }}>
 
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -456,7 +456,7 @@ function Pile(propsPile){
                 <button 
                     className='myButtonRound'
                     onClick={ (e)=>( Elevators.PileAdd(), propsPile.callback( !propsPile.updateState ) ) }
-                >A</button>
+                >+</button>
                 <span class="tooltiptext">Add Pile</span>
                 </div>
 
@@ -581,24 +581,23 @@ function Pile(propsPile){
                 <label style={{ width: 120 }}>Tension Base:</label>
                 <input className='inputPile' type ='number' min="0" max="1.5" step="0.01" value = {pile.Tension_Base} onChange={ ChangeTensionBase }/>
             </div>
-            <input className='inputPile' style={{ width: '97%' }}type ='range' min="0" max="1.5" step="0.01" value = {pile.Tension_Base} onChange={ ChangeTensionBase }/>
+            <input style={{ width: '97%' }} type ='range' min="0" max="1.5" step="0.01" value = {pile.Tension_Base} onChange={ ChangeTensionBase }/>
 
             <div className='rowPile' >
                 <label style={{ width: 120 }}>Tension Volume:</label>
                 <input className='inputPile'  type ='number' min="0" max="1" step="0.01" value = {pile.Tension_Volume} onChange={ ChangeTensionVolume }/>
             </div>
-            <input className='inputPile' style={{ width: '97%' }}type ='range' min="0" max="1" step="0.01" value = {pile.Tension_Volume} onChange={ ChangeTensionVolume }/>
+            <input style={{ width: '97%' }} type ='range' min="0" max="1" step="0.01" value = {pile.Tension_Volume} onChange={ ChangeTensionVolume }/>
 
             <div><hr/></div>
 
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'end' }}>
-                <Button 
-                    variant='outlined'
-                    size='small'
-                    style={{ height: 25 }}
+                <button 
+                    className='myButton'
+                    style={{ width: 50 }}
                     onClick={()=>( iolocal.SaveElevator() )}
                     >Save
-                </Button>
+                </button>
             </div>
         </div>
 
