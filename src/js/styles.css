@@ -28,13 +28,22 @@ input[type="range"] {
 
 .myButtonRound{
   border-radius: 50%;
-  width: 25px;
+  border: 0;
+  width: 30px;
   margin: 3px;
-  height: 25px;
-  border: 1px solid #1976d2;
+  height: 30px;
   background-color: transparent;
   color: #1976d2;
+  font-size: 1rem;
+  text-align: center;
+  text-shadow: 1px 1px 1px #000;
+  background-image: linear-gradient(to top left, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2) 30%, rgba(0, 0, 0, 0));
+  box-shadow: inset 2px 2px 3px rgba(255, 255, 255, 0.6), inset -2px -2px 3px rgba(0, 0, 0, 0.6);
 }
+.myButtonRound:active {
+  box-shadow: inset -2px -2px 3px rgba(255, 255, 255, 0.6), inset 2px 2px 3px rgba(0, 0, 0, 0.6);
+}
+
 .myButtonRound:hover {
   background-color: whitesmoke;
 }

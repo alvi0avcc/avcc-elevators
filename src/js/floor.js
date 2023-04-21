@@ -444,7 +444,7 @@ function Pile(propsPile){
     };
 
     return (
-        <div className='block' style={{ flexDirection: 'row', height: 530 }}>
+        <div className='block' style={{ flexDirection: 'row', height: 540 }}>
         <div className='block' style={{ width: 300 }}>
 
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
