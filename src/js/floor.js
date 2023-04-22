@@ -347,8 +347,10 @@ function Pile(propsPile){
         setValue(!value);
     };
     const ChangeHeight = (event) => {
-        pile.Height = event.target.value;
-       if ( pile.Height <= 0 ) pile.Height = 0.01;
+        let h = 0;
+        h = event.target.value;
+        pile.Height = h - pile.underBase_Height;
+       //if ( pile.Height <= 0 ) pile.Height = 0.01;
         Elevators.setPile_Height ( index, pile.Height );
         setValue(!value);
     };
@@ -402,31 +404,22 @@ function Pile(propsPile){
                 <label><strong>Pile № {propsPile.index + 1 }</strong></label>
 
             <div>
-                <div className='tooltip'>
                 <button 
-                    className='myButtonRound'
+                    className='myButton'
                     onClick={ (e)=>( Elevators.PileAdd(), propsPile.callback( !propsPile.updateState ) ) }
-                >+</button>
-                <span class="tooltiptext">Add Pile</span>
-                </div>
+                >add</button>
 
-                <div className='tooltip'>
                 <button 
-                    className='myButtonRound'
+                    className='myButton'
                     onClick={()=>( Elevators.PileClone(index), propsPile.callback( !propsPile.updateState ) )}
-                >C</button>
-                <span class="tooltiptext">Clone Pile</span>
-                </div>
+                >clone</button>
             </div>
 
-            <div className='tooltip'>
                 <button
-                    className='myButtonRound'
+                    className='myButton'
                     disabled = { Elevators.FloorFound ? false : true }
                     onClick={()=>( Elevators.PileDel( index ), propsPile.callback( !propsPile.updateState ) )}
-                >D</button>
-                <span class="tooltiptext">Delete current Pile</span>
-            </div>
+                >del</button>
 
             </div>
 
@@ -495,8 +488,12 @@ function Pile(propsPile){
             </div>
             <div><hr/></div>
             <div className='rowPile'>
-                <label><strong>Height:</strong></label>
-                <input className='inputPile' type ='number' step='0.01' value = {pile.Height} onChange={ ChangeHeight }/>
+                <label><strong>Total Height:</strong></label>
+                <input
+                    className='inputPile'
+                    style={{ backgroundColor: ( +pile.Height > 0  ? '' : 'yellow' ) }}
+                    type ='number' 
+                    step='0.01' value = {pile.Height + pile.underBase_Height} onChange={ ChangeHeight }/>
             </div>
 
             <div><hr/></div>
@@ -545,7 +542,7 @@ function Pile(propsPile){
             <div><hr/></div>
 
             <div className='rowPile' >
-                <label >under Base Height:</label>
+                <label ><strong>Box Height:</strong></label>
                 <input className='inputPile' type ='number' min="0" step="0.01" value = {pile.underBase_Height} onChange={ ChangeUnderBase_Height }/>
             </div>
 

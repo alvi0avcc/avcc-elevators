@@ -19,6 +19,13 @@ export function draw_PLine_3D(ctx, points ) {
     ctx.stroke();
 }
 
+export function draw_Line_3D(ctx, point_1, point_2 ) {
+    ctx.beginPath();
+    ctx.moveTo(point_1[0], point_1[1]);
+    ctx.lineTo(point_2[0], point_2[1]);
+    ctx.stroke();
+}
+
 export function draw_PLine_3D_between(ctx, points1, points2 ) {
     ctx.beginPath();
     for( let i=0; i < points1.length; i+=4 ) {
@@ -45,36 +52,18 @@ export function draw_underBase(ctx, points ) {
     points2 = points2.concat( points2.slice( 0, 4 ) );
     draw_PLine_3D(ctx, points1 );
     draw_PLine_3D(ctx, points2 );
-    let x =0;
-    let y =0;
-    let step = 10;
-    let x1,y1,x2,y2;
-    let points3 = [];
-    let points4 = [];
-    for ( let j = 0; j < points1.length; j+=4 ) {
-        x1 = points1[0+j];
-        y1 = points1[1+j];
-        x2 = points1[4+j];
-        y2 = points1[5+j];
-        for ( let i = 0; i <= step; i++ ) {
-            y = y1 + ( y2 - y1 ) / step * i;
-            if ( y1 == y2  ) {
-                x = x1 + ( x2 - x1 ) / step  * i; 
-            } else x = interpolation( y , x1,y1, x2,y2 );
-            points3 = points3.concat( [ x, y, points1[3+j], 1 ] );
-        }
-        x1 = points2[0+j];
-        y1 = points2[1+j];
-        x2 = points2[4+j];
-        y2 = points2[5+j];
-        for ( let i = 0; i <= step; i++) {
-            y = y1 + ( y2 - y1 ) / step * i;
-            if ( y1 == y2  ) {
-                x = x1 + ( x2 - x1 ) / step  * i; 
-            } else x = interpolation( y , x1,y1, x2,y2 );
-            points4 = points4.concat( [ x, y, points2[3+j], 1 ] );
-        }
-    };
-    draw_PLine_3D_between(ctx, points3, points4 );
+    draw_PLine_3D_between(ctx, points1, points2 );
+
+    draw_Line_3D(ctx, [ points1[0], points1[1] ], [ points2[4], points2[5] ] );
+    draw_Line_3D(ctx, [ points1[4], points1[5] ], [ points2[8], points2[9] ] );
+    draw_Line_3D(ctx, [ points1[8], points1[9] ], [ points2[12], points2[13] ] );
+    draw_Line_3D(ctx, [ points1[12], points1[13] ], [ points2[16], points2[17] ] );
+
+    draw_Line_3D(ctx, [ points2[0], points2[1] ], [ points1[4], points1[5] ] );
+    draw_Line_3D(ctx, [ points2[4], points2[5] ], [ points1[8], points1[9] ] );
+    draw_Line_3D(ctx, [ points2[8], points2[9] ], [ points1[12], points1[13] ] );
+    draw_Line_3D(ctx, [ points2[12], points2[13] ], [ points1[16], points1[17] ] );
+
+
 
 }

@@ -228,7 +228,7 @@ get_Slice_Base( level ) {
 }
 
 get get_Volume(){
-    let max = get_Max_Y_3D( this.get_Contur_Arc_Length ) - 0.0001;
+    
     let slice_step = 50;
     let slices1, slices2;
     let volume = 0; // total
@@ -237,13 +237,18 @@ get get_Volume(){
 
     volume1 = MyRound( this.Base_Length * this.Base_Width * this.underBase_Height, 3 );
 
-    for ( let i = 0; i < slice_step; i ++ ){
-        slices1 = this.get_Slice_Base( max / slice_step * i );
-        slices2 = this.get_Slice_Base( max / slice_step * (i+1) );
-        for ( let j = 0; j < slices1.length-4; j+=4 ) {
+    if ( this.Height > 0 ) {
+        let max = get_Max_Y_3D( this.get_Contur_Arc_Length ) - 0.0001;
+
+        for ( let i = 0; i < slice_step; i ++ ){
+            slices1 = this.get_Slice_Base( max / slice_step * i );
+            slices2 = this.get_Slice_Base( max / slice_step * (i+1) );
+            for ( let j = 0; j < slices1.length-4; j+=4 ) {
             volume2 = volume2 + Volume_Pillers( slices1[j],slices1[1+j],slices1[2+j], slices2[j],slices2[1+j],slices2[2+j], slices2[4+j],slices2[5+j],slices2[6+j], slices1[4+j],slices1[5+j],slices1[6+j] );
+            }
         }
     }
+    
     volume2 = MyRound( volume2, 3 );
     volume = MyRound( volume1 + volume2 , 3 );
     return { volume, volume1, volume2 };
