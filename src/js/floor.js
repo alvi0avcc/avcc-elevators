@@ -376,7 +376,7 @@ function Pile(propsPile){
     };
     const ChangeHeight = (event) => {
         pile.Height = event.target.value;
-        if ( pile.Height <= 0 ) pile.Height = 0.01;
+       if ( pile.Height <= 0 ) pile.Height = 0.01;
         Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
             pile.Height, pile.Box_Heights,
             pile.Base.length, pile.Base.width,
@@ -444,7 +444,7 @@ function Pile(propsPile){
     };
 
     return (
-        <div className='block' style={{ flexDirection: 'row', height: 550 }}>
+        <div className='block' style={{ flexDirection: 'row', height: 580 }}>
         <div className='block' style={{ width: 300 }}>
 
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -491,9 +491,10 @@ function Pile(propsPile){
                     onChange={ ChangeName }
                 />
             </div>
-            <div className='rowPile'>
+            <div className='rowPile' >
                 <label>Pile type:</label>
-                <select 
+                <select  
+                    disabled
                     className='inputPile' 
                     style={{ width: 87 }}
                     value = { pile.type }
@@ -506,6 +507,7 @@ function Pile(propsPile){
             <div className='rowPile'>
                 <label>Placement Level:</label>
                 <select 
+                    disabled
                     className='inputPile' 
                     style={{ width: 87 }}
                     value = { pile.type_location }
@@ -518,6 +520,7 @@ function Pile(propsPile){
             <div className='rowPile'>
                 <label>Volume:</label>
                 <select 
+                    disabled
                     className='inputPile' 
                     style={{ width: 87 }}
                     value = {pile.purpose}
@@ -530,20 +533,20 @@ function Pile(propsPile){
             <div><hr/></div>
             <div className='rowPile'>
                 <label>Location X:</label>
-                <input className='inputPile' type ='number' value = {pile.X} onChange={ ChangeX }/>
+                <input disabled className='inputPile' type ='number' value = {pile.X} onChange={ ChangeX }/>
             </div>
             <div className='rowPile'>
                 <label>Location Y:</label>
-                <input className='inputPile' type ='number' value = {pile.Y} onChange={ ChangeY }/>
+                <input disabled className='inputPile' type ='number' value = {pile.Y} onChange={ ChangeY }/>
             </div>
             <div className='rowPile'>
                 <label>Orientation (angle):</label>
-                <input className='inputPile' type ='number' value = {pile.angle} onChange={ ChangeAngle }/>
+                <input disabled className='inputPile' type ='number' value = {pile.angle} onChange={ ChangeAngle }/>
             </div>
             <div><hr/></div>
             <div className='rowPile'>
                 <label><strong>Height:</strong></label>
-                <input className='inputPile' type ='number' min="0.01" step='0.01' value = {pile.Height} onChange={ ChangeHeight }/>
+                <input className='inputPile' type ='number' step='0.01' value = {pile.Height} onChange={ ChangeHeight }/>
             </div>
 
             <div><hr/></div>
@@ -588,6 +591,13 @@ function Pile(propsPile){
                 <input className='inputPile'  type ='number' min="0" max="1" step="0.01" value = {pile.Tension_Volume} onChange={ ChangeTensionVolume }/>
             </div>
             <input style={{ width: '97%' }} type ='range' min="0" max="1" step="0.01" value = {pile.Tension_Volume} onChange={ ChangeTensionVolume }/>
+
+            <div><hr/></div>
+
+            <div className='rowPile' >
+                <label style={{ width: 120 }}>Base Height:</label>
+                <input disabled className='inputPile' type ='number' min="0" step="0.01" value = {pile.Base_Height} onChange={ ChangeTensionBase }/>
+            </div>
 
             <div><hr/></div>
 
