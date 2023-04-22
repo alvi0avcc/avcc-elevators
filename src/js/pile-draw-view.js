@@ -67,7 +67,7 @@ const PileViewCanvas = props => {
 
     let zoom = Math.min( zoom_L, zoom_W, zoom_H );
 
-    if ( zoom == zoom_L ) { zoom = zoom * 0.9 };
+    zoom = zoom * 0.9 ;
 
     /*if ( ctx.canvas.height / total_H > ctx.canvas.width / l ) {
         zoom = ctx.canvas.width / l
@@ -90,9 +90,10 @@ const PileViewCanvas = props => {
     ctx.font = "18px serif";
     //ctx.fillText( Elevators.volume_Pile_base(props.index), 25, ctx.canvas.height - 25 );
     let volume = gPile.get_Volume;
-    ctx.fillText( 'Upper Pile Volume = '+ volume.volume2 +' (m3)', 25, ctx.canvas.height - 75 );
-    ctx.fillText( 'Base Pile Volume = '+ volume.volume1 +' (m3)', 25, ctx.canvas.height - 50 );
-    ctx.fillText( 'Total Volume = '+ volume.volume +' (m3)', 25, ctx.canvas.height - 25 );
+    ctx.fillText( 'Upper Pile Volume = '+ volume.volume2 +' (m3)', 25, ctx.canvas.height - 65 );
+    ctx.fillText( 'Base Pile Volume = '+ volume.volume1 +' (m3)', 25, ctx.canvas.height - 45 );
+    ctx.fillText( 'Internal Pile Volume = '+ volume.volume3 +' (m3)', 25, ctx.canvas.height - 25 );
+    ctx.fillText( 'Total Volume = '+ volume.volume +' (m3)', 25, ctx.canvas.height - 5 );
   
 // Pile (splines)
 if ( pile.Height > 0 ){

@@ -115,12 +115,25 @@ export function interpolation( y , x1,y1, x2,y2 ){
 return x;
 }
 
+export function DistanceBetweenPoints ( point_1 = [], point_2 = [] ) {
+    let delta = Math.sqrt( Math.pow( point_2[0] - point_1[0], 2 ) +  Math.pow( point_2[1] - point_1[1], 2) + Math.pow( point_2[2] - point_1[2], 2 ) );
+return delta;
+}
+
 export function Volume_Pillers( x1,y1,z1, x2,y2,z2, x3,y3,z3, x4,y4,z4 ){
     let s = Math.abs( ( x1*y2 + x2*y3 + x3*y4 + x4*y1 ) - ( y1*x2 + y2*x3 + y3*x4 + y4*x1 ) ) / 2;
     let h = ( z1 + z2+ z3 + z4 ) / 4;
     let v = s*h;
     //console.log('Volume_Pillers = ',v);
     return ( v );
+}
+
+export function Square_by_slice( points = [] ){
+    let S = 0;
+    for ( let i = 0; i < points.length - 4; i+=4 ){
+        S = S + Math.abs( ( points[i+1+4] + points[i+1] ) * ( points[i+4] - points[i] ) /2 );
+    }
+return S;
 }
 
 export function Mass(w) {

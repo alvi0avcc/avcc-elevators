@@ -6,6 +6,7 @@ import FloorViewCanvas from './floor-draw-view.js';
 import PileViewCanvas from './pile-draw-view.js';
 import { Divider, Tab, Tabs, Button, TextField , IconButton, Tooltip } from '@mui/material';
 import SettingsTwoToneIcon from '@mui/icons-material/SettingsTwoTone';
+import { Margin } from '@mui/icons-material';
 
 export default function Floor(){
     const [update, setUpdate] = React.useState(true);
@@ -365,6 +366,26 @@ function Pile(propsPile){
         Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
         setValue(!value);
     };
+    const setBaseLength_max = () => {
+        pile.Base.length = Elevators.FloorCurrentDimensions.Length;
+        Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
+        setValue(!value);
+    }
+    const setBaseWidth_max = () => {
+        pile.Base.width = Elevators.FloorCurrentDimensions.Width;
+        Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
+        setValue(!value);
+    }
+    const setBase_Square = () => {
+        pile.Tension_Base = 1.753;
+        Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
+        setValue(!value);
+    }
+    const setBase_Round = () => {
+        pile.Tension_Base = 0.837;
+        Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
+        setValue(!value);
+    }
     const ChangeBase_width = (event) => {
         pile.Base.width = event.target.value;
         Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
@@ -520,16 +541,42 @@ function Pile(propsPile){
 
             <div className='rowPile'>
                 <label>length:</label>
-                <input className='inputPile' type ='number' min={0.01} step={0.01} value = {pile.Base.length} onChange={ ChangeBase_length }/>
+                <div style={{ marginTop: -1.1, marginBottom: -1.1 }}>
+                <button 
+                    className='myButton'
+                    style={{ height: 20, fontSize: '0.9rem' }}
+                    onClick={setBaseLength_max}
+                    >max</button>
+                <input className='inputPile' style={{ height: 18.8 }} type ='number' min={0.01} step={0.01} value = {pile.Base.length} onChange={ ChangeBase_length }/>
+                </div>
             </div>
             <div className='rowPile'>
                 <label>width:</label>
-                <input className='inputPile' type ='number' min={0.01} step={0.01} value = {pile.Base.width} onChange={ ChangeBase_width }/>
+                <div style={{ marginTop: -1.1, marginBottom: -1.1 }}>
+                <button 
+                    className='myButton'
+                    style={{ height: 20, fontSize: '0.9rem' }}
+                    onClick={setBaseWidth_max}
+                    >max</button>
+                <input className='inputPile' style={{ height: 18.8 }} type ='number' min={0.01} step={0.01} value = {pile.Base.width} onChange={ ChangeBase_width }/>
+                </div>
             </div>
 
             <div className='rowPile' >
                 <label >Tension Base:</label>
-                <input className='inputPile' type ='number' min="0" max="2" step="0.01" value = {pile.Tension_Base} onChange={ ChangeTensionBase }/>
+                <div>
+                    <button 
+                        className='myButton' 
+                        style={{ height: 20, width: 20, fontSize: '0.7rem', borderRadius: 2 }}
+                        onClick={setBase_Square}
+                        >S</button>
+                    <button 
+                        className='myButton'
+                        style={{ height: 20, width: 20, fontSize: '0.7rem' }}
+                        onClick={setBase_Round}
+                        >R</button>
+                    <input className='inputPile' type ='number' min="0" max="2" step="0.01" value = {pile.Tension_Base} onChange={ ChangeTensionBase }/>
+                </div>
             </div>
             <input style={{ width: '97%' }} type ='range' min="0" max="2" step="0.01" value = {pile.Tension_Base} onChange={ ChangeTensionBase }/>
 

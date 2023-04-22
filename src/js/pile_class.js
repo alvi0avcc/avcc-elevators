@@ -1,5 +1,6 @@
 import { getCurvePoints, getPoints_by_Y, get_Max_Y_3D } from './spline.js'; // spline
-import { interpolation, MyRound, Volume_Pillers } from './calc.js';
+import { interpolation, MyRound, Volume_Pillers, DistanceBetweenPoints, Square_by_slice } from './calc.js';
+import { ContactlessOutlined } from '@mui/icons-material';
 
 export default class cPile{
     constructor() {
@@ -200,15 +201,10 @@ get_Slice_Base( level ) {
     let xyz = [];
     let contur_L = this.Length_Arc_Points;
     let contur_W = this.Widht_Arc_Points;
-    //console.log('level 2 = ',level);
     let xy_L = getPoints_by_Y( level , contur_L );
     let xy_W = getPoints_by_Y( level , contur_W );
-    //console.log('xy_L = ',xy_L);
-    //console.log('xy_W = ',xy_W);
     let x1 = interpolation( level , xy_L[0][0], xy_L[0][1], xy_L[0][2], xy_L[0][3] );
     let x2 = interpolation( level , xy_W[0][0], xy_W[0][1], xy_W[0][2], xy_W[0][3] );
-    //console.log('x1 = ',x1 );
-    //console.log('x2 = ',x2 );
     let points = [];
     points[0] = -x1;//l
     points[1] = 0;
@@ -219,12 +215,22 @@ get_Slice_Base( level ) {
     points[6] = 0;
     points[7] = x2;//w
     let xy = getCurvePoints( points, this.Tension_Base, true, this.numOfSegments );
-    //console.log('getCurvePoints (xy) = ',xy );
     for ( let i = 0; i < xy.length; i+=2 ){
         xyz = xyz.concat( [ xy[i], xy[i+1], level, 1 ] );
     }
-    //console.log('getCurvePoints (xyz) = ',xyz );
     return xyz;
+}
+
+get_Check_Pile_Mesh( points = [] ) {
+    let point_1 = points.slice( 0, 4 );
+    let point_2 = [];
+    let dx = [];
+    for ( let i = 4; i < points.length; i +=4 ){
+        point_2 = [ points[i], points[i+1], points[i+2], points[i+3] ];
+        dx = dx.concat( DistanceBetweenPoints( point_1, point_2 ) );
+    }
+   dx = MyRound( Math.max( ...dx ), 5 );
+return dx;
 }
 
 get get_Volume(){
@@ -248,10 +254,13 @@ get get_Volume(){
             }
         }
     }
+    //let check = this.get_Check_Pile_Mesh( slices2 );
+    let square = Square_by_slice( slices2 );
+    let volume3 = MyRound( square * this.Height, 3 );
     
     volume2 = MyRound( volume2, 3 );
-    volume = MyRound( volume1 + volume2 , 3 );
-    return { volume, volume1, volume2 };
+    volume = MyRound( volume1 + volume2 + volume3 , 3 );
+    return { volume, volume1, volume2, volume3 };
 }
 
 
