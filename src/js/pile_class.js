@@ -12,6 +12,7 @@ export default class cPile{
         this.Height = 10;//Height of Pile (distance between Base & Top)
         this.Base_Length = 30; //base plane
         this.Base_Width  = 30; //base plane
+        this.underBase_Height = 0;//Height of Box under Pil
         this.Top_Length  = 15; //upper plane
         this.Top_Width   = 15; //upper plane
         this.Tension_Base = 0.835;
@@ -19,6 +20,8 @@ export default class cPile{
         this.numOfSegments = 10; // quantity spline segments
         //calculated input data
         this.Base_Control_Points = [];
+        this.underBase_Control_Points = [];
+        this.underBase_Control_Points_3d = [];
         this.Top_Control_Points = [];
         this.Length_Arc_Control_Points = []; // depended from Base & Top
         this.Widht_Arc_Control_Points = []; // depended from Base & Top
@@ -40,6 +43,7 @@ set_Initial_Data_Complex ( pile, numOfSegments ){
             this.Height         = Number ( pile.Height );
             this.Base_Length    = Number ( pile.Base.length );
             this.Base_Width     = Number ( pile.Base.width );
+            this.underBase_Height = Number ( pile.underBase_Height );
             this.Top_Length     = Number ( pile.Top.length );
             this.Top_Width      = Number ( pile.Top.width );
             this.Tension_Base   = Number ( pile.Tension_Base );
@@ -48,7 +52,7 @@ set_Initial_Data_Complex ( pile, numOfSegments ){
             this.set_Initialisation();
     }
 
-set_Initial_Data_Intividual ( type_location, purpose, X, Y, angle, Height, Base_Length, Base_Width, Top_Length, Top_Width, Tension_Base, Tension_Volume, numOfSegments ){
+set_Initial_Data_Intividual ( type_location, purpose, X, Y, angle, Height, Base_Length, Base_Width, underBase_Height, Top_Length, Top_Width, Tension_Base, Tension_Volume, numOfSegments ){
         this.type_location  = type_location;
         this.purpose        = purpose;
         this.X              = Number ( X );
@@ -57,6 +61,7 @@ set_Initial_Data_Intividual ( type_location, purpose, X, Y, angle, Height, Base_
         this.Height         = Number ( Height );
         this.Base_Length    = Number ( Base_Length );
         this.Base_Width     = Number ( Base_Width );
+        this.underBase_Height = Number ( underBase_Height );
         this.Top_Length     = Number ( Top_Length );
         this.Top_Width      = Number ( Top_Width );
         this.Tension_Base   = Number ( Tension_Base );
@@ -66,6 +71,7 @@ set_Initial_Data_Intividual ( type_location, purpose, X, Y, angle, Height, Base_
 }
 set_Initialisation(){
     this.set_Base ( this.Base_Length, this.Base_Width, this.Tension_Base );
+    this.set_under_Base ( this.Base_Length, this.Base_Width, this.underBase_Height );
     this.set_Top ( this.Top_Length, this.Top_Width, this.Tension_Top );
     this.set_Contur_Arc_Length();
     this.set_Contur_Arc_Widht();
@@ -88,10 +94,35 @@ set_Base ( Base_Length, Base_Width, Tension_Base ){
     this.Base_Length    = Number ( Base_Length );
     this.Base_Width     = Number ( Base_Width );
     this.Tension_Base   = Number ( Tension_Base );
-    this.Base_Control_Points = [  -this.Base_Length/2,            0, 
-                                                    0,  -Base_Width, 
-                                     this.Base_Length,             0, 
-                                                    0,   Base_Width ];
+    this.Base_Control_Points = [-Base_Length/2,              0, 
+                                             0,  -Base_Width/2, 
+                                 Base_Length/2,              0, 
+                                             0,   Base_Width/2 ];
+    this.Base_Points = getCurvePoints( this.Base_Control_Points, this.Tension_Base, true , this.numOfSegments );
+}
+
+set_under_Base ( Base_Length, Base_Width, underBase_Height ){
+    this.Base_Length    = Number ( Base_Length );
+    this.Base_Width     = Number ( Base_Width );
+    this.underBase_Height   = Number ( underBase_Height );
+    this.underBase_Control_Points = [   -Base_Length/2, -Base_Width/2, 0,
+                                        -Base_Length/2,  Base_Width/2, 0,
+                                         Base_Length/2,  Base_Width/2, 0,
+                                         Base_Length/2, -Base_Width/2, 0,
+
+                                        -Base_Length/2, -Base_Width/2, underBase_Height,
+                                        -Base_Length/2,  Base_Width/2, underBase_Height,
+                                         Base_Length/2,  Base_Width/2, underBase_Height,
+                                         Base_Length/2, -Base_Width/2, underBase_Height ];
+    this.underBase_Control_Points_3d = [-Base_Length/2, -Base_Width/2, 0, 1,
+                                        -Base_Length/2,  Base_Width/2, 0, 1,
+                                         Base_Length/2,  Base_Width/2, 0, 1,
+                                         Base_Length/2, -Base_Width/2, 0, 1,
+
+                                        -Base_Length/2, -Base_Width/2, underBase_Height, 1,
+                                        -Base_Length/2,  Base_Width/2, underBase_Height, 1,
+                                         Base_Length/2,  Base_Width/2, underBase_Height, 1,
+                                         Base_Length/2, -Base_Width/2, underBase_Height, 1 ];
     this.Base_Points = getCurvePoints( this.Base_Control_Points, this.Tension_Base, true , this.numOfSegments );
 }
 
@@ -99,10 +130,10 @@ set_Top ( Top_Length, Top_Width, Tension_Top ){
     this.Top_Length    = Number ( Top_Length );
     this.Top_Width     = Number ( Top_Width );
     this.Tension_Top   = Number ( Tension_Top );
-    this.Top_Control_Points = [  -this.Top_Length/2,           0, 
-                                                  0,  -Top_Width, 
-                                    this.Top_Length,           0, 
-                                                  0,   Top_Width ];
+    this.Top_Control_Points = [ -Top_Length/2,             0, 
+                                            0,  -Top_Width/2, 
+                                 Top_Length/2,             0, 
+                                            0,   Top_Width/2 ];
     this.Top_Points = getCurvePoints( this.Top_Control_Points, this.Tension_Top, true , this.numOfSegments );                                              
 }
 
@@ -144,6 +175,13 @@ set_Contur_Arc_Length(){
 
 get get_Contur_Arc_Length(){
     return this.Length_Arc_Points3d;
+}
+
+get get_Contur_under_Base(){
+    let result  = { xyz: [], xyz3d: [] };
+    result.xyz = this.underBase_Control_Points;
+    result.xyz3d = this.underBase_Control_Points_3d;
+    return result;
 }
 
 set_Contur_Arc_Widht(){
@@ -193,19 +231,22 @@ get get_Volume(){
     let max = get_Max_Y_3D( this.get_Contur_Arc_Length ) - 0.0001;
     let slice_step = 50;
     let slices1, slices2;
-    let volume = 0;
+    let volume = 0; // total
+    let volume1 = 0; // underBase
+    let volume2 = 0; // Pile
+
+    volume1 = MyRound( this.Base_Length * this.Base_Width * this.underBase_Height, 3 );
+
     for ( let i = 0; i < slice_step; i ++ ){
         slices1 = this.get_Slice_Base( max / slice_step * i );
         slices2 = this.get_Slice_Base( max / slice_step * (i+1) );
         for ( let j = 0; j < slices1.length-4; j+=4 ) {
-            volume = volume + Volume_Pillers( slices1[j],slices1[1+j],slices1[2+j], slices2[j],slices2[1+j],slices2[2+j], slices2[4+j],slices2[5+j],slices2[6+j], slices1[4+j],slices1[5+j],slices1[6+j] );
-        
+            volume2 = volume2 + Volume_Pillers( slices1[j],slices1[1+j],slices1[2+j], slices2[j],slices2[1+j],slices2[2+j], slices2[4+j],slices2[5+j],slices2[6+j], slices1[4+j],slices1[5+j],slices1[6+j] );
         }
     }
-    //console.log('slices1 = ', slices1);
-
-    volume = MyRound( volume, 3 );
-    return volume;
+    volume2 = MyRound( volume2, 3 );
+    volume = MyRound( volume1 + volume2 , 3 );
+    return { volume, volume1, volume2 };
 }
 
 

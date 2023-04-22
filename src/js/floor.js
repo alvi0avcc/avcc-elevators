@@ -313,133 +313,83 @@ function Pile(propsPile){
 
     const ChangeName = (event) => {
         pile.Name = event.target.value;
-        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
-            pile.Height, pile.Box_Heights,
-            pile.Base.length, pile.Base.width,
-            pile.Top.length, pile.Top.width,
-            pile.Tension_Base, pile.Tension_Volume );
+        Elevators.setPile_BaseInfo ( index, pile.Name, pile.type, pile.type_location, pile.purpose );
         setValue(!value);
     };
     const ChangeType = (event) => {
         pile.type = event.target.value;
-        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
-            pile.Height, pile.Box_Heights,
-            pile.Base.length, pile.Base.width,
-            pile.Top.length, pile.Top.width,
-            pile.Tension_Base, pile.Tension_Volume );
+        Elevators.setPile_BaseInfo ( index, pile.Name, pile.type, pile.type_location, pile.purpose );
         setValue(!value);
     };
     const ChangeTypeLocation = (event) => {
         pile.type_location = event.target.value;
-        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
-            pile.Height, pile.Box_Heights,
-            pile.Base.length, pile.Base.width,
-            pile.Top.length, pile.Top.width,
-            pile.Tension_Base, pile.Tension_Volume );
+        Elevators.setPile_BaseInfo ( index, pile.Name, pile.type, pile.type_location, pile.purpose );
         setValue(!value);
     };
     const ChangePurpose = (event) => {
         pile.purpose = event.target.value;
-        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
-            pile.Height, pile.Box_Heights,
-            pile.Base.length, pile.Base.width,
-            pile.Top.length, pile.Top.width,
-            pile.Tension_Base, pile.Tension_Volume );
+        Elevators.setPile_BaseInfo ( index, pile.Name, pile.type, pile.type_location, pile.purpose );
         setValue(!value);
     };
     const ChangeX = (event) => {
         pile.X = event.target.value;
-        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
-            pile.Height, pile.Box_Heights,
-            pile.Base.length, pile.Base.width,
-            pile.Top.length, pile.Top.width,
-            pile.Tension_Base, pile.Tension_Volume );
+        Elevators.setPile_Location ( index, pile.X, pile.Y, pile.angle );
         setValue(!value);
     };
     const ChangeY = (event) => {
         pile.Y = event.target.value;
-        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
-            pile.Height, pile.Box_Heights,
-            pile.Base.length, pile.Base.width,
-            pile.Top.length, pile.Top.width,
-            pile.Tension_Base, pile.Tension_Volume );
+        Elevators.setPile_Location ( index, pile.X, pile.Y, pile.angle );
         setValue(!value);
     };
     const ChangeAngle = (event) => {
         pile.angle = event.target.value;
-        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
-            pile.Height, pile.Box_Heights,
-            pile.Base.length, pile.Base.width,
-            pile.Top.length, pile.Top.width,
-            pile.Tension_Base, pile.Tension_Volume );
+        Elevators.setPile_Location ( index, pile.X, pile.Y, pile.angle );
         setValue(!value);
     };
     const ChangeHeight = (event) => {
         pile.Height = event.target.value;
        if ( pile.Height <= 0 ) pile.Height = 0.01;
-        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
-            pile.Height, pile.Box_Heights,
-            pile.Base.length, pile.Base.width,
-            pile.Top.length, pile.Top.width,
-            pile.Tension_Base, pile.Tension_Volume );
+        Elevators.setPile_Height ( index, pile.Height );
+        setValue(!value);
+    };
+    const ChangeUnderBase_Height = (event) => {
+        pile.underBase_Height = event.target.value;
+       if ( pile.underBase_Height < 0 ) pile.underBase_Height = 0;
+        Elevators.setPile_underBase_Height ( index, pile.underBase_Height);
         setValue(!value);
     };
     const ChangeBase_length = (event) => {
         pile.Base.length = event.target.value;
-        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
-            pile.Height, pile.Box_Heights,
-            pile.Base.length, pile.Base.width,
-            pile.Top.length, pile.Top.width,
-            pile.Tension_Base, pile.Tension_Volume );
+        Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
         setValue(!value);
     };
     const ChangeBase_width = (event) => {
         pile.Base.width = event.target.value;
-        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
-            pile.Height, pile.Box_Heights,
-            pile.Base.length, pile.Base.width,
-            pile.Top.length, pile.Top.width,
-            pile.Tension_Base, pile.Tension_Volume );
+        Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
         setValue(!value);
     };
     const ChangeTensionBase = (event) => {
         pile.Tension_Base = event.target.value;
-        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
-            pile.Height, pile.Box_Heights,
-            pile.Base.length, pile.Base.width,
-            pile.Top.length, pile.Top.width,
-            pile.Tension_Base, pile.Tension_Volume );
+        Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
         setValue(!value);
     };
     const ChangeTensionVolume = (event) => {
         pile.Tension_Volume = event.target.value;
-        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
-            pile.Height, pile.Box_Heights,
-            pile.Base.length, pile.Base.width,
-            pile.Top.length, pile.Top.width,
-            pile.Tension_Base, pile.Tension_Volume );
+        Elevators.setPile_TopContur ( index, pile.Top.length, pile.Top.width, pile.Tension_Volume );
         setValue(!value);
     };
     const ChangeTop_length = (event) => {
         pile.Top.length = event.target.value;
-        pile.Top.length_left =  ( Number( pile.Base.length ) - Number( pile.Top.length ) ) / 2 ;
-        pile.Top.length_right = pile.Top.length_left;
-        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
-            pile.Height, pile.Box_Heights,
-            pile.Base.length, pile.Base.width,
-            pile.Top.length, pile.Top.width,
-            pile.Tension_Base, pile.Tension_Volume );
+        //pile.Top.length_left =  ( Number( pile.Base.length ) - Number( pile.Top.length ) ) / 2 ;
+        //pile.Top.length_right = pile.Top.length_left;
+        Elevators.setPile_TopContur ( index, pile.Top.length, pile.Top.width, pile.Tension_Volume );
         setValue(!value);
     };
     const ChangeTop_width = (event) => {
         pile.Top.width = event.target.value;
-        pile.Top.width_front =  ( Number( pile.Base.width ) - Number( pile.Top.width ) ) / 2 ;
-        pile.Top.width_aft = pile.Top.width_front;
-        Elevators.setPile ( index, pile.Name, pile.type, pile.type_location, pile.purpose, pile.X, pile.Y, pile.angle,
-            pile.Height, pile.Box_Heights,
-            pile.Base.length, pile.Base.width,
-            pile.Top.length, pile.Top.width,
-            pile.Tension_Base, pile.Tension_Volume );
+        //pile.Top.width_front =  ( Number( pile.Base.width ) - Number( pile.Top.width ) ) / 2 ;
+        //pile.Top.width_aft = pile.Top.width_front;
+        Elevators.setPile_TopContur ( index, pile.Top.length, pile.Top.width, pile.Tension_Volume );
         setValue(!value);
     };
 
@@ -449,7 +399,7 @@ function Pile(propsPile){
 
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
 
-                <label><strong>index: {propsPile.index}</strong></label>
+                <label><strong>Pile № {propsPile.index + 1 }</strong></label>
 
             <div>
                 <div className='tooltip'>
@@ -581,13 +531,13 @@ function Pile(propsPile){
             </div>
 
             <div className='rowPile' >
-                <label style={{ width: 120 }}>Tension Base:</label>
-                <input className='inputPile' type ='number' min="0" max="1.5" step="0.01" value = {pile.Tension_Base} onChange={ ChangeTensionBase }/>
+                <label >Tension Base:</label>
+                <input className='inputPile' type ='number' min="0" max="2" step="0.01" value = {pile.Tension_Base} onChange={ ChangeTensionBase }/>
             </div>
-            <input style={{ width: '97%' }} type ='range' min="0" max="1.5" step="0.01" value = {pile.Tension_Base} onChange={ ChangeTensionBase }/>
+            <input style={{ width: '97%' }} type ='range' min="0" max="2" step="0.01" value = {pile.Tension_Base} onChange={ ChangeTensionBase }/>
 
             <div className='rowPile' >
-                <label style={{ width: 120 }}>Tension Volume:</label>
+                <label >Tension Volume:</label>
                 <input className='inputPile'  type ='number' min="0" max="1" step="0.01" value = {pile.Tension_Volume} onChange={ ChangeTensionVolume }/>
             </div>
             <input style={{ width: '97%' }} type ='range' min="0" max="1" step="0.01" value = {pile.Tension_Volume} onChange={ ChangeTensionVolume }/>
@@ -595,8 +545,8 @@ function Pile(propsPile){
             <div><hr/></div>
 
             <div className='rowPile' >
-                <label style={{ width: 120 }}>Base Height:</label>
-                <input disabled className='inputPile' type ='number' min="0" step="0.01" value = {pile.Base_Height} onChange={ ChangeTensionBase }/>
+                <label >under Base Height:</label>
+                <input className='inputPile' type ='number' min="0" step="0.01" value = {pile.underBase_Height} onChange={ ChangeUnderBase_Height }/>
             </div>
 
             <div><hr/></div>

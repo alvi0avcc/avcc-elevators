@@ -67,7 +67,7 @@ class cPile {
             this.Height = 10;//Height of Pile
             this.Box_Heights = {h1: 1, h2: 1, h3: 1, h4: 1};
             this.Base   = { length: 30, width: 30 }; //base plane
-            this.Base_Height = 0;//Height of Box under Pile
+            this.underBase_Height = 0;//Height of Box under Pile
             this.Top    = { length: 15, width: 15 }; //upper plane
             this.Tension_Base = 0.835;
             this.Tension_Volume = 0.5;
@@ -400,6 +400,45 @@ class cElevators {
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Tension_Volume = Number( Tension_Volume );
         } 
     }
+    setPile_BaseInfo ( index, Name, type, type_location, purpose ){
+        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Name = Name;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].type = type ;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].type_location = type_location;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].purpose = purpose;
+        } 
+    }
+    setPile_Location ( index, X, Y, angle ){
+        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].X = Number( X );
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Y = Number( Y );
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].angle = Number( angle );
+        } 
+    }
+    setPile_Height ( index, Height ){
+        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Height = Number( Height );
+        } 
+    }
+    setPile_underBase_Height ( index, underBase_Height ){
+        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].underBase_Height = Number( underBase_Height );
+        } 
+    }
+    setPile_TopContur ( index, Top_length, Top_width, Tension_Volume ){
+        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.length = Number( Top_length );
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Top.width = Number( Top_width );
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Tension_Volume = Number( Tension_Volume );
+        } 
+    }
+    setPile_BaseContur ( index, Base_length, Base_width, Tension_Base ){
+        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Base.length = Number( Base_length );
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Base.width = Number( Base_width );
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Tension_Base = Number( Tension_Base );
+        } 
+    }
     setAngleView( index, angle_X, angle_Y, angle_Z ){
         if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] ) {
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].angle_X = angle_X;
@@ -506,7 +545,7 @@ class cElevators {
     }
     PileDel( index ){
         if ( this.PileFound > 0 ) {
-            let message = 'Are you sure you want to remove Pile № '+ index +'?';
+            let message = 'Are you sure you want to remove Pile № '+  (+index + +1) +'?';
             if ( window.confirm( message ) ) {
                 this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile.splice( index, 1 );
             }

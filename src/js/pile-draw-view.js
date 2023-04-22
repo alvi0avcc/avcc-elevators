@@ -6,7 +6,8 @@ import * as Calc from './calc.js';
 import cPile from './pile_class.js'
 import { get_Max_Y_3D, getCurvePoints, drawLines, drawCurve, getPoint, drawPoint, drawPoints, getSlice, drawSlice, drawContur, getContur, getPoints_by_Y, interpolation } from './spline.js';
 import { MoveMatrix, MoveMatrixAny, RotateMatrix_X, RotateMatrix_X_any, RotateMatrix_Y, RotateMatrix_Y_any, RotateMatrix_Z, RotateMatrix_Z_any, ScaleMatrix, ScaleMatrixAny, ScaleMatrixAny1zoom } from './3d-matrix.js';
-import { draw_PLine_3D, draw_PLine_3D_between } from './draw.js';
+import { draw_PLine_3D, draw_PLine_3D_between, draw_underBase } from './draw.js';
+import { ContactlessOutlined } from '@mui/icons-material';
 
 
 const PileViewCanvas = props => {
@@ -49,15 +50,24 @@ const PileViewCanvas = props => {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     let x_center = ctx.canvas.width/2;
     let y_center = ctx.canvas.height/2;
-    let zoom;
-    if ( ctx.canvas.height / pile.Height > ctx.canvas.width / pile.Base.length ) {
-        zoom = ctx.canvas.width / pile.Base.length
-    } else zoom = ctx.canvas.height / pile.Height;
-    zoom = zoom * 0.8;
+    
 
     let l = Number(pile.Base.length);
     let w = Number(pile.Base.width);
     let h = Number(pile.Height);
+    let uH = Number(pile.underBase_Height);
+    let dh = 0;
+    let total_H = uH + h;
+
+    dh = -h/2 + uH/2;
+
+    let zoom;
+    if ( ctx.canvas.height / total_H > ctx.canvas.width / l ) {
+        zoom = ctx.canvas.width / l
+    } else zoom = ctx.canvas.height / total_H;
+
+    zoom = zoom * 0.7;
+
     let Tension_Base = Number( pile.Tension_Base );
     let Tension_Volume = Number( pile.Tension_Volume );
 
@@ -264,7 +274,10 @@ ctx.stroke();*/
     ctx.fillStyle   = 'black';
     ctx.font = "18px serif";
     //ctx.fillText( Elevators.volume_Pile_base(props.index), 25, ctx.canvas.height - 25 );
-    ctx.fillText( 'Pile № '+ props.index + ' Volume = '+ gPile.get_Volume +' (m3)', 25, ctx.canvas.height - 25 );
+    let volume = gPile.get_Volume;
+    ctx.fillText( 'Upper Pile Volume = '+ volume.volume2 +' (m3)', 25, ctx.canvas.height - 75 );
+    ctx.fillText( 'Base Pile Volume = '+ volume.volume1 +' (m3)', 25, ctx.canvas.height - 50 );
+    ctx.fillText( 'Total Volume = '+ volume.volume +' (m3)', 25, ctx.canvas.height - 25 );
   
 // splines
 
@@ -280,7 +293,7 @@ ctx.stroke();*/
         //console.log('level 1 = ',level );
         slices = gPile.get_Slice_Base( level );
         //console.log('slices = ',slices );
-        slices  = MoveMatrixAny( slices, 0, 0, -h/2 );
+        slices  = MoveMatrixAny( slices, 0, 0, dh );
         slices  = ScaleMatrixAny1zoom( slices, zoom );
         slices  = RotateMatrix_X_any( slices, pile.angle_X );
         //slices  = RotateMatrix_Y_any( slices, frameCount/4 );
@@ -303,7 +316,7 @@ ctx.stroke();*/
 
     };
         slices  = gPile.get_Slice_Base( h );
-        slices  = MoveMatrixAny( slices, 0, 0, -h/2 );
+        slices  = MoveMatrixAny( slices, 0, 0, dh );
         slices  = ScaleMatrixAny1zoom( slices, zoom );
         slices  = RotateMatrix_X_any( slices, pile.angle_X );
         slices  = RotateMatrix_Y_any( slices, pile.angle_Y );
@@ -314,7 +327,7 @@ ctx.stroke();*/
         draw_PLine_3D( ctx, slices );
 
     let contur = gPile.get_Contur_Arc_Length;
-        contur  = MoveMatrixAny( contur, 0, 0, -h/2 );
+        contur  = MoveMatrixAny( contur, 0, 0, dh );
         contur  = ScaleMatrixAny1zoom( contur, zoom );
         contur  = RotateMatrix_X_any( contur, pile.angle_X );
         contur  = RotateMatrix_Y_any( contur, pile.angle_Y );
@@ -327,7 +340,7 @@ ctx.stroke();*/
         //contur by widht
         contur  = gPile.get_Contur_Arc_Widht; 
         contur  = RotateMatrix_Z_any( contur, 90 )   
-        contur  = MoveMatrixAny( contur, 0, 0, -h/2 );
+        contur  = MoveMatrixAny( contur, 0, 0, dh );
         contur  = ScaleMatrixAny1zoom( contur, zoom );
         contur  = RotateMatrix_X_any( contur, pile.angle_X );
         contur  = RotateMatrix_Y_any( contur, pile.angle_Y );
@@ -335,6 +348,18 @@ ctx.stroke();*/
         contur  = MoveMatrixAny( contur, x_center, y_center, 0 );
         ctx.lineWidth = 1;
         draw_PLine_3D( ctx, contur );
+
+        //under Base box
+        if ( pile.underBase_Height > 0 ) {
+            let underBaseContur  = gPile.get_Contur_under_Base.xyz3d;
+            underBaseContur  = MoveMatrixAny( underBaseContur, 0, 0, -uH+dh );
+            underBaseContur  = ScaleMatrixAny1zoom( underBaseContur, zoom );
+            underBaseContur  = RotateMatrix_X_any( underBaseContur, pile.angle_X );
+            underBaseContur  = RotateMatrix_Y_any( underBaseContur, pile.angle_Y );
+            underBaseContur  = RotateMatrix_Z_any( underBaseContur, pile.angle_Z );
+            underBaseContur  = MoveMatrixAny( underBaseContur, x_center, y_center, 0 );
+            draw_underBase( ctx, underBaseContur );
+        }
 
     }
 
@@ -371,50 +396,38 @@ ctx.stroke();*/
             onChange={ changeAngleX }
             />
 
-    <div style={{ display: 'flex', flexDirection: 'row', height: 440 }}>
+    <div style={{ display: 'flex', flexDirection: 'row', height: 510 }}>
         
         <canvas ref={canvasRef} {...props} style={{ width: '100%', height: '100%' }}/>
 
         <div className='block' style={{ marginLeft: -41, padding: 1 }} >
-            <div className='tooltip'>
             <button
                 className='myButtonRound'
                 onClick={ ()=> { pile.angle_X = 0; pile.angle_Y = 0; pile.angle_Z = 0; Elevators.setAngleView( props.index, pile.angle_X, pile.angle_Y, pile.angle_Z ); } }
                 >
                 U
             </button>
-            <span class="tooltiptext">Upper view</span>
-            </div>
 
-            <div className='tooltip'>
             <button 
                 className='myButtonRound'
                 onClick={ ()=> { pile.angle_X = -90; pile.angle_Y = 0; pile.angle_Z = 0; Elevators.setAngleView( props.index, pile.angle_X, pile.angle_Y, pile.angle_Z ); } }
                 >
                 F
             </button>
-            <span class="tooltiptext">Front view</span>
-            </div>
 
-            <div className='tooltip'>
             <button 
                 className='myButtonRound'
                 onClick={ ()=> { pile.angle_X = -90; pile.angle_Y = 90; pile.angle_Z = 0; Elevators.setAngleView( props.index, pile.angle_X, pile.angle_Y, pile.angle_Z ); } }
                 >
                 S
             </button>
-            <span class="tooltiptext">Side view</span>
-            </div>
             
-            <div className='tooltip'>
             <button 
                 className='myButtonRound'
                 onClick={ ()=> { pile.angle_X = -70; pile.angle_Y = 15; pile.angle_Z = -10; Elevators.setAngleView( props.index, pile.angle_X, pile.angle_Y, pile.angle_Z ); } }
                 >
                 3d
             </button>
-            <span class="tooltiptext">3D view</span>
-            </div>
         </div>
     </div>
         <input 
