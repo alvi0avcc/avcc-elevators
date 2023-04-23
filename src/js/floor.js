@@ -371,11 +371,15 @@ function Pile(propsPile){
     };
     const setBaseLength_max = () => {
         pile.Base.length = Elevators.FloorCurrentDimensions.Length;
+        pile.X = pile.Base.length/2;
+        Elevators.setPile_Location ( index, pile.X, pile.Y, pile.angle );
         Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
         setValue(!value);
     }
     const setBaseWidth_max = () => {
         pile.Base.width = Elevators.FloorCurrentDimensions.Width;
+        pile.Y = pile.Base.width/2;
+        Elevators.setPile_Location ( index, pile.X, pile.Y, pile.angle );
         Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
         setValue(!value);
     }
