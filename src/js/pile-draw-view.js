@@ -20,8 +20,26 @@ const PileViewCanvas = props => {
         //setValue(!value);
     };
 
-    const changeAngleY = (event) => {
-        pile.angle_Y = event.target.value;
+    const changeAngleX_minus = (event) => {
+        pile.angle_X = pile.angle_X - 5;
+        Elevators.setAngleView( props.index, pile.angle_X, pile.angle_Y, pile.angle_Z );
+        //setValue(!value);
+    };
+
+    const changeAngleX_plus = (event) => {
+        pile.angle_X = pile.angle_X + 5;
+        Elevators.setAngleView( props.index, pile.angle_X, pile.angle_Y, pile.angle_Z );
+        //setValue(!value);
+    };
+
+    const changeAngleY_minus = (event) => {
+        pile.angle_Y = pile.angle_Y - 5;
+        Elevators.setAngleView( props.index, pile.angle_X, pile.angle_Y, pile.angle_Z );
+        //setValue(!value);
+    };
+
+    const changeAngleY_plus = (event) => {
+        pile.angle_Y = pile.angle_Y + 5;
         Elevators.setAngleView( props.index, pile.angle_X, pile.angle_Y, pile.angle_Z );
         //setValue(!value);
     };
@@ -207,59 +225,83 @@ if ( pile.Height > 0 ){
   }, [draw])
   
   return (
-  <div>
-        <input 
-            style={{ width: '95%', marginLeft: 30 }}
-            type="range" id="horizontal_Z" name="horizontal_Z"
-            min={-180} max={180}
-            defaultValue={-10}
-            onChange={ changeAngleX }
-            />
-
-    <div style={{ display: 'flex', flexDirection: 'row', height: 510 }}>
+    <div>
+        <div style={{ display: 'flex', flexDirection: 'row', height: 570 }}>
         
         <canvas ref={canvasRef} {...props} style={{ width: '100%', height: '100%' }}/>
 
-        <div className='block' style={{ marginLeft: -41, padding: 1 }} >
-            <button
-                className='myButtonRound'
+            <div className='block' style={{ marginLeft: -61, padding: 1 }} >
+                <button
+                className='myButton'
                 onClick={ ()=> { pile.angle_X = 0; pile.angle_Y = 0; pile.angle_Z = 0; Elevators.setAngleView( props.index, pile.angle_X, pile.angle_Y, pile.angle_Z ); } }
                 >
-                U
-            </button>
+                Up
+                </button>
 
-            <button 
-                className='myButtonRound'
+                <button 
+                className='myButton'
                 onClick={ ()=> { pile.angle_X = -90; pile.angle_Y = 0; pile.angle_Z = 0; Elevators.setAngleView( props.index, pile.angle_X, pile.angle_Y, pile.angle_Z ); } }
                 >
-                F
-            </button>
+                Front
+                </button>
 
-            <button 
-                className='myButtonRound'
+                <button 
+                className='myButton'
                 onClick={ ()=> { pile.angle_X = -90; pile.angle_Y = 90; pile.angle_Z = 0; Elevators.setAngleView( props.index, pile.angle_X, pile.angle_Y, pile.angle_Z ); } }
                 >
-                S
-            </button>
+                Side
+                </button>
             
-            <button 
-                className='myButtonRound'
+                <button 
+                className='myButton'
                 onClick={ ()=> { pile.angle_X = -70; pile.angle_Y = 15; pile.angle_Z = -10; Elevators.setAngleView( props.index, pile.angle_X, pile.angle_Y, pile.angle_Z ); } }
                 >
-                3d
-            </button>
-        </div>
+                3D
+                </button>
+
+                <div><hr/></div>
+                
+                <div style={{ margin: -3 }}>
+
+                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                        <button
+                        className='myButtonRound'
+                        style={{ width: 25, height: 25 }}
+                        onClick={changeAngleX_minus}
+                        >▲</button>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: -7, marginBottom: -7 }}>   
+                    
+                        <button
+                            className='myButtonRound'
+                            style={{ width: 25, height: 25 }}
+                            onClick={changeAngleY_plus}
+                        >◄</button>
+
+                        <button
+                            className='myButtonRound'
+                            style={{ width: 25, height: 25 }}
+                            onClick={changeAngleY_minus}
+                        >►</button>
+                            
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                        <button
+                        className='myButtonRound'
+                        style={{ width: 25, height: 25 }}
+                        onClick={changeAngleX_plus}
+                        >▼</button>
+                    </div>
+
+                </div>
+
+                <div><hr/></div>
+
+                </div>
+        </div> 
     </div>
-        <input 
-            style={{ width: '95%', marginLeft: 30 }}
-            type="range" id="horizontal_Y" name="horizontal_Y"
-            min={-180} max={180}
-            //step={5}
-            defaultValue={15}
-            //value={angle_Y}
-            onChange={ changeAngleY }
-            />
-  </div>
   )
 }
 
