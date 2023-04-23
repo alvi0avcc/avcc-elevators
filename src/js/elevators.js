@@ -64,12 +64,12 @@ class cPile {
             this.X      = 0; // location
             this.Y      = 0;
             this.angle  = 0;
-            this.Height = 10;//Height of Pile
+            this.Height = 3;//Height of Pile
             this.Box_Heights = {h1: 1, h2: 1, h3: 1, h4: 1};
-            this.Base   = { length: 30, width: 30 }; //base plane
+            this.Base   = { length: 10, width: 10 }; //base plane
             this.underBase_Height = 0;//Height of Box under Pile
-            this.Top    = { length: 15, width: 15 }; //upper plane
-            this.Tension_Base = 0.835;
+            this.Top    = { length: 2, width: 2 }; //upper plane
+            this.Tension_Base = 0.837;
             this.Tension_Volume = 0.5;
             this.angle_X = -70;
             this.angle_Y = 15;
@@ -475,6 +475,9 @@ class cElevators {
     PileAdd(){
         if ( this.FloorFound > 0 ) {
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile.push(new cPile());
+            let dim = this.Elevators[this.Selected].Warehouse[this.Elevators[this.Selected].Warehouse.length-1].Dimensions;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile.length-1].X = dim.Length/2; 
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile.length-1].Y = dim.Width/2;
             this.State = 'PIle added';
         } else alert ('Error adding pile !')
     }

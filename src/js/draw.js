@@ -63,7 +63,4 @@ export function draw_underBase(ctx, points ) {
     draw_Line_3D(ctx, [ points2[4], points2[5] ], [ points1[8], points1[9] ] );
     draw_Line_3D(ctx, [ points2[8], points2[9] ], [ points1[12], points1[13] ] );
     draw_Line_3D(ctx, [ points2[12], points2[13] ], [ points1[16], points1[17] ] );
-
-
-
 }

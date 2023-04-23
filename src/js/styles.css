@@ -79,6 +79,13 @@ input[type="range"]::-moz-range-thumb {
   background-color: whitesmoke;
 }
 
+.myText{
+  background-color: transparent;
+  color: #1976d2;
+  font-size: 1rem;
+  text-align: center;
+  text-shadow: 1px 1px 1px #000;
+}
 
 .myButton{
   border-radius: 15px;
@@ -86,7 +93,7 @@ input[type="range"]::-moz-range-thumb {
   width: 50px;
   margin: 3px;
   height: 30px;
-  background-color: transparent;
+  background-color: white;
   color: #1976d2;
   font-size: 1rem;
   text-align: center;

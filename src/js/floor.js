@@ -155,7 +155,7 @@ function FloorSize(propsSize){
             >
         <IconButton
             color="primary"
-            aria-label="Edit Complex Name"
+            aria-label="Edit Warehouse Name"
             component="label"
             onClick={() => { Dialogs.FloorDialogShow(Elevators.FloorName, 0); propsSize.callback( !propsSize.updateState ) }}>
               <Tooltip title="Edit Warehouse Name">
@@ -299,6 +299,7 @@ function Pile(propsPile){
     let pile = Elevators.PileGet( index );
 
     const [value, setValue] = React.useState(false);
+    const [mode, setMode] = React.useState(true);
 
    /* const changeAngleX = (event) => {
         pile.angle_X = event.target.value;
@@ -335,11 +336,13 @@ function Pile(propsPile){
     const ChangeX = (event) => {
         pile.X = event.target.value;
         Elevators.setPile_Location ( index, pile.X, pile.Y, pile.angle );
+        setMode(false);
         setValue(!value);
     };
     const ChangeY = (event) => {
         pile.Y = event.target.value;
         Elevators.setPile_Location ( index, pile.X, pile.Y, pile.angle );
+        setMode(false);
         setValue(!value);
     };
     const ChangeAngle = (event) => {
@@ -497,11 +500,11 @@ function Pile(propsPile){
             <div><hr/></div>
             <div className='rowPile'>
                 <label>Location X:</label>
-                <input disabled className='inputPile' type ='number' value = {pile.X} onChange={ ChangeX }/>
+                <input className='inputPile' type ='number' min = '0' step = '0.01' value = {pile.X} onChange={ ChangeX }/>
             </div>
             <div className='rowPile'>
                 <label>Location Y:</label>
-                <input disabled className='inputPile' type ='number' value = {pile.Y} onChange={ ChangeY }/>
+                <input className='inputPile' type ='number' min = '0' step = '0.01' value = {pile.Y} onChange={ ChangeY }/>
             </div>
             <div className='rowPile'>
                 <label>Orientation (angle):</label>
@@ -606,7 +609,7 @@ function Pile(propsPile){
         </div>
 
         <div className='block' style={{ width: '100%' }}>
-            { Elevators.FloorFound ?  <PileViewCanvas index={index} /> : '' }
+            { Elevators.FloorFound ?  <PileViewCanvas index={index} mode={mode} callback={(data)=> setMode( data ) } /> : '' }
         </div>
 
         </div>

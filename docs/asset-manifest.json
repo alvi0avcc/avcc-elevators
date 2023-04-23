@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/avcc-elevators/static/css/main.4683d720.css",
-    "main.js": "/avcc-elevators/static/js/main.35a4f761.js",
+    "main.css": "/avcc-elevators/static/css/main.d966e319.css",
+    "main.js": "/avcc-elevators/static/js/main.b6436707.js",
     "static/js/787.dc98cd1f.chunk.js": "/avcc-elevators/static/js/787.dc98cd1f.chunk.js",
     "static/media/roboto-all-300-normal.woff": "/avcc-elevators/static/media/roboto-all-300-normal.168d6383e73339293ac3.woff",
     "static/media/roboto-latin-300-normal.woff2": "/avcc-elevators/static/media/roboto-latin-300-normal.c48fb6765a9fcb00b330.woff2",
@@ -12,12 +12,12 @@
     "static/media/roboto-vietnamese-300-normal.woff2": "/avcc-elevators/static/media/roboto-vietnamese-300-normal.32fc45a3d1e8ea11fabc.woff2",
     "static/media/roboto-greek-ext-300-normal.woff2": "/avcc-elevators/static/media/roboto-greek-ext-300-normal.35b9d6be04b95f0f0530.woff2",
     "index.html": "/avcc-elevators/index.html",
-    "main.4683d720.css.map": "/avcc-elevators/static/css/main.4683d720.css.map",
-    "main.35a4f761.js.map": "/avcc-elevators/static/js/main.35a4f761.js.map",
+    "main.d966e319.css.map": "/avcc-elevators/static/css/main.d966e319.css.map",
+    "main.b6436707.js.map": "/avcc-elevators/static/js/main.b6436707.js.map",
     "787.dc98cd1f.chunk.js.map": "/avcc-elevators/static/js/787.dc98cd1f.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.4683d720.css",
-    "static/js/main.35a4f761.js"
+    "static/css/main.d966e319.css",
+    "static/js/main.b6436707.js"
   ]
 }
