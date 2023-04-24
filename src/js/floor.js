@@ -301,11 +301,11 @@ function Pile(propsPile){
     const [value, setValue] = React.useState(false);
     const [mode, setMode] = React.useState(true);
 
-   /* const changeAngleX = (event) => {
+    const changeAngleX = (event) => {
         pile.angle_X = event.target.value;
         Elevators.setAngleView( index, pile.angle_X, pile.angle_Y, pile.angle_Z );
         setValue(!value);
-    };*/
+    };
 
     /*const changeAngleY = (event) => {
         pile.angle_Y = event.target.value;
@@ -348,13 +348,15 @@ function Pile(propsPile){
     const ChangeAngle = (event) => {
         pile.angle = event.target.value;
         Elevators.setPile_Location ( index, pile.X, pile.Y, pile.angle );
+        setMode(false);
         setValue(!value);
     };
     const ChangeHeight = (event) => {
-        let h = 0;
-        h = event.target.value;
-        pile.Height = h - pile.underBase_Height;
+        //let h = 0;
+        //h = event.target.value;
+        //pile.Height = h - pile.underBase_Height;
        //if ( pile.Height <= 0 ) pile.Height = 0.01;
+        pile.Height = event.target.value;
         Elevators.setPile_Height ( index, pile.Height );
         setValue(!value);
     };
@@ -504,24 +506,24 @@ function Pile(propsPile){
             <div><hr/></div>
             <div className='rowPile'>
                 <label>Location X:</label>
-                <input className='inputPile' type ='number' min = '0' step = '0.01' value = {pile.X} onChange={ ChangeX }/>
+                <input className='inputPile' type ='number' min = '0' step = '0.05' value = {pile.X} onChange={ ChangeX }/>
             </div>
             <div className='rowPile'>
                 <label>Location Y:</label>
-                <input className='inputPile' type ='number' min = '0' step = '0.01' value = {pile.Y} onChange={ ChangeY }/>
+                <input className='inputPile' type ='number' min = '0' step = '0.05' value = {pile.Y} onChange={ ChangeY }/>
             </div>
             <div className='rowPile'>
                 <label>Orientation (angle):</label>
-                <input disabled className='inputPile' type ='number' value = {pile.angle} onChange={ ChangeAngle }/>
+                <input className='inputPile' type ='number' value = {pile.angle} onChange={ ChangeAngle }/>
             </div>
             <div><hr/></div>
             <div className='rowPile'>
-                <label><strong>Total Height:</strong></label>
+                <label><strong>Pile height (hat):</strong></label>
                 <input
                     className='inputPile'
                     style={{ backgroundColor: ( +pile.Height > 0  ? '' : 'yellow' ) }}
                     type ='number' 
-                    step='0.01' value = {pile.Height + pile.underBase_Height} onChange={ ChangeHeight }/>
+                    min = '0' step='0.01' value = {pile.Height} onChange={ ChangeHeight }/>
             </div>
 
             <div><hr/></div>

@@ -6,7 +6,7 @@ import * as Calc from './calc.js';
 import cPile from './pile_class.js'
 import { get_Max_Y_3D, getCurvePoints, drawLines, drawCurve, getPoint, drawPoint, drawPoints, getSlice, drawSlice, drawContur, getContur, getPoints_by_Y, interpolation } from './spline.js';
 import { MoveMatrix, MoveMatrixAny, RotateMatrix_X, RotateMatrix_X_any, RotateMatrix_Y, RotateMatrix_Y_any, RotateMatrix_Z, RotateMatrix_Z_any, ScaleMatrix, ScaleMatrixAny, ScaleMatrixAny1zoom } from './3d-matrix.js';
-import { draw_PLine_3D, draw_PLine_3D_between, draw_underBase } from './draw.js';
+import { draw_Line_3D, draw_PLine_3D, draw_PLine_3D_between, draw_underBase } from './draw.js';
 import { ContactlessOutlined } from '@mui/icons-material';
 
 
@@ -201,6 +201,8 @@ export default PileViewCanvas;
 
 function Pile_Draw( ctx, index, mode, boss_index ){
 
+    ctx.setLineDash([]);
+
     let boss_pile = Elevators.PileGet( boss_index );
     let pile = Elevators.PileGet( index );
 
@@ -251,9 +253,15 @@ function Pile_Draw( ctx, index, mode, boss_index ){
     let x_location = pile.X;
     let y_location = pile.Y;
     let z_location = 0;
-    let angle = pile.angle;
+
+
+    if ( pile.angle == undefined  ) pile.angle = 0;
+    let angle = -pile.angle;
 
     if ( mode ) {
+
+        angle = 0;
+
         let zoom_L = ( ctx.canvas.width - 90 ) / l;
         let zoom_W = ctx.canvas.height / w;
         let zoom_H = ctx.canvas.height / total_H;
@@ -308,10 +316,8 @@ function Pile_Draw( ctx, index, mode, boss_index ){
             ctx.lineWidth = 4;
             draw_PLine_3D( ctx, floor_points );
         }
+
     }
-
-
-    
 
 // Pile (splines)
 if ( pile.Height > 0 ){
@@ -324,6 +330,7 @@ if ( pile.Height > 0 ){
     for ( let i = 0; i <= slice_step; i ++ ){
         level = max / slice_step * i;
         slices = gPile.get_Slice_Base( level );
+        slices  = RotateMatrix_Z_any( slices, angle );
         slices  = MoveMatrixAny( slices, x_location, y_location, dh + z_location );
         slices  = ScaleMatrixAny1zoom( slices, zoom );
         slices  = RotateMatrix_X_any( slices, angle_X );
@@ -332,7 +339,34 @@ if ( pile.Height > 0 ){
         slices  = MoveMatrixAny( slices, x_center, y_center, z_center );
         ctx.strokeStyle  = 'blue';
         if ( i == 0 ) ctx.strokeStyle  = 'magenta';
-        if ( i == 0 ) { ctx.lineWidth = line_width * 2; draw_PLine_3D( ctx, slices ); }
+        if ( i == 0 ) {
+            // draw Base contur
+            ctx.lineWidth = line_width * 2; draw_PLine_3D( ctx, slices );
+        }
+        if ( i == slice_step & !mode) { // draw names of Piles
+            let text_place_Y = 0;
+            let text_place_X = 0;
+                if ( index < 17 ) { 
+                    text_place_Y  = 25;
+                    text_place_X  = 60*index;
+                } else {
+                    text_place_Y = 560;
+                    text_place_X  = 60*( index -17 );
+                }
+                let p1 = [ 10+text_place_X, text_place_Y ];
+                let p2 = slices.slice( 0, 2 );
+                ctx.strokeStyle  = 'yellow';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([10, 10])
+                draw_Line_3D( ctx, p1, p2 );
+                p2 = [ 10+text_place_X+45, text_place_Y ];
+                ctx.setLineDash([]);
+                draw_Line_3D( ctx, p1, p2 );
+                ctx.fillStyle   = 'blue';
+                ctx.font = "18px serif";
+                ctx.fillText( 'Pile '+ ( index + 1 ), 10+text_place_X, text_place_Y-2 );
+        }
+
         if ( i > 0) { 
             ctx.strokeStyle  = 'blue';
             ctx.lineWidth = line_width / 2;
@@ -345,6 +379,7 @@ if ( pile.Height > 0 ){
 
     if ( mode ){
         slices  = gPile.get_Slice_Base( h );
+        slices  = RotateMatrix_Z_any( slices, angle );
         slices  = MoveMatrixAny( slices, x_location, y_location, dh + z_location );
         slices  = ScaleMatrixAny1zoom( slices, zoom );
         slices  = RotateMatrix_X_any( slices, angle_X );
@@ -356,6 +391,7 @@ if ( pile.Height > 0 ){
         draw_PLine_3D( ctx, slices );
 
         let contur = gPile.get_Contur_Arc_Length;
+        contur  = RotateMatrix_Z_any( contur, angle );
         contur  = MoveMatrixAny( contur, x_location, y_location, dh + z_location );
         contur  = ScaleMatrixAny1zoom( contur, zoom );
         contur  = RotateMatrix_X_any( contur, angle_X );
@@ -368,7 +404,7 @@ if ( pile.Height > 0 ){
 
         //contur by widht
         contur  = gPile.get_Contur_Arc_Widht; 
-        contur  = RotateMatrix_Z_any( contur, 90 )   
+        contur  = RotateMatrix_Z_any( contur, 90 + angle )   
         contur  = MoveMatrixAny( contur, x_location, y_location, dh + z_location );
         contur  = ScaleMatrixAny1zoom( contur, zoom );
         contur  = RotateMatrix_X_any( contur, angle_X );
@@ -384,6 +420,7 @@ if ( pile.Height > 0 ){
         //under Base box
         if ( pile.underBase_Height > 0 ) {
             let underBaseContur  = gPile.get_Contur_under_Base.xyz3d;
+            underBaseContur  = RotateMatrix_Z_any( underBaseContur, angle );
             underBaseContur  = MoveMatrixAny( underBaseContur, x_location, y_location, -uH+dh + z_location );
             underBaseContur  = ScaleMatrixAny1zoom( underBaseContur, zoom );
             underBaseContur  = RotateMatrix_X_any( underBaseContur, angle_X );
