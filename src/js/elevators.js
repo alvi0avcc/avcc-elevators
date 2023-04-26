@@ -1,4 +1,5 @@
 import * as Calc from './calc';
+import * as Spline from './spline.js';
 import cgPile from './pile_class.js'
 import * as matrix from './3d-matrix.js';
 import { get_Max_Y_3D, getCurvePoints, drawLines, drawCurve, getPoint, drawPoint, drawPoints, getSlice, drawSlice, drawContur, getContur, getPoints_by_Y } from './spline.js';
@@ -392,6 +393,7 @@ class cElevators {
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Dimensions.Conus_Y = Number(Conus_Y);
         } 
     }
+
     setPile ( index, Name, type, type_location, purpose, X, Y, angle, Height, Box_Heights, Base_length, Base_width, Top_length, Top_width, Tension_Base, Tension_Volume ){
         if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] ) {
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Name = Name;
@@ -1072,22 +1074,25 @@ class cElevators {
         return {volume, weight, err_mes };
     }
 
-    get_Volume_Piles( Warehouse_Index ){
+    get_Volume_Piles( Warehouse_Index, step_mesh = 50 ){
         let z = [];
         let mesh = [];
-        let mesh_3D = [];
+        //let mesh_3D = [];
         let volume = 0;
         let Length = 0;
         let Width = 0;
         let dx_X = 0;
         let dx_Y = 0;
         let angle = 0;
+        let step_xy = step_mesh;
 
         let floor = this.get_FloorByIndex( Warehouse_Index );
 
         if ( floor != 0 && floor != -1  ){
             Length = floor.Dimensions.Length;
             Width = floor.Dimensions.Width;
+            //step_xy = floor.Step;
+            //if ( step_xy == undefined || step_xy == 0 ) step_xy = 50;
 
             let pile = new cPile;
             let Pile_H = 0
@@ -1103,7 +1108,7 @@ class cElevators {
             let x2 = 0; let y2 = 0; let z2=0;
             let x3 = 0; let y3 = 0; let z3=0;
             let x4 = 0; let y4 = 0; let z4=0;
-            let a =0 ; let b = 0; let c = 0;
+            //let a =0 ; let b = 0; let c = 0;
 
             for ( let index = 0; index < floor.Pile.length; index++ ){ //Pile slicing
             //for ( let index = 0; index < 1; index++ ){ //Pile slicing
@@ -1135,13 +1140,38 @@ class cElevators {
                // console.log('slices = ', slices);
             }//Pile slicing
 
+
+            let dx = Length / step_xy;
+            let dy = Width / step_xy;
+            let xy_gab = { x_min: 0, x_max: 0, y_min: 0, y_max: 0 };
+            let x_start = 0, x_end = 0;
+            let y_start = 0, y_end = 0;
+
             piles: for ( let index = 0; index < slices.length; index++ ){
                 pile = Elevators.PileGet( index );
                 dx_X = pile.X;
                 dx_Y = pile.Y;
-                coord_X: for ( let x = 0; x <= Length; x+=1 ){
-                    coord_Y: for ( let y = 0; y <= Width; y+=1 ){
-                        z = [ x, y, 0 ];
+                xy_gab = Spline.get_Max_Gabarit( slices[ index ][0], dx_X, dx_Y );
+                //console.log('xy_gab = ',xy_gab);
+                if ( xy_gab.x_min+dx_X <= 0 ) { 
+                    x_start = 0;
+                } else x_start = Math.trunc( ( xy_gab.x_min+dx_X ) / dx );
+
+                if ( xy_gab.x_max+dx_X >= Length ) { 
+                    x_end = step_xy;
+                } else x_end = Math.floor( ( xy_gab.x_max+dx_X ) / dx );
+
+                if ( xy_gab.y_min+dx_Y <= 0 ) { 
+                    y_start = 0;
+                } else y_start = Math.trunc( ( xy_gab.y_min+dx_Y ) / dy );
+
+                if ( xy_gab.y_max+dx_Y >= Width ) { 
+                    y_end = step_xy;
+                } else y_end = Math.floor( ( xy_gab.y_max+dx_Y ) / dy );
+
+                coord_X: for ( let x = x_start; x <= x_end; x++ ){
+                    coord_Y: for ( let y = y_start; y <= y_end; y++ ){
+                        z = [ x*dx, y*dy, 0 ];
                             slises: for ( let i = 0; i < step; i++ ){
                                 segments: for ( let j = 0; j < slices[index][i].length-4; j+=4 ){
                                                 x1 = slices[ index ][i][j]+dx_X;
@@ -1160,26 +1190,19 @@ class cElevators {
                                                 y4 = slices[ index ][i+1][j+5]+dx_Y;
                                                 z4 = slices[ index ][i+1][j+6];
 
-                                               /* a = (x1 - x) * (y2 - y1) - (x2 - x1) * (y1 - y);
-                                                b = (x2 - x) * (y3 - y2) - (x3 - x2) * (y2 - y);
-                                                c = (x3 - x) * (y1 - y3) - (x1 - x3) * (y3 - y);*/
- 
-                                                if ( Calc.Point_inside_Triangle( x1, y1, x2, y2, x4, y4, x, y ) ) {
-                                                    z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x2, y2, z2 ], [ x4, y4, z4 ], [ x, y, 0 ], [ 0, 0, 1 ] );
-                                                    break segments;
+                                                if ( Calc.Point_inside_Triangle( x1, y1, x2, y2, x4, y4, x*dx, y*dy ) ) {
+                                                    z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x2, y2, z2 ], [ x4, y4, z4 ], [ x*dx, y*dy, 0 ], [ 0, 0, 1 ] );
+                                                    break slises;
                                                 }
 
-                                                if ( Calc.Point_inside_Triangle( x1, y1, x3, y3, x4, y4, x, y ) ) {
-                                                    z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x3, y3, z3 ], [ x4, y4, z4 ], [ x, y, 0 ], [ 0, 0, 1 ] );
-                                                    break segments;
+                                                if ( Calc.Point_inside_Triangle( x1, y1, x3, y3, x4, y4, x*dx, y*dy ) ) {
+                                                    z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x3, y3, z3 ], [ x4, y4, z4 ], [ x*dx, y*dy, 0 ], [ 0, 0, 1 ] );
+                                                    break slises;
                                                 }
 
-                                    if ( z[2] > 0 ) break slises;
                                 } //segments
                             } //slises
                         mesh = mesh.concat( z, [ 1 ] );
-                        //mesh_3D = mesh_3D.concat( z );
-                        //mesh_3D = mesh_3D.concat( Calc.Change_Orientation( z ), 0 , 0, 0 );
                     }//coord_Y
                 }//coord_X
             }//piles

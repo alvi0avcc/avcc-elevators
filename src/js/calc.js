@@ -266,7 +266,7 @@ export function rayPlaneIntersection(p1, p2, p3, rayPoint, rayDirection) {
     //Vector metod
     let Bx = 0;
     let By = 0;
-    let Cx =0;
+    let Cx = 0;
     let Cy = 0;
     let Px = 0;
     let Py = 0;
@@ -286,8 +286,10 @@ export function rayPlaneIntersection(p1, p2, p3, rayPoint, rayDirection) {
 
     if (  m >= 0  &&  m <= 1  ) {
         l = (Px - m*Cx) / Bx;
-        if ( ( l >= 0 ) &&  ( m + l  <= 1 ) ) result = true;
+        if ( ( l >= 0 ) && ( m + l  <= 1 ) ) result = true;
     }
+
+    //if ( !result ) console.log('false');
 
     return result;
   }

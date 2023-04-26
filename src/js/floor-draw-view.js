@@ -2,33 +2,46 @@ import React, { useRef, useEffect } from 'react';
 import { Elevators } from './elevators.js';
 import * as matrix from './3d-matrix.js';
 import { mat4 } from 'gl-matrix';
+import { FloodRounded } from '@mui/icons-material';
 
 const FloorViewCanvas = props => {
 
     
     const canvasRef = useRef(null)
 
+    let floor = Elevators.FloorCurrentDimensions;
+    //let step_xy = 0;
+    //console.log('floor.Step = ',floor.Step);
+    //step_xy = Elevators.FloorCurrentStep;
+    //if ( floor.Step == undefined || floor.Step <= 0 ) Elevators.set_FloorStep = 10;
+    //step_xy = floor.Step;
+    //if ( step_xy == undefined || step_xy == 0 ) step_xy = 50;
+
     const [ mesh, setMesh] = React.useState([]);
+    const [ step_xy, setStep_xy] = React.useState( 50 );
 
     const meshCalc = ()=>{
-        let a = Elevators.get_Volume_Piles( Elevators.WarehouseSelected ).mesh;
-        let floor = Elevators.get_FloorByIndex( Elevators.WarehouseSelected );
-        Length = floor.Dimensions.Length;
-        Width = floor.Dimensions.Width;
-        Height = floor.Dimensions.Height;
+        //if ( step_xy < 10 ) setStep_xy( 10 );
+        let a = Elevators.get_Volume_Piles( Elevators.WarehouseSelected, step_xy ).mesh;
         a = matrix.MoveMatrixAny( a, -Length/2, -Width/2, -Height/2 );
         setMesh( a );
     }
 
-    let data = Elevators.FloorCurrentDimensions;
-    let Length = data.Length;
-    let Width = data.Width;
-    let Height = data.Height;
-    let Conus_height = data.Conus_height;
-    let Conus_L = data.Conus_L;
-    let Conus_W = data.Conus_W;
-    let Conus_X = data.Conus_X;
-    let Conus_Y = data.Conus_Y;
+    const changeMeshStep = (event)=>{
+        setStep_xy( Number ( event.target.value ) );
+        //console.log('mesh_step = ',event.target.value);
+        //Elevators.set_FloorStep = event.target.value;
+    }
+
+    let Length = floor.Length;
+    let Width = floor.Width;
+    let Height = floor.Height;
+    let Conus_height = floor.Conus_height;
+    let Conus_L = floor.Conus_L;
+    let Conus_W = floor.Conus_W;
+    let Conus_X = floor.Conus_X;
+    let Conus_Y = floor.Conus_Y;
+    ;
 
     // Korpus                
     let korpus_draw = [ -Length/2, -Width/2, -Height/2, 1,
@@ -95,7 +108,7 @@ const FloorViewCanvas = props => {
         //let vertices = korpus_draw.concat(head_draw, conus_draw );
         //let vertices = korpus_draw.concat( head_draw, mesh );
         //let vertices = mesh;
-        console.log('vertices = ',vertices);
+    //    console.log('vertices = ',vertices);
         console.log('mesh_3D = ',mesh);
         // матрица перспективы
 
@@ -109,8 +122,8 @@ const FloorViewCanvas = props => {
         let cameraMatrix = mat4.create();
         //mat4.perspective(cameraMatrix, 1, 1, 0.5, 1000);
         //mat4.translate(cameraMatrix, cameraMatrix, [0, 0, -100]);
-        mat4.ortho(cameraMatrix, 0, 100, 0, 100, 0, 500);
-        mat4.translate(cameraMatrix, cameraMatrix, [ 50, 30, -100 ]);
+        mat4.ortho(cameraMatrix, 0, 70, 0, 70, 0, 200);
+        mat4.translate(cameraMatrix, cameraMatrix, [ 35, 15, -100 ]);
 
         // Создадим единичную матрицу положения куба
         let cubeMatrix = mat4.create();
@@ -202,8 +215,6 @@ const FloorViewCanvas = props => {
             let aColor = gl.getAttribLocation(program, 'a_color');
 
             mat4.rotateX(cubeMatrix, cubeMatrix, -3.14/4);
-            //mat4.rotateY(cubeMatrix, cubeMatrix, 3.14/4)
-            //mat4.rotateZ(cubeMatrix, cubeMatrix, 3.14/2)
 
 //----------------------------------------------------------------------
         function render() {
@@ -261,6 +272,9 @@ const FloorViewCanvas = props => {
 
             //piles
             gl.drawArrays(gl.LINE_STRIP, 36, mesh.length/4 );
+            /*for ( let i = 36; i < mesh.length/4; i+= step_xy+1 ) {
+                gl.drawArrays(gl.LINE_STRIP, i, step_xy +1 );
+            }*/
         
             lastRenderTime = time;
 
@@ -308,6 +322,14 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
                     style={{ width: 80 }}
                     onClick={ meshCalc }
                     >calc</button>
+
+                <label className='myText' >Mesh Step</label>
+                <input 
+                    className='inputPile'
+                    type='number'
+                    value={ step_xy }
+                    onChange={ changeMeshStep }
+                    />
             </div>
     </div>
     );
