@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { Elevators } from './elevators.js';
+import * as matrix from './3d-matrix.js';
 import { mat4 } from 'gl-matrix';
 
 const FloorViewCanvas = props => {
@@ -10,7 +11,13 @@ const FloorViewCanvas = props => {
     const [ mesh, setMesh] = React.useState([]);
 
     const meshCalc = ()=>{
-        setMesh( Elevators.get_Volume_Piles(Elevators.WarehouseSelected).mesh );
+        let a = Elevators.get_Volume_Piles( Elevators.WarehouseSelected ).mesh;
+        let floor = Elevators.get_FloorByIndex( Elevators.WarehouseSelected );
+        Length = floor.Dimensions.Length;
+        Width = floor.Dimensions.Width;
+        Height = floor.Dimensions.Height;
+        a = matrix.MoveMatrixAny( a, -Length/2, -Width/2, -Height/2 );
+        setMesh( a );
     }
 
     let data = Elevators.FloorCurrentDimensions;
@@ -24,56 +31,56 @@ const FloorViewCanvas = props => {
     let Conus_Y = data.Conus_Y;
 
     // Korpus                
-    let korpus_draw = [-Length/2, -Height/2, -Width/2,
-                    -Length/2, -Height/2, Width/2,
-                    -Length/2, Height/2, Width/2,
-                    -Length/2, Height/2, -Width/2,
+    let korpus_draw = [ -Length/2, -Width/2, -Height/2, 1,
+                        -Length/2,  Width/2, -Height/2, 1,
+                        -Length/2,  Width/2,  Height/2, 1,
+                        -Length/2, -Width/2,  Height/2, 1,
 
-                    Length/2, -Height/2, -Width/2,
-                    Length/2, -Height/2, Width/2,
-                    Length/2, Height/2, Width/2,
-                    Length/2, Height/2, -Width/2,
+                         Length/2, -Width/2, -Height/2, 1,
+                         Length/2,  Width/2, -Height/2, 1,
+                         Length/2,  Width/2,  Height/2, 1,
+                         Length/2, -Width/2,  Height/2, 1,
 
-                    -Length/2, -Height/2, -Width/2,
-                    -Length/2, Height/2, -Width/2,
-                    Length/2, Height/2, -Width/2,
-                    Length/2, -Height/2, -Width/2,
+                        -Length/2, -Width/2, -Height/2, 1,
+                        -Length/2, -Width/2,  Height/2, 1,
+                         Length/2, -Width/2,  Height/2, 1,
+                         Length/2, -Width/2, -Height/2, 1,
 
-                    -Length/2, -Height/2 ,Width/2,
-                    -Length/2, Height/2, Width/2,
-                    Length/2, Height/2, Width/2,
-                    Length/2, -Height/2, Width/2
-                ];
+                        -Length/2,  Width/2, -Height/2, 1,
+                        -Length/2,  Width/2,  Height/2, 1,
+                         Length/2,  Width/2,  Height/2, 1,
+                         Length/2,  Width/2, -Height/2, 1
+                        ];
     // Head                
     let head_up = Height/3;
-    let head_draw = [-Length/2, Height/2, -Width/2,
-                    -Length/2, Height/2 + head_up, 0,
-                    Length/2, Height/2 + head_up, 0,
-                    Length/2, Height/2, -Width/2,
+    let head_draw = [  -Length/2,    -Width/2,           Height/2, 1,
+                       -Length/2,           0, Height/2 + head_up, 1,
+                        Length/2,           0, Height/2 + head_up, 1,
+                        Length/2,    -Width/2,           Height/2, 1,
 
-                    -Length/2, Height/2, Width/2,
-                    -Length/2, Height/2 + head_up, 0,
-                    Length/2, Height/2 + head_up, 0,
-                    Length/2, Height/2, Width/2,
-                ];
+                       -Length/2,     Width/2,           Height/2, 1,
+                       -Length/2,           0, Height/2 + head_up, 1,
+                        Length/2,           0, Height/2 + head_up, 1,
+                        Length/2,     Width/2,           Height/2, 1    
+                    ];
     // Bottom Conus                
-    let conus_draw = [-Length/2, -Height/2, Width/2,
-                     Length/2, -Height/2, Width/2,
-                    -Length/2 + Conus_X + Conus_L/2 , -Height/2 - Conus_height, -Width/2 + Conus_Y + Conus_W/2,
-                    -Length/2 + Conus_X - Conus_L/2 , -Height/2 - Conus_height, -Width/2 + Conus_Y + Conus_W/2,
+    let conus_draw = [ -Length/2,                                               Width/2,                -Height/2, 1,
+                        Length/2,                                               Width/2,                -Height/2, 1,
+                       -Length/2 + Conus_X + Conus_L/2 , -Width/2 + Conus_Y + Conus_W/2, -Height/2 - Conus_height, 1,
+                       -Length/2 + Conus_X - Conus_L/2 , -Width/2 + Conus_Y + Conus_W/2, -Height/2 - Conus_height, 1,
 
-                    -Length/2, -Height/2, -Width/2,
-                     Length/2, -Height/2, -Width/2,
-                    -Length/2 + Conus_X + Conus_L/2 , -Height/2 - Conus_height, -Width/2 + Conus_Y - Conus_W/2,
-                    -Length/2 + Conus_X - Conus_L/2 , -Height/2 - Conus_height, -Width/2 + Conus_Y - Conus_W/2,
+                       -Length/2,                                              -Width/2,                -Height/2, 1,
+                        Length/2,                                              -Width/2,                -Height/2, 1,
+                       -Length/2 + Conus_X + Conus_L/2 , -Width/2 + Conus_Y - Conus_W/2, -Height/2 - Conus_height, 1,
+                       -Length/2 + Conus_X - Conus_L/2 , -Width/2 + Conus_Y - Conus_W/2, -Height/2 - Conus_height, 1,
 
-                    -Length/2 + Conus_X - Conus_L/2 , -Height/2 - Conus_height, -Width/2 + Conus_Y + Conus_W/2,
-                    -Length/2 + Conus_X + Conus_L/2 , -Height/2 - Conus_height, -Width/2 + Conus_Y + Conus_W/2,
-                    -Length/2 + Conus_X + Conus_L/2 , -Height/2 - Conus_height, -Width/2 + Conus_Y - Conus_W/2,
-                    -Length/2 + Conus_X - Conus_L/2 , -Height/2 - Conus_height, -Width/2 + Conus_Y - Conus_W/2,
+                       -Length/2 + Conus_X - Conus_L/2 , -Width/2 + Conus_Y + Conus_W/2, -Height/2 - Conus_height, 1,
+                       -Length/2 + Conus_X + Conus_L/2 , -Width/2 + Conus_Y + Conus_W/2, -Height/2 - Conus_height, 1,
+                       -Length/2 + Conus_X + Conus_L/2 , -Width/2 + Conus_Y - Conus_W/2, -Height/2 - Conus_height, 1,
+                       -Length/2 + Conus_X - Conus_L/2 , -Width/2 + Conus_Y - Conus_W/2, -Height/2 - Conus_height, 1
                 ];
 
-    let zoom = 1/Length;
+    //let zoom = 1/Length;
     /*data_draw[0] = ;
     data_draw[0] = ;
     data_draw[0] = ;*/
@@ -86,9 +93,10 @@ const FloorViewCanvas = props => {
 
         let vertices = korpus_draw.concat(head_draw, conus_draw, mesh );
         //let vertices = korpus_draw.concat(head_draw, conus_draw );
-        //let vertices = korpus_draw.concat( mesh.mesh );
+        //let vertices = korpus_draw.concat( head_draw, mesh );
+        //let vertices = mesh;
         console.log('vertices = ',vertices);
-        console.log('mesh = ',mesh);
+        console.log('mesh_3D = ',mesh);
         // матрица перспективы
 
         /*Метод mat4.perspective(matrix, fov, aspect, near, far) принимает пять параметров:
@@ -101,8 +109,8 @@ const FloorViewCanvas = props => {
         let cameraMatrix = mat4.create();
         //mat4.perspective(cameraMatrix, 1, 1, 0.5, 1000);
         //mat4.translate(cameraMatrix, cameraMatrix, [0, 0, -100]);
-        mat4.ortho(cameraMatrix, 0, 200, 0, 200, 0, 500);
-        mat4.translate(cameraMatrix, cameraMatrix, [ 90, 50, -100 ]);
+        mat4.ortho(cameraMatrix, 0, 100, 0, 100, 0, 500);
+        mat4.translate(cameraMatrix, cameraMatrix, [ 50, 30, -100 ]);
 
         // Создадим единичную матрицу положения куба
         let cubeMatrix = mat4.create();
@@ -125,7 +133,7 @@ const FloorViewCanvas = props => {
                 gl_Position = u_camera * u_cube * vec4(a_position, 1.0);
             }`;*/
 
-        const vertexShaderSource =
+        /*const vertexShaderSource =
            `attribute vec3 a_position;
             attribute vec3 a_color;
             uniform mat4 u_cube;
@@ -134,7 +142,18 @@ const FloorViewCanvas = props => {
             void main(void) {
                 v_color = a_color;
                 gl_Position = u_camera * u_cube * vec4(a_position, 1.0);
-            }`;
+            }`;*/
+
+        const vertexShaderSource =
+            `attribute vec4 a_position;
+             attribute vec3 a_color;
+             uniform mat4 u_cube;
+             uniform mat4 u_camera;
+             varying vec3 v_color;
+             void main(void) {
+                 v_color = a_color;
+                 gl_Position = u_camera * u_cube * a_position;
+             }`;
 
         /*const vertexShaderSource =
             `attribute vec4 position;
@@ -183,6 +202,9 @@ const FloorViewCanvas = props => {
             let aColor = gl.getAttribLocation(program, 'a_color');
 
             mat4.rotateX(cubeMatrix, cubeMatrix, -3.14/4);
+            //mat4.rotateY(cubeMatrix, cubeMatrix, 3.14/4)
+            //mat4.rotateZ(cubeMatrix, cubeMatrix, 3.14/2)
+
 //----------------------------------------------------------------------
         function render() {
             // Запрашиваем рендеринг на следующий кадр
@@ -195,9 +217,9 @@ const FloorViewCanvas = props => {
             // Вращаем куб относительно оси X
             //mat4.rotateX(cubeMatrix, cubeMatrix, -3.14/4);
             // Вращаем куб относительно оси Y
-            mat4.rotateY(cubeMatrix, cubeMatrix, dt / 2000);
+            //mat4.rotateY(cubeMatrix, cubeMatrix, dt / 4000);
             // Вращаем куб относительно оси Z
-            //mat4.rotateZ(cubeMatrix, cubeMatrix, dt / 2000);
+            mat4.rotateZ(cubeMatrix, cubeMatrix, dt / 4000);
             // Вращаем куб относительно оси X
             //mat4.rotateX(cubeMatrix, cubeMatrix, 1);
         
@@ -212,7 +234,7 @@ const FloorViewCanvas = props => {
         
             gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
             gl.enableVertexAttribArray(aPosition);
-            gl.vertexAttribPointer(aPosition, 3, gl.FLOAT, false, 0, 0);
+            gl.vertexAttribPointer(aPosition, 4, gl.FLOAT, false, 0, 0);
         
             //gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
             //gl.enableVertexAttribArray(aColor);
@@ -236,6 +258,9 @@ const FloorViewCanvas = props => {
             gl.drawArrays(gl.LINE_LOOP, 24, 4);
             gl.drawArrays(gl.LINE_LOOP, 28, 4);
             gl.drawArrays(gl.LINE_LOOP, 31, 4);
+
+            //piles
+            gl.drawArrays(gl.LINE_STRIP, 36, mesh.length/4 );
         
             lastRenderTime = time;
 

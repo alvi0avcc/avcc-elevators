@@ -88,13 +88,14 @@ export function getPoints_by_Y( y , points_xy ){
     for ( let i = 0;  i < curve.length-1; i+=2 ){
         if ( curve[i+1] <= y && ( y < curve[i+3] || y == curve[i+3] ) ) { // y1 <= y < y2
             xy.push( [ curve[i], curve[i+1], curve[i+2], curve[i+3] ] ); // [ x1,y1, x2,y2 ]
+            break;
         }
     }
     //console.log('xy = ',xy);
     return xy;
 }
 
-export function get_Max_Y_3D( points_xy ){
+export function get_Max_Y_3D_full( points_xy ){
     let curve = points_xy;
     let max = 0;
     for ( let i = 0;  i < curve.length; i+=4 ){
@@ -102,3 +103,13 @@ export function get_Max_Y_3D( points_xy ){
     }
     return max;
 }
+
+export function get_Max_Y_3D( points_xy ){
+    let curve = points_xy;
+    let max = 0;
+    for ( let i = 0;  i < curve.length/2; i+=4 ){
+        if ( max <= curve[i+2] ) {max = curve[i+2];}
+    }
+    return max;
+}
+

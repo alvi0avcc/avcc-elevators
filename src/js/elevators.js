@@ -1,5 +1,6 @@
 import * as Calc from './calc';
 import cgPile from './pile_class.js'
+import * as matrix from './3d-matrix.js';
 import { get_Max_Y_3D, getCurvePoints, drawLines, drawCurve, getPoint, drawPoint, drawPoints, getSlice, drawSlice, drawContur, getContur, getPoints_by_Y } from './spline.js';
 import { MoveMatrix, MoveMatrixAny, RotateMatrix_X, RotateMatrix_X_any, RotateMatrix_Y, RotateMatrix_Y_any, RotateMatrix_Z, RotateMatrix_Z_any, ScaleMatrix, ScaleMatrixAny, ScaleMatrixAny1zoom } from './3d-matrix.js';
 
@@ -1074,13 +1075,20 @@ class cElevators {
     get_Volume_Piles( Warehouse_Index ){
         let z = [];
         let mesh = [];
+        let mesh_3D = [];
         let volume = 0;
+        let Length = 0;
+        let Width = 0;
+        let dx_X = 0;
+        let dx_Y = 0;
+        let angle = 0;
+
         let floor = this.get_FloorByIndex( Warehouse_Index );
+
         if ( floor != 0 && floor != -1  ){
-            let Length = 0;
-            let Width = 0;
             Length = floor.Dimensions.Length;
             Width = floor.Dimensions.Width;
+
             let pile = new cPile;
             let Pile_H = 0
             let max = 0;
@@ -1097,11 +1105,14 @@ class cElevators {
             let x4 = 0; let y4 = 0; let z4=0;
             let a =0 ; let b = 0; let c = 0;
 
-      //      for ( let index = 0; index < floor.Pile.length; index++ ){ //Pile slicing
-            for ( let index = 0; index < 1; index++ ){ //Pile slicing
+            for ( let index = 0; index < floor.Pile.length; index++ ){ //Pile slicing
+            //for ( let index = 0; index < 1; index++ ){ //Pile slicing
                 pile = Elevators.PileGet( index );
                 gPile.set_Initial_Data_Complex ( pile, numOfSegments );//initialisation Pile
                 Pile_H = pile.Height;
+                dx_X = pile.X;
+                dx_Y = pile.Y;
+                angle = pile.angle;
                 max = get_Max_Y_3D( gPile.get_Contur_Arc_Length ) - 0.0001;
                 slices.push([]);
                 for ( let i = 0; i <= step; i++ ){ 
@@ -1116,7 +1127,8 @@ class cElevators {
                     slices  = MoveMatrixAny( slices, x_center , y_center , z_center );*/
                     //
                     slices[index].push([]);
-                    slices[index][i] = slice.slice(0) ;
+                    //slices[index][i] = slice.slice(0) ;
+                    slices[index][i] = matrix.RotateMatrix_Z_any( slice, angle, 3 );
                     //mesh = mesh.concat( slice.slice(0) );
 
                 }
@@ -1124,59 +1136,38 @@ class cElevators {
             }//Pile slicing
 
             piles: for ( let index = 0; index < slices.length; index++ ){
-
-                coord_X: for ( let x = 0; x <= Length; x+=0.5 ){
-                    coord_Y: for ( let y = 0; y <= Width; y+=0.5 ){
-                        z = [ x, y, 0, 1 ];
-                            slises: for ( let i = 0; i < step-1; i+=2 ){
-                                segments: for ( let j = 0; j < slices[index][i].length-8; j+=4 ){
-                                                x1 = slices[ index ][i][j]+25;
-                                                y1 = slices[ index ][i][j+1]+10;
+                pile = Elevators.PileGet( index );
+                dx_X = pile.X;
+                dx_Y = pile.Y;
+                coord_X: for ( let x = 0; x <= Length; x+=1 ){
+                    coord_Y: for ( let y = 0; y <= Width; y+=1 ){
+                        z = [ x, y, 0 ];
+                            slises: for ( let i = 0; i < step; i++ ){
+                                segments: for ( let j = 0; j < slices[index][i].length-4; j+=4 ){
+                                                x1 = slices[ index ][i][j]+dx_X;
+                                                y1 = slices[ index ][i][j+1]+dx_Y;
                                                 z1 = slices[ index ][i][j+2];
 
-                                                x2 = slices[ index ][i][j+4]+25;
-                                                y2 = slices[ index ][i][j+5]+10;
+                                                x2 = slices[ index ][i][j+4]+dx_X;
+                                                y2 = slices[ index ][i][j+5]+dx_Y;
                                                 z2 = slices[ index ][i][j+6];
 
-                                                x3 = slices[ index ][i+1][j]+25;
-                                                y3 = slices[ index ][i+1][j+1]+10;
+                                                x3 = slices[ index ][i+1][j]+dx_X;
+                                                y3 = slices[ index ][i+1][j+1]+dx_Y;
                                                 z3 = slices[ index ][i+1][j+2];
 
-                                                x4 = slices[ index ][i+1][j+4]+25;
-                                                y4 = slices[ index ][i+1][j+5]+10;
+                                                x4 = slices[ index ][i+1][j+4]+dx_X;
+                                                y4 = slices[ index ][i+1][j+5]+dx_Y;
                                                 z4 = slices[ index ][i+1][j+6];
 
-                                //if  ( ( Math.min(x1, x2) <= x <= Math.max(x1, x2) ) & ( Math.min(y1, y2) <= y <= Math.max(y1, y2)) ) {
-                                //console.log('xyz',x1,y1,z1);
-                                //
-                                
-                                                a = (x1 - x) * (y2 - y1) - (x2 - x1) * (y1 - y);
+                                               /* a = (x1 - x) * (y2 - y1) - (x2 - x1) * (y1 - y);
                                                 b = (x2 - x) * (y3 - y2) - (x3 - x2) * (y2 - y);
-                                                c = (x3 - x) * (y1 - y3) - (x1 - x3) * (y3 - y);
+                                                c = (x3 - x) * (y1 - y3) - (x1 - x3) * (y3 - y);*/
  
-                                //console.log('abc',a,b,c);
-
-                                                /*if ( ( a >= 0 && b >= 0 && c >= 0 ) || ( a <= 0 && b <= 0 && c <= 0 ) ){
-                                                    //z = Calc.Point_from_Plane_and_XY( x, y, x1,y1,z1, x2,y2,z2, x3,y3,z3 );
-                                                    z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x2, y2, z2 ], [ x3, y3, z3 ], [ x, y, 0 ], [ 0, 0, 1 ] );
-                                                    break segments;
-                                                }*/
-
                                                 if ( Calc.Point_inside_Triangle( x1, y1, x2, y2, x4, y4, x, y ) ) {
                                                     z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x2, y2, z2 ], [ x4, y4, z4 ], [ x, y, 0 ], [ 0, 0, 1 ] );
                                                     break segments;
                                                 }
-
-                                                /*a = (x1 - x) * (y4 - y1) - (x4 - x1) * (y1 - y);
-                                                b = (x4 - x) * (y3 - y4) - (x3 - x4) * (y4 - y);
-                                                c = (x3 - x) * (y1 - y3) - (x1 - x3) * (y3 - y);
- 
-                                                if ( ( a >= 0 && b >= 0 && c >= 0 ) || ( a <= 0 && b <= 0 && c <= 0 ) ){
-                                    //console.log('found 2');
-                                    //z = Calc.Point_from_Plane_and_XY( x, y, x1,y1,z1, x4,y4,z4, x3,y3,z3 );
-                                                    z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x4, y4, z4 ], [ x3, y3, z3 ], [ x, y, 0 ], [ 0, 0, 1 ] );
-                                                    break segments;
-                                                }*/
 
                                                 if ( Calc.Point_inside_Triangle( x1, y1, x3, y3, x4, y4, x, y ) ) {
                                                     z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x3, y3, z3 ], [ x4, y4, z4 ], [ x, y, 0 ], [ 0, 0, 1 ] );
@@ -1186,7 +1177,9 @@ class cElevators {
                                     if ( z[2] > 0 ) break slises;
                                 } //segments
                             } //slises
-                        mesh = mesh.concat( z );
+                        mesh = mesh.concat( z, [ 1 ] );
+                        //mesh_3D = mesh_3D.concat( z );
+                        //mesh_3D = mesh_3D.concat( Calc.Change_Orientation( z ), 0 , 0, 0 );
                     }//coord_Y
                 }//coord_X
             }//piles

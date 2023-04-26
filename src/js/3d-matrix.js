@@ -239,14 +239,22 @@ export function RotateMatrix_Z( matrix, angle ){
   return result;
 }
 //------------------------------------------------------------------------------------------------
-export function RotateMatrix_Z_any(matrix, angle) {
+
+/**
+     * @param {[]} matrix input matrix
+     * @param {number} angle angle (deg) of rotation
+     * @param {number} type type of matrix - 3 or 4 elements
+     * @return {[]} rotated matrix
+     */
+export function RotateMatrix_Z_any( matrix, angle, type = 4 ) {
   let point = new Array(4);
   let result = [];
   for ( let i = 0; i < matrix.length; i=i+4 ) {
     point[0] = matrix[i];
     point[1] = matrix[i+1];
     point[2] = matrix[i+2];
-    point[3] = matrix[i+3];
+    if ( type === 3 ) point[3] = 1;
+    if ( type === 4 ) point[3] = matrix[i+3];
     result = result.concat( multiplyMatrixAndPoint( getRotation_Z( angle ), point ) );
   };
   return result;

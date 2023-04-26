@@ -197,6 +197,7 @@ const PileViewCanvas = props => {
 
                     <button
                         className='myButton'
+                        hidden
                         style={{ width: 80, height: 30 }}
                         onClick={ calcMesh }
                         >Calc</button>
@@ -443,7 +444,8 @@ if ( pile.Height > 0 ){
             draw_underBase( ctx, underBaseContur );
         }
 
-        let gMesh = [];
+        // mesh Piles
+        /*let gMesh = [];
         if ( mesh.length > 0 ){
             ctx.strokeStyle  = 'lime'
             ctx.lineWidth = line_width;
@@ -454,6 +456,6 @@ if ( pile.Height > 0 ){
             gMesh  = RotateMatrix_Z_any( gMesh, angle_Z );
             gMesh  = MoveMatrixAny( gMesh, x_center, y_center, z_center );
             draw_Point_3D( ctx, gMesh );
-        }
+        }*/
     
 };

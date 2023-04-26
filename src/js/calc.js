@@ -227,6 +227,18 @@ export function Point_from_Plane_and_XY( x, y, x1,y1,z1, x2,y2,z2, x3,y3,z3 ){
     return Point_from_Plane_and_Line( x1,y1,z1, x2,y2,z2, x3,y3,z3, x,y,0, x,y,100 );
 }
 
+export function Change_Orientation( point = [], dx = 0, dy = 0, dz = 0 ){
+    let x = 0;
+    let y = 0;
+    let z = 0;
+
+    x = point[ 0 ] + dx;
+    y = point[ 1 ] + dy;
+    z = point[ 2 ] + dz;
+
+    return ( [ x, y, z ] );
+}
+
 //---------------------------------------
 export function rayPlaneIntersection(p1, p2, p3, rayPoint, rayDirection) {
     // Calculate normal vector to the plane
@@ -246,25 +258,35 @@ export function rayPlaneIntersection(p1, p2, p3, rayPoint, rayDirection) {
 
     let w = [rayPoint[0]-p1[0], rayPoint[1]-p1[1], rayPoint[2]-p1[2]];
     let si = -(normal[0]*w[0] + normal[1]*w[1] + normal[2]*w[2]) / ndotu;
-    let intersection = [rayPoint[0]+si*rayDirection[0], rayPoint[1]+si*rayDirection[1], rayPoint[2]+si*rayDirection[2], 1 ];
+    let intersection = [rayPoint[0]+si*rayDirection[0], rayPoint[1]+si*rayDirection[1], rayPoint[2]+si*rayDirection[2] ];
     return intersection;
   }
 
-  export function Point_inside_Triangle ( aAx, aAy, aBx, aBy, aCx, aCy, aPx, aPy ){
-    let Bx, By, Cx, Cy, Px, Py;
-    let m, l; // koeff
+  export function Point_inside_Triangle ( aAx = 0, aAy = 0, aBx = 0, aBy = 0, aCx = 0, aCy = 0, aPx = 0, aPy = 0 ){
+    //Vector metod
+    let Bx = 0;
+    let By = 0;
+    let Cx =0;
+    let Cy = 0;
+    let Px = 0;
+    let Py = 0;
+    let m = 0; // coefficient
+    let l = 0; // coefficient
 
     let result = false;
     // move triangle from point A to (0;0).
-    Bx = aBx - aAx; By = aBy - aAy;
-    Cx = aCx - aAx; Cy = aCy - aAy;
-    Px = aPx - aAx; Py = aPy - aAy;
+    Bx = aBx - aAx;
+    By = aBy - aAy;
+    Cx = aCx - aAx;
+    Cy = aCy - aAy;
+    Px = aPx - aAx;
+    Py = aPy - aAy;
     
     m = (Px*By - Bx*Py) / (Cx*By - Bx*Cy);
 
-    if ( ( m >= 0 ) && ( m <= 1 ) ) {
+    if (  m >= 0  &&  m <= 1  ) {
         l = (Px - m*Cx) / Bx;
-        if ( ( l >= 0 ) && ( m + l ) <= 1 ) result = true;
+        if ( ( l >= 0 ) &&  ( m + l  <= 1 ) ) result = true;
     }
 
     return result;
