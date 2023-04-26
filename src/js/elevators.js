@@ -1,5 +1,7 @@
-import { Dining } from '@mui/icons-material';
 import * as Calc from './calc';
+import cgPile from './pile_class.js'
+import { get_Max_Y_3D, getCurvePoints, drawLines, drawCurve, getPoint, drawPoint, drawPoints, getSlice, drawSlice, drawContur, getContur, getPoints_by_Y } from './spline.js';
+import { MoveMatrix, MoveMatrixAny, RotateMatrix_X, RotateMatrix_X_any, RotateMatrix_Y, RotateMatrix_Y_any, RotateMatrix_Z, RotateMatrix_Z_any, ScaleMatrix, ScaleMatrixAny, ScaleMatrixAny1zoom } from './3d-matrix.js';
 
 let SoftVersion = '0.1.0'; 
 let DBlocalVersion = '0.1.0';
@@ -154,6 +156,14 @@ class cElevators {
                 else return 0;
             }
         else return 0;
+    };
+    get_FloorByIndex( index ){
+        //console.log('index = ',index);
+        let count = this.FloorFound;
+        if ( index < 0 || index > count ) return -1;
+        if ( count < 1 ) return 0;
+
+        return this.Elevators[this.Selected].Warehouse[ index ];
     };
     get PileFound(){
         if ( this.FloorFound ) {
@@ -1060,6 +1070,131 @@ class cElevators {
         if ( silo.CargoTW < 10 ) { err_mes = err_mes + 'incorrect Test Weight, ' };
         return {volume, weight, err_mes };
     }
+
+    get_Volume_Piles( Warehouse_Index ){
+        let z = [];
+        let mesh = [];
+        let volume = 0;
+        let floor = this.get_FloorByIndex( Warehouse_Index );
+        if ( floor != 0 && floor != -1  ){
+            let Length = 0;
+            let Width = 0;
+            Length = floor.Dimensions.Length;
+            Width = floor.Dimensions.Width;
+            let pile = new cPile;
+            let Pile_H = 0
+            let max = 0;
+            let step = 10;
+            let gPile = new cgPile();
+            let numOfSegments = 10;
+            
+            let slices = [];
+            let slice = [];
+
+            let x1 = 0; let y1 = 0; let z1=0;
+            let x2 = 0; let y2 = 0; let z2=0;
+            let x3 = 0; let y3 = 0; let z3=0;
+            let x4 = 0; let y4 = 0; let z4=0;
+            let a =0 ; let b = 0; let c = 0;
+
+      //      for ( let index = 0; index < floor.Pile.length; index++ ){ //Pile slicing
+            for ( let index = 0; index < 1; index++ ){ //Pile slicing
+                pile = Elevators.PileGet( index );
+                gPile.set_Initial_Data_Complex ( pile, numOfSegments );//initialisation Pile
+                Pile_H = pile.Height;
+                max = get_Max_Y_3D( gPile.get_Contur_Arc_Length ) - 0.0001;
+                slices.push([]);
+                for ( let i = 0; i <= step; i++ ){ 
+                    slice = gPile.get_Slice_Base( max / step * i );
+                    //3d modification
+                    /*slices  = RotateMatrix_Z_any( slices, angle );
+                    slices  = MoveMatrixAny( slices, x_location, y_location, dh + z_location );
+                    slices  = ScaleMatrixAny1zoom( slices, zoom );
+                    slices  = RotateMatrix_X_any( slices, angle_X );
+                    slices  = RotateMatrix_Y_any( slices, angle_Y );
+                    slices  = RotateMatrix_Z_any( slices, angle_Z );
+                    slices  = MoveMatrixAny( slices, x_center , y_center , z_center );*/
+                    //
+                    slices[index].push([]);
+                    slices[index][i] = slice.slice(0) ;
+                    //mesh = mesh.concat( slice.slice(0) );
+
+                }
+               // console.log('slices = ', slices);
+            }//Pile slicing
+
+            piles: for ( let index = 0; index < slices.length; index++ ){
+
+                coord_X: for ( let x = 0; x <= Length; x+=0.5 ){
+                    coord_Y: for ( let y = 0; y <= Width; y+=0.5 ){
+                        z = [ x, y, 0, 1 ];
+                            slises: for ( let i = 0; i < step-1; i+=2 ){
+                                segments: for ( let j = 0; j < slices[index][i].length-8; j+=4 ){
+                                                x1 = slices[ index ][i][j]+25;
+                                                y1 = slices[ index ][i][j+1]+10;
+                                                z1 = slices[ index ][i][j+2];
+
+                                                x2 = slices[ index ][i][j+4]+25;
+                                                y2 = slices[ index ][i][j+5]+10;
+                                                z2 = slices[ index ][i][j+6];
+
+                                                x3 = slices[ index ][i+1][j]+25;
+                                                y3 = slices[ index ][i+1][j+1]+10;
+                                                z3 = slices[ index ][i+1][j+2];
+
+                                                x4 = slices[ index ][i+1][j+4]+25;
+                                                y4 = slices[ index ][i+1][j+5]+10;
+                                                z4 = slices[ index ][i+1][j+6];
+
+                                //if  ( ( Math.min(x1, x2) <= x <= Math.max(x1, x2) ) & ( Math.min(y1, y2) <= y <= Math.max(y1, y2)) ) {
+                                //console.log('xyz',x1,y1,z1);
+                                //
+                                
+                                                a = (x1 - x) * (y2 - y1) - (x2 - x1) * (y1 - y);
+                                                b = (x2 - x) * (y3 - y2) - (x3 - x2) * (y2 - y);
+                                                c = (x3 - x) * (y1 - y3) - (x1 - x3) * (y3 - y);
+ 
+                                //console.log('abc',a,b,c);
+
+                                                /*if ( ( a >= 0 && b >= 0 && c >= 0 ) || ( a <= 0 && b <= 0 && c <= 0 ) ){
+                                                    //z = Calc.Point_from_Plane_and_XY( x, y, x1,y1,z1, x2,y2,z2, x3,y3,z3 );
+                                                    z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x2, y2, z2 ], [ x3, y3, z3 ], [ x, y, 0 ], [ 0, 0, 1 ] );
+                                                    break segments;
+                                                }*/
+
+                                                if ( Calc.Point_inside_Triangle( x1, y1, x2, y2, x4, y4, x, y ) ) {
+                                                    z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x2, y2, z2 ], [ x4, y4, z4 ], [ x, y, 0 ], [ 0, 0, 1 ] );
+                                                    break segments;
+                                                }
+
+                                                /*a = (x1 - x) * (y4 - y1) - (x4 - x1) * (y1 - y);
+                                                b = (x4 - x) * (y3 - y4) - (x3 - x4) * (y4 - y);
+                                                c = (x3 - x) * (y1 - y3) - (x1 - x3) * (y3 - y);
+ 
+                                                if ( ( a >= 0 && b >= 0 && c >= 0 ) || ( a <= 0 && b <= 0 && c <= 0 ) ){
+                                    //console.log('found 2');
+                                    //z = Calc.Point_from_Plane_and_XY( x, y, x1,y1,z1, x4,y4,z4, x3,y3,z3 );
+                                                    z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x4, y4, z4 ], [ x3, y3, z3 ], [ x, y, 0 ], [ 0, 0, 1 ] );
+                                                    break segments;
+                                                }*/
+
+                                                if ( Calc.Point_inside_Triangle( x1, y1, x3, y3, x4, y4, x, y ) ) {
+                                                    z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x3, y3, z3 ], [ x4, y4, z4 ], [ x, y, 0 ], [ 0, 0, 1 ] );
+                                                    break segments;
+                                                }
+
+                                    if ( z[2] > 0 ) break slises;
+                                } //segments
+                            } //slises
+                        mesh = mesh.concat( z );
+                    }//coord_Y
+                }//coord_X
+            }//piles
+
+        }//if
+        return { mesh, volume };
+    };//get_Volume_Piles
+
 };
 
 export let Elevators = new cElevators();

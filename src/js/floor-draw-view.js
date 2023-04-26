@@ -1,12 +1,17 @@
 import React, { useRef, useEffect } from 'react';
 import { Elevators } from './elevators.js';
-//import { Matrix4 } from 'three';
 import { mat4 } from 'gl-matrix';
 
 const FloorViewCanvas = props => {
 
     
     const canvasRef = useRef(null)
+
+    const [ mesh, setMesh] = React.useState([]);
+
+    const meshCalc = ()=>{
+        setMesh( Elevators.get_Volume_Piles(Elevators.WarehouseSelected).mesh );
+    }
 
     let data = Elevators.FloorCurrentDimensions;
     let Length = data.Length;
@@ -79,8 +84,11 @@ const FloorViewCanvas = props => {
         // Инициализация данных
         let vertexBuffer = gl.createBuffer();
 
-        let vertices = korpus_draw.concat(head_draw, conus_draw);
-
+        let vertices = korpus_draw.concat(head_draw, conus_draw, mesh );
+        //let vertices = korpus_draw.concat(head_draw, conus_draw );
+        //let vertices = korpus_draw.concat( mesh.mesh );
+        console.log('vertices = ',vertices);
+        console.log('mesh = ',mesh);
         // матрица перспективы
 
         /*Метод mat4.perspective(matrix, fov, aspect, near, far) принимает пять параметров:
@@ -91,9 +99,10 @@ const FloorViewCanvas = props => {
         far — максимальное расстояние до объектов, которые будут видны.*/
 
         let cameraMatrix = mat4.create();
-        //mat4.perspective(cameraMatrix, 1, 1, 0.1, 1000);
-        mat4.ortho(cameraMatrix, 0, 100, 0, 100, 0.1, 1000);
-        mat4.translate(cameraMatrix, cameraMatrix, [50, 50, -100]);
+        //mat4.perspective(cameraMatrix, 1, 1, 0.5, 1000);
+        //mat4.translate(cameraMatrix, cameraMatrix, [0, 0, -100]);
+        mat4.ortho(cameraMatrix, 0, 200, 0, 200, 0, 500);
+        mat4.translate(cameraMatrix, cameraMatrix, [ 90, 50, -100 ]);
 
         // Создадим единичную матрицу положения куба
         let cubeMatrix = mat4.create();
@@ -102,7 +111,7 @@ const FloorViewCanvas = props => {
         let lastRenderTime = Date.now();
 
         // Устанавливаем вьюпорт у WebGL
-        gl.viewport(0, 0, 400, 400);
+        gl.viewport(0, 0, gl.canvas.width, gl.canvas.width);
 
        // Инициализация шейдеров
        /* const vertexShaderSource =
@@ -253,16 +262,30 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
     
     useEffect(() => {
       
-      const canvas = canvasRef.current
-      canvas.height = 400;
-      canvas.width = 400;
+      const canvas = canvasRef.current;
+      const { width, height } = canvas.getBoundingClientRect();
+      canvas.height = height;
+      canvas.width = width;
       const gl = canvas.getContext('webgl')
   
         draw(gl)
   
       }, [draw])
     
-    return <canvas ref={canvasRef} {...props}/>
+    return (
+    <div style={{ display: 'flex', flexDirection: 'row', height: 450 }}>
+
+            <canvas ref={canvasRef} {...props} style={{ width: '100%', height: '100%' }} />
+
+            <div className='block' style={{ marginLeft: -91, padding: 1 }}>
+                <button
+                    className='myButton'
+                    style={{ width: 80 }}
+                    onClick={ meshCalc }
+                    >calc</button>
+            </div>
+    </div>
+    );
   }
   
   export default FloorViewCanvas

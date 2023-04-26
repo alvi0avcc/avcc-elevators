@@ -19,6 +19,12 @@ export function draw_PLine_3D(ctx, points ) {
     ctx.stroke();
 }
 
+export function draw_Point_3D(ctx, points ) {
+    ctx.beginPath();
+    for( let i=4; i < points.length; i+=4 ) ctx.rect(points[i]-1, points[i+1]-1, 2, 2);
+    ctx.stroke();
+}
+
 export function draw_Line_3D(ctx, point_1, point_2 ) {
     ctx.beginPath();
     ctx.moveTo(point_1[0], point_1[1]);

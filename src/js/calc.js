@@ -1,3 +1,7 @@
+import { Elevators } from './elevators.js';
+import cPile from './pile_class.js'
+import { get_Max_Y_3D, getCurvePoints, drawLines, drawCurve, getPoint, drawPoint, drawPoints, getSlice, drawSlice, drawContur, getContur, getPoints_by_Y } from './spline.js';
+
 export function MyRound(value, decimal){
     let MyPow;
     let result;
@@ -153,4 +157,115 @@ export function Mass(w) {
         UdPogrV = 1000 / w.Natura;
         w.Result.M = w.Result.V / UdPogrV;
     return w;
+};
+
+export function Point_from_Plane_and_Line( x1,y1,z1, x2,y2,z2, x3,y3,z3, x4,y4,z4, x5,y5,z5 ){
+    //x1,y1,z1, x2,y2,z2, x3,y3,z3 - координаты заданной плоскости
+    //x4,y4,z4, x5,y5,z5 - координаты заданной прямой
+
+    //Коэффициенты для уравнения плоскости
+    let A = y1*(z2 - z3) + y2*(z3 - z1) + y3*(z1 - z2);
+    let B = z1*(x2 - x3) + z2*(x3 - x1) + z3*(x1 - x2);
+    let C = x1*(y2 - y3) + x2*(y3 - y1) + x3*(y1 - y2);
+    let D = -1*(x1*(y2*z3 - y3*z2) + x2*(y3*z1 - y1*z3) + x3*(y1*z2 - y2*z1));
+
+    //console.log('a,b,c,d = ',A,B,C,D);
+    //Нормальный вектор к заданной плоскости
+    let xN = A;
+    let yN = B;
+    let zN = C;
+
+    //Вспомогательный вектор
+    let xV = x1-x4;
+    let yV = y1-y4;
+    let zV = z1-z4;
+
+    //Расстояние до плоскости по нормали
+    let dist1 = xN*xV + yN*yV + zN*zV;
+
+    //Вспомогательный вектор
+    let xW = x5-x4;
+    let yW = y5-y4;
+    let zW = z5-z4;
+
+    //Приближение к плоскости по нормали
+    let dist2 = xN*xW + yN*yW + zN*zW;
+
+
+    let x0 = x4;
+    let y0 = y4;
+    let z0 = 0;
+
+    //console.log('dist1 = ',dist1);
+    //console.log('dist2 = ',dist2);
+    //Проверка на параллельность
+    if ( dist1 != 0 ) { // Прямая не принадлежит плоскости
+	    if ( dist2 != 0 ) { //Прямая не параллельна плоскости
+
+		//Вспомогательное отношение
+		let ratio = dist1/dist2;
+
+		//Вспомогательный вектор
+		xW = xW*ratio;
+		yW = yW*ratio;
+		zW = zW*ratio;
+
+		//Искомые координаты
+		x0 = x4 + xW;
+		y0 = y4 + yW;
+		z0 = z4 + zW;
+        }
+    }
+
+    //z0 = (-A*x4 -B*y4)/C;
+
+    return [ x0, y0, z0, 1 ];
 }
+
+export function Point_from_Plane_and_XY( x, y, x1,y1,z1, x2,y2,z2, x3,y3,z3 ){
+
+    return Point_from_Plane_and_Line( x1,y1,z1, x2,y2,z2, x3,y3,z3, x,y,0, x,y,100 );
+}
+
+//---------------------------------------
+export function rayPlaneIntersection(p1, p2, p3, rayPoint, rayDirection) {
+    // Calculate normal vector to the plane
+    let v1 = [p2[0]-p1[0], p2[1]-p1[1], p2[2]-p1[2]];
+    let v2 = [p3[0]-p1[0], p3[1]-p1[1], p3[2]-p1[2]];
+    let normal = [v1[1]*v2[2]-v1[2]*v2[1], v1[2]*v2[0]-v1[0]*v2[2], v1[0]*v2[1]-v1[1]*v2[0]];
+  
+    // Find the intersection of the ray and the plane
+    let ndotu = normal[0]*rayDirection[0] + normal[1]*rayDirection[1] + normal[2]*rayDirection[2];
+    if (ndotu === 0) {
+      //return null; // Ray is parallel to plane
+      return [ rayPoint[0], rayPoint[1], 0, 1 ]; // Ray is parallel to plane
+    }
+    
+    //if ( ( rayPoint[0] < p1[0]  && rayPoint[0] < p2[0] && rayPoint[0] < p3[0] ) || ( rayPoint[0] > p1[0]  && rayPoint[0] > p2[0] && rayPoint[0] > p3[0] ) ) return [ rayPoint[0], rayPoint[1], 0, 1];
+    //if ( ( rayPoint[1] < p1[1]  && rayPoint[1] < p2[1] && rayPoint[0] < p3[1] ) || ( rayPoint[1] > p1[1]  && rayPoint[1] > p2[1] && rayPoint[1] > p3[1] ) ) return [ rayPoint[0], rayPoint[1], 0, 1];
+
+    let w = [rayPoint[0]-p1[0], rayPoint[1]-p1[1], rayPoint[2]-p1[2]];
+    let si = -(normal[0]*w[0] + normal[1]*w[1] + normal[2]*w[2]) / ndotu;
+    let intersection = [rayPoint[0]+si*rayDirection[0], rayPoint[1]+si*rayDirection[1], rayPoint[2]+si*rayDirection[2], 1 ];
+    return intersection;
+  }
+
+  export function Point_inside_Triangle ( aAx, aAy, aBx, aBy, aCx, aCy, aPx, aPy ){
+    let Bx, By, Cx, Cy, Px, Py;
+    let m, l; // koeff
+
+    let result = false;
+    // move triangle from point A to (0;0).
+    Bx = aBx - aAx; By = aBy - aAy;
+    Cx = aCx - aAx; Cy = aCy - aAy;
+    Px = aPx - aAx; Py = aPy - aAy;
+    
+    m = (Px*By - Bx*Py) / (Cx*By - Bx*Cy);
+
+    if ( ( m >= 0 ) && ( m <= 1 ) ) {
+        l = (Px - m*Cx) / Bx;
+        if ( ( l >= 0 ) && ( m + l ) <= 1 ) result = true;
+    }
+
+    return result;
+  }

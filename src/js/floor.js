@@ -19,7 +19,7 @@ export default function Floor(){
                 className='block'
                 style={{ display: `${ Elevators.FloorFound ? 'block' : 'none' }`,
                 minWidth: 1000,
-                marginTop: 10 }}
+                marginTop: 15 }}
                 >
                 <PilesHeader updateState={update} callback={(data)=> setUpdate( data ) }/>
                 { Elevators.PileFound > 0 ?  <Piles updateState={update} callback={(data)=> setUpdate( data ) }/> : '' }
@@ -146,12 +146,11 @@ function FloorSize(propsSize){
         };
 
     return (
-        <>
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <div className='block' style={{ display: 'flex', flexDirection: 'row' }}>
 
         <div 
             className='block'
-            style={{ minWidth: 150 }}
+            style={{ width: 325 }}
             >
         <IconButton
             color="primary"
@@ -234,13 +233,14 @@ function FloorSize(propsSize){
         onChange={ Conus_Y_Change }
         ></TextField>
 
-        </div>
-            <div className='block'>
-                { Elevators.FloorFound ?  <FloorViewCanvas/> : '' }
             </div>
-        </div>
 
-        </>
+                <div className='block' style={{ width: '100%' }}>
+                    { Elevators.FloorFound ?  <FloorViewCanvas/> : '' }
+                </div>
+
+
+        </div>
     )
 };
 
@@ -299,7 +299,7 @@ function Pile(propsPile){
     let pile = Elevators.PileGet( index );
 
     const [value, setValue] = React.useState(false);
-    const [mode, setMode] = React.useState(true);
+    const [mode, setMode] = React.useState('model');
 
     const changeAngleX = (event) => {
         pile.angle_X = event.target.value;
@@ -336,19 +336,19 @@ function Pile(propsPile){
     const ChangeX = (event) => {
         pile.X = event.target.value;
         Elevators.setPile_Location ( index, pile.X, pile.Y, pile.angle );
-        setMode(false);
+        setMode('location');
         setValue(!value);
     };
     const ChangeY = (event) => {
         pile.Y = event.target.value;
         Elevators.setPile_Location ( index, pile.X, pile.Y, pile.angle );
-        setMode(false);
+        setMode('location');
         setValue(!value);
     };
     const ChangeAngle = (event) => {
         pile.angle = event.target.value;
         Elevators.setPile_Location ( index, pile.X, pile.Y, pile.angle );
-        setMode(false);
+        setMode('location');
         setValue(!value);
     };
     const ChangeHeight = (event) => {

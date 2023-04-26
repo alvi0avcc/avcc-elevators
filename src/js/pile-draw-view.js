@@ -3,16 +3,22 @@ import { Elevators } from './elevators.js';
 import { Isometric, IsometricArr, Matrix, DecartToSphereArr, SphereToDecartArr } from './calc.js';
 //import { mat4 } from 'gl-matrix';
 import * as Calc from './calc.js';
-import cPile from './pile_class.js'
-import { get_Max_Y_3D, getCurvePoints, drawLines, drawCurve, getPoint, drawPoint, drawPoints, getSlice, drawSlice, drawContur, getContur, getPoints_by_Y, interpolation } from './spline.js';
+import cgPile from './pile_class.js'
+import { get_Max_Y_3D, getCurvePoints, drawLines, drawCurve, getPoint, drawPoint, drawPoints, getSlice, drawSlice, drawContur, getContur, getPoints_by_Y } from './spline.js';
 import { MoveMatrix, MoveMatrixAny, RotateMatrix_X, RotateMatrix_X_any, RotateMatrix_Y, RotateMatrix_Y_any, RotateMatrix_Z, RotateMatrix_Z_any, ScaleMatrix, ScaleMatrixAny, ScaleMatrixAny1zoom } from './3d-matrix.js';
-import { draw_Line_3D, draw_PLine_3D, draw_PLine_3D_between, draw_underBase } from './draw.js';
-import { ContactlessOutlined } from '@mui/icons-material';
+import { draw_Line_3D, draw_PLine_3D, draw_PLine_3D_between, draw_underBase, draw_Point_3D } from './draw.js';
 
 
 const PileViewCanvas = props => {
 
-    //const [value, setValue] = React.useState(true);
+    const [ mode, setMode ] = React.useState( props.mode );
+    const [ mesh, setMesh ] = React.useState([]);
+
+    const calcMesh = () => {
+        setMesh(Elevators.get_Volume_Piles(Elevators.WarehouseSelected).mesh);
+        console.log('calcMesh = ',mesh);
+    };
+
 
     const changeAngleX = (event) => {
         pile.angle_X = event.target.value;
@@ -49,10 +55,10 @@ const PileViewCanvas = props => {
         Elevators.setAngleView( props.index, pile.angle_X, pile.angle_Y, pile.angle_Z );
         //setValue(!value);
     };
-  
-    const canvasRef = useRef(null);
 
-    let mode = props.mode;
+    const canvasRef = useRef(null);
+    //let mode = true;
+    //let mode = props.mode;
 
     let pile = Elevators.PileGet( props.index );
 
@@ -62,11 +68,11 @@ const PileViewCanvas = props => {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
 
-    if ( mode ) { Pile_Draw( ctx, props.index, mode, props.index ); 
+    if ( mode == 'model' ) { Pile_Draw( ctx, +props.index, mode, +props.index, mesh ); 
     } else {
             for (let i = 0; i < Elevators.PileFound; i ++ ) {
 
-                Pile_Draw( ctx, i, mode, props.index  );
+                Pile_Draw( ctx, +i, mode, +props.index, mesh  );
             }
         }
 
@@ -100,7 +106,7 @@ const PileViewCanvas = props => {
     <div>
         <div style={{ display: 'flex', flexDirection: 'row', height: 570 }}>
         
-        <canvas ref={canvasRef} {...props} style={{ width: '100%', height: '100%' }}/>
+        <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }}/>
 
             <div className='block' style={{ marginLeft: -91, padding: 1 }} >
                 <button
@@ -180,15 +186,20 @@ const PileViewCanvas = props => {
                 <button
                         className='myButton'
                         style={{ width: 80, height: 30 }}
-                        onClick={ ()=>{ props.callback( true ); } }
+                        onClick={ ()=>{ setMode('model') } }
                         >Model</button>
 
                     <button
                         className='myButton'
                         style={{ width: 80, height: 30 }}
-                        onClick={ ()=>{ props.callback( false ); } }
+                        onClick={ ()=>{ setMode('location') } }
                         >Location</button>
 
+                    <button
+                        className='myButton'
+                        style={{ width: 80, height: 30 }}
+                        onClick={ calcMesh }
+                        >Calc</button>
                 </div>
         </div> 
     </div>
@@ -199,14 +210,14 @@ export default PileViewCanvas;
 
 //----------------------------------------------------------------------
 
-function Pile_Draw( ctx, index, mode, boss_index ){
+function Pile_Draw( ctx, index, mode, boss_index, mesh ){
 
     ctx.setLineDash([]);
 
     let boss_pile = Elevators.PileGet( boss_index );
     let pile = Elevators.PileGet( index );
 
-    let gPile = new cPile();
+    let gPile = new cgPile();
 
     if ( boss_pile.angle_X == undefined ) boss_pile.angle_X = -70;
     if ( boss_pile.angle_Y == undefined ) boss_pile.angle_Y = 15;
@@ -220,7 +231,7 @@ function Pile_Draw( ctx, index, mode, boss_index ){
 
     if ( boss_pile.numOfSegments == undefined ) boss_pile.numOfSegments = 10;
     let numOfSegments = boss_pile.numOfSegments;
-    if ( !mode & index != boss_index ) {
+    if ( mode == 'location' && index != boss_index ) {
         numOfSegments = 5;
         slice_step = 10;
     }
@@ -258,7 +269,7 @@ function Pile_Draw( ctx, index, mode, boss_index ){
     if ( pile.angle == undefined  ) pile.angle = 0;
     let angle = -pile.angle;
 
-    if ( mode ) {
+    if ( mode == 'model' ) {
 
         angle = 0;
 
@@ -343,7 +354,7 @@ if ( pile.Height > 0 ){
             // draw Base contur
             ctx.lineWidth = line_width * 2; draw_PLine_3D( ctx, slices );
         }
-        if ( i == slice_step & !mode) { // draw names of Piles
+        if ( i == slice_step && mode == 'location' ) { // draw names of Piles
             let text_place_Y = 0;
             let text_place_X = 0;
                 if ( index < 17 ) { 
@@ -355,7 +366,7 @@ if ( pile.Height > 0 ){
                 }
                 let p1 = [ 10+text_place_X, text_place_Y ];
                 let p2 = slices.slice( 0, 2 );
-                ctx.strokeStyle  = 'yellow';
+                ctx.strokeStyle  = 'lime';
                 ctx.lineWidth = 1;
                 ctx.setLineDash([10, 10])
                 draw_Line_3D( ctx, p1, p2 );
@@ -377,7 +388,7 @@ if ( pile.Height > 0 ){
 
     };
 
-    if ( mode ){
+    if ( mode == 'model' ){
         slices  = gPile.get_Slice_Base( h );
         slices  = RotateMatrix_Z_any( slices, angle );
         slices  = MoveMatrixAny( slices, x_location, y_location, dh + z_location );
@@ -430,6 +441,19 @@ if ( pile.Height > 0 ){
             ctx.strokeStyle  = 'blue'
             ctx.lineWidth = line_width;
             draw_underBase( ctx, underBaseContur );
+        }
+
+        let gMesh = [];
+        if ( mesh.length > 0 ){
+            ctx.strokeStyle  = 'lime'
+            ctx.lineWidth = line_width;
+            gMesh  = MoveMatrixAny( mesh, x_location-25, y_location-10, dh );
+            gMesh  = ScaleMatrixAny1zoom( gMesh, zoom );
+            gMesh  = RotateMatrix_X_any( gMesh, angle_X );
+            gMesh  = RotateMatrix_Y_any( gMesh, angle_Y );
+            gMesh  = RotateMatrix_Z_any( gMesh, angle_Z );
+            gMesh  = MoveMatrixAny( gMesh, x_center, y_center, z_center );
+            draw_Point_3D( ctx, gMesh );
         }
     
 };

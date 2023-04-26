@@ -86,7 +86,7 @@ export function getPoints_by_Y( y , points_xy ){
     //console.log('level y = ',y);
     //console.log('type y = ', typeof(y));
     for ( let i = 0;  i < curve.length-1; i+=2 ){
-        if ( curve[i+1] <= y & ( y < curve[i+3] || y == curve[i+3] ) ) { // y1 <= y < y2
+        if ( curve[i+1] <= y && ( y < curve[i+3] || y == curve[i+3] ) ) { // y1 <= y < y2
             xy.push( [ curve[i], curve[i+1], curve[i+2], curve[i+3] ] ); // [ x1,y1, x2,y2 ]
         }
     }

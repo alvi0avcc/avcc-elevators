@@ -1,8 +1,7 @@
 import { getCurvePoints, getPoints_by_Y, get_Max_Y_3D } from './spline.js'; // spline
 import { interpolation, MyRound, Volume_Pillers, DistanceBetweenPoints, Square_by_slice } from './calc.js';
-import { ContactlessOutlined } from '@mui/icons-material';
 
-export default class cPile{
+export default class cgPile{
     constructor() {
         //input data
         this.type_location   = ( 'base', 'upper' ); // base = base level Pile , upper = upper level Pile

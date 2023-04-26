@@ -137,6 +137,11 @@ input[type="range"]::-moz-range-thumb {
   justify-content: space-between;
   width: 250px;
 }
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
 /* Style the tab */
 .tab {
   overflow: hidden;
