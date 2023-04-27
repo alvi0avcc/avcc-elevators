@@ -1214,7 +1214,7 @@ class cElevators {
     //-------------------------------------------
     get_Volume_Piles_v2( Warehouse_Index, step_mesh = 50 ){
         let z = [];
-        let _z = [];
+        let _z = [ 0, 0, 0 ];
         let mesh = [];
         let volume = 0;
         let Length = 0;
@@ -1270,18 +1270,10 @@ class cElevators {
 
                     slices[index] = slices[index].concat( matrix.MoveMatrixAny( matrix.RotateMatrix_Z_any( slice, angle, 3 ), dx_X, dx_Y, 0 ) );
 
-                    //console.log('slices[index] = ', slices[index]);
-                    //mesh = mesh.concat( slice.slice(0) );
-
                 }
-               // console.log('slices = ', slices);
-                //dx_X = pile.X;
-                //dx_Y = pile.Y;
                 xy_gab = Spline.get_Max_Gabarit_ver2( slices[ index ], count );
                 slices[index] = slices[index].concat( xy_gab );
             }//Pile slicing
-            //console.log('slices = ', slices);
-            //console.log('xy_gab = ', xy_gab);
 
 
             let dx = Length / step_xy;
@@ -1292,27 +1284,16 @@ class cElevators {
             let y_start = 0;
             let y_end = step_xy;
             
-            for ( let index = 0; index < slices.length; index++ ){
-                _xy_gab = slices[ index ][ slices[ index ].length -1 ];
-                console.log('_xy_gab = ', _xy_gab);
-            }
-            console.log('slices!!! = ', slices);
-
-            //count = ( numOfSegments + 1 ) * 16;
-
             coord_X: for ( let x = x_start; x <= x_end; x++ ) {
 
                 coord_Y: for ( let y = y_start; y <= y_end; y++ ) {
 
                     z = [ x*dx, y*dy, 0 ];
+                    _z = z.slice(0);
 
                     pile: for ( let index = 0; index < slices.length; index++ ){
 
                         _xy_gab = slices[ index ][ slices[ index ].length -1 ];
-
-                        pile = Elevators.PileGet( index );
-                        dx_X = 0;
-                        dx_Y = 0;
 
                         // check X position for each Pile
                         if ( _xy_gab.x_min <= ( x * dx ) && ( x * dx ) <= _xy_gab.x_max ) {
@@ -1321,39 +1302,39 @@ class cElevators {
                                 
                                 slises: for ( let i = 0; i < step; i++ ){
                                     segments: for ( let j = 0; j < count - 1 - 4; j+=4 ){
-                                        x1 = slices[ index ][ count * i + j ]+dx_X;
-                                        y1 = slices[ index ][ count * i + j +1 ]+dx_Y;
+                                        x1 = slices[ index ][ count * i + j ];
+                                        y1 = slices[ index ][ count * i + j +1 ];
                                         z1 = slices[ index ][ count * i + j +2 ];
 
-                                        x2 = slices[ index ][ count * i + j +4 ]+dx_X;
-                                        y2 = slices[ index ][ count * i + j +5 ]+dx_Y;
+                                        x2 = slices[ index ][ count * i + j +4 ];
+                                        y2 = slices[ index ][ count * i + j +5 ];
                                         z2 = slices[ index ][ count * i + j +6 ];
 
-                                        x3 = slices[ index ][ count * i + count + j ]+dx_X;
-                                        y3 = slices[ index ][ count * i + count + j+1 ]+dx_Y;
+                                        x3 = slices[ index ][ count * i + count + j ];
+                                        y3 = slices[ index ][ count * i + count + j+1 ];
                                         z3 = slices[ index ][ count * i + count + j+2 ];
 
-                                        x4 = slices[ index ][ count * i + count + j+4 ]+dx_X;
-                                        y4 = slices[ index ][ count * i + count + j+5 ]+dx_Y;
+                                        x4 = slices[ index ][ count * i + count + j+4 ];
+                                        y4 = slices[ index ][ count * i + count + j+5 ];
                                         z4 = slices[ index ][ count * i + count + j+6 ];
 
-                                        if ( Calc.Point_inside_Triangle( x1, y1, x2, y2, x4, y4, x*dx, y*dy ) ) {
+                                        if ( Calc.Point_inside_Triangle( x1, y1, x2, y2, x4, y4, x*dx, y*dy ) || Calc.Point_inside_Triangle( x1, y1, x3, y3, x4, y4, x*dx, y*dy ) ) {
                                             _z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x2, y2, z2 ], [ x4, y4, z4 ], [ x*dx, y*dy, 0 ], [ 0, 0, 1 ] );
                                             break slises;
                                         }
-
+/*
                                         if ( Calc.Point_inside_Triangle( x1, y1, x3, y3, x4, y4, x*dx, y*dy ) ) {
                                             _z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x3, y3, z3 ], [ x4, y4, z4 ], [ x*dx, y*dy, 0 ], [ 0, 0, 1 ] );
                                             break slises;
-                                        }
+                                        }*/
 
                                     } //segments
                                 } //slises
-                               // mesh = mesh.concat( z, [ 1 ] );
                             }
 
                         }
-                        if ( _z[ 2 ] > z[ 2 ] ) z = _z.slice(0);
+                        if ( _z[ 2 ] > z[ 2 ] ) { z = _z.slice(0); }
+                        //console.log('_z = ', _z );
                     }
                     mesh = mesh.concat( z, [ 1 ] );
 

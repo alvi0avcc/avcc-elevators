@@ -272,8 +272,8 @@ const FloorViewCanvas = props => {
 
             //piles
             gl.drawArrays(gl.LINE_STRIP, 36, mesh.length/4 );
-            /*for ( let i = 36; i < mesh.length/4; i+= step_xy+1 ) {
-                gl.drawArrays(gl.LINE_STRIP, i, step_xy +1 );
+            /*for ( let i = 36; i < mesh.length/4; i+= step_xy ) {
+                gl.drawArrays(gl.LINE_STRIP, i, step_xy );
             }*/
         
             lastRenderTime = time;
