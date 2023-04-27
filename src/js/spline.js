@@ -113,16 +113,31 @@ export function get_Max_Y_3D( points_xy ){
     return max;
 }
 
-export function get_Max_Gabarit( slice = [ 0, 0, 0, 1 ], dx = 0, dy = 0 ){
+export function get_Max_Gabarit( slice = [ 0, 0, 0, 1 ] ){
     let x_min = slice[ 0 ];
     let x_max = slice[ 0 ];
     let y_min = slice[ 1 ];
     let y_max = slice[ 1 ];
     for ( let i =  4; i < slice.length; i+= 4 ) {
-        if ( x_min > slice[ i ] ) x_min = slice[ i ];
-        if ( x_max < slice[ i ] ) x_max = slice[ i ];
-        if ( y_min > slice[ i+1 ] ) y_min = slice[ i+1 ];
-        if ( y_max < slice[ i+1 ] ) y_max = slice[ i+1 ];
+        if ( x_min >= slice[ i ] ) x_min = slice[ i ];
+        if ( x_max <= slice[ i ] ) x_max = slice[ i ];
+        if ( y_min >= slice[ i+1 ] ) y_min = slice[ i+1 ];
+        if ( y_max <= slice[ i+1 ] ) y_max = slice[ i+1 ];
+    }
+    return ( { x_min, x_max, y_min, y_max } );
+}
+
+export function get_Max_Gabarit_ver2( slice = [ 0 ], count = 0 ){
+    console.log('slice = ', slice);
+    let x_min = slice[ 0 ];
+    let x_max = slice[ 0 ];
+    let y_min = slice[ 1 ];
+    let y_max = slice[ 1 ];
+    for ( let i = 4; i <= count; i+= 4 ) {
+        if ( x_min >= slice[ i ] ) x_min = slice[ i ];
+        if ( x_max <= slice[ i ] ) x_max = slice[ i ];
+        if ( y_min >= slice[ i+1 ] ) y_min = slice[ i+1 ];
+        if ( y_max <= slice[ i+1 ] ) y_max = slice[ i+1 ];
     }
     return ( { x_min, x_max, y_min, y_max } );
 }

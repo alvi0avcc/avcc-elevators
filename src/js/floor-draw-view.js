@@ -22,7 +22,7 @@ const FloorViewCanvas = props => {
 
     const meshCalc = ()=>{
         //if ( step_xy < 10 ) setStep_xy( 10 );
-        let a = Elevators.get_Volume_Piles( Elevators.WarehouseSelected, step_xy ).mesh;
+        let a = Elevators.get_Volume_Piles_v2( Elevators.WarehouseSelected, step_xy ).mesh;
         a = matrix.MoveMatrixAny( a, -Length/2, -Width/2, -Height/2 );
         setMesh( a );
     }

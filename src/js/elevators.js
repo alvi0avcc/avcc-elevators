@@ -1211,6 +1211,162 @@ class cElevators {
         return { mesh, volume };
     };//get_Volume_Piles
 
+    //-------------------------------------------
+    get_Volume_Piles_v2( Warehouse_Index, step_mesh = 50 ){
+        let z = [];
+        let _z = [];
+        let mesh = [];
+        let volume = 0;
+        let Length = 0;
+        let Width = 0;
+        let dx_X = 0;
+        let dx_Y = 0;
+        let angle = 0;
+        let step_xy = step_mesh;
+
+        let floor = this.get_FloorByIndex( Warehouse_Index );
+
+        if ( floor != 0 && floor != -1  ){
+            Length = floor.Dimensions.Length;
+            Width = floor.Dimensions.Width;
+
+            let pile = new cPile;
+            let Pile_H = 0
+            let max = 0;
+            let step = 10;
+            let gPile = new cgPile();
+
+            let numOfSegments = 10;
+            let count = ( numOfSegments + 1 ) * 16;
+            
+            let slices = [];
+            let slice = [];
+
+            let xy_gab = { x_min: 0, x_max: 0, y_min: 0, y_max: 0 };
+            let _xy_gab = xy_gab;
+
+            let x1 = 0; let y1 = 0; let z1=0;
+            let x2 = 0; let y2 = 0; let z2=0;
+            let x3 = 0; let y3 = 0; let z3=0;
+            let x4 = 0; let y4 = 0; let z4=0;
+            let slice_above = [];
+            let slice_over = [];
+
+            for ( let index = 0; index < floor.Pile.length; index++ ){ //Pile slicing
+            //for ( let index = 0; index < 1; index++ ){ //Pile slicing
+                pile = Elevators.PileGet( index );
+                gPile.set_Initial_Data_Complex ( pile, numOfSegments );//initialisation Pile
+                Pile_H = pile.Height;
+                dx_X = pile.X;
+                dx_Y = pile.Y;
+                angle = pile.angle;
+                max = get_Max_Y_3D( gPile.get_Contur_Arc_Length ) - 0.0001;
+                slices.push([]);
+                for ( let i = 0; i <= step; i++ ){ 
+                    slice = gPile.get_Slice_Base( max / step * i );
+
+                    //slice_above = matrix.RotateMatrix_Z_any( gPile.get_Slice_Base( max / step * i ), angle, 3 );
+                    //slice_over = matrix.RotateMatrix_Z_any( gPile.get_Slice_Base( max / step * ( i + 1) ), angle, 3 );
+
+                    slices[index] = slices[index].concat( matrix.MoveMatrixAny( matrix.RotateMatrix_Z_any( slice, angle, 3 ), dx_X, dx_Y, 0 ) );
+
+                    //console.log('slices[index] = ', slices[index]);
+                    //mesh = mesh.concat( slice.slice(0) );
+
+                }
+               // console.log('slices = ', slices);
+                //dx_X = pile.X;
+                //dx_Y = pile.Y;
+                xy_gab = Spline.get_Max_Gabarit_ver2( slices[ index ], count );
+                slices[index] = slices[index].concat( xy_gab );
+            }//Pile slicing
+            //console.log('slices = ', slices);
+            //console.log('xy_gab = ', xy_gab);
+
+
+            let dx = Length / step_xy;
+            let dy = Width / step_xy;
+            
+            let x_start = 0;
+            let x_end = step_xy;
+            let y_start = 0;
+            let y_end = step_xy;
+            
+            for ( let index = 0; index < slices.length; index++ ){
+                _xy_gab = slices[ index ][ slices[ index ].length -1 ];
+                console.log('_xy_gab = ', _xy_gab);
+            }
+            console.log('slices!!! = ', slices);
+
+            //count = ( numOfSegments + 1 ) * 16;
+
+            coord_X: for ( let x = x_start; x <= x_end; x++ ) {
+
+                coord_Y: for ( let y = y_start; y <= y_end; y++ ) {
+
+                    z = [ x*dx, y*dy, 0 ];
+
+                    pile: for ( let index = 0; index < slices.length; index++ ){
+
+                        _xy_gab = slices[ index ][ slices[ index ].length -1 ];
+
+                        pile = Elevators.PileGet( index );
+                        dx_X = 0;
+                        dx_Y = 0;
+
+                        // check X position for each Pile
+                        if ( _xy_gab.x_min <= ( x * dx ) && ( x * dx ) <= _xy_gab.x_max ) {
+                            // check Y position for each Pile
+                            if ( _xy_gab.y_min <= ( y * dy ) && ( y * dy ) <= _xy_gab.y_max ) {
+                                
+                                slises: for ( let i = 0; i < step; i++ ){
+                                    segments: for ( let j = 0; j < count - 1 - 4; j+=4 ){
+                                        x1 = slices[ index ][ count * i + j ]+dx_X;
+                                        y1 = slices[ index ][ count * i + j +1 ]+dx_Y;
+                                        z1 = slices[ index ][ count * i + j +2 ];
+
+                                        x2 = slices[ index ][ count * i + j +4 ]+dx_X;
+                                        y2 = slices[ index ][ count * i + j +5 ]+dx_Y;
+                                        z2 = slices[ index ][ count * i + j +6 ];
+
+                                        x3 = slices[ index ][ count * i + count + j ]+dx_X;
+                                        y3 = slices[ index ][ count * i + count + j+1 ]+dx_Y;
+                                        z3 = slices[ index ][ count * i + count + j+2 ];
+
+                                        x4 = slices[ index ][ count * i + count + j+4 ]+dx_X;
+                                        y4 = slices[ index ][ count * i + count + j+5 ]+dx_Y;
+                                        z4 = slices[ index ][ count * i + count + j+6 ];
+
+                                        if ( Calc.Point_inside_Triangle( x1, y1, x2, y2, x4, y4, x*dx, y*dy ) ) {
+                                            _z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x2, y2, z2 ], [ x4, y4, z4 ], [ x*dx, y*dy, 0 ], [ 0, 0, 1 ] );
+                                            break slises;
+                                        }
+
+                                        if ( Calc.Point_inside_Triangle( x1, y1, x3, y3, x4, y4, x*dx, y*dy ) ) {
+                                            _z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x3, y3, z3 ], [ x4, y4, z4 ], [ x*dx, y*dy, 0 ], [ 0, 0, 1 ] );
+                                            break slises;
+                                        }
+
+                                    } //segments
+                                } //slises
+                               // mesh = mesh.concat( z, [ 1 ] );
+                            }
+
+                        }
+                        if ( _z[ 2 ] > z[ 2 ] ) z = _z.slice(0);
+                    }
+                    mesh = mesh.concat( z, [ 1 ] );
+
+                }
+            }
+            console.log('mesh = ',mesh);
+
+        }//if
+        
+        return { mesh, volume };
+    };//get_Volume_Piles ver.2
+
+
 };
 
 export let Elevators = new cElevators();
