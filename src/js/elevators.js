@@ -1319,15 +1319,20 @@ class cElevators {
                                         y4 = slices[ index ][ count * i + count + j+5 ];
                                         z4 = slices[ index ][ count * i + count + j+6 ];
 
-                                        if ( Calc.Point_inside_Triangle( x1, y1, x2, y2, x4, y4, x*dx, y*dy ) || Calc.Point_inside_Triangle( x1, y1, x3, y3, x4, y4, x*dx, y*dy ) ) {
+                                        if ( Calc.Point_inside_Triangle( x1, y1, x2, y2, x4, y4, x*dx, y*dy )  ) {
                                             _z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x2, y2, z2 ], [ x4, y4, z4 ], [ x*dx, y*dy, 0 ], [ 0, 0, 1 ] );
                                             break slises;
                                         }
-/*
+
                                         if ( Calc.Point_inside_Triangle( x1, y1, x3, y3, x4, y4, x*dx, y*dy ) ) {
                                             _z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x3, y3, z3 ], [ x4, y4, z4 ], [ x*dx, y*dy, 0 ], [ 0, 0, 1 ] );
                                             break slises;
-                                        }*/
+                                        }
+
+                                        if ( Calc.Point_inside_Triangle( x1, y1, x4, y4, x3, y3, x*dx, y*dy ) ) {
+                                            _z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x3, y3, z3 ], [ x4, y4, z4 ], [ x*dx, y*dy, 0 ], [ 0, 0, 1 ] );
+                                            break slises;
+                                        }
 
                                     } //segments
                                 } //slises
@@ -1349,12 +1354,6 @@ class cElevators {
                 n = j * ( step_mesh + 1 ) * 4 ;
                 m = ( j + 1 ) * ( step_mesh + 1 ) * 4;    
                 for ( let i = 0; i <= step_mesh * 4; i+=4 ){
-                    //mesh_3D = mesh_3D.concat ( mesh.slice( n + i, n + i + 4 ) );
-                    //mesh_3D = mesh_3D.concat( mesh[ n + i ], mesh[ n +  i + 1 ], mesh[ n + i + 2 ], mesh[ n + i + 3 ] );
-                    //mesh_3D = mesh_3D.concat( mesh[ n + i, n + i + 1, n + i + 2, n + i + 3 ] );
-                    //mesh_3D = mesh_3D.concat( mesh[ n + i, n + i + 1, n + i + 2, n + i + 3 ], mesh[ n + i + 4, n + i + 1 + 4, n + i + 2 + 4, n + i + 3 + 4 ] );
-                    //mesh_3D = mesh_3D.concat ( mesh.slice( n + i, n + i + 5 ));
-                    //mesh_3D = mesh_3D.concat ( mesh.slice( n + i, n + i + 4 ), mesh.slice( n + i + 4, n + i + 4 ) );
                     mesh_3D = mesh_3D.concat ( mesh.slice( n + i, n + i + 4 ), mesh.slice( n + i + 4, n + i + 4 ), mesh.slice( m + i, m + i + 4 ) );
                     }
             }
