@@ -1216,6 +1216,7 @@ class cElevators {
         let z = [];
         let _z = [ 0, 0, 0 ];
         let mesh = [];
+        let mesh_3D = [];
         let volume = 0;
         let Length = 0;
         let Width = 0;
@@ -1335,16 +1336,32 @@ class cElevators {
                         }
                         if ( _z[ 2 ] > z[ 2 ] ) { z = _z.slice(0); }
                         //console.log('_z = ', _z );
-                    }
+                    } // pile
                     mesh = mesh.concat( z, [ 1 ] );
 
-                }
-            }
+                }// coord_Y
+            }// coord_X
+            
+            let n = 0;
+            let m = 0;
             console.log('mesh = ',mesh);
-
+            for ( let j = 0; j < step_mesh; j++ ) {
+                n = j * ( step_mesh + 1 ) * 4 ;
+                m = ( j + 1 ) * ( step_mesh + 1 ) * 4;    
+                for ( let i = 0; i <= step_mesh * 4; i+=4 ){
+                    //mesh_3D = mesh_3D.concat ( mesh.slice( n + i, n + i + 4 ) );
+                    //mesh_3D = mesh_3D.concat( mesh[ n + i ], mesh[ n +  i + 1 ], mesh[ n + i + 2 ], mesh[ n + i + 3 ] );
+                    //mesh_3D = mesh_3D.concat( mesh[ n + i, n + i + 1, n + i + 2, n + i + 3 ] );
+                    //mesh_3D = mesh_3D.concat( mesh[ n + i, n + i + 1, n + i + 2, n + i + 3 ], mesh[ n + i + 4, n + i + 1 + 4, n + i + 2 + 4, n + i + 3 + 4 ] );
+                    //mesh_3D = mesh_3D.concat ( mesh.slice( n + i, n + i + 5 ));
+                    //mesh_3D = mesh_3D.concat ( mesh.slice( n + i, n + i + 4 ), mesh.slice( n + i + 4, n + i + 4 ) );
+                    mesh_3D = mesh_3D.concat ( mesh.slice( n + i, n + i + 4 ), mesh.slice( n + i + 4, n + i + 4 ), mesh.slice( m + i, m + i + 4 ) );
+                    }
+            }
+            console.log('mesh_3D 1= ',mesh_3D);
         }//if
         
-        return { mesh, volume };
+        return { mesh, mesh_3D, volume };
     };//get_Volume_Piles ver.2
 
 

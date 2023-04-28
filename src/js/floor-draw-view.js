@@ -22,7 +22,7 @@ const FloorViewCanvas = props => {
 
     const meshCalc = ()=>{
         //if ( step_xy < 10 ) setStep_xy( 10 );
-        let a = Elevators.get_Volume_Piles_v2( Elevators.WarehouseSelected, step_xy ).mesh;
+        let a = Elevators.get_Volume_Piles_v2( Elevators.WarehouseSelected, step_xy ).mesh_3D;
         a = matrix.MoveMatrixAny( a, -Length/2, -Width/2, -Height/2 );
         setMesh( a );
     }
@@ -246,11 +246,11 @@ const FloorViewCanvas = props => {
             gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
             gl.enableVertexAttribArray(aPosition);
             gl.vertexAttribPointer(aPosition, 4, gl.FLOAT, false, 0, 0);
-        
-            //gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-            //gl.enableVertexAttribArray(aColor);
-            //gl.vertexAttribPointer(aColor, 3, gl.FLOAT, false, 0, 0);
-        
+        /*
+            gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+            gl.enableVertexAttribArray(aColor);
+            gl.vertexAttribPointer(aColor, 3, gl.FLOAT, false, 0, 0);
+        */
             gl.uniformMatrix4fv(uCube, false, cubeMatrix);
             gl.uniformMatrix4fv(uCamera, false, cameraMatrix);
         
@@ -271,7 +271,9 @@ const FloorViewCanvas = props => {
             gl.drawArrays(gl.LINE_LOOP, 31, 4);
 
             //piles
+            //gl.uniform4f(aColor, Math.random(), Math.random(), Math.random(), 1);
             gl.drawArrays(gl.LINE_STRIP, 36, mesh.length/4 );
+            //gl.drawArrays(gl.TRIANGLE_STRIP, 36, mesh.length/4 );
             /*for ( let i = 36; i < mesh.length/4; i+= step_xy ) {
                 gl.drawArrays(gl.LINE_STRIP, i, step_xy );
             }*/

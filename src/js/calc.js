@@ -248,6 +248,7 @@ export function rayPlaneIntersection(p1, p2, p3, rayPoint, rayDirection) {
   
     // Find the intersection of the ray and the plane
     let ndotu = normal[0]*rayDirection[0] + normal[1]*rayDirection[1] + normal[2]*rayDirection[2];
+    
     if (ndotu === 0) {
       //return null; // Ray is parallel to plane
       return [ rayPoint[0], rayPoint[1], 0, 1 ]; // Ray is parallel to plane
@@ -292,4 +293,32 @@ export function rayPlaneIntersection(p1, p2, p3, rayPoint, rayDirection) {
     //if ( !result ) console.log('false');
 
     return result;
+  }
+
+  //----------------------
+  export function PointInPolygon( x = 0, y = 0, points = [0] ) {        
+    let n2 = 0;
+    let f = true;
+    let count = points.length;
+
+  for ( let n1 = 0; n1 < count - 1; n1+= 2) {
+    n2 = (n1 + 1) % count;
+    if ( myXOR( y > points[n1].Y, y > points[n2].Y) ) {
+      if ( x > points[n1].X + ( points[n2].X - points[n1].X ) * ( y - points[n1].Y) / ( points[n2].Y - points[n1].Y) ) {
+        f = !f;
+    }
+}
+  }
+  return f;
+
+  /*
+  В полигоне может быть сколько угодно углов, допустима даже невыпуклая фигура.
+V() - массив вертексов с координатами вершин полигона, vCnt - количество вершин.
+Mod - вычисление остатка от целочисленного деления.
+Неинициализированные локальные переменные автоматически инициализируются нулями (False).
+  */
+  }
+
+  export function myXOR(a,b) {
+    return ( a || b ) && !( a && b );
   }
