@@ -10,18 +10,11 @@ const FloorViewCanvas = props => {
     const canvasRef = useRef(null)
 
     let floor = Elevators.FloorCurrentDimensions;
-    //let step_xy = 0;
-    //console.log('floor.Step = ',floor.Step);
-    //step_xy = Elevators.FloorCurrentStep;
-    //if ( floor.Step == undefined || floor.Step <= 0 ) Elevators.set_FloorStep = 10;
-    //step_xy = floor.Step;
-    //if ( step_xy == undefined || step_xy == 0 ) step_xy = 50;
 
     const [ mesh, setMesh] = React.useState([]);
     const [ step_xy, setStep_xy] = React.useState( 50 );
 
     const meshCalc = ()=>{
-        //if ( step_xy < 10 ) setStep_xy( 10 );
         let a = Elevators.get_Volume_Piles_v2( Elevators.WarehouseSelected, step_xy ).mesh_3D;
         a = matrix.MoveMatrixAny( a, -Length/2, -Width/2, -Height/2 );
         setMesh( a );
@@ -29,8 +22,6 @@ const FloorViewCanvas = props => {
 
     const changeMeshStep = (event)=>{
         setStep_xy( Number ( event.target.value ) );
-        //console.log('mesh_step = ',event.target.value);
-        //Elevators.set_FloorStep = event.target.value;
     }
 
     let Length = floor.Length;
@@ -93,11 +84,6 @@ const FloorViewCanvas = props => {
                        -Length/2 + Conus_X - Conus_L/2 , -Width/2 + Conus_Y - Conus_W/2, -Height/2 - Conus_height, 1
                 ];
 
-    //let zoom = 1/Length;
-    /*data_draw[0] = ;
-    data_draw[0] = ;
-    data_draw[0] = ;*/
-    //Length: 0, Width: 0, Height: 0, Conus_height: 0, Conus_L: 0, Conus_W: 0, Conus_X :0, Conus_Y:0 }
 
     const draw = (gl) => {
 
@@ -105,11 +91,7 @@ const FloorViewCanvas = props => {
         let vertexBuffer = gl.createBuffer();
 
         let vertices = korpus_draw.concat(head_draw, conus_draw, mesh );
-        //let vertices = korpus_draw.concat(head_draw, conus_draw );
-        //let vertices = korpus_draw.concat( head_draw, mesh );
-        //let vertices = mesh;
-    //    console.log('vertices = ',vertices);
-        console.log('mesh_3D = ',mesh);
+
         // матрица перспективы
 
         /*Метод mat4.perspective(matrix, fov, aspect, near, far) принимает пять параметров:
@@ -126,7 +108,7 @@ const FloorViewCanvas = props => {
         mat4.translate(cameraMatrix, cameraMatrix, [ 35, 15, -100 ]);
 
         // Создадим единичную матрицу положения куба
-        let cubeMatrix = mat4.create();
+        let modelMatrix = mat4.create();
         //mat4.translate(cubeMatrix, cubeMatrix, [0, 0, 0]);
         // Запомним время последней отрисовки кадра
         let lastRenderTime = Date.now();
@@ -138,12 +120,12 @@ const FloorViewCanvas = props => {
        /* const vertexShaderSource =
             `attribute vec3 a_position;
             attribute vec3 a_color;
-            uniform mat4 u_cube;
+            uniform mat4 u_model;
             uniform mat4 u_camera;
             varying vec3 v_color;
             void main(void) {
                 v_color = a_color;
-                gl_Position = u_camera * u_cube * vec4(a_position, 1.0);
+                gl_Position = u_camera * u_model * vec4(a_position, 1.0);
             }`;*/
 
         /*const vertexShaderSource =
@@ -160,12 +142,12 @@ const FloorViewCanvas = props => {
         const vertexShaderSource =
             `attribute vec4 a_position;
              attribute vec3 a_color;
-             uniform mat4 u_cube;
+             uniform mat4 u_model;
              uniform mat4 u_camera;
              varying vec3 v_color;
              void main(void) {
                  v_color = a_color;
-                 gl_Position = u_camera * u_cube * a_position;
+                 gl_Position = u_camera * u_model * a_position;
              }`;
 
         /*const vertexShaderSource =
@@ -176,16 +158,16 @@ const FloorViewCanvas = props => {
 
         //Use the createShader function from the example above
         const vertexShader = createShader(gl, vertexShaderSource, gl.VERTEX_SHADER);
-
-        /*const fragmentShaderSource =
-            `precision mediump float;
+/*
+        const fragmentShaderSource =`
+            precision mediump float;
             varying vec3 v_color;
             void main(void) {
                 gl_FragColor = vec4(v_color.rgb, 1.0);
             }`;*/
 
-        const fragmentShaderSource = 
-            `void main() {
+        const fragmentShaderSource = `
+            void main() {
                 gl_FragColor = vec4(0.0,  0.0,  1.0,  1.0);
                 }`;
 
@@ -208,13 +190,13 @@ const FloorViewCanvas = props => {
             
             // Получим местоположение переменных в программе шейдеров
             
-            let uCube = gl.getUniformLocation(program, 'u_cube');
+            let uModel = gl.getUniformLocation(program, 'u_model');
             let uCamera = gl.getUniformLocation(program, 'u_camera');
             
             let aPosition = gl.getAttribLocation(program, 'a_position');
             let aColor = gl.getAttribLocation(program, 'a_color');
 
-            mat4.rotateX(cubeMatrix, cubeMatrix, -3.14/4);
+            mat4.rotateX(modelMatrix, modelMatrix, -3.14/4);
 
 //----------------------------------------------------------------------
         function render() {
@@ -225,14 +207,8 @@ const FloorViewCanvas = props => {
             var time = Date.now();
             var dt = lastRenderTime - time;
         
-            // Вращаем куб относительно оси X
-            //mat4.rotateX(cubeMatrix, cubeMatrix, -3.14/4);
-            // Вращаем куб относительно оси Y
-            //mat4.rotateY(cubeMatrix, cubeMatrix, dt / 4000);
             // Вращаем куб относительно оси Z
-            mat4.rotateZ(cubeMatrix, cubeMatrix, dt / 4000);
-            // Вращаем куб относительно оси X
-            //mat4.rotateX(cubeMatrix, cubeMatrix, 1);
+            mat4.rotateZ(modelMatrix, modelMatrix, dt / 4000);
         
             // Очищаем сцену, закрашивая её в белый цвет
             gl.clearColor(1.0, 1.0, 1.0, 1.0);
@@ -251,12 +227,9 @@ const FloorViewCanvas = props => {
             gl.enableVertexAttribArray(aColor);
             gl.vertexAttribPointer(aColor, 3, gl.FLOAT, false, 0, 0);
         */
-            gl.uniformMatrix4fv(uCube, false, cubeMatrix);
+            gl.uniformMatrix4fv(uModel, false, modelMatrix);
             gl.uniformMatrix4fv(uCamera, false, cameraMatrix);
         
-            //gl.drawArrays(gl.TRIANGLES, 0, 24);
-            //gl.drawElements(gl.LINE_LOOP, 36, gl.UNSIGNED_SHORT, 0);
-
             //korpus
             gl.drawArrays(gl.LINE_LOOP, 0, 4);
             gl.drawArrays(gl.LINE_LOOP, 4, 4);

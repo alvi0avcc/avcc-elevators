@@ -322,3 +322,54 @@ Mod - вычисление остатка от целочисленного де
   export function myXOR(a,b) {
     return ( a || b ) && !( a && b );
   }
+
+  export function Normal_from_3points( point1 = [], point2 = [], point3 = [] ){
+/*
+    point[0][0] = points[ 0 ];//x1
+    point[0][1] = points[ 1 ];//y1
+    point[0][2] = points[ 2 ];//z1
+
+    point[1][0] = points[ 0 ];//x2
+    point[1][1] = points[ 1 ];//y2
+    point[1][2] = points[ 2 ];//z2
+
+    point[2][0] = points[ 0 ];//x3
+    point[2][1] = points[ 1 ];//y3
+    point[2][2] = points[ 2 ];//z3
+
+
+        vDirection[0][0]=point[1][0]-point[0][0];
+        vDirection[0][1]=point[1][1]-point[0][1];
+        vDirection[0][2]=point[1][2]-point[0][2];
+ 
+        vDirection[1][0]=point[1][0]-point[2][0];
+        vDirection[1][1]=point[1][1]-point[2][1];
+        vDirection[1][2]=point[1][2]-point[2][2];
+ 
+        vDirection[2][0]=point[0][0]-point[2][0];
+        vDirection[2][1]=point[0][1]-point[2][1];
+        vDirection[2][2]=point[0][2]-point[2][2];
+ 
+    wVector[0]=vDirection[0][1]*vDirection[1][2]-vDirection[0][2]*vDirection[1][1];
+    wVector[1]=vDirection[0][2]*vDirection[1][0]-vDirection[0][0]*vDirection[1][2];
+    wVector[2]=vDirection[0][0]*vDirection[1][1]-vDirection[0][1]*vDirection[1][0];
+
+*/
+    let vDirection1=point2[ 0 ]-point1[ 0 ];
+    let vDirection2=point2[ 1 ]-point1[ 1 ];
+    let vDirection3=point2[ 2 ]-point1[ 2 ];
+ 
+    let vDirection4=point2[ 0 ]-point3[ 0 ];
+    let vDirection5=point2[ 1 ]-point3[ 1 ];
+    let vDirection6=point2[ 2 ]-point3[ 2 ];
+ /*
+    vDirection[2][0]=points[ 0 ]-points[ 0 ];
+    vDirection[2][1]=points[ 1 ]-points[ 1 ];
+    vDirection[2][2]=points[ 2 ]-points[ 2 ];
+ */
+ /*   wVector[0]=v2*v6-v3*v5;
+    wVector[1]=v3*v4-v1*v6;
+    wVector[2]=v1*v5-v2*v4;
+*/
+    return ( [ vDirection2*vDirection6-vDirection3*vDirection5, vDirection3*vDirection4-vDirection1*vDirection6, vDirection1*vDirection5-vDirection2*vDirection4 ] );
+  }
