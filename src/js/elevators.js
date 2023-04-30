@@ -1352,10 +1352,13 @@ class cElevators {
             console.log('mesh = ',mesh);
             for ( let j = 0; j < step_mesh; j++ ) {
                 n = j * ( step_mesh + 1 ) * 4 ;
-                m = ( j + 1 ) * ( step_mesh + 1 ) * 4;    
+                m = ( j + 1 ) * ( step_mesh + 1 ) * 4;  
+                mesh_3D = mesh_3D.concat ( mesh.slice( n , n + 4 ) );  
                 for ( let i = 0; i <= step_mesh * 4; i+=4 ){
-                    mesh_3D = mesh_3D.concat ( mesh.slice( n + i, n + i + 4 ), mesh.slice( n + i + 4, n + i + 4 ), mesh.slice( m + i, m + i + 4 ) );
+                    //mesh_3D = mesh_3D.concat ( mesh.slice( n + i, n + i + 4 ), mesh.slice( n + i + 4, n + i + 4 + 4 ), mesh.slice( m + i, m + i + 4  ) );
+                    mesh_3D = mesh_3D.concat ( mesh.slice( m + i, m + i + 4 ), mesh.slice( n + i + 4, n + i + 4 + 4 ) );
                     }
+                mesh_3D = mesh_3D.concat ( mesh.slice( m + step_mesh * 4 + 4, m + step_mesh * 4 + 4 + 4 ) );
             }
             console.log('mesh_3D 1= ',mesh_3D);
         }//if

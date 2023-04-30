@@ -12,7 +12,6 @@ const FloorViewCanvas = props => {
     let floor = Elevators.FloorCurrentDimensions;
 
     const [ mesh, setMesh] = React.useState([]);
-    const [ meshView, setMeshView] = React.useState(true);
     const [ step_xy, setStep_xy] = React.useState( 50 );
 
     const meshCalc = ()=>{
@@ -85,7 +84,6 @@ const FloorViewCanvas = props => {
                        -Length/2 + Conus_X - Conus_L/2 , -Width/2 + Conus_Y - Conus_W/2, -Height/2 - Conus_height, 1
                 ];
 
-
     const draw = (gl) => {
 
         // Инициализация данных
@@ -109,7 +107,7 @@ const FloorViewCanvas = props => {
         mat4.translate(cameraMatrix, cameraMatrix, [ 35, 15, -100 ]);
 
         // Создадим единичную матрицу положения куба
-        let modelMatrix = mat4.create();
+        let cubeMatrix = mat4.create();
         //mat4.translate(cubeMatrix, cubeMatrix, [0, 0, 0]);
         // Запомним время последней отрисовки кадра
         let lastRenderTime = Date.now();
@@ -118,16 +116,6 @@ const FloorViewCanvas = props => {
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.width);
 
        // Инициализация шейдеров
-       /* const vertexShaderSource =
-            `attribute vec3 a_position;
-            attribute vec3 a_color;
-            uniform mat4 u_model;
-            uniform mat4 u_camera;
-            varying vec3 v_color;
-            void main(void) {
-                v_color = a_color;
-                gl_Position = u_camera * u_model * vec4(a_position, 1.0);
-            }`;*/
 
         /*const vertexShaderSource =
            `attribute vec3 a_position;
@@ -140,66 +128,59 @@ const FloorViewCanvas = props => {
                 gl_Position = u_camera * u_cube * vec4(a_position, 1.0);
             }`;*/
 
-        const vertexShaderSource =
-            `attribute vec4 a_position;
-             attribute vec3 a_normal;
-             attribute vec3 a_color;
-
-             uniform mat4 u_model;
-             uniform mat4 u_camera;
-
-             varying vec3 v_color;
-             varying vec3 v_normal;
-
-             void main(void) {
-                 v_color = a_color;
-                 gl_Position = u_camera * u_model * a_position;
-
-                 // Pass the normal to the fragment shader
-                //v_normal = a_normal;
-                v_normal = mat3(u_model) * a_normal;
+            //attribute vec3 a_color;
+            //varying vec3 v_color;
+// v_color = a_color;
+        const vertexShaderSource = `
+        attribute vec4 a_position;
+        attribute vec3 a_normal;
+        
+        uniform mat4 u_matrix;
+        
+        varying vec3 v_normal;
+        
+        void main() {
+          // Multiply the position by the matrix.
+          gl_Position = u_matrix * a_position;
+        
+          // Pass the normal to the fragment shader
+          v_normal = a_normal;
              }`;
-
-        /*const vertexShaderSource =
-            `attribute vec4 position;
-                void main() {
-                    gl_Position = position;
-                    }`;*/
 
         //Use the createShader function from the example above
         const vertexShader = createShader(gl, vertexShaderSource, gl.VERTEX_SHADER);
 
-        const fragmentShaderSource =`
-            precision mediump float;
+        /*const fragmentShaderSource =
+            `precision mediump float;
+            varying vec3 v_color;
+            void main(void) {
+                gl_FragColor = vec4(v_color.rgb, 1.0);
+            }`;*/
 
-            // Passed in from the vertex shader.
-            varying vec3 v_normal;
-            uniform vec3 u_reverseLightDirection;
+        const fragmentShaderSource = `
+        precision mediump float;
 
-            uniform vec4 u_color;
-
-            void main() {
-
-                // because v_normal is a varying it's interpolated
-                // so it will not be a unit vector. Normalizing it
-                // will make it a unit vector again
-                vec3 normal = normalize(v_normal);
+        // Passed in from the vertex shader.
+        varying vec3 v_normal;
         
-                float light = dot(normal, u_reverseLightDirection);
-
-                gl_FragColor = u_color;
-
-                // Lets multiply just the color portion (not the alpha)
-                // by the light
-                gl_FragColor.rgb *= light;
-
-            }`;
-
- /*       const fragmentShaderSource = `
-            void main() {
-                gl_FragColor = vec4(0.0,  0.0,  1.0,  1.0);
-                }`;*/
-
+        uniform vec3 u_reverseLightDirection;
+        uniform vec4 u_color;
+        
+        void main() {
+          // because v_normal is a varying it's interpolated
+          // so it will not be a unit vector. Normalizing it
+          // will make it a unit vector again
+          vec3 normal = normalize(v_normal);
+        
+          float light = dot(normal, u_reverseLightDirection);
+        
+          gl_FragColor = u_color;
+        
+          // Lets multiply just the color portion (not the alpha)
+          // by the light
+          gl_FragColor.rgb *= light;
+                }`;
+//gl_FragColor = vec4(0.0,  0.0,  1.0,  1.0);
         //Use the createShader function from the example above
         const fragmentShader = createShader( gl, fragmentShaderSource, gl.FRAGMENT_SHADER );
 
@@ -209,16 +190,12 @@ const FloorViewCanvas = props => {
             gl.linkProgram(program);
 
 
-            gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),  gl.STATIC_DRAW);
-
+            //gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+            //gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),  gl.STATIC_DRAW);
             
-            
-            let colorBuffer = gl.createBuffer();
-            let colors = [1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1 ];
-            gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-
+            //let colorBuffer = gl.createBuffer();
+            //let colors = [1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1 ];
+            let colors = [];
             let normal = [];
             let _normal = [];
             for ( let i = 0; i < vertices.length; i+=4 ) {
@@ -227,31 +204,63 @@ const FloorViewCanvas = props => {
                vec3.normalize( _normal, _normal );
                normal = normal.concat( _normal );
             }
-
-            //mat4.rotateX(normal, normal, -3.14/4);
-
-            // Create a buffer to put normals in
+            //console.log('normal = ',normal);
+            //gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+            //gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+            /*
+            // Создаём буфер для нормалей
             let normalBuffer = gl.createBuffer();
-            // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = normalBuffer)
+            // Привязываем его к ARRAY_BUFFER (условно говоря, ARRAY_BUFFER = normalBuffer)
             gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-            // Put normals data into buffer
             // Записываем данные в буфер
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normal), gl.STATIC_DRAW);
+            //setNormals(gl);
+*/
 
-            
+            // look up where the vertex data needs to go.
+  var positionLocation = gl.getAttribLocation(program, "a_position");
+  var normalLocation = gl.getAttribLocation(program, "a_normal");
+
+  // lookup uniforms
+  var matrixLocation = gl.getUniformLocation(program, "u_matrix");
+  var colorLocation = gl.getUniformLocation(program, "u_color");
+  var reverseLightDirectionLocation =
+      gl.getUniformLocation(program, "u_reverseLightDirection");
+
+       // Create a buffer to put positions in
+  var positionBuffer = gl.createBuffer();
+  // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
+  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+  // Put geometry data into buffer
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),  gl.STATIC_DRAW);;
+
+  // Create a buffer to put normals in
+  var normalBuffer = gl.createBuffer();
+  // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = normalBuffer)
+  gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+  // Put normals data into buffer
+  // Записываем данные в буфер
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normal), gl.STATIC_DRAW);
+
+
+
+      /*
             // Получим местоположение переменных в программе шейдеров
             
-            let uModel = gl.getUniformLocation(program, 'u_model');
+            let uCube = gl.getUniformLocation(program, 'u_cube');
             let uCamera = gl.getUniformLocation(program, 'u_camera');
             
             let aPosition = gl.getAttribLocation(program, 'a_position');
+            //let aColor = gl.getAttribLocation(program, 'a_color');
             let normalLocation = gl.getAttribLocation(program, "a_normal");
-            let aColor = gl.getAttribLocation(program, 'a_color');
-            let colorUniformLocation = gl.getUniformLocation(program, "u_color");
-            let reverseLightDirectionLocation = gl.getUniformLocation(program, "u_reverseLightDirection");
 
-            mat4.rotateX(modelMatrix, modelMatrix, -3.14/4);
-            
+            let colorLocation  = gl.getUniformLocation(program, "u_color");
+            let reverseLightDirectionLocation = gl.getUniformLocation(program, "u_reverseLightDirection");
+*/
+            mat4.rotateX(cubeMatrix, cubeMatrix, -3.14/4);
+
+
 
 //----------------------------------------------------------------------
         function render() {
@@ -259,77 +268,156 @@ const FloorViewCanvas = props => {
             requestAnimationFrame(render);
         
             // Получаем время прошедшее с прошлого кадра
-            var time = Date.now();
-            var dt = lastRenderTime - time;
+            let time = Date.now();
+            let dt = lastRenderTime - time;
         
+            // Вращаем куб относительно оси X
+            //mat4.rotateX(cubeMatrix, cubeMatrix, -3.14/4);
+            // Вращаем куб относительно оси Y
+            //mat4.rotateY(cubeMatrix, cubeMatrix, dt / 4000);
             // Вращаем куб относительно оси Z
-            mat4.rotateZ(modelMatrix, modelMatrix, dt / 4000);
-
+            mat4.rotateZ(cubeMatrix, cubeMatrix, dt / 4000);
+            // Вращаем куб относительно оси X
+            //mat4.rotateX(cubeMatrix, cubeMatrix, 1);
+        
             // Очищаем сцену, закрашивая её в белый цвет
             gl.clearColor(1.0, 1.0, 1.0, 1.0);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         
+            gl.enable(gl.CULL_FACE)
+
             // Включаем фильтр глубины
             gl.enable(gl.DEPTH_TEST);
         
-            gl.enable(gl.CULL_FACE);
-
             gl.useProgram(program);
-        
+
+            // Turn on the position attribute
+    gl.enableVertexAttribArray(positionLocation);
+
+    // Bind the position buffer.
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+    gl.vertexAttribPointer(positionLocation, 4, gl.FLOAT, false, 0, 0);
+
+    // Turn on the normal attribute
+    gl.enableVertexAttribArray(normalLocation);
+
+    // Bind the normal buffer.
+    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+
+    gl.vertexAttribPointer(normalLocation, 4, gl.FLOAT, false, 0, 0);
+
+    // Compute the projection matrix
+    var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+    var zNear = 1;
+    var zFar = 2000;
+    //var projectionMatrix = mat4.perspective(fieldOfViewRadians, aspect, zNear, zFar);
+
+    
+    
+/*
+    // Compute the camera's matrix
+    var camera = [100, 150, 200];
+    var target = [0, 35, 0];
+    var up = [0, 1, 0];
+    var cameraMatrix = m4.lookAt(camera, target, up);
+*/
+    // Make a view matrix from the camera matrix.
+    //var viewMatrix = m4.inverse(cameraMatrix);
+    //var viewMatrix = mat4.invert( cameraMatrix, cameraMatrix);
+    let viewMatrix = mat4.create();
+    //mat4.translate(viewMatrix, viewMatrix, [ 35, 15, -100 ]);
+    
+
+    // Compute a view projection matrix
+    //var viewProjectionMatrix = m4.multiply(projectionMatrix, viewMatrix);
+    //var viewProjectionMatrix = mat4.multiply(projectionMatrix, viewMatrix);
+    //var viewProjectionMatrix = mat4.perspective(viewMatrix, 1, 1, 0.5, 1000);
+    let viewProjectionMatrix = mat4.create();
+    mat4.perspective(viewProjectionMatrix, 1, 1, 0.5, 1000);
+
+    //mat4.ortho(cameraMatrix, 0, 70, 0, 70, 0, 200);
+
+    // Draw a F at the origin
+    //var worldMatrix = m4.yRotation(fRotationRadians);
+
+    // Multiply the matrices.
+    //var worldViewProjectionMatrix = m4.multiply(viewProjectionMatrix, worldMatrix);
+    let worldViewProjectionMatrix = mat4.create();
+    //var worldViewProjectionMatrix = mat4.rotateY(viewProjectionMatrix, viewProjectionMatrix, dt / 4000 );
+    mat4.rotateY(worldViewProjectionMatrix, viewProjectionMatrix, dt / 4000 );
+
+    // Set the matrix.
+    gl.uniformMatrix4fv(matrixLocation, false, worldViewProjectionMatrix);
+
+    // Set the color to use
+    gl.uniform4fv(colorLocation, [0.2, 1, 0.2, 1]); // green
+
+    // set the light direction.
+    //gl.uniform3fv(reverseLightDirectionLocation, vec3.normalize([0.5, 0.7, 1]));
+    let light_vector = [0.5, 0.7, 1];
+            vec3.normalize( light_vector, light_vector )
+    gl.uniform3fv(reverseLightDirectionLocation, light_vector );
+
+
+
+        /*
             gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
             gl.enableVertexAttribArray(aPosition);
-            gl.vertexAttribPointer(aPosition, 4, gl.FLOAT, false, 0, 0);
-
-
-
-            // Turn on the normal attribute
-            gl.enableVertexAttribArray(normalLocation);
-
-            // Bind the normal buffer.
-            gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-
-            gl.vertexAttribPointer(normalLocation, 3, gl.FLOAT, false, 0, 0);
-
+            gl.vertexAttribPointer(aPosition, 4, gl.FLOAT, false, 0, 0);*/
         /*
             gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
             gl.enableVertexAttribArray(aColor);
-            gl.vertexAttribPointer(aColor, 3, gl.FLOAT, false, 0, 0);
+            gl.vertexAttribPointer(aColor, 3, gl.FLOAT, true, 0, 0);
         */
-            gl.uniformMatrix4fv(uModel, false, modelMatrix);
-            gl.uniformMatrix4fv(uCamera, false, cameraMatrix);
+            // Включаем атрибут нормалей
+          /*  gl.enableVertexAttribArray(normalLocation);
+            // Привязываем буфер нормалей
+            gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+            gl.vertexAttribPointer(normalLocation, 4, gl.FLOAT, false, 0, 0);
 
-            //let light_vector = [0.5, 0.7, 1];
-            let light_vector = [ 0, 0, 1];
+
+            gl.uniformMatrix4fv(uCube, false, cubeMatrix);
+            gl.uniformMatrix4fv(uCamera, false, cameraMatrix);
+        
+
+            // Устанавливаем цвет
+            gl.uniform4fv(colorLocation, [1, 1, 0.2, 1]); // зелёный
+ 
+            // Задаём направление света
+            let light_vector = [ 0, -1, 1];
             vec3.normalize( light_vector, light_vector )
             gl.uniform3fv(reverseLightDirectionLocation, light_vector );
 
-        
+            //gl.drawArrays(gl.TRIANGLES, 0, 24);
+            //gl.drawElements(gl.LINE_LOOP, 36, gl.UNSIGNED_SHORT, 0);
+
+            // Set a random color.
+            //gl.uniform4f(uColor, Math.random(), Math.random(), Math.random(), 1);
+*/
             //korpus
-            gl.uniform4f(colorUniformLocation, 0, 0, 1, 1);
+            //gl.uniform4f(uColor, 1, 0, 0, 1);
             gl.drawArrays(gl.LINE_LOOP, 0, 4);
             gl.drawArrays(gl.LINE_LOOP, 4, 4);
             gl.drawArrays(gl.LINE_LOOP, 8, 4);
             gl.drawArrays(gl.LINE_LOOP, 12, 4);
             //head
-            gl.uniform4f(colorUniformLocation, 0, 1, 0, 1);
+            //gl.uniform4f(uColor, 0, 1, 0, 1);
             gl.drawArrays(gl.LINE_LOOP, 16, 4);
             gl.drawArrays(gl.LINE_LOOP, 20, 4);
             //conus
-            gl.uniform4f(colorUniformLocation, 1, 0, 0, 1);
+            //gl.uniform4f(uColor, 0, 0, 1, 1);
             gl.drawArrays(gl.LINE_LOOP, 24, 4);
             gl.drawArrays(gl.LINE_LOOP, 28, 4);
             gl.drawArrays(gl.LINE_LOOP, 31, 4);
 
             //piles
-            //gl.uniform4f(colorUniformLocation, Math.random(), Math.random(), Math.random(), 1);
-            gl.uniform4f(colorUniformLocation, 0, 0, 1, 1);
-            //gl.uniform4f(colorUniformLocation, 1, 1, 0, 1);
+            //gl.uniform4f(uColor, 0, 0.5, 1, 1);
             //gl.drawArrays(gl.LINE_STRIP, 36, mesh.length/4 );
-            //gl.drawArrays(gl.TRIANGLE_STRIP, 36, mesh.length/4 );
-            for ( let i = 36; i < mesh.length; i+= ( step_xy + 2 ) * 2 ) {
-                if ( meshView ) { gl.drawArrays(gl.LINE_STRIP,  i, ( step_xy + 1 ) * 2 ); 
-                } else { gl.drawArrays(gl.TRIANGLE_STRIP, i, ( step_xy + 1 ) * 2 ); }
-            }
+            gl.drawArrays(gl.TRIANGLE_STRIP, 36, mesh.length/4 );
+            /*for ( let i = 36; i < mesh.length/4; i+= step_xy ) {
+                gl.drawArrays(gl.LINE_STRIP, i, step_xy );
+            }*/
         
             lastRenderTime = time;
 
@@ -385,25 +473,7 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
                     value={ step_xy }
                     onChange={ changeMeshStep }
                     />
-
-                
-                <div style={{ marginTop: 10 }}><hr/></div>
-                <label className='myText' >View:</label>
-
-                <button
-                    className='myButton'
-                    style={{ width: 80 }}
-                    onClick={ ()=>{ setMeshView(true); } }
-                    >Mesh</button>
-
-                <button
-                    className='myButton'
-                    style={{ width: 80 }}
-                    onClick={ ()=>{ setMeshView(false); } }
-                    >Solid</button>
-
             </div>
-
     </div>
     );
   }
