@@ -13,6 +13,8 @@ const FloorViewCanvas = props => {
 
     const [ mesh, setMesh] = React.useState([]);
     const [ meshView, setMeshView] = React.useState(true);
+    const [ houseView, setHouseView] = React.useState(true);
+    const [ colorMulti, setColorMulti] = React.useState(true);
     const [ step_xy, setStep_xy] = React.useState( 50 );
 
     const meshCalc = ()=>{
@@ -93,20 +95,10 @@ const FloorViewCanvas = props => {
 
         let vertices = korpus_draw.concat(head_draw, conus_draw, mesh );
 
-        // матрица перспективы
-
-        /*Метод mat4.perspective(matrix, fov, aspect, near, far) принимает пять параметров:
-        matrix — матрица, которую необходимо изменить;
-        fov — угл обзора в радианах;
-        aspect — cоотношение сторон экрана;
-        near — минимальное расстояние до объектов, которые будут видны;
-        far — максимальное расстояние до объектов, которые будут видны.*/
-
         let cameraMatrix = mat4.create();
-        //mat4.perspective(cameraMatrix, 1, 1, 0.5, 1000);
-        //mat4.translate(cameraMatrix, cameraMatrix, [0, 0, -100]);
+
         mat4.ortho(cameraMatrix, 0, 70, 0, 70, 0, 200);
-        mat4.translate(cameraMatrix, cameraMatrix, [ 35, 15, -100 ]);
+        mat4.translate(cameraMatrix, cameraMatrix, [ 35, 20, -100 ]);
 
         // Создадим единичную матрицу положения куба
         let modelMatrix = mat4.create();
@@ -145,8 +137,22 @@ const FloorViewCanvas = props => {
              attribute vec3 a_normal;
              attribute vec3 a_color;
 
+             attribute vec2 a_texcoord;
+
+             varying vec2 v_texcoord;
+
+            varying vec3 v_surfaceToLight;
+            varying vec3 v_surfaceToView;
+
+            uniform mat4 u_world;
+            uniform mat4 u_worldViewProjection;
+            uniform mat4 u_worldInverseTranspose;
+
              uniform mat4 u_model;
              uniform mat4 u_camera;
+
+             uniform vec3 u_lightWorldPosition;
+             uniform vec3 u_viewWorldPosition;
 
              varying vec3 v_color;
              varying vec3 v_normal;
@@ -157,14 +163,23 @@ const FloorViewCanvas = props => {
 
                  // Pass the normal to the fragment shader
                 //v_normal = a_normal;
-                v_normal = mat3(u_model) * a_normal;
-             }`;
+                v_normal = mat3(u_camera) * a_normal;
 
-        /*const vertexShaderSource =
-            `attribute vec4 position;
-                void main() {
-                    gl_Position = position;
-                    }`;*/
+                // compute the world position of the surface
+                vec3 surfaceWorldPosition = (u_model * a_position).xyz;
+
+                // compute the vector of the surface to the light
+                // and pass it to the fragment shader
+                v_surfaceToLight = u_lightWorldPosition - surfaceWorldPosition;
+
+                // compute the vector of the surface to the view/camera
+                // and pass it to the fragment shader
+                v_surfaceToView = u_viewWorldPosition - surfaceWorldPosition;
+
+                // Pass the texcoord to the fragment shader.
+                v_texcoord = a_texcoord;
+
+             }`;
 
         //Use the createShader function from the example above
         const vertexShader = createShader(gl, vertexShaderSource, gl.VERTEX_SHADER);
@@ -176,7 +191,17 @@ const FloorViewCanvas = props => {
             varying vec3 v_normal;
             uniform vec3 u_reverseLightDirection;
 
+            varying vec3 v_surfaceToLight;
+            varying vec3 v_surfaceToView;
+
             uniform vec4 u_color;
+            uniform float u_shininess;
+
+            // Passed in from the vertex shader.
+            varying vec2 v_texcoord;
+
+            // The texture.
+            uniform sampler2D u_texture;
 
             void main() {
 
@@ -184,21 +209,30 @@ const FloorViewCanvas = props => {
                 // so it will not be a unit vector. Normalizing it
                 // will make it a unit vector again
                 vec3 normal = normalize(v_normal);
+
+                vec3 surfaceToLightDirection = normalize(v_surfaceToLight);
+                vec3 surfaceToViewDirection = normalize(v_surfaceToView);
+                vec3 halfVector = normalize(surfaceToLightDirection + surfaceToViewDirection);
+
         
-                float light = dot(normal, u_reverseLightDirection);
+                float light = dot(normal, surfaceToLightDirection);
+                float specular = 0.0;
+                if (light > 0.0) {
+                    specular = pow(dot(normal, halfVector), u_shininess);
+                }
 
                 gl_FragColor = u_color;
+                //gl_FragColor = vec4(0.0,  0.0,  1.0,  1.0);
+                //gl_FragColor = texture2D(u_texture, v_texcoord);
 
                 // Lets multiply just the color portion (not the alpha)
                 // by the light
-                gl_FragColor.rgb *= light;
+                //gl_FragColor.rgb *= light;
+
+                // Just add in the specular
+                //gl_FragColor.rgb += specular;
 
             }`;
-
- /*       const fragmentShaderSource = `
-            void main() {
-                gl_FragColor = vec4(0.0,  0.0,  1.0,  1.0);
-                }`;*/
 
         //Use the createShader function from the example above
         const fragmentShader = createShader( gl, fragmentShaderSource, gl.FRAGMENT_SHADER );
@@ -215,18 +249,32 @@ const FloorViewCanvas = props => {
             
             
             let colorBuffer = gl.createBuffer();
-            let colors = [1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1 ];
+            let colors = [];
             gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 
             let normal = [];
             let _normal = [];
             for ( let i = 0; i < vertices.length; i+=4 ) {
-               colors = colors.concat( Math.random(), Math.random(), Math.random() );
+                colors = colors.concat( Math.random(), Math.random(), Math.random(), 1 );
                _normal = Calc.Normal_from_3points( vertices.slice( i, i + 3 ), vertices.slice( i+1, i + 3+1 ), vertices.slice( i+2, i + 3+2 ) );
                vec3.normalize( _normal, _normal );
                normal = normal.concat( _normal );
             }
+
+            /*let textures = [];
+            let _textures = [];
+            for ( let i = 0; i < normal.length; i++ ) {
+                _textures = [   0, 0, 
+                                0, 1, 
+                                1, 0, 
+                                0, 1, 
+                                1, 0 ];
+                textures = textures.concat( _textures );
+               //_normal = Calc.Normal_from_3points( vertices.slice( i, i + 3 ), vertices.slice( i+1, i + 3+1 ), vertices.slice( i+2, i + 3+2 ) );
+               //vec3.normalize( _normal, _normal );
+               //normal = normal.concat( _normal );
+            }*/
 
             //mat4.rotateX(normal, normal, -3.14/4);
 
@@ -237,6 +285,31 @@ const FloorViewCanvas = props => {
             // Put normals data into buffer
             // Записываем данные в буфер
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normal), gl.STATIC_DRAW);
+/*
+            // provide texture coordinates for the rectangle.
+            var texcoordBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
+            // Set Texcoords.
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textures), gl.STATIC_DRAW);
+
+             // Create a texture.
+            var texture = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            // Fill the texture with a 1x1 blue pixel.
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
+                new Uint8Array([0, 0, 255, 255]));
+            // Asynchronously load an image
+            var image = new Image();
+            image.crossOrigin = 'anonymous';
+            image.src = 'https://webglfundamentals.org/webgl/resources/f-texture.png';
+            //image.src = 'http://localhost:3000/wwheat-grain.png';
+            image.addEventListener('load', function() {
+            // Now that the image has loaded make copy it to the texture.
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE, image);
+            gl.generateMipmap(gl.TEXTURE_2D);
+            });
+*/
 
             
             // Получим местоположение переменных в программе шейдеров
@@ -249,6 +322,13 @@ const FloorViewCanvas = props => {
             let aColor = gl.getAttribLocation(program, 'a_color');
             let colorUniformLocation = gl.getUniformLocation(program, "u_color");
             let reverseLightDirectionLocation = gl.getUniformLocation(program, "u_reverseLightDirection");
+
+            let shininessLocation = gl.getUniformLocation(program, "u_shininess");
+            let lightWorldPositionLocation = gl.getUniformLocation(program, "u_lightWorldPosition");
+           // var viewWorldPositionLocation = gl.getUniformLocation(program, "u_viewWorldPosition");
+
+           var texcoordLocation = gl.getAttribLocation(program, "a_texcoord");
+           var textureLocation = gl.getUniformLocation(program, "u_texture");
 
             mat4.rotateX(modelMatrix, modelMatrix, -3.14/4);
             
@@ -299,11 +379,20 @@ const FloorViewCanvas = props => {
             gl.uniformMatrix4fv(uCamera, false, cameraMatrix);
 
             //let light_vector = [0.5, 0.7, 1];
-            let light_vector = [ 0, 0, 1];
+           /* let light_vector = [ 0, 0, 1];
             vec3.normalize( light_vector, light_vector )
-            gl.uniform3fv(reverseLightDirectionLocation, light_vector );
+            gl.uniform3fv(reverseLightDirectionLocation, light_vector );*/
 
-        
+            // set the light position
+            //gl.uniform3fv(lightWorldPositionLocation, [20, 30, 60]);
+            //gl.uniform3fv(lightWorldPositionLocation, [ 0, -100, 0 ]);
+
+            // set the shininess
+            //let shininess = 100;
+            //gl.uniform1f(shininessLocation, shininess);
+
+
+            if ( houseView ) {
             //korpus
             gl.uniform4f(colorUniformLocation, 0, 0, 1, 1);
             gl.drawArrays(gl.LINE_LOOP, 0, 4);
@@ -319,14 +408,11 @@ const FloorViewCanvas = props => {
             gl.drawArrays(gl.LINE_LOOP, 24, 4);
             gl.drawArrays(gl.LINE_LOOP, 28, 4);
             gl.drawArrays(gl.LINE_LOOP, 31, 4);
-
+            }
             //piles
-            //gl.uniform4f(colorUniformLocation, Math.random(), Math.random(), Math.random(), 1);
-            gl.uniform4f(colorUniformLocation, 0, 0, 1, 1);
-            //gl.uniform4f(colorUniformLocation, 1, 1, 0, 1);
-            //gl.drawArrays(gl.LINE_STRIP, 36, mesh.length/4 );
-            //gl.drawArrays(gl.TRIANGLE_STRIP, 36, mesh.length/4 );
             for ( let i = 36; i < mesh.length; i+= ( step_xy + 2 ) * 2 ) {
+                if ( colorMulti ) { gl.uniform4f(colorUniformLocation, colors[i], colors[i+1], colors[i+2], colors[i+3]); 
+                } else { gl.uniform4f(colorUniformLocation, 0.0,  0.0,  1.0,  1.0); };
                 if ( meshView ) { gl.drawArrays(gl.LINE_STRIP,  i, ( step_xy + 1 ) * 2 ); 
                 } else { gl.drawArrays(gl.TRIANGLE_STRIP, i, ( step_xy + 1 ) * 2 ); }
             }
@@ -371,23 +457,24 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
 
             <canvas ref={canvasRef} {...props} style={{ width: '100%', height: '100%' }} />
 
-            <div className='block' style={{ marginLeft: -91, padding: 1 }}>
+            <div className='block' style={{ marginLeft: -100, padding: 1 }}>
                 <button
                     className='myButton'
-                    style={{ width: 80 }}
+                    style={{ width: 90 }}
                     onClick={ meshCalc }
                     >calc</button>
-
+                <div className='block'>
                 <label className='myText' >Mesh Step</label>
                 <input 
                     className='inputPile'
+                    id="meshStep" name="meshStep"
                     type='number'
                     value={ step_xy }
                     onChange={ changeMeshStep }
                     />
-
+                </div>
                 
-                <div style={{ marginTop: 10 }}><hr/></div>
+                <div className='block' >
                 <label className='myText' >View:</label>
 
                 <button
@@ -401,6 +488,33 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
                     style={{ width: 80 }}
                     onClick={ ()=>{ setMeshView(false); } }
                     >Solid</button>
+                </div>
+
+                <div className='block'>
+                <label className='myText' for="houseView">Show warehouse</label>
+                <input 
+                    className='inputPile'
+                    type='checkbox'
+                    value={ houseView }
+                    defaultChecked
+                    id="houseView" name="houseView"
+                    onChange={ ()=>{ setHouseView( !houseView ) } }
+                    />
+                
+                </div>
+
+                <div className='block'>
+                <label className='myText' for="colorMulti">Multicolor</label>
+                <input 
+                    className='inputPile'
+                    type='checkbox'
+                    value={ colorMulti }
+                    defaultChecked
+                    id="colorMulti" name="colorMulti"
+                    onChange={ ()=>{ setColorMulti( !colorMulti ) } }
+                    />
+                
+                </div>
 
             </div>
 
