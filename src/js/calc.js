@@ -371,5 +371,9 @@ Mod - вычисление остатка от целочисленного де
     wVector[1]=v3*v4-v1*v6;
     wVector[2]=v1*v5-v2*v4;
 */
-    return ( [ vDirection2*vDirection6-vDirection3*vDirection5, vDirection3*vDirection4-vDirection1*vDirection6, vDirection1*vDirection5-vDirection2*vDirection4 ] );
+    let Vx = Math.abs(vDirection2*vDirection6-vDirection3*vDirection5);
+    let Vy = Math.abs(vDirection3*vDirection4-vDirection1*vDirection6);
+    let Vz = Math.abs(vDirection1*vDirection5-vDirection2*vDirection4);
+
+    return ( [ Vx, Vy, Vz ] );
   }

@@ -11,11 +11,6 @@ const FloorViewCanvas = props => {
 
     let floor = Elevators.FloorCurrentDimensions;
 
-    
-   // const [ meshView, setMeshView] = React.useState(true);
-    //const [ houseView, setHouseView] = React.useState(true);
-    //const [ colorMulti, setColorMulti] = React.useState(true);
-
     let meshView = true;
     let houseView =true;
     let colorMulti = true;
@@ -85,180 +80,155 @@ const FloorViewCanvas = props => {
                        -Length/2 + Conus_X - Conus_L/2 , -Width/2 + Conus_Y - Conus_W/2, -Height/2 - Conus_height, 1
                 ];
 
+    //let vertices = mesh.concat( korpus_draw, head_draw, conus_draw  );
+    let vertices = korpus_draw.concat( head_draw, conus_draw, mesh );
+    //let vertices = mesh ;
+
+    let colors = [];
+    let normal = [];
+    for ( let i = 0; i < 36; i++ ){
+        normal = normal.concat( [ 0, 0, 1 ] );
+    }
+    //let normal = [];
+    let _normal = [];
+    for ( let i = 0; i < mesh.length; i+=4 ) {
+        colors = colors.concat( Math.random(), Math.random(), Math.random(), 1 );
+        _normal = Calc.Normal_from_3points( mesh.slice( i, i + 3 ), mesh.slice( i+4, i + 3+4 ), mesh.slice( i+8, i + 3+8 ) );
+        //vec3.normalize( _normal, _normal );
+        normal = normal.concat( _normal );
+    }
+    //normal = normal.concat( [ 0,0,0 ] );
+    //console.log('normal = ', normal);
+
 
     const draw = (gl) => {
 
-        // Инициализация данных
-        let vertexBuffer = gl.createBuffer();
+    // Запомним время последней отрисовки кадра
+    let lastRenderTime = Date.now();
 
-        let vertices = korpus_draw.concat(head_draw, conus_draw, mesh );
+    // Инициализация шейдеров
+    const vertexShaderSource =`
+        attribute vec4 a_position;
+        attribute vec3 a_normal;
+        //attribute vec3 a_color;
 
-        let cameraMatrix = mat4.create();
+        varying vec3 v_surfaceToLight;
+        varying vec3 v_surfaceToView;
 
-        mat4.ortho(cameraMatrix, 0, 70, 0, 70, 0, 200);
-        mat4.translate(cameraMatrix, cameraMatrix, [ 35, 20, -100 ]);
+        //uniform mat4 u_world;
+        //uniform mat4 u_worldViewProjection;
+        //uniform mat4 u_worldInverseTranspose;
 
-        // Создадим единичную матрицу положения куба
-        let modelMatrix = mat4.create();
-        //mat4.translate(cubeMatrix, cubeMatrix, [0, 0, 0]);
-        // Запомним время последней отрисовки кадра
-        let lastRenderTime = Date.now();
+        uniform mat4 u_modelView;
+        uniform mat4 u_projection;
 
-        // Устанавливаем вьюпорт у WebGL
-        gl.viewport(0, 0, gl.canvas.width, gl.canvas.width);
+        uniform vec3 u_lightWorldPosition;
+        uniform vec3 u_viewWorldPosition;
 
-       // Инициализация шейдеров
-       /* const vertexShaderSource =
-            `attribute vec3 a_position;
-            attribute vec3 a_color;
-            uniform mat4 u_model;
-            uniform mat4 u_camera;
-            varying vec3 v_color;
-            void main(void) {
-                v_color = a_color;
-                gl_Position = u_camera * u_model * vec4(a_position, 1.0);
-            }`;*/
+        //varying vec3 v_color;
+        varying vec3 v_normal;
 
-        /*const vertexShaderSource =
-           `attribute vec3 a_position;
-            attribute vec3 a_color;
-            uniform mat4 u_cube;
-            uniform mat4 u_camera;
-            varying vec3 v_color;
-            void main(void) {
-                v_color = a_color;
-                gl_Position = u_camera * u_cube * vec4(a_position, 1.0);
-            }`;*/
+        void main(void) {
+            //v_color = a_color;
+            gl_Position = u_projection * u_modelView * a_position;
 
-        const vertexShaderSource =
-            `attribute vec4 a_position;
-             attribute vec3 a_normal;
-             attribute vec3 a_color;
+            // Pass the normal to the fragment shader
+            v_normal = mat3(u_modelView) * a_normal;
+            //v_normal = a_normal;
 
-             attribute vec2 a_texcoord;
+            // compute the world position of the surface
+            vec3 surfaceWorldPosition = (u_modelView * a_position).xyz;
 
-             varying vec2 v_texcoord;
+            // compute the vector of the surface to the light
+            // and pass it to the fragment shader
+            v_surfaceToLight = u_lightWorldPosition - surfaceWorldPosition;
 
-            varying vec3 v_surfaceToLight;
-            varying vec3 v_surfaceToView;
+            // compute the vector of the surface to the view/camera
+            // and pass it to the fragment shader
+            v_surfaceToView = u_viewWorldPosition - surfaceWorldPosition;
+        }`;
 
-            uniform mat4 u_world;
-            uniform mat4 u_worldViewProjection;
-            uniform mat4 u_worldInverseTranspose;
+    const fragmentShaderSource =`
+        precision mediump float;
 
-             uniform mat4 u_model;
-             uniform mat4 u_camera;
+        // Passed in from the vertex shader.
+        varying vec3 v_normal;
+        uniform vec3 u_reverseLightDirection;
 
-             uniform vec3 u_lightWorldPosition;
-             uniform vec3 u_viewWorldPosition;
+        varying vec3 v_surfaceToLight;
+        varying vec3 v_surfaceToView;
 
-             varying vec3 v_color;
-             varying vec3 v_normal;
+        uniform vec4 u_color;
+        uniform float u_shininess;
 
-             void main(void) {
-                 v_color = a_color;
-                 gl_Position = u_camera * u_model * a_position;
+        void main() {
 
-                 // Pass the normal to the fragment shader
-                //v_normal = a_normal;
-                v_normal = mat3(u_camera) * a_normal;
+            // because v_normal is a varying it's interpolated
+            // so it will not be a unit vector. Normalizing it
+            // will make it a unit vector again
+            vec3 normal = normalize(v_normal);
 
-                // compute the world position of the surface
-                vec3 surfaceWorldPosition = (u_model * a_position).xyz;
+            vec3 surfaceToLightDirection = normalize(v_surfaceToLight);
+            vec3 surfaceToViewDirection = normalize(v_surfaceToView);
+            vec3 halfVector = normalize(surfaceToLightDirection + surfaceToViewDirection);
 
-                // compute the vector of the surface to the light
-                // and pass it to the fragment shader
-                v_surfaceToLight = u_lightWorldPosition - surfaceWorldPosition;
-
-                // compute the vector of the surface to the view/camera
-                // and pass it to the fragment shader
-                v_surfaceToView = u_viewWorldPosition - surfaceWorldPosition;
-
-                // Pass the texcoord to the fragment shader.
-                v_texcoord = a_texcoord;
-
-             }`;
-
-        //Use the createShader function from the example above
-        const vertexShader = createShader(gl, vertexShaderSource, gl.VERTEX_SHADER);
-
-        const fragmentShaderSource =`
-            precision mediump float;
-
-            // Passed in from the vertex shader.
-            varying vec3 v_normal;
-            uniform vec3 u_reverseLightDirection;
-
-            varying vec3 v_surfaceToLight;
-            varying vec3 v_surfaceToView;
-
-            uniform vec4 u_color;
-            uniform float u_shininess;
-
-            // Passed in from the vertex shader.
-            varying vec2 v_texcoord;
-
-            // The texture.
-            uniform sampler2D u_texture;
-
-            void main() {
-
-                // because v_normal is a varying it's interpolated
-                // so it will not be a unit vector. Normalizing it
-                // will make it a unit vector again
-                vec3 normal = normalize(v_normal);
-
-                vec3 surfaceToLightDirection = normalize(v_surfaceToLight);
-                vec3 surfaceToViewDirection = normalize(v_surfaceToView);
-                vec3 halfVector = normalize(surfaceToLightDirection + surfaceToViewDirection);
-
-        
-                float light = dot(normal, surfaceToLightDirection);
-                float specular = 0.0;
-                if (light > 0.0) {
-                    specular = pow(dot(normal, halfVector), u_shininess);
-                }
-
-                gl_FragColor = u_color;
-                //gl_FragColor = vec4(0.0,  0.0,  1.0,  1.0);
-                //gl_FragColor = texture2D(u_texture, v_texcoord);
-
-                // Lets multiply just the color portion (not the alpha)
-                // by the light
-                //gl_FragColor.rgb *= light;
-
-                // Just add in the specular
-                //gl_FragColor.rgb += specular;
-
-            }`;
-
-        //Use the createShader function from the example above
-        const fragmentShader = createShader( gl, fragmentShaderSource, gl.FRAGMENT_SHADER );
-
-        let program = gl.createProgram();
-            gl.attachShader(program, vertexShader);
-            gl.attachShader(program, fragmentShader);
-            gl.linkProgram(program);
-
-
-            gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),  gl.STATIC_DRAW);
-
-            
-            
-            let colorBuffer = gl.createBuffer();
-            let colors = [];
-            gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-
-            let normal = [];
-            let _normal = [];
-            for ( let i = 0; i < vertices.length; i+=4 ) {
-                colors = colors.concat( Math.random(), Math.random(), Math.random(), 1 );
-               _normal = Calc.Normal_from_3points( vertices.slice( i, i + 3 ), vertices.slice( i+1, i + 3+1 ), vertices.slice( i+2, i + 3+2 ) );
-               vec3.normalize( _normal, _normal );
-               normal = normal.concat( _normal );
+            float light = dot(normal, surfaceToLightDirection);
+            float specular = 0.0;
+            if (light > 0.0) {
+                specular = pow(dot(normal, halfVector), u_shininess);
             }
+
+            gl_FragColor = u_color;
+
+            // Lets multiply just the color portion (not the alpha)
+            // by the light
+            gl_FragColor.rgb *= light;
+
+            // Just add in the specular
+            //gl_FragColor.rgb += specular;
+
+        }`;
+    //use the compileShader function for create Shaders
+    const vertexShader = compileShader(gl, vertexShaderSource, gl.VERTEX_SHADER);
+    const fragmentShader = compileShader( gl, fragmentShaderSource, gl.FRAGMENT_SHADER );
+
+    // create program from Shaders
+    let program = createProgram(gl, vertexShader, fragmentShader)
+
+    //--------------------------------------------Инициализация шейдеров
+        var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+        //perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
+
+    //--------------------------------------------Устанавливаем вьюпорт у WebGL
+        //gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+        gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight)
+
+    //--------------------------------------------Получим местоположение переменных в программе шейдеров
+        let uModelView = gl.getUniformLocation(program, 'u_modelView');
+        let uProjection = gl.getUniformLocation(program, 'u_projection');
+        let aPosition = gl.getAttribLocation(program, 'a_position');
+        let normalLocation = gl.getAttribLocation(program, "a_normal");
+        //let aColor = gl.getAttribLocation(program, 'a_color');
+        let colorUniformLocation = gl.getUniformLocation(program, "u_color");
+        let reverseLightDirectionLocation = gl.getUniformLocation(program, "u_reverseLightDirection");
+        let shininessLocation = gl.getUniformLocation(program, "u_shininess");
+        let lightWorldPositionLocation = gl.getUniformLocation(program, "u_lightWorldPosition");
+       // var viewWorldPositionLocation = gl.getUniformLocation(program, "u_viewWorldPosition");
+        //let texcoordLocation = gl.getAttribLocation(program, "a_texcoord");
+        //let textureLocation = gl.getUniformLocation(program, "u_texture");
+
+    //--------------------------------------------
+        let vertexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),  gl.STATIC_DRAW);
+            
+        let colorBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+
+        let normalBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normal), gl.STATIC_DRAW);    
 
             /*let textures = [];
             let _textures = [];
@@ -273,63 +243,13 @@ const FloorViewCanvas = props => {
                //vec3.normalize( _normal, _normal );
                //normal = normal.concat( _normal );
             }*/
+        //--------------------------------------------
+            let projectionMatrix = mat4.create();
+            mat4.ortho(projectionMatrix, 0, 70, 0, 70, 0, 200);
+            mat4.translate(projectionMatrix, projectionMatrix, [ 35, 30, -100 ]);
 
-            //mat4.rotateX(normal, normal, -3.14/4);
-
-            // Create a buffer to put normals in
-            let normalBuffer = gl.createBuffer();
-            // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = normalBuffer)
-            gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-            // Put normals data into buffer
-            // Записываем данные в буфер
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normal), gl.STATIC_DRAW);
-/*
-            // provide texture coordinates for the rectangle.
-            var texcoordBuffer = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
-            // Set Texcoords.
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textures), gl.STATIC_DRAW);
-
-             // Create a texture.
-            var texture = gl.createTexture();
-            gl.bindTexture(gl.TEXTURE_2D, texture);
-            // Fill the texture with a 1x1 blue pixel.
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
-                new Uint8Array([0, 0, 255, 255]));
-            // Asynchronously load an image
-            var image = new Image();
-            image.crossOrigin = 'anonymous';
-            image.src = 'https://webglfundamentals.org/webgl/resources/f-texture.png';
-            //image.src = 'http://localhost:3000/wwheat-grain.png';
-            image.addEventListener('load', function() {
-            // Now that the image has loaded make copy it to the texture.
-            gl.bindTexture(gl.TEXTURE_2D, texture);
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE, image);
-            gl.generateMipmap(gl.TEXTURE_2D);
-            });
-*/
-
-            
-            // Получим местоположение переменных в программе шейдеров
-            
-            let uModel = gl.getUniformLocation(program, 'u_model');
-            let uCamera = gl.getUniformLocation(program, 'u_camera');
-            
-            let aPosition = gl.getAttribLocation(program, 'a_position');
-            let normalLocation = gl.getAttribLocation(program, "a_normal");
-            let aColor = gl.getAttribLocation(program, 'a_color');
-            let colorUniformLocation = gl.getUniformLocation(program, "u_color");
-            let reverseLightDirectionLocation = gl.getUniformLocation(program, "u_reverseLightDirection");
-
-            let shininessLocation = gl.getUniformLocation(program, "u_shininess");
-            let lightWorldPositionLocation = gl.getUniformLocation(program, "u_lightWorldPosition");
-           // var viewWorldPositionLocation = gl.getUniformLocation(program, "u_viewWorldPosition");
-
-           var texcoordLocation = gl.getAttribLocation(program, "a_texcoord");
-           var textureLocation = gl.getUniformLocation(program, "u_texture");
-
+            let modelMatrix = mat4.create();
             mat4.rotateX(modelMatrix, modelMatrix, -3.14/4);
-            
 
 //----------------------------------------------------------------------
         function render() {
@@ -338,88 +258,84 @@ const FloorViewCanvas = props => {
             meshView = Elevators.get_Floor_MeshStyle;
             colorMulti = Elevators.get_Floor_Multicolor;
 
-            // Запрашиваем рендеринг на следующий кадр
+        // Запрашиваем рендеринг на следующий кадр
             requestAnimationFrame(render);
         
-            // Получаем время прошедшее с прошлого кадра
+        // Получаем время прошедшее с прошлого кадра
             var time = Date.now();
             var dt = lastRenderTime - time;
-        
-            // Вращаем куб относительно оси Z
-            mat4.rotateZ(modelMatrix, modelMatrix, dt / 4000);
 
-            // Очищаем сцену, закрашивая её в белый цвет
+        //--------------------------------------------  Вращаем куб относительно оси Z
+           mat4.rotateZ(modelMatrix, modelMatrix, dt / 4000);
+        //----------------------------------------------------------------------
             gl.clearColor(1.0, 1.0, 1.0, 1.0);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        
-            // Включаем фильтр глубины
+        //----------------------------------------------------------------------
             gl.enable(gl.DEPTH_TEST);
-        
             gl.enable(gl.CULL_FACE);
-
+        //----------------------------------------------------------------------
             gl.useProgram(program);
-        
+        //----------------------------------------------------------------------
             gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
             gl.enableVertexAttribArray(aPosition);
             gl.vertexAttribPointer(aPosition, 4, gl.FLOAT, false, 0, 0);
 
-
-
-            // Turn on the normal attribute
-            gl.enableVertexAttribArray(normalLocation);
-
             // Bind the normal buffer.
             gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-
+            gl.enableVertexAttribArray(normalLocation);
             gl.vertexAttribPointer(normalLocation, 3, gl.FLOAT, false, 0, 0);
-
+        //----------------------------------------------------------------------
         /*
             gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
             gl.enableVertexAttribArray(aColor);
             gl.vertexAttribPointer(aColor, 3, gl.FLOAT, false, 0, 0);
         */
-            gl.uniformMatrix4fv(uModel, false, modelMatrix);
-            gl.uniformMatrix4fv(uCamera, false, cameraMatrix);
+        //----------------------------------------------------------------------
+
+            gl.uniformMatrix4fv(uModelView, false, modelMatrix);
+            gl.uniformMatrix4fv(uProjection, false, projectionMatrix);
 
             //let light_vector = [0.5, 0.7, 1];
-           /* let light_vector = [ 0, 0, 1];
+            let light_vector = [ 0, 0, 1];
             vec3.normalize( light_vector, light_vector )
-            gl.uniform3fv(reverseLightDirectionLocation, light_vector );*/
+            gl.uniform3fv(reverseLightDirectionLocation, light_vector );
 
             // set the light position
             //gl.uniform3fv(lightWorldPositionLocation, [20, 30, 60]);
-            //gl.uniform3fv(lightWorldPositionLocation, [ 0, -100, 0 ]);
+            gl.uniform3fv(lightWorldPositionLocation, [ 0, 25, 50 ]);
 
             // set the shininess
-            //let shininess = 100;
-            //gl.uniform1f(shininessLocation, shininess);
-
+            let shininess = 50;
+            gl.uniform1f(shininessLocation, shininess);
 
             if ( houseView ) {
-            //korpus
-            gl.uniform4f(colorUniformLocation, 0, 0, 1, 1);
-            gl.drawArrays(gl.LINE_LOOP, 0, 4);
-            gl.drawArrays(gl.LINE_LOOP, 4, 4);
-            gl.drawArrays(gl.LINE_LOOP, 8, 4);
-            gl.drawArrays(gl.LINE_LOOP, 12, 4);
-            //head
-            gl.uniform4f(colorUniformLocation, 0, 1, 0, 1);
-            gl.drawArrays(gl.LINE_LOOP, 16, 4);
-            gl.drawArrays(gl.LINE_LOOP, 20, 4);
-            //conus
-            gl.uniform4f(colorUniformLocation, 1, 0, 0, 1);
-            gl.drawArrays(gl.LINE_LOOP, 24, 4);
-            gl.drawArrays(gl.LINE_LOOP, 28, 4);
-            gl.drawArrays(gl.LINE_LOOP, 31, 4);
-            }
+                //korpus
+                gl.uniform4f(colorUniformLocation, 0, 0, 1, 1);
+                gl.drawArrays(gl.LINE_LOOP, 0, 4);
+                gl.drawArrays(gl.LINE_LOOP, 4, 4);
+                gl.drawArrays(gl.LINE_LOOP, 8, 4);
+                gl.drawArrays(gl.LINE_LOOP, 12, 4);
+                //head
+                gl.uniform4f(colorUniformLocation, 0, 1, 0, 1);
+                gl.drawArrays(gl.LINE_LOOP, 16, 4);
+                gl.drawArrays(gl.LINE_LOOP, 20, 4);
+                //conus
+                gl.uniform4f(colorUniformLocation, 1, 0, 0, 1);
+                gl.drawArrays(gl.LINE_LOOP, 24, 4);
+                gl.drawArrays(gl.LINE_LOOP, 28, 4);
+                gl.drawArrays(gl.LINE_LOOP, 31, 4);
+                }
+
             //piles
             for ( let i = 36; i < mesh.length; i+= ( step_xy + 2 ) * 2 ) {
+
                 if ( colorMulti ) { gl.uniform4f(colorUniformLocation, colors[i], colors[i+1], colors[i+2], colors[i+3]); 
                 } else { gl.uniform4f(colorUniformLocation, 0.0,  0.0,  1.0,  1.0); };
+
                 if ( meshView == 'mesh' ) { gl.drawArrays(gl.LINE_STRIP,  i, ( step_xy + 1 ) * 2 ); 
                 } else { gl.drawArrays(gl.TRIANGLE_STRIP, i, ( step_xy + 1 ) * 2 ); }
             }
-        
+
             lastRenderTime = time;
 
             
@@ -469,16 +385,58 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
 
 
 
-  
-  function createShader(gl, sourceCode, type) {
+  /**
+ * Создание и компиляция шейдера
+ *
+ * @param {!WebGLRenderingContext} gl Контекст WebGL
+ * @param {string} shaderSource Исходный код шейдера на языке GLSL
+ * @param {number} shaderType Тип шейдера, VERTEX_SHADER или FRAGMENT_SHADER.
+ * @return {!WebGLShader} Шейдер
+ */
+  function compileShader( gl, shaderSource, shaderType ) {
     // Compiles either a shader of type gl.VERTEX_SHADER or gl.FRAGMENT_SHADER
-    const shader = gl.createShader(type);
-    gl.shaderSource(shader, sourceCode);
-    gl.compileShader(shader);
-  
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      const info = gl.getShaderInfoLog(shader);
+
+    // создаём объект шейдера
+    const shader = gl.createShader(shaderType);
+    // устанавливаем исходный код шейдера
+    gl.shaderSource( shader, shaderSource );
+    // компилируем шейдер
+    gl.compileShader( shader );
+
+    // проверяем результат компиляции
+    if (!gl.getShaderParameter( shader, gl.COMPILE_STATUS) ) {
+      const info = gl.getShaderInfoLog ( shader );
       throw `Could not compile WebGL program. \n\n${info}`;
     }
     return shader;
   }
+
+
+  /**
+ * Создаём программу из 2 шейдеров
+ *
+ * @param {!WebGLRenderingContext} gl Контекст WebGL
+ * @param {!WebGLShader} vertexShader Вершинный шейдер
+  * @param {!WebGLShader} fragmentShader Фрагментный шейдер
+  * @return {!WebGLProgram} Программа
+  */
+ function createProgram(gl, vertexShader, fragmentShader) {
+   // создаём программу
+   let program = gl.createProgram();
+  
+   // прикрепляем шейдеры
+   gl.attachShader(program, vertexShader);
+   gl.attachShader(program, fragmentShader);
+  
+   // компонуем программу
+   gl.linkProgram(program);
+  
+   // проверяем результат компоновки
+   let success = gl.getProgramParameter(program, gl.LINK_STATUS);
+   if (!success) {
+       // что-то пошло не так на этапе компоновки
+       throw ("ошибка компоновки программы:" + gl.getProgramInfoLog (program));
+   }
+  
+   return program;
+ };
