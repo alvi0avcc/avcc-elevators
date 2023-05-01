@@ -89,7 +89,7 @@ input[type="range"]::-moz-range-thumb {
 
 .myButton{
   border-radius: 15px;
-  border: 0;
+  border-width: 0;
   width: 50px;
   margin: 3px;
   height: 30px;

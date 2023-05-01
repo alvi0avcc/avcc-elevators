@@ -11,21 +11,14 @@ const FloorViewCanvas = props => {
 
     let floor = Elevators.FloorCurrentDimensions;
 
-    const [ mesh, setMesh] = React.useState([]);
-    const [ meshView, setMeshView] = React.useState(true);
-    const [ houseView, setHouseView] = React.useState(true);
-    const [ colorMulti, setColorMulti] = React.useState(true);
-    const [ step_xy, setStep_xy] = React.useState( 50 );
+    
+   // const [ meshView, setMeshView] = React.useState(true);
+    //const [ houseView, setHouseView] = React.useState(true);
+    //const [ colorMulti, setColorMulti] = React.useState(true);
 
-    const meshCalc = ()=>{
-        let a = Elevators.get_Volume_Piles_v2( Elevators.WarehouseSelected, step_xy ).mesh_3D;
-        a = matrix.MoveMatrixAny( a, -Length/2, -Width/2, -Height/2 );
-        setMesh( a );
-    }
-
-    const changeMeshStep = (event)=>{
-        setStep_xy( Number ( event.target.value ) );
-    }
+    let meshView = true;
+    let houseView =true;
+    let colorMulti = true;
 
     let Length = floor.Length;
     let Width = floor.Width;
@@ -35,7 +28,12 @@ const FloorViewCanvas = props => {
     let Conus_W = floor.Conus_W;
     let Conus_X = floor.Conus_X;
     let Conus_Y = floor.Conus_Y;
-    ;
+
+    let step_xy = 50;
+    step_xy = Elevators.get_Floor_MeshStep;
+    let mesh = [];
+    mesh = Elevators.get_Floor_Mesh_3D;
+    mesh = matrix.MoveMatrixAny( mesh, -Length/2, -Width/2, -Height/2 );
 
     // Korpus                
     let korpus_draw = [ -Length/2, -Width/2, -Height/2, 1,
@@ -335,6 +333,11 @@ const FloorViewCanvas = props => {
 
 //----------------------------------------------------------------------
         function render() {
+
+            houseView = Elevators.get_Floor_ShowHouse;
+            meshView = Elevators.get_Floor_MeshStyle;
+            colorMulti = Elevators.get_Floor_Multicolor;
+
             // Запрашиваем рендеринг на следующий кадр
             requestAnimationFrame(render);
         
@@ -413,7 +416,7 @@ const FloorViewCanvas = props => {
             for ( let i = 36; i < mesh.length; i+= ( step_xy + 2 ) * 2 ) {
                 if ( colorMulti ) { gl.uniform4f(colorUniformLocation, colors[i], colors[i+1], colors[i+2], colors[i+3]); 
                 } else { gl.uniform4f(colorUniformLocation, 0.0,  0.0,  1.0,  1.0); };
-                if ( meshView ) { gl.drawArrays(gl.LINE_STRIP,  i, ( step_xy + 1 ) * 2 ); 
+                if ( meshView == 'mesh' ) { gl.drawArrays(gl.LINE_STRIP,  i, ( step_xy + 1 ) * 2 ); 
                 } else { gl.drawArrays(gl.TRIANGLE_STRIP, i, ( step_xy + 1 ) * 2 ); }
             }
         
@@ -456,67 +459,6 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
     <div style={{ display: 'flex', flexDirection: 'row', height: 450 }}>
 
             <canvas ref={canvasRef} {...props} style={{ width: '100%', height: '100%' }} />
-
-            <div className='block' style={{ marginLeft: -100, padding: 1 }}>
-                <button
-                    className='myButton'
-                    style={{ width: 90 }}
-                    onClick={ meshCalc }
-                    >calc</button>
-                <div className='block'>
-                <label className='myText' >Mesh Step</label>
-                <input 
-                    className='inputPile'
-                    id="meshStep" name="meshStep"
-                    type='number'
-                    value={ step_xy }
-                    onChange={ changeMeshStep }
-                    />
-                </div>
-                
-                <div className='block' >
-                <label className='myText' >View:</label>
-
-                <button
-                    className='myButton'
-                    style={{ width: 80 }}
-                    onClick={ ()=>{ setMeshView(true); } }
-                    >Mesh</button>
-
-                <button
-                    className='myButton'
-                    style={{ width: 80 }}
-                    onClick={ ()=>{ setMeshView(false); } }
-                    >Solid</button>
-                </div>
-
-                <div className='block'>
-                <label className='myText' for="houseView">Show warehouse</label>
-                <input 
-                    className='inputPile'
-                    type='checkbox'
-                    value={ houseView }
-                    defaultChecked
-                    id="houseView" name="houseView"
-                    onChange={ ()=>{ setHouseView( !houseView ) } }
-                    />
-                
-                </div>
-
-                <div className='block'>
-                <label className='myText' for="colorMulti">Multicolor</label>
-                <input 
-                    className='inputPile'
-                    type='checkbox'
-                    value={ colorMulti }
-                    defaultChecked
-                    id="colorMulti" name="colorMulti"
-                    onChange={ ()=>{ setColorMulti( !colorMulti ) } }
-                    />
-                
-                </div>
-
-            </div>
 
     </div>
     );

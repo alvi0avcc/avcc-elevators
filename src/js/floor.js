@@ -233,13 +233,14 @@ function FloorSize(propsSize){
         onChange={ Conus_Y_Change }
         ></TextField>
 
+        </div>
+
+            <div className='block' style={{ width: '100%' }}>
+                { Elevators.FloorFound ?  <FloorViewCanvas/> : '' }
             </div>
 
-                <div className='block' style={{ width: '100%' }}>
-                    { Elevators.FloorFound ?  <FloorViewCanvas/> : '' }
-                </div>
-
-
+            <FloorSidePanel_3D updateState={value} callback={(data)=> setValue( data ) }/>
+                
         </div>
     )
 };
@@ -620,4 +621,125 @@ function Pile(propsPile){
 
         </div>
     )
+}
+
+function FloorSidePanel_3D( props ) {
+
+    const [ value, setValue ] = React.useState( false );
+    let step_xy = Elevators.get_Floor_MeshStep;
+    //const [step_xy, setStep_xy ] = React.useState( Elevators.get_Floor_MeshStep );
+    //const [ meshView, setMeshView] = React.useState(true);
+    //const [ houseView, setHouseView] = React.useState( Elevators.get_Floor_ShowHouse );
+    let houseView = Elevators.get_Floor_ShowHouse
+    //const [ colorMulti, setColorMulti] = React.useState( Elevators.get_Floor_Multicolor );
+    let colorMulti = Elevators.get_Floor_Multicolor;
+    let meshStyle = Elevators.get_Floor_MeshStyle;
+
+    //let houseView = true;
+    //houseView = Elevators.get_Floor_ShowHouse;
+    //console.log('houseView = ',houseView);
+
+    const changeMeshStep = (event)=>{
+        Elevators.set_Floor_MeshStep = +event.target.value;
+        //Elevators.set_Floor_MeshStep = +event.target.value;
+        //setStep_xy( +event.target.value );
+        setValue( !value );
+    }
+
+    const changeShowHouse = (event)=>{
+        Elevators.set_Floor_ShowHouse = event.target.checked;
+        //setHouseView( event.target.checked );
+        setValue( !value );
+    }
+
+    const changeMulticolor = (event)=>{
+        Elevators.set_Floor_Multicolor = event.target.checked;
+        //setColorMulti( event.target.checked );
+        setValue( !value );
+    }
+
+    const setMeshStyle_mesh = ()=>{
+        Elevators.set_Floor_MeshStyle = 'mesh';
+        setValue(!value);
+    }
+
+    const meshCalc = ()=>{
+        Elevators.set_Floor_Mesh = step_xy;
+        props.callback( !props.updateState );
+    }
+
+    const keyPress = (event)=>{
+        if ( event.keyCode == 13 )  meshCalc();
+    }
+
+    const setMeshStyle_solid = ()=>{
+        Elevators.set_Floor_MeshStyle = 'solid';
+        setValue(!value);
+    }
+
+
+    return (
+        <div className='block'>
+                <button
+                    className='myButton'
+                    style={{ width: 90 }}
+                    onClick={ meshCalc }
+                    >calc</button>
+                <div className='block'>
+                <label className='myText' >Mesh Step</label>
+                <input 
+                    className='inputPile'
+                    id="meshStep" name="meshStep"
+                    type='number'
+                    value={ step_xy }
+                    step={2}
+                    min={0}
+                    onChange={ changeMeshStep }
+                    onKeyUp={ keyPress }
+                    />
+                </div>
+                
+                <div className='block' >
+                <label className='myText' >View:</label>
+
+                <button
+                    className='myButton'
+                    style= { meshStyle == 'mesh' ? { width: 80, borderWidth: 2, borderColor: 'lime' } : { width: 80} }
+                    onClick={ setMeshStyle_mesh }
+                    >Mesh</button>
+
+                <button
+                    className='myButton'
+                    style={ meshStyle == 'solid' ? { width: 80, borderWidth: 2, borderColor: 'lime' } : { width: 80} }
+                    onClick={ setMeshStyle_solid }
+                    >Solid</button>
+                </div>
+
+                <div className='block'>
+                <label className='myText' htmlFor='houseView'>Show warehouse</label>
+                <input 
+                    className='inputPile'
+                    type='checkbox'
+                    checked={ houseView }
+                    id="houseView" name="houseView"
+                    onChange={ changeShowHouse }
+                    />
+                
+                </div>
+
+                <div className='block'>
+                <label className='myText' htmlFor="colorMulti">Multicolor</label>
+                <input 
+                    className='inputPile'
+                    type='checkbox'
+                    checked={ colorMulti }
+                    id="colorMulti" name="colorMulti"
+                    onChange={ changeMulticolor }
+                    />
+                
+                </div>
+
+        </div>
+    )
+
 }

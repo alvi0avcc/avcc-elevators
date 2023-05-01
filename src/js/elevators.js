@@ -88,6 +88,12 @@ class cWarehouse {
     this.Dimensions  = { Length: 0, Width: 0, Height: 0, Conus_height: 0, Conus_L: 0, Conus_W: 0, Conus_X: 0, Conus_Y: 0 };
     this.Pile        = [];
     this.Cargo       = {Name: '', Natura: 0 };
+    this.MeshStep   = 50;
+    this.MeshStyle  = ( 'solid', 'mesh' );
+    this.ShowHouse  = true;
+    this.Multicolor = true;
+    this.Mesh       = [];
+    this.Mesh_3D    = [];
     this.Comments    = ''
     }
 };
@@ -380,6 +386,66 @@ class cElevators {
         let result;
         if ( this.FloorFound) { result = structuredClone( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Dimensions ); }
         return( result );
+    }
+    set set_Floor_Mesh( step = 50 ){
+        step = Math.trunc( step / 2 ) * 2;
+        this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].MeshStep = step;
+        let result = this.get_Volume_Piles_v2( this.WarehouseSelected, step );
+        this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Mesh = structuredClone( result.mesh );
+        this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Mesh_3D = structuredClone( result.mesh_3D ); 
+    }
+    set set_Floor_MeshStyle ( style ){
+        this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].MeshStyle = style;
+    }
+    get get_Floor_MeshStyle (){
+        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].MeshStyle  == undefined ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].MeshStyle = 'mesh';
+        }
+        return this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].MeshStyle
+    }
+    get get_Floor_Mesh(){
+        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Mesh  == undefined ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Mesh = [];
+        }
+        return this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Mesh;
+    }
+    get get_Floor_Mesh_3D(){
+        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Mesh_3D  == undefined ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Mesh_3D = [];
+        }
+        return this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Mesh_3D;
+    }
+    get get_Floor_MeshStep(){
+        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].MeshStep == undefined ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].MeshStep = 50;
+        }
+        return this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].MeshStep;
+    }
+    set set_Floor_MeshStep( step ){
+        //step = Math.trunc( step / 2 ) * 2;
+        this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].MeshStep = step;
+    }
+    get get_Floor_ShowHouse(){
+        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].ShowHouse == undefined ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].ShowHouse = true;
+        }
+        return this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].ShowHouse;
+    }
+    set set_Floor_ShowHouse( showHouse ){
+        this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].ShowHouse = showHouse;
+    }
+    get get_Floor_Multicolor(){
+        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Multicolor == undefined ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Multicolor = true;
+        }
+        return this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Multicolor;
+    }
+    set set_Floor_Multicolor( multicolor ){
+        this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Multicolor = multicolor;
+    }
+    set_Floor_View( ShowHouse = true, Multicolor = true ){
+        this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].ShowHouse = ShowHouse;
+        this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Multicolor = Multicolor;
     }
     setFloorDimensions ( Length , Width , Height , Conus_height , Conus_L , Conus_W , Conus_X , Conus_Y ){
         if ( this.FloorFound ) {
@@ -1213,6 +1279,7 @@ class cElevators {
 
     //-------------------------------------------
     get_Volume_Piles_v2( Warehouse_Index, step_mesh = 50 ){
+        step_mesh = Math.trunc( step_mesh / 2 ) * 2;
         let z = [];
         let _z = [ 0, 0, 0 ];
         let mesh = [];
