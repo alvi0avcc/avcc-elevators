@@ -1279,6 +1279,9 @@ class cElevators {
 
     //-------------------------------------------
     get_Volume_Piles_v2( Warehouse_Index, step_mesh = 50 ){
+
+        let time1 = new Date().getTime(); //time control
+
         step_mesh = Math.trunc( step_mesh / 2 ) * 2;
         let z = [];
         let _z = [ 0, 0, 0 ];
@@ -1317,8 +1320,10 @@ class cElevators {
             let x2 = 0; let y2 = 0; let z2=0;
             let x3 = 0; let y3 = 0; let z3=0;
             let x4 = 0; let y4 = 0; let z4=0;
-            let slice_above = [];
-            let slice_over = [];
+            //let slice_above = [];
+            //let slice_over = [];
+
+            //let matrix_move = [];
 
             for ( let index = 0; index < floor.Pile.length; index++ ){ //Pile slicing
             //for ( let index = 0; index < 1; index++ ){ //Pile slicing
@@ -1335,13 +1340,17 @@ class cElevators {
 
                     //slice_above = matrix.RotateMatrix_Z_any( gPile.get_Slice_Base( max / step * i ), angle, 3 );
                     //slice_over = matrix.RotateMatrix_Z_any( gPile.get_Slice_Base( max / step * ( i + 1) ), angle, 3 );
-
+                    //matrix_move = matrix.MoveMatrixAny( matrix.RotateMatrix_Z_any( slice, angle, 3 ), dx_X, dx_Y, 0 );
+                    //console.log('matrix_move = ',matrix_move);
                     slices[index] = slices[index].concat( matrix.MoveMatrixAny( matrix.RotateMatrix_Z_any( slice, angle, 3 ), dx_X, dx_Y, 0 ) );
-
+                    //slices[index].push( matrix_move[ 0 ], matrix_move[ 1 ], matrix_move[ 2 ], matrix_move[ 3 ] );
+                    //Array.prototype.push.apply(slices[index], matrix.MoveMatrixAny( matrix.RotateMatrix_Z_any( slice, angle, 3 ), dx_X, dx_Y, 0 ));
                 }
                 xy_gab = Spline.get_Max_Gabarit_ver2( slices[ index ], count );
-                slices[index] = slices[index].concat( xy_gab );
+                //slices[index] = slices[index].concat( xy_gab );
+                slices[index].push( xy_gab );
             }//Pile slicing
+            //console.log('slices = ',slices);
 
 
             let dx = Length / step_xy;
@@ -1361,7 +1370,9 @@ class cElevators {
 
                     pile: for ( let index = 0; index < slices.length; index++ ){
 
-                        _xy_gab = slices[ index ][ slices[ index ].length -1 ];
+                        let slice_Index = slices[index];
+
+                        _xy_gab = slice_Index[ slices[ index ].length -1 ];
 
                         // check X position for each Pile
                         if ( _xy_gab.x_min <= ( x * dx ) && ( x * dx ) <= _xy_gab.x_max ) {
@@ -1369,27 +1380,38 @@ class cElevators {
                             if ( _xy_gab.y_min <= ( y * dy ) && ( y * dy ) <= _xy_gab.y_max ) {
                                 
                                 slises: for ( let i = 0; i < step; i++ ){
+
+                                    let count_i = count * i;
+                                    let count_j = 0;
+
                                     segments: for ( let j = 0; j < count - 1 - 4; j+=4 ){
-                                        x1 = slices[ index ][ count * i + j ];
-                                        y1 = slices[ index ][ count * i + j +1 ];
-                                        z1 = slices[ index ][ count * i + j +2 ];
+                                        count_j = count + j;
 
-                                        x2 = slices[ index ][ count * i + j +4 ];
-                                        y2 = slices[ index ][ count * i + j +5 ];
-                                        z2 = slices[ index ][ count * i + j +6 ];
+                                        x1 = slice_Index[ count_i + j ];
+                                        y1 = slice_Index[ count_i + j + 1 ];
+                                        z1 = slice_Index[ count_i + j + 2 ];
 
-                                        x3 = slices[ index ][ count * i + count + j ];
-                                        y3 = slices[ index ][ count * i + count + j+1 ];
-                                        z3 = slices[ index ][ count * i + count + j+2 ];
+                                        x2 = slice_Index[ count_i + j + 4 ];
+                                        y2 = slice_Index[ count_i + j + 5 ];
+                                        z2 = slice_Index[ count_i + j + 6 ];
 
-                                        x4 = slices[ index ][ count * i + count + j+4 ];
-                                        y4 = slices[ index ][ count * i + count + j+5 ];
-                                        z4 = slices[ index ][ count * i + count + j+6 ];
+                                        x3 = slice_Index[ count_i + count_j ];
+                                        y3 = slice_Index[ count_i + count_j + 1 ];
+                                        z3 = slice_Index[ count_i + count_j + 2 ];
+
+                                        x4 = slice_Index[ count_i + count_j + 4 ];
+                                        y4 = slice_Index[ count_i + count_j + 5 ];
+                                        z4 = slice_Index[ count_i + count_j + 6 ];
 
                                         if ( Calc.Point_inside_Triangle( x1, y1, x2, y2, x4, y4, x*dx, y*dy )  ) {
                                             _z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x2, y2, z2 ], [ x4, y4, z4 ], [ x*dx, y*dy, 0 ], [ 0, 0, 1 ] );
                                             break slises;
                                         }
+/*
+                                        if ( Calc.Point_inside_Triangle( x1, y1, x4, y4, x2, y2, x*dx, y*dy )  ) {
+                                            _z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x4, y4, z4 ], [ x2, y2, z2 ], [ x*dx, y*dy, 0 ], [ 0, 0, 1 ] );
+                                            break slises;
+                                        }*/
 
                                         if ( Calc.Point_inside_Triangle( x1, y1, x3, y3, x4, y4, x*dx, y*dy ) ) {
                                             _z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x3, y3, z3 ], [ x4, y4, z4 ], [ x*dx, y*dy, 0 ], [ 0, 0, 1 ] );
@@ -1409,26 +1431,39 @@ class cElevators {
                         if ( _z[ 2 ] > z[ 2 ] ) { z = _z.slice(0); }
                         //console.log('_z = ', _z );
                     } // pile
-                    mesh = mesh.concat( z, [ 1 ] );
+                    //mesh = mesh.concat( z, [ 1 ] );
+                    mesh.push( z[ 0 ], z[ 1 ], z[ 2 ], 1 );
 
                 }// coord_Y
             }// coord_X
             
             let n = 0;
             let m = 0;
-            console.log('mesh = ',mesh);
+            //console.log('mesh = ',mesh);
             for ( let j = 0; j < step_mesh; j++ ) {
                 n = j * ( step_mesh + 1 ) * 4 ;
                 m = ( j + 1 ) * ( step_mesh + 1 ) * 4;  
-                mesh_3D = mesh_3D.concat ( mesh.slice( n , n + 4 ) );  
+                //mesh_3D = mesh_3D.concat ( mesh.slice( n , n + 4 ) ); 
+                mesh_3D.push( mesh[ n ], mesh[ n + 1 ], mesh[ n + 2 ], mesh[ n + 3 ] );
+                let m_i = 0;
+                let n_i = 0;
+                let m_step = 0;
                 for ( let i = 0; i <= step_mesh * 4; i+=4 ){
+                    m_i = m + i;
+                    n_i = n + i;
+                    m_step = m + step_mesh * 4;
                     //mesh_3D = mesh_3D.concat ( mesh.slice( n + i, n + i + 4 ), mesh.slice( n + i + 4, n + i + 4 + 4 ), mesh.slice( m + i, m + i + 4  ) );
-                    mesh_3D = mesh_3D.concat ( mesh.slice( m + i, m + i + 4 ), mesh.slice( n + i + 4, n + i + 4 + 4 ) );
+                    //mesh_3D = mesh_3D.concat ( mesh.slice( m + i, m + i + 4 ), mesh.slice( n + i + 4, n + i + 4 + 4 ) );
+                    mesh_3D.push( mesh[ m_i ], mesh[ m_i +1 ], mesh[ m_i +2 ], mesh[ m_i +3 ], mesh[ n_i + 4 ], mesh[ n_i + 5 ], mesh[ n_i + 6 ], mesh[ n_i + 7 ] );
                     }
-                mesh_3D = mesh_3D.concat ( mesh.slice( m + step_mesh * 4 + 4, m + step_mesh * 4 + 4 + 4 ) );
+                //mesh_3D = mesh_3D.concat ( mesh.slice( m + step_mesh * 4 + 4, m + step_mesh * 4 + 4 + 4 ) );
+                mesh_3D.push( mesh[ m_step + 4 ], mesh[ m_step + 5 ], mesh[ m_step + 6 ], mesh[ m_step + 7 ] );
             }
-            console.log('mesh_3D 1= ',mesh_3D);
+            //console.log('mesh_3D 1= ',mesh_3D);
         }//if
+
+        let time2 = new Date().getTime(); // time control
+        console.log('get_Volume_Piles_v2 - (time working) = ', time2 - time1, ' ms');
         
         return { mesh, mesh_3D, volume };
     };//get_Volume_Piles ver.2

@@ -6,6 +6,7 @@ import * as Calc from './calc.js';
 
 const FloorViewCanvas = props => {
 
+    let time1 = new Date().getTime(); //time control
     
     const canvasRef = useRef(null)
 
@@ -27,6 +28,7 @@ const FloorViewCanvas = props => {
     let step_xy = 50;
     step_xy = Elevators.get_Floor_MeshStep;
     let mesh = [];
+
     mesh = Elevators.get_Floor_Mesh_3D;
     mesh = matrix.MoveMatrixAny( mesh, -Length/2, -Width/2, -Height/2 );
 
@@ -87,21 +89,30 @@ const FloorViewCanvas = props => {
     let colors = [];
     let normal = [];
     for ( let i = 0; i < 36; i++ ){
-        normal = normal.concat( [ 0, 0, 1 ] );
+        //normal = normal.concat( [ 0, 0, 1 ] );
+        normal.push( 0, 0, 1 );
     }
+
     //let normal = [];
     let _normal = [];
     for ( let i = 0; i < mesh.length; i+=4 ) {
-        colors = colors.concat( Math.random(), Math.random(), Math.random(), 1 );
+        //colors = colors.concat( Math.random(), Math.random(), Math.random(), 1 );
+        colors.push( Math.random(), Math.random(), Math.random(), 1 );
         _normal = Calc.Normal_from_3points( mesh.slice( i, i + 3 ), mesh.slice( i+4, i + 3+4 ), mesh.slice( i+8, i + 3+8 ) );
         //vec3.normalize( _normal, _normal );
-        normal = normal.concat( _normal );
+        //normal = normal.concat( _normal );
+        normal.push( _normal[0], _normal[1], _normal[2] );
     }
+
     //normal = normal.concat( [ 0,0,0 ] );
     //console.log('normal = ', normal);
 
+    let time2 = new Date().getTime(); // time control
+    console.log('floor - canvas init - (time working) = ', time2 - time1, ' ms');
 
     const draw = (gl) => {
+
+        let time1 = new Date().getTime(); //time control draw 
 
     // Запомним время последней отрисовки кадра
     let lastRenderTime = Date.now();
@@ -251,6 +262,9 @@ const FloorViewCanvas = props => {
             let modelMatrix = mat4.create();
             mat4.rotateX(modelMatrix, modelMatrix, -3.14/4);
 
+
+            let time2 = new Date().getTime(); // time control draw
+            console.log('floor - draw - (time working) = ', time2 - time1, ' ms');
 //----------------------------------------------------------------------
         function render() {
 

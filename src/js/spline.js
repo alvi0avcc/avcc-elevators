@@ -128,7 +128,7 @@ export function get_Max_Gabarit( slice = [ 0, 0, 0, 1 ] ){
 }
 
 export function get_Max_Gabarit_ver2( slice = [ 0 ], count = 0 ){
-    console.log('slice = ', slice);
+    //console.log('slice = ', slice);
     let x_min = slice[ 0 ];
     let x_max = slice[ 0 ];
     let y_min = slice[ 1 ];

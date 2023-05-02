@@ -164,7 +164,7 @@ function FloorSize(propsSize){
         <br/>
         <TextField
         size='small'
-        label='Длина'
+        label='Length'
         type='number'
         value={Length}
         onChange={ Length_Change }
@@ -173,7 +173,7 @@ function FloorSize(propsSize){
         <TextField
         style={{ marginTop: 7 }}
         size='small'
-        label='Ширина'
+        label='Width'
         type='number'
         value={Width}
         onChange={ Width_Change }
@@ -182,7 +182,7 @@ function FloorSize(propsSize){
         <TextField
         style={{ marginTop: 7 }}
         size='small'
-        label='Высота'
+        label='Height'
         type='number'
         value={Height}
         onChange={ Height_Change }
@@ -191,7 +191,7 @@ function FloorSize(propsSize){
         <TextField
         style={{ marginTop: 7 }}
         size='small'
-        label='Глубина нижнего конуса'
+        label='Bottom Cone depth'
         type='number'
         value={Conus_height}
         onChange={ Conus_height_Change }
@@ -200,7 +200,7 @@ function FloorSize(propsSize){
         <TextField
         style={{ marginTop: 7 }}
         size='small'
-        label='длина окна нижнего конуса'
+        label='Bottom cone window length'
         type='number'
         value={Conus_L}
         onChange={ Conus_L_Change }
@@ -209,7 +209,7 @@ function FloorSize(propsSize){
         <TextField
         style={{ marginTop: 7 }}
         size='small'
-        label='ширина окна нижнего конуса'
+        label='Bottom cone window width'
         type='number'
         value={Conus_W}
         onChange={ Conus_W_Change }
@@ -218,7 +218,7 @@ function FloorSize(propsSize){
         <TextField
         style={{ marginTop: 7 }}
         size='small'
-        label='X нижнего конуса'
+        label='Bottom cone location by length'
         type='number'
         value={Conus_X}
         onChange={ Conus_X_Change }
@@ -227,7 +227,7 @@ function FloorSize(propsSize){
         <TextField
         style={{ marginTop: 7 }}
         size='small'
-        label='Y нижнего конуса'
+        label='Bottom cone location by width'
         type='number'
         value={Conus_Y}
         onChange={ Conus_Y_Change }

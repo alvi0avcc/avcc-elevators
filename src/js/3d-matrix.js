@@ -165,13 +165,16 @@ export function MoveMatrix( matrix, dx, dy, dz ){
 //------------------------------------------------------------------------------------------------
 export function MoveMatrixAny(matrix, dx, dy, dz) {
   let point = new Array(4);
+  let mult = [];
   let result = [];
   for ( let i = 0; i < matrix.length; i=i+4 ) {
     point[0] = matrix[i];
     point[1] = matrix[i+1];
     point[2] = matrix[i+2];
     point[3] = matrix[i+3];
-    result = result.concat( multiplyMatrixAndPoint( getTranslationMatrix( dx, dy, dz ), point ) );
+    mult = multiplyMatrixAndPoint( getTranslationMatrix( dx, dy, dz ), point );
+    //result = result.concat( multiplyMatrixAndPoint( getTranslationMatrix( dx, dy, dz ), point ) );
+    result.push( mult[ 0 ], mult[ 1 ], mult[ 2 ], mult[ 3 ]  );
   };
   return result;
 }
@@ -248,6 +251,7 @@ export function RotateMatrix_Z( matrix, angle ){
      */
 export function RotateMatrix_Z_any( matrix, angle, type = 4 ) {
   let point = new Array(4);
+  let mult = [];
   let result = [];
   for ( let i = 0; i < matrix.length; i=i+4 ) {
     point[0] = matrix[i];
@@ -255,7 +259,8 @@ export function RotateMatrix_Z_any( matrix, angle, type = 4 ) {
     point[2] = matrix[i+2];
     if ( type === 3 ) point[3] = 1;
     if ( type === 4 ) point[3] = matrix[i+3];
-    result = result.concat( multiplyMatrixAndPoint( getRotation_Z( angle ), point ) );
+    mult = multiplyMatrixAndPoint( getRotation_Z( angle ), point );
+    result.push( mult[ 0 ],  mult[ 1 ],  mult[ 2 ],  mult[ 3 ] );
   };
   return result;
 }

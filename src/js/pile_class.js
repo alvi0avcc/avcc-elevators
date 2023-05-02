@@ -215,7 +215,8 @@ get_Slice_Base( level ) {
     points[7] = x2;//w
     let xy = getCurvePoints( points, this.Tension_Base, true, this.numOfSegments );
     for ( let i = 0; i < xy.length; i+=2 ){
-        xyz = xyz.concat( [ xy[i], xy[i+1], level, 1 ] );
+        //xyz = xyz.concat( [ xy[i], xy[i+1], level, 1 ] );
+        xyz.push( xy[i], xy[i+1], level, 1 );
     }
     return xyz;
 }
