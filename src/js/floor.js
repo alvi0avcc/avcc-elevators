@@ -146,7 +146,7 @@ function FloorSize(propsSize){
         };
 
     return (
-        <div className='block' style={{ display: 'flex', flexDirection: 'row' }}>
+        <div className='block' style={{ display: 'flex', flexDirection: 'row', minWidth: 1000 }}>
 
         <div 
             className='block'
