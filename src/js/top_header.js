@@ -11,7 +11,7 @@ export default function TopHeader(){
 
     return (
         <>
-        <AppBar style={{ position: 'sticky' }}>
+        <AppBar style={{ position: 'static' }}>
         <Toolbar sx={{ alignContent: 'space-between' }}>
             <Box sx={{ flexGrow: 1 }}></Box>
         <Typography
