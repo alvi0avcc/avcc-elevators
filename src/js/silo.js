@@ -233,7 +233,7 @@ function SiloInfo(){
                 <TextField 
                   value={ Elevators.SiloVolume } 
                   style={ Elevators.SiloVolume < 0 || Elevators.SiloVolume == null ? {backgroundClip: 'content-box', backgroundColor: 'yellow'} :  { backgroundClip: 'content-box', backgroundColor: ''} }
-                  label="Сargo volume (m³)" 
+                  label="Cargo volume (m³)" 
                   sx={{ p: 1 }} 
                   size='small' />
                 <TextField 

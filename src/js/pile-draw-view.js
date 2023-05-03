@@ -241,8 +241,8 @@ function Pile_Draw( ctx, index, mode, boss_index, mesh ){
 
     gPile.set_Initial_Data_Complex ( pile, numOfSegments );//initialisation Pile
 
-    let x_center  = ( ctx.canvas.width - 90 ) / 2;
-    let y_center = ctx.canvas.height/2;
+    let x_center  = ( ctx.canvas.clientWidth - 90 ) / 2;
+    let y_center = ctx.canvas.clientHeight/2;
     let z_center = 0;
 
     let l = Number(pile.Base.length);
@@ -260,6 +260,10 @@ function Pile_Draw( ctx, index, mode, boss_index, mesh ){
 
     let zoom = 1;
 
+    let zoom_L = 1;
+    let zoom_W = 1;
+    let zoom_H = 1;
+
     let volume;
 
     let x_location = pile.X;
@@ -274,11 +278,13 @@ function Pile_Draw( ctx, index, mode, boss_index, mesh ){
 
         angle = 0;
 
-        let zoom_L = ( ctx.canvas.width - 90 ) / l;
-        let zoom_W = ctx.canvas.height / w;
-        let zoom_H = ctx.canvas.height / total_H;
+        zoom_L = ( ctx.canvas.clientWidth ) / l;
+        zoom_W = ctx.canvas.clientHeight / w;
+        zoom_H = ctx.canvas.clientHeight / h;
         zoom = Math.min( zoom_L, zoom_W, zoom_H );
-        zoom = zoom * 0.9 ;
+        zoom = zoom * 0.8 ;
+
+        
 
         x_location = 0;
         y_location = 0;
@@ -297,11 +303,12 @@ function Pile_Draw( ctx, index, mode, boss_index, mesh ){
 
     } else {
 
-        let zoom_L = ( ctx.canvas.width - 90 ) / floor_lenght;
-        let zoom_W = ctx.canvas.height / floor_width;
-        let zoom_H = ctx.canvas.height / floor_height;
+        zoom_L = ( ctx.canvas.clientWidth ) / floor_lenght;
+        zoom_W = ctx.canvas.clientHeight / floor_width;
+        zoom_H = ctx.canvas.clientHeight / floor_height;
         zoom = Math.min( zoom_L, zoom_W, zoom_H );
-        zoom = zoom * 0.9 ;
+        zoom = zoom * 0.8 ;
+        
 
         x_location = pile.X - floor_lenght / 2;
         y_location = floor_width / 2 - pile.Y;
@@ -320,6 +327,7 @@ function Pile_Draw( ctx, index, mode, boss_index, mesh ){
                                 -floor_lenght /2, -floor_width / 2, 0, 1];
             floor_points  = MoveMatrixAny( floor_points, 0, 0, -floor_height / 2 );
             floor_points  = ScaleMatrixAny1zoom( floor_points, zoom );
+            //floor_points  = ScaleMatrixAny( floor_points, zoom_L, zoom_W, zoom_H );
             floor_points  = RotateMatrix_X_any( floor_points, angle_X );
             floor_points  = RotateMatrix_Y_any( floor_points, angle_Y );
             floor_points  = RotateMatrix_Z_any( floor_points, angle_Z );
@@ -345,6 +353,7 @@ if ( pile.Height > 0 ){
         slices  = RotateMatrix_Z_any( slices, angle );
         slices  = MoveMatrixAny( slices, x_location, y_location, dh + z_location );
         slices  = ScaleMatrixAny1zoom( slices, zoom );
+        //slices  = ScaleMatrixAny( slices, zoom_L, zoom_W, zoom_H );
         slices  = RotateMatrix_X_any( slices, angle_X );
         slices  = RotateMatrix_Y_any( slices, angle_Y );
         slices  = RotateMatrix_Z_any( slices, angle_Z );

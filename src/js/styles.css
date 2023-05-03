@@ -351,3 +351,18 @@ input[type="range"]::-moz-range-thumb {
   transition-duration: 2s;
   opacity: 1;
 }
+
+.container {
+  position: relative;
+}
+#overlay {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  background-color: transparent;
+  color: black;
+  font-family: serif;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 1em;
+}

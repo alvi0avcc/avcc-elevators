@@ -185,7 +185,7 @@ export function ScaleMatrix( matrix, dx, dy, dz ){
 }
 //------------------------------------------------------------------------------------------------
 export function ScaleMatrixAny1zoom(matrix, zoom) {
-  return ScaleMatrixAny(matrix, zoom, zoom, zoom/2);//???? zoom for z =  zoom /2
+  return ScaleMatrixAny( matrix, zoom, zoom, zoom );
 }
 //------------------------------------------------------------------------------------------------
 export function ScaleMatrixAny(matrix, dx, dy, dz) {

@@ -27,10 +27,15 @@ const FloorViewCanvas = props => {
 
     let step_xy = 50;
     step_xy = Elevators.get_Floor_MeshStep;
-    let mesh = [];
 
+    
+
+    let mesh = [];
     mesh = Elevators.get_Floor_Mesh_3D;
     mesh = matrix.MoveMatrixAny( mesh, -Length/2, -Width/2, -Height/2 );
+
+    let strip = [];
+    strip = Elevators.get_Floor_Strip;
 
     // Korpus                
     let korpus_draw = [ -Length/2, -Width/2, -Height/2, 1,
@@ -84,6 +89,7 @@ const FloorViewCanvas = props => {
 
     //let vertices = mesh.concat( korpus_draw, head_draw, conus_draw  );
     let vertices = korpus_draw.concat( head_draw, conus_draw, mesh );
+    //vertices = matrix.ScaleMatrixAny1zoom( vertices, 10 );
     //let vertices = mesh ;
 
     let colors = [];
@@ -207,12 +213,12 @@ const FloorViewCanvas = props => {
     let program = createProgram(gl, vertexShader, fragmentShader)
 
     //--------------------------------------------Инициализация шейдеров
-        var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+        //var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
         //perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
 
     //--------------------------------------------Устанавливаем вьюпорт у WebGL
         //gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-        gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight)
+        gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
     //--------------------------------------------Получим местоположение переменных в программе шейдеров
         let uModelView = gl.getUniformLocation(program, 'u_modelView');
@@ -256,10 +262,24 @@ const FloorViewCanvas = props => {
             }*/
         //--------------------------------------------
             let projectionMatrix = mat4.create();
-            mat4.ortho(projectionMatrix, 0, 70, 0, 70, 0, 200);
-            mat4.translate(projectionMatrix, projectionMatrix, [ 35, 30, -100 ]);
+
+            //var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+            //var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+            //mat4.perspective(projectionMatrix, 3, 1, -50, 1000);
+            //gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight)
+            mat4.ortho(projectionMatrix, 0, gl.drawingBufferWidth, 0, gl.drawingBufferHeight, -500, 500);
+            //mat4.translate(projectionMatrix, projectionMatrix, [ 35, 30, -100 ]);
+            mat4.translate(projectionMatrix, projectionMatrix, [ gl.drawingBufferWidth / 2, gl.drawingBufferHeight / 2 , 0 ]);
 
             let modelMatrix = mat4.create();
+            //mat4.scale(modelMatrix, modelMatrix, [ 10, 10, 10 ]);
+            let zoom_L = gl.drawingBufferWidth / Length;
+            let zoom_W = gl.drawingBufferHeight / Width;
+            let zoom_H = gl.drawingBufferHeight / Height;
+            let zoom = Math.min( zoom_L, zoom_W, zoom_H );
+            zoom = zoom * 0.7;
+
+            mat4.scale( modelMatrix, modelMatrix, [ zoom, zoom, zoom ] );
             mat4.rotateX(modelMatrix, modelMatrix, -3.14/4);
 
 
@@ -316,7 +336,7 @@ const FloorViewCanvas = props => {
 
             // set the light position
             //gl.uniform3fv(lightWorldPositionLocation, [20, 30, 60]);
-            gl.uniform3fv(lightWorldPositionLocation, [ 0, 25, 50 ]);
+            gl.uniform3fv(lightWorldPositionLocation, [ 0, 300, 300 ]);
 
             // set the shininess
             let shininess = 50;
@@ -341,14 +361,37 @@ const FloorViewCanvas = props => {
                 }
 
             //piles
-            for ( let i = 36; i < mesh.length; i+= ( step_xy + 2 ) * 2 ) {
+        /*    for ( let i = 36; i < mesh.length; i+= ( step_xy + 2 ) * 2 ) {
 
                 if ( colorMulti ) { gl.uniform4f(colorUniformLocation, colors[i], colors[i+1], colors[i+2], colors[i+3]); 
                 } else { gl.uniform4f(colorUniformLocation, 0.0,  0.0,  1.0,  1.0); };
 
                 if ( meshView == 'mesh' ) { gl.drawArrays(gl.LINE_STRIP,  i, ( step_xy + 1 ) * 2 ); 
                 } else { gl.drawArrays(gl.TRIANGLE_STRIP, i, ( step_xy + 1 ) * 2 ); }
+            }*/
+
+            //let line = 0;
+            let start = 0;
+            let count = 0;
+            //console.log('strip = ',strip);
+            for ( let line = 0; line < strip.length; line ++ ) {
+                
+                //for ( let i = 36; i < mesh.length; i+= ( step_xy + 2 ) * 2 ) {
+                    //if ( strip[ line ] <> )
+                    //if ( line < strip.length ) {
+                    //start = strip[ line +1].start;
+                    count = strip[ line ].count;
+                    let i = 36 + line * ( step_xy + 2 ) * 2 + start;
+                   // }
+                   
+                    if ( colorMulti ) { gl.uniform4f(colorUniformLocation, colors[i], colors[i+1], colors[i+2], colors[i+3]); 
+                    } else { gl.uniform4f(colorUniformLocation, 0.0,  0.0,  1.0,  1.0); };
+
+                    if ( meshView == 'mesh' ) { gl.drawArrays( gl.LINE_STRIP, i, ( count + 1 ) * 2 ); 
+                    } else { gl.drawArrays(gl.TRIANGLE_STRIP, i, ( count + 1 ) * 2 ); }
+                    //line++;
             }
+            
 
             lastRenderTime = time;
 
@@ -377,8 +420,9 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
       
       const canvas = canvasRef.current;
       const { width, height } = canvas.getBoundingClientRect();
-      canvas.height = height;
-      canvas.width = width;
+      //canvas.height = window.innerHeight;
+      canvas.height = 450;
+      canvas.width = window.innerWidth - 460;
       const gl = canvas.getContext('webgl')
   
         draw(gl)
@@ -388,7 +432,13 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
     return (
     <div style={{ display: 'flex', flexDirection: 'row', height: 450 }}>
 
-            <canvas ref={canvasRef} {...props} style={{ width: '100%', height: '100%' }} />
+        <div class="container">
+            <canvas id="canvas" ref={canvasRef} {...props} />
+            <div id="overlay">
+                <div>Volume: <span id="floor_volume">{Elevators.get_Floor_Volume} (m³)</span></div>
+            </div>
+        </div>
+            
 
     </div>
     );
