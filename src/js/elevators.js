@@ -1333,6 +1333,7 @@ class cElevators {
                 dx_X = pile.X;
                 dx_Y = pile.Y;
                 angle = pile.angle;
+                let box = pile.underBase_Height;
                 max = get_Max_Y_3D( gPile.get_Contur_Arc_Length ) - 0.0001;
                 slices.push([]);
                 for ( let i = 0; i <= step; i++ ){ 
@@ -1342,7 +1343,7 @@ class cElevators {
                     //slice_over = matrix.RotateMatrix_Z_any( gPile.get_Slice_Base( max / step * ( i + 1) ), angle, 3 );
                     //matrix_move = matrix.MoveMatrixAny( matrix.RotateMatrix_Z_any( slice, angle, 3 ), dx_X, dx_Y, 0 );
                     //console.log('matrix_move = ',matrix_move);
-                    slices[index] = slices[index].concat( matrix.MoveMatrixAny( matrix.RotateMatrix_Z_any( slice, angle, 3 ), dx_X, dx_Y, 0 ) );
+                    slices[index] = slices[index].concat( matrix.MoveMatrixAny( matrix.RotateMatrix_Z_any( slice, angle, 3 ), dx_X, dx_Y, box ) );
                     //slices[index].push( matrix_move[ 0 ], matrix_move[ 1 ], matrix_move[ 2 ], matrix_move[ 3 ] );
                     //Array.prototype.push.apply(slices[index], matrix.MoveMatrixAny( matrix.RotateMatrix_Z_any( slice, angle, 3 ), dx_X, dx_Y, 0 ));
                 }
@@ -1459,7 +1460,7 @@ class cElevators {
                 //mesh_3D = mesh_3D.concat ( mesh.slice( m + step_mesh * 4 + 4, m + step_mesh * 4 + 4 + 4 ) );
                 mesh_3D.push( mesh[ m_step + 4 ], mesh[ m_step + 5 ], mesh[ m_step + 6 ], mesh[ m_step + 7 ] );
             }
-            //console.log('mesh_3D 1= ',mesh_3D);
+            console.log('mesh_3D = ',mesh_3D);
         }//if
 
         let time2 = new Date().getTime(); // time control

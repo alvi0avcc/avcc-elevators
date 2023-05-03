@@ -185,18 +185,21 @@ export function ScaleMatrix( matrix, dx, dy, dz ){
 }
 //------------------------------------------------------------------------------------------------
 export function ScaleMatrixAny1zoom(matrix, zoom) {
-  return ScaleMatrixAny(matrix, zoom, zoom, zoom);
+  return ScaleMatrixAny(matrix, zoom, zoom, zoom/2);//???? zoom for z =  zoom /2
 }
 //------------------------------------------------------------------------------------------------
 export function ScaleMatrixAny(matrix, dx, dy, dz) {
   let point = new Array(4);
   let result = [];
+  let mult = [];
   for ( let i = 0; i < matrix.length; i=i+4 ) {
     point[0] = matrix[i];
     point[1] = matrix[i+1];
     point[2] = matrix[i+2];
     point[3] = matrix[i+3];
-    result = result.concat( multiplyMatrixAndPoint( getScaleMatrix( dx, dy, dz ), point ) );
+    //result = result.concat( multiplyMatrixAndPoint( getScaleMatrix( dx, dy, dz ), point ) );
+    mult = multiplyMatrixAndPoint( getScaleMatrix( dx, dy, dz ), point );
+    result.push( mult[ 0 ],  mult[ 1 ],  mult[ 2 ],  mult[ 3 ] );
   };
   return result;
 }
@@ -209,12 +212,15 @@ export function RotateMatrix_X( matrix, angle ){
 export function RotateMatrix_X_any(matrix, angle) {
   let point = new Array(4);
   let result = [];
+  let mult = [];
   for ( let i = 0; i < matrix.length; i=i+4 ) {
     point[0] = matrix[i];
     point[1] = matrix[i+1];
     point[2] = matrix[i+2];
     point[3] = matrix[i+3];
-    result = result.concat( multiplyMatrixAndPoint( getRotation_X( angle ), point ) );
+    //result = result.concat( multiplyMatrixAndPoint( getRotation_X( angle ), point ) );
+    mult = multiplyMatrixAndPoint( getRotation_X( angle ), point );
+    result.push( mult[ 0 ],  mult[ 1 ],  mult[ 2 ],  mult[ 3 ] );
   };
   return result;
 }
@@ -227,12 +233,15 @@ export function RotateMatrix_Y( matrix, angle ){
 export function RotateMatrix_Y_any( matrix, angle ){
   let point = new Array(4);
   let result = [];
+  let mult = [];
   for ( let i = 0; i < matrix.length; i=i+4 ) {
     point[0] = matrix[i];
     point[1] = matrix[i+1];
     point[2] = matrix[i+2];
     point[3] = matrix[i+3];
-    result = result.concat( multiplyMatrixAndPoint( getRotation_Y( angle ), point ) );
+    //result = result.concat( multiplyMatrixAndPoint( getRotation_Y( angle ), point ) );
+    mult = multiplyMatrixAndPoint( getRotation_Y( angle ), point );
+    result.push( mult[ 0 ],  mult[ 1 ],  mult[ 2 ],  mult[ 3 ] );
   };
   return result;
 }
