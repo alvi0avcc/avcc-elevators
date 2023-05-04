@@ -78,6 +78,7 @@ class cPile {
             this.angle_X = -70;
             this.angle_Y = 15;
             this.angle_Z = -10;
+            this.Volume = 0;
         }
     }
 
@@ -378,6 +379,13 @@ class cElevators {
             result =structuredClone( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] );
             }
         return( result );
+    }
+    get_Pile_Volume( index = 0 ){
+        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Volume == undefined ) return ( 0 );
+        return ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Volume );
+    }
+    set_Pile_Volume( index = 0, volume = 0 ){
+        this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Volume = volume;
     }
     get FloorCurrent(){
         let result;

@@ -359,10 +359,10 @@ input[type="range"]::-moz-range-thumb {
   position: absolute;
   left: 10px;
   bottom: 10px;
-  background-color: transparent;
+  background-color: rgba(117, 190, 218, 0.5);
   color: black;
   font-family: serif;
   font-size: 18px;
   font-weight: bold;
-  padding: 1em;
+  padding: 0.5em;
 }

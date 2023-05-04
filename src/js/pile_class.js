@@ -1,5 +1,6 @@
 import { getCurvePoints, getPoints_by_Y, get_Max_Y_3D } from './spline.js'; // spline
 import { interpolation, MyRound, Volume_Pillers, DistanceBetweenPoints, Square_by_slice } from './calc.js';
+import { Elevators } from './elevators.js';
 
 export default class cgPile{
     constructor() {
@@ -197,7 +198,11 @@ get get_Contur_Arc_Widht(){
 }
 
 get_Slice_Base( level ) {
-    let xyz = [];
+    if ( this.Height == 0 ) {
+        console.log(' Error - Pile height (hat) = 0 !');
+        return ( [] );
+    }
+    let xyz = [];  
     let contur_L = this.Length_Arc_Points;
     let contur_W = this.Widht_Arc_Points;
     let xy_L = getPoints_by_Y( level , contur_L );
@@ -260,6 +265,7 @@ get get_Volume(){
     
     volume2 = MyRound( volume2, 3 );
     volume = MyRound( volume1 + volume2 + volume3 , 3 );
+    
     return { volume, volume1, volume2, volume3 };
 }
 

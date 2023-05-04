@@ -70,13 +70,14 @@ const PileViewCanvas = props => {
 
     if ( mode == 'model' ) { Pile_Draw( ctx, +props.index, mode, +props.index, mesh ); 
     } else {
-            for (let i = 0; i < Elevators.PileFound; i ++ ) {
+            for (let index = 0; index < Elevators.PileFound; index ++ ) {
 
-                Pile_Draw( ctx, +i, mode, +props.index, mesh  );
+                Pile_Draw( ctx, +index, mode, +props.index, mesh  );
             }
         }
 
   }
+
 //-------------------------------------------------------------
 
   useEffect(() => {
@@ -102,13 +103,22 @@ const PileViewCanvas = props => {
     }
   }, [draw])
   
+/*
+  <div class="container">
+  <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }}/>
+      <div id="overlay">
+          <div>Volume: <span id="floor_volume">{ Elevators.get_Pile_Volume( +props.index ) } (m³)</span></div>
+      </div>
+  </div>
+*/
+
   return (
     <div>
         <div style={{ display: 'flex', flexDirection: 'row', height: 570 }}>
-        
-        <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }}/>
 
-            <div className='block' style={{ marginLeft: -91, padding: 1 }} >
+            <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }}/>
+
+            <div className='block' style={{ marginLeft: -91, padding: 1, zIndex: 1 }} >
                 <button
                 className='myButton'
                 style={{ width: 80 }}
@@ -241,6 +251,11 @@ function Pile_Draw( ctx, index, mode, boss_index, mesh ){
 
     gPile.set_Initial_Data_Complex ( pile, numOfSegments );//initialisation Pile
 
+    //get & put calculated Volume
+    let volume = 0;
+    volume = gPile.get_Volume;
+    Elevators.set_Pile_Volume( boss_index, volume.volume );
+
     let x_center  = ( ctx.canvas.clientWidth - 90 ) / 2;
     let y_center = ctx.canvas.clientHeight/2;
     let z_center = 0;
@@ -263,8 +278,6 @@ function Pile_Draw( ctx, index, mode, boss_index, mesh ){
     let zoom_L = 1;
     let zoom_W = 1;
     let zoom_H = 1;
-
-    let volume;
 
     let x_location = pile.X;
     let y_location = pile.Y;
@@ -291,6 +304,9 @@ function Pile_Draw( ctx, index, mode, boss_index, mesh ){
         z_location = 0;
 
         line_width = 1;
+
+
+
 
         // bottom text
         ctx.fillStyle   = 'black';

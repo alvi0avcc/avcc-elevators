@@ -150,7 +150,7 @@ function FloorSize(propsSize){
 
         <div 
             className='block'
-            style={{ width: 325 }}
+            style={{ minWidth: 260, width: 260 }}
             >
         <IconButton
             color="primary"
