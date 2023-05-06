@@ -379,6 +379,7 @@ if ( pile.Height > 0 ){
         if ( i == 0 ) {
             // draw Base contur
             ctx.lineWidth = line_width * 2; draw_PLine_3D( ctx, slices );
+            //console.log('slices (2d) = ',slices);
         }
         if ( i == slice_step && mode == 'location' ) { // draw names of Piles
             let text_place_Y = 0;

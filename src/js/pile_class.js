@@ -1,5 +1,6 @@
 import { getCurvePoints, getPoints_by_Y, get_Max_Y_3D } from './spline.js'; // spline
 import { interpolation, MyRound, Volume_Pillers, DistanceBetweenPoints, Square_by_slice } from './calc.js';
+import { MoveMatrix, MoveMatrixAny, RotateMatrix_X, RotateMatrix_X_any, RotateMatrix_Y, RotateMatrix_Y_any, RotateMatrix_Z, RotateMatrix_Z_any, ScaleMatrix, ScaleMatrixAny, ScaleMatrixAny1zoom } from './3d-matrix.js';
 import { Elevators } from './elevators.js';
 
 export default class cgPile{
@@ -178,6 +179,10 @@ get get_Contur_Arc_Length(){
     return this.Length_Arc_Points3d;
 }
 
+get get_Contur_Arc_Widht(){
+    return this.Widht_Arc_Points3d;
+}
+
 get get_Contur_under_Base(){
     let result  = { xyz: [], xyz3d: [] };
     result.xyz = this.underBase_Control_Points;
@@ -191,10 +196,6 @@ set_Contur_Arc_Widht(){
     this.Widht_Arc_Points = result.xyz;
     this.Widht_Arc_Points3d = result.xyz3d;
     return result;
-}
-
-get get_Contur_Arc_Widht(){
-    return this.Widht_Arc_Points3d;
 }
 
 get_Slice_Base( level ) {
@@ -238,6 +239,37 @@ get_Check_Pile_Mesh( points = [] ) {
 return dx;
 }
 
+get_Mesh( slice_step = 25 ) {
+
+    let slices = [];
+    let slice;
+    let slice_old;
+    let max = get_Max_Y_3D( this.get_Contur_Arc_Length ) - 0.0001;
+    let level = 0;
+
+    for ( let i = 0; i <= slice_step; i ++ ){
+        level = max / slice_step * i;
+        slice = this.get_Slice_Base( level );
+        //slices.push( slice );
+        //slice  = RotateMatrix_Z_any( slice, angle );
+        //slice  = MoveMatrixAny( slices, x_location, y_location, dh + z_location );
+        //slice  = ScaleMatrixAny1zoom( slice, 2 );
+        //slice  = RotateMatrix_X_any( slice, angle_X );
+        //slice  = RotateMatrix_Y_any( slice, angle_Y );
+        //slice  = RotateMatrix_Z_any( slice, angle_Z );
+        //slice  = MoveMatrixAny( slice, x_center, y_center, z_center );
+
+        slices = slices.concat( slice );
+
+        slice_old = slice.slice(0);
+
+    };
+    let x = this.X;
+    let y = this.Y;
+    let angle = this.angle;
+    return ( { slices, x, y, angle } );
+}
+
 get get_Volume(){
     
     let slice_step = 50;
@@ -265,7 +297,7 @@ get get_Volume(){
     
     volume2 = MyRound( volume2, 3 );
     volume = MyRound( volume1 + volume2 + volume3 , 3 );
-    
+
     return { volume, volume1, volume2, volume3 };
 }
 

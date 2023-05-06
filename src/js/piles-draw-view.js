@@ -3,11 +3,13 @@ import { Elevators } from './elevators.js';
 import * as matrix from './3d-matrix.js';
 import { mat3, mat4, vec3, vec4 } from 'gl-matrix';
 import * as Calc from './calc.js';
+import cgPile from './pile_class.js'
+import { get_Max_Y_3D, getCurvePoints, drawLines, drawCurve, getPoint, drawPoint, drawPoints, getSlice, drawSlice, drawContur, getContur, getPoints_by_Y } from './spline.js';
+import { MoveMatrix, MoveMatrixAny, RotateMatrix_X, RotateMatrix_X_any, RotateMatrix_Y, RotateMatrix_Y_any, RotateMatrix_Z, RotateMatrix_Z_any, ScaleMatrix, ScaleMatrixAny, ScaleMatrixAny1zoom } from './3d-matrix.js';
+import { draw_Line_3D, draw_PLine_3D, draw_PLine_3D_between, draw_underBase, draw_Point_3D } from './draw.js';
 
-const FloorViewCanvas = props => {
+const PilesViewCanvas = props => {
 
-    let time1 = new Date().getTime(); //time control
-    
     const canvasRef = useRef(null)
 
     let floor = Elevators.FloorCurrentDimensions;
@@ -31,66 +33,35 @@ const FloorViewCanvas = props => {
     
 
     let mesh = [];
-    mesh = Elevators.get_Floor_Mesh_3D;
-    mesh = matrix.MoveMatrixAny( mesh, -Length/2, -Width/2, -Height/2 );
+    //mesh = Elevators.get_Floor_Mesh_3D;
+    //mesh = matrix.MoveMatrixAny( mesh, -Length/2, -Width/2, -Height/2 );
 
     let strip = [];
-    strip = Elevators.get_Floor_Strip;
+    //strip = Elevators.get_Floor_Strip;
 
     // Korpus                
-    let korpus_draw = [ -Length/2, -Width/2, -Height/2, 1,
-                        -Length/2,  Width/2, -Height/2, 1,
-                        -Length/2,  Width/2,  Height/2, 1,
-                        -Length/2, -Width/2,  Height/2, 1,
+    let korpus_draw = [ -Length/2, -Width/2, 0, 1,
+                        -Length/2,  Width/2, 0, 1,
+                        -Length/2,  Width/2,  Height, 1,
+                        -Length/2, -Width/2,  Height, 1,
 
-                         Length/2, -Width/2, -Height/2, 1,
-                         Length/2,  Width/2, -Height/2, 1,
-                         Length/2,  Width/2,  Height/2, 1,
-                         Length/2, -Width/2,  Height/2, 1,
+                         Length/2, -Width/2, 0, 1,
+                         Length/2,  Width/2, 0, 1,
+                         Length/2,  Width/2,  Height, 1,
+                         Length/2, -Width/2,  Height, 1,
 
-                        -Length/2, -Width/2, -Height/2, 1,
-                        -Length/2, -Width/2,  Height/2, 1,
-                         Length/2, -Width/2,  Height/2, 1,
-                         Length/2, -Width/2, -Height/2, 1,
+                        -Length/2, -Width/2, 0, 1,
+                        -Length/2, -Width/2,  Height, 1,
+                         Length/2, -Width/2,  Height, 1,
+                         Length/2, -Width/2, 0, 1,
 
-                        -Length/2,  Width/2, -Height/2, 1,
-                        -Length/2,  Width/2,  Height/2, 1,
-                         Length/2,  Width/2,  Height/2, 1,
-                         Length/2,  Width/2, -Height/2, 1
+                        -Length/2,  Width/2, 0, 1,
+                        -Length/2,  Width/2,  Height, 1,
+                         Length/2,  Width/2,  Height, 1,
+                         Length/2,  Width/2, 0, 1
                         ];
-    // Head                
-    let head_up = Height/3;
-    let head_draw = [  -Length/2,    -Width/2,           Height/2, 1,
-                       -Length/2,           0, Height/2 + head_up, 1,
-                        Length/2,           0, Height/2 + head_up, 1,
-                        Length/2,    -Width/2,           Height/2, 1,
 
-                       -Length/2,     Width/2,           Height/2, 1,
-                       -Length/2,           0, Height/2 + head_up, 1,
-                        Length/2,           0, Height/2 + head_up, 1,
-                        Length/2,     Width/2,           Height/2, 1    
-                    ];
-    // Bottom Conus                
-    let conus_draw = [ -Length/2,                                               Width/2,                -Height/2, 1,
-                        Length/2,                                               Width/2,                -Height/2, 1,
-                       -Length/2 + Conus_X + Conus_L/2 , -Width/2 + Conus_Y + Conus_W/2, -Height/2 - Conus_height, 1,
-                       -Length/2 + Conus_X - Conus_L/2 , -Width/2 + Conus_Y + Conus_W/2, -Height/2 - Conus_height, 1,
-
-                       -Length/2,                                              -Width/2,                -Height/2, 1,
-                        Length/2,                                              -Width/2,                -Height/2, 1,
-                       -Length/2 + Conus_X + Conus_L/2 , -Width/2 + Conus_Y - Conus_W/2, -Height/2 - Conus_height, 1,
-                       -Length/2 + Conus_X - Conus_L/2 , -Width/2 + Conus_Y - Conus_W/2, -Height/2 - Conus_height, 1,
-
-                       -Length/2 + Conus_X - Conus_L/2 , -Width/2 + Conus_Y + Conus_W/2, -Height/2 - Conus_height, 1,
-                       -Length/2 + Conus_X + Conus_L/2 , -Width/2 + Conus_Y + Conus_W/2, -Height/2 - Conus_height, 1,
-                       -Length/2 + Conus_X + Conus_L/2 , -Width/2 + Conus_Y - Conus_W/2, -Height/2 - Conus_height, 1,
-                       -Length/2 + Conus_X - Conus_L/2 , -Width/2 + Conus_Y - Conus_W/2, -Height/2 - Conus_height, 1
-                ];
-
-    //let vertices = mesh.concat( korpus_draw, head_draw, conus_draw  );
-    let vertices = korpus_draw.concat( head_draw, conus_draw, mesh );
-    //vertices = matrix.ScaleMatrixAny1zoom( vertices, 10 );
-    //let vertices = mesh ;
+    let vertices = [];
 
     let colors = [];
     let normal = [];
@@ -113,12 +84,30 @@ const FloorViewCanvas = props => {
     //normal = normal.concat( [ 0,0,0 ] );
     //console.log('normal = ', normal);
 
-    let time2 = new Date().getTime(); // time control
-    console.log('floor - canvas init - (time working) = ', time2 - time1, ' ms');
+    //---------------------------------------
+
+    let gPile = new cgPile();
+    let piles = [];
+    let result = { mesh: [], x: 0, y: 0 };
+    let gPiles = [];
+    let count = Elevators.PileFound;
+
+    for ( let index = 0; index < count; index++ ) {
+
+        piles.push (Elevators.PileGet( index ) );
+        if ( piles[ index ].numOfSegments == undefined ) piles[ index ].numOfSegments = 10;
+
+        gPile.set_Initial_Data_Complex ( piles[ index ], piles[ index ].numOfSegments );//initialisation Pile
+        /*result.mesh = gPile.get_Mesh().slice(0);
+        result.x = 0;
+        result.y = 0;*/
+        gPiles.push( gPile.get_Mesh() ) ;
+    }
+    console.log('gPiles = ',gPiles);
+
+    //---------------------------------------
 
     const draw = (gl) => {
-
-        let time1 = new Date().getTime(); //time control draw 
 
     // Запомним время последней отрисовки кадра
     let lastRenderTime = Date.now();
@@ -235,9 +224,17 @@ const FloorViewCanvas = props => {
         //let textureLocation = gl.getUniformLocation(program, "u_texture");
 
     //--------------------------------------------
+    //vertices = gPiles[0];
+ /*   vertices = [];
+    for ( let index = 0; index < gPiles.length; index++ ) {
+        vertices = vertices.concat( gPiles[ index ] );
+    }*/
+    //vertices = gPiles[ 0 ];
+    //console.log('vertices = ',vertices);
+    //--------------------------------------------
         let vertexBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),  gl.STATIC_DRAW);
+     //   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+     //   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),  gl.STATIC_DRAW);
             
         let colorBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
@@ -267,9 +264,7 @@ const FloorViewCanvas = props => {
             //var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
             //mat4.perspective(projectionMatrix, 3, 1, -50, 1000);
             //gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight)
-            mat4.ortho(projectionMatrix, 0, gl.drawingBufferWidth, 0, gl.drawingBufferHeight, -500, 500);
             //mat4.translate(projectionMatrix, projectionMatrix, [ 35, 30, -100 ]);
-            mat4.translate(projectionMatrix, projectionMatrix, [ gl.drawingBufferWidth / 2, gl.drawingBufferHeight / 2 , 0 ]);
 
             let modelMatrix = mat4.create();
             //mat4.scale(modelMatrix, modelMatrix, [ 10, 10, 10 ]);
@@ -279,13 +274,13 @@ const FloorViewCanvas = props => {
             let zoom = Math.min( zoom_L, zoom_W, zoom_H );
             zoom = zoom * 0.7;
 
+            mat4.ortho(projectionMatrix, 0, gl.drawingBufferWidth, 0, gl.drawingBufferHeight, -500, 500);
+            mat4.translate(projectionMatrix, projectionMatrix, [ gl.drawingBufferWidth / 2, gl.drawingBufferHeight / 2 - Height*0.8*zoom/2, 0 ]);
+
             mat4.scale( modelMatrix, modelMatrix, [ zoom, zoom, zoom ] );
             mat4.rotateX(modelMatrix, modelMatrix, -3.14/3);
             mat4.rotateZ(modelMatrix, modelMatrix, -3.14/6);
 
-
-            let time2 = new Date().getTime(); // time control draw
-            console.log('floor - draw - (time working) = ', time2 - time1, ' ms');
 //----------------------------------------------------------------------
         function render() {
 
@@ -308,8 +303,13 @@ const FloorViewCanvas = props => {
         //----------------------------------------------------------------------
             gl.enable(gl.DEPTH_TEST);
             gl.enable(gl.CULL_FACE);
+
         //----------------------------------------------------------------------
             gl.useProgram(program);
+        //----------------------------------------------------------------------
+
+
+
         //----------------------------------------------------------------------
             gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
             gl.enableVertexAttribArray(aPosition);
@@ -343,6 +343,38 @@ const FloorViewCanvas = props => {
             let shininess = 50;
             gl.uniform1f(shininessLocation, shininess);
 
+            //------------------------------- corpus draw
+
+            vertices = korpus_draw;
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),  gl.STATIC_DRAW);
+        
+            gl.uniform4f(colorUniformLocation, 0, 0, 1, 1);
+            gl.drawArrays(gl.LINE_LOOP, 0, 4);
+            gl.drawArrays(gl.LINE_LOOP, 4, 4);
+            gl.drawArrays(gl.LINE_LOOP, 8, 4);
+            gl.drawArrays(gl.LINE_LOOP, 12, 4);
+
+            //vertices = [];
+
+            //----------------------piles draw
+            for ( let i = 0; i < gPiles.length; i++ ) {
+                vertices = gPiles[ i ].slices;
+                let x = gPiles[ i ].x;
+                let y = gPiles[ i ].y;
+                let angle = gPiles[ i ].angle;
+                vertices = RotateMatrix_Z_any( vertices , angle, 4 );
+                vertices = MoveMatrixAny( vertices , x - Length / 2, y - Width / 2, 0 );
+
+                gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),  gl.STATIC_DRAW);
+            
+            gl.uniform4f(colorUniformLocation, 0, 0, 1, 1 );
+            gl.drawArrays(gl.LINE_STRIP, 0, vertices.length );
+        }
+            //----------------------
+            /*
             if ( houseView ) {
                 //korpus
                 gl.uniform4f(colorUniformLocation, 0, 0, 1, 1);
@@ -360,7 +392,7 @@ const FloorViewCanvas = props => {
                 gl.drawArrays(gl.LINE_LOOP, 28, 4);
                 gl.drawArrays(gl.LINE_LOOP, 31, 4);
                 }
-
+*/
             //piles
         /*    for ( let i = 36; i < mesh.length; i+= ( step_xy + 2 ) * 2 ) {
 
@@ -372,7 +404,7 @@ const FloorViewCanvas = props => {
             }*/
 
             //let line = 0;
-            let start = 0;
+       /*     let start = 0;
             let count = 0;
             //console.log('strip = ',strip);
             for ( let line = 0; line < strip.length; line ++ ) {
@@ -392,7 +424,7 @@ const FloorViewCanvas = props => {
                     } else { gl.drawArrays(gl.TRIANGLE_STRIP, i, ( count + 1 ) * 2 ); }
                     //line++;
             }
-            
+            */
 
             lastRenderTime = time;
 
@@ -421,31 +453,29 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
       
       const canvas = canvasRef.current;
       const { width, height } = canvas.getBoundingClientRect();
-      //canvas.height = window.innerHeight;
-      canvas.height = 450;
-      canvas.width = window.innerWidth - 460;
-      const gl = canvas.getContext('webgl')
+      canvas.height = height;
+      canvas.width = width;
+      const gl = canvas.getContext('webgl', { antialias: true } );
   
         draw(gl)
   
       }, [draw])
     
     return (
-    <div style={{ display: 'flex', flexDirection: 'row', height: 450 }}>
 
         <div class="container">
-            <canvas id="canvas" ref={canvasRef} {...props} />
+            <canvas id="canvas" ref={canvasRef} {...props} style={{ width: '100%' }} />
             <div id="overlay">
                 <div>Volume: <span id="floor_volume">{Elevators.get_Floor_Volume} (m³)</span></div>
             </div>
         </div>
             
 
-    </div>
     );
   }
-  
-  export default FloorViewCanvas
+
+  export default PilesViewCanvas;
+//-----------------------------------------------------------------
 
 
 
