@@ -2,6 +2,7 @@ import { getCurvePoints, getPoints_by_Y, get_Max_Y_3D } from './spline.js'; // s
 import { interpolation, MyRound, Volume_Pillers, DistanceBetweenPoints, Square_by_slice } from './calc.js';
 import { MoveMatrix, MoveMatrixAny, RotateMatrix_X, RotateMatrix_X_any, RotateMatrix_Y, RotateMatrix_Y_any, RotateMatrix_Z, RotateMatrix_Z_any, ScaleMatrix, ScaleMatrixAny, ScaleMatrixAny1zoom } from './3d-matrix.js';
 import { Elevators } from './elevators.js';
+import * as Calc from './calc.js';
 
 export default class cgPile{
     constructor() {
@@ -14,7 +15,7 @@ export default class cgPile{
         this.Height = 10;//Height of Pile (distance between Base & Top)
         this.Base_Length = 30; //base plane
         this.Base_Width  = 30; //base plane
-        this.underBase_Height = 0;//Height of Box under Pil
+        this.underBase_Height = 0;//Height of Box under Pile
         this.Top_Length  = 15; //upper plane
         this.Top_Width   = 15; //upper plane
         this.Tension_Base = 0.835;
@@ -241,7 +242,10 @@ return dx;
 
 get_Mesh( slice_step = 25 ) {
 
+    let mesh = [];
     let slices = [];
+    let normal = [];
+    let _normal = [];
     let slice;
     let slice_old;
     let max = get_Max_Y_3D( this.get_Contur_Arc_Length ) - 0.0001;
@@ -261,13 +265,33 @@ get_Mesh( slice_step = 25 ) {
 
         slices = slices.concat( slice );
 
+
+
+        if ( i > 0 ) {
+            for ( let j = 0; j < slice.length; j+=4 ) {
+                mesh.push( slice[ j ], slice[ j +1 ], slice[ j +2 ], slice[ j +3 ], slice_old[ j ], slice_old[ j +1 ], slice_old[ j +2 ], slice_old[ j +3 ] );
+               // _normal = Calc.Normal_from_3points( mesh.slice( j, j + 3 ), mesh.slice( j+4, j + 3+4 ), mesh.slice( j+8, j + 3+8 ) );
+               // normal.push( _normal[0], _normal[1], _normal[2] );
+            }
+
+           // if ( i == slice_step ) mesh.push( slice[ -4 ], slice[ -3 ], slice[ -2 ], slice[ -1 ] );
+
+
+
+        } else mesh.push( slice[ 0 ], slice[ 1 ], slice[ 2 ], slice[ 3 ] );
+
         slice_old = slice.slice(0);
+
 
     };
     let x = this.X;
     let y = this.Y;
+    let box = this.underBase_Height;
     let angle = this.angle;
-    return ( { slices, x, y, angle } );
+    let count = slice.length;
+    //console.log('mesh normal = ',normal);
+    //console.log('mesh slice = ',mesh);
+    return ( { slices, mesh, normal,  x, y, box, angle, count } );
 }
 
 get get_Volume(){

@@ -12,6 +12,11 @@ const PilesViewCanvas = props => {
 
     const canvasRef = useRef(null)
 
+    let currentPile = 0;
+    currentPile = props.currentPile;
+
+    let mode = props.mode;
+
     let floor = Elevators.FloorCurrentDimensions;
 
     let meshView = true;
@@ -65,13 +70,15 @@ const PilesViewCanvas = props => {
 
     let colors = [];
     let normal = [];
+    /*
     for ( let i = 0; i < 36; i++ ){
         //normal = normal.concat( [ 0, 0, 1 ] );
         normal.push( 0, 0, 1 );
-    }
+    }*/
 
     //let normal = [];
     let _normal = [];
+    /*
     for ( let i = 0; i < mesh.length; i+=4 ) {
         //colors = colors.concat( Math.random(), Math.random(), Math.random(), 1 );
         colors.push( Math.random(), Math.random(), Math.random(), 1 );
@@ -80,7 +87,7 @@ const PilesViewCanvas = props => {
         //normal = normal.concat( _normal );
         normal.push( _normal[0], _normal[1], _normal[2] );
     }
-
+*/
     //normal = normal.concat( [ 0,0,0 ] );
     //console.log('normal = ', normal);
 
@@ -91,19 +98,46 @@ const PilesViewCanvas = props => {
     let result = { mesh: [], x: 0, y: 0 };
     let gPiles = [];
     let count = Elevators.PileFound;
+    let slice_step = 25;
 
-    for ( let index = 0; index < count; index++ ) {
+    let angle_X = props.view.x;
+    let angle_Y = props.view.y;
+    let angle_Z = props.view.z;
 
-        piles.push (Elevators.PileGet( index ) );
-        if ( piles[ index ].numOfSegments == undefined ) piles[ index ].numOfSegments = 10;
+    if ( mode == 'location' ) {
+        for ( let index = 0; index < count; index++ ) {
 
-        gPile.set_Initial_Data_Complex ( piles[ index ], piles[ index ].numOfSegments );//initialisation Pile
-        /*result.mesh = gPile.get_Mesh().slice(0);
-        result.x = 0;
-        result.y = 0;*/
-        gPiles.push( gPile.get_Mesh() ) ;
+            let pile = Elevators.PileGet( index );
+            if ( pile.numOfSegments == undefined ) pile.numOfSegments = 10;
+            piles.push ( pile );
+
+            gPile.set_Initial_Data_Complex ( pile, pile.numOfSegments );//initialisation Pile
+
+            //get & put calculated Volume current Pile
+            if ( index == currentPile ) {
+                let volume = 0;
+                volume = gPile.get_Volume;
+                Elevators.set_Pile_Volume( currentPile, volume.volume );
+            }
+            gPiles.push( gPile.get_Mesh( slice_step ) ) ;
+        }
+    } else {
+        let pile = Elevators.PileGet( currentPile );
+        if ( pile.numOfSegments == undefined ) pile.numOfSegments = 10;
+        piles.push ( pile );
+
+        gPile.set_Initial_Data_Complex ( pile, pile.numOfSegments );//initialisation Pile
+
+        //get & put calculated Volume current Pile
+        let volume = 0;
+        volume = gPile.get_Volume;
+        Elevators.set_Pile_Volume( currentPile, volume.volume );
+        gPiles.push( gPile.get_Mesh( slice_step ) ) ;
     }
-    console.log('gPiles = ',gPiles);
+
+    let l = Number(piles[0].Base.length);
+    let w = Number(piles[0].Base.width);
+    let h = Number(piles[0].Height);
 
     //---------------------------------------
 
@@ -139,7 +173,7 @@ const PilesViewCanvas = props => {
             gl_Position = u_projection * u_modelView * a_position;
 
             // Pass the normal to the fragment shader
-            v_normal = mat3(u_modelView) * a_normal;
+            //v_normal = mat3(u_modelView) * a_normal;
             //v_normal = a_normal;
 
             // compute the world position of the surface
@@ -147,11 +181,11 @@ const PilesViewCanvas = props => {
 
             // compute the vector of the surface to the light
             // and pass it to the fragment shader
-            v_surfaceToLight = u_lightWorldPosition - surfaceWorldPosition;
+            //v_surfaceToLight = u_lightWorldPosition - surfaceWorldPosition;
 
             // compute the vector of the surface to the view/camera
             // and pass it to the fragment shader
-            v_surfaceToView = u_viewWorldPosition - surfaceWorldPosition;
+            //v_surfaceToView = u_viewWorldPosition - surfaceWorldPosition;
         }`;
 
     const fragmentShaderSource =`
@@ -174,25 +208,24 @@ const PilesViewCanvas = props => {
             // will make it a unit vector again
             vec3 normal = normalize(v_normal);
 
-            vec3 surfaceToLightDirection = normalize(v_surfaceToLight);
-            vec3 surfaceToViewDirection = normalize(v_surfaceToView);
-            vec3 halfVector = normalize(surfaceToLightDirection + surfaceToViewDirection);
+            //vec3 surfaceToLightDirection = normalize(v_surfaceToLight);
+            //vec3 surfaceToViewDirection = normalize(v_surfaceToView);
+            //vec3 halfVector = normalize(surfaceToLightDirection + surfaceToViewDirection);
 
-            float light = dot(normal, surfaceToLightDirection);
-            float specular = 0.0;
-            if (light > 0.0) {
-                specular = pow(dot(normal, halfVector), u_shininess);
-            }
+            //float light = dot(normal, surfaceToLightDirection);
+            //float specular = 0.0;
+            //if (light > 0.0) {
+            //    specular = pow(dot(normal, halfVector), u_shininess);
+            //}
 
             gl_FragColor = u_color;
 
             // Lets multiply just the color portion (not the alpha)
             // by the light
-            gl_FragColor.rgb *= light;
+            //gl_FragColor.rgb *= light;
 
             // Just add in the specular
             //gl_FragColor.rgb += specular;
-
         }`;
     //use the compileShader function for create Shaders
     const vertexShader = compileShader(gl, vertexShaderSource, gl.VERTEX_SHADER);
@@ -213,12 +246,12 @@ const PilesViewCanvas = props => {
         let uModelView = gl.getUniformLocation(program, 'u_modelView');
         let uProjection = gl.getUniformLocation(program, 'u_projection');
         let aPosition = gl.getAttribLocation(program, 'a_position');
-        let normalLocation = gl.getAttribLocation(program, "a_normal");
+       // let normalLocation = gl.getAttribLocation(program, "a_normal");
         //let aColor = gl.getAttribLocation(program, 'a_color');
         let colorUniformLocation = gl.getUniformLocation(program, "u_color");
-        let reverseLightDirectionLocation = gl.getUniformLocation(program, "u_reverseLightDirection");
-        let shininessLocation = gl.getUniformLocation(program, "u_shininess");
-        let lightWorldPositionLocation = gl.getUniformLocation(program, "u_lightWorldPosition");
+        //let reverseLightDirectionLocation = gl.getUniformLocation(program, "u_reverseLightDirection");
+        //let shininessLocation = gl.getUniformLocation(program, "u_shininess");
+        //let lightWorldPositionLocation = gl.getUniformLocation(program, "u_lightWorldPosition");
        // var viewWorldPositionLocation = gl.getUniformLocation(program, "u_viewWorldPosition");
         //let texcoordLocation = gl.getAttribLocation(program, "a_texcoord");
         //let textureLocation = gl.getUniformLocation(program, "u_texture");
@@ -241,8 +274,7 @@ const PilesViewCanvas = props => {
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 
         let normalBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normal), gl.STATIC_DRAW);    
+            
 
             /*let textures = [];
             let _textures = [];
@@ -268,32 +300,44 @@ const PilesViewCanvas = props => {
 
             let modelMatrix = mat4.create();
             //mat4.scale(modelMatrix, modelMatrix, [ 10, 10, 10 ]);
-            let zoom_L = gl.drawingBufferWidth / Length;
-            let zoom_W = gl.drawingBufferHeight / Width;
-            let zoom_H = gl.drawingBufferHeight / Height;
-            let zoom = Math.min( zoom_L, zoom_W, zoom_H );
+            let zoom = 1;
+            if ( mode == 'location' ) {
+                let zoom_L = gl.drawingBufferWidth / Length;
+                let zoom_W = gl.drawingBufferHeight / Width;
+                let zoom_H = gl.drawingBufferHeight / Height;
+                zoom = Math.min( zoom_L, zoom_W, zoom_H );
+            } else {
+                let zoom_L = gl.drawingBufferWidth / l;
+                let zoom_W = gl.drawingBufferHeight / w;
+                let zoom_H = gl.drawingBufferHeight / h;
+                zoom = Math.min( zoom_L, zoom_W, zoom_H );
+            }
+
+
             zoom = zoom * 0.7;
 
             mat4.ortho(projectionMatrix, 0, gl.drawingBufferWidth, 0, gl.drawingBufferHeight, -500, 500);
-            mat4.translate(projectionMatrix, projectionMatrix, [ gl.drawingBufferWidth / 2, gl.drawingBufferHeight / 2 - Height*0.8*zoom/2, 0 ]);
+            if ( mode == 'location') {
+                mat4.translate(projectionMatrix, projectionMatrix, [ gl.drawingBufferWidth / 2, gl.drawingBufferHeight / 2 - Height*0.8*zoom/2, 0 ]);
+            } else mat4.translate(projectionMatrix, projectionMatrix, [ gl.drawingBufferWidth / 2, gl.drawingBufferHeight / 2 - h*0.8*zoom/2, 0 ]);
 
             mat4.scale( modelMatrix, modelMatrix, [ zoom, zoom, zoom ] );
-            mat4.rotateX(modelMatrix, modelMatrix, -3.14/3);
-            mat4.rotateZ(modelMatrix, modelMatrix, -3.14/6);
+            mat4.rotateX(modelMatrix, modelMatrix, angle_X);
+            mat4.rotateZ(modelMatrix, modelMatrix, angle_Z);
 
 //----------------------------------------------------------------------
         function render() {
 
-            houseView = Elevators.get_Floor_ShowHouse;
-            meshView = Elevators.get_Floor_MeshStyle;
-            colorMulti = Elevators.get_Floor_Multicolor;
+            //houseView = Elevators.get_Floor_ShowHouse;
+            //meshView = Elevators.get_Floor_MeshStyle;
+            //colorMulti = Elevators.get_Floor_Multicolor;
 
         // Запрашиваем рендеринг на следующий кадр
             //requestAnimationFrame(render);
         
         // Получаем время прошедшее с прошлого кадра
-            var time = Date.now();
-            var dt = lastRenderTime - time;
+            //var time = Date.now();
+            //var dt = lastRenderTime - time;
 
         //--------------------------------------------  Вращаем куб относительно оси Z
           // mat4.rotateZ(modelMatrix, modelMatrix, dt / 4000);
@@ -302,7 +346,7 @@ const PilesViewCanvas = props => {
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         //----------------------------------------------------------------------
             gl.enable(gl.DEPTH_TEST);
-            gl.enable(gl.CULL_FACE);
+            //gl.enable(gl.CULL_FACE);
 
         //----------------------------------------------------------------------
             gl.useProgram(program);
@@ -316,9 +360,9 @@ const PilesViewCanvas = props => {
             gl.vertexAttribPointer(aPosition, 4, gl.FLOAT, false, 0, 0);
 
             // Bind the normal buffer.
-            gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-            gl.enableVertexAttribArray(normalLocation);
-            gl.vertexAttribPointer(normalLocation, 3, gl.FLOAT, false, 0, 0);
+            //gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+            //gl.enableVertexAttribArray(normalLocation);
+            //gl.vertexAttribPointer(normalLocation, 3, gl.FLOAT, false, 0, 0);
         //----------------------------------------------------------------------
         /*
             gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
@@ -331,103 +375,148 @@ const PilesViewCanvas = props => {
             gl.uniformMatrix4fv(uProjection, false, projectionMatrix);
 
             //let light_vector = [0.5, 0.7, 1];
-            let light_vector = [ 0, 0, 1];
-            vec3.normalize( light_vector, light_vector )
-            gl.uniform3fv(reverseLightDirectionLocation, light_vector );
+            //let light_vector = [ 0, 0, 1];
+            //vec3.normalize( light_vector, light_vector )
+            //gl.uniform3fv(reverseLightDirectionLocation, light_vector );
 
             // set the light position
             //gl.uniform3fv(lightWorldPositionLocation, [20, 30, 60]);
-            gl.uniform3fv(lightWorldPositionLocation, [ 0, 300, 300 ]);
+            //gl.uniform3fv(lightWorldPositionLocation, [ 0, 300, 300 ]);
 
             // set the shininess
-            let shininess = 50;
-            gl.uniform1f(shininessLocation, shininess);
+            //let shininess = 50;
+            //gl.uniform1f(shininessLocation, shininess);
 
             //------------------------------- corpus draw
 
-            vertices = korpus_draw;
-
-            gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),  gl.STATIC_DRAW);
-        
-            gl.uniform4f(colorUniformLocation, 0, 0, 1, 1);
-            gl.drawArrays(gl.LINE_LOOP, 0, 4);
-            gl.drawArrays(gl.LINE_LOOP, 4, 4);
-            gl.drawArrays(gl.LINE_LOOP, 8, 4);
-            gl.drawArrays(gl.LINE_LOOP, 12, 4);
-
-            //vertices = [];
-
-            //----------------------piles draw
-            for ( let i = 0; i < gPiles.length; i++ ) {
-                vertices = gPiles[ i ].slices;
-                let x = gPiles[ i ].x;
-                let y = gPiles[ i ].y;
-                let angle = gPiles[ i ].angle;
-                vertices = RotateMatrix_Z_any( vertices , angle, 4 );
-                vertices = MoveMatrixAny( vertices , x - Length / 2, y - Width / 2, 0 );
+            if ( mode == 'location') {
+                vertices = korpus_draw;
 
                 gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
                 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),  gl.STATIC_DRAW);
-            
-            gl.uniform4f(colorUniformLocation, 0, 0, 1, 1 );
-            gl.drawArrays(gl.LINE_STRIP, 0, vertices.length );
-        }
-            //----------------------
-            /*
-            if ( houseView ) {
-                //korpus
-                gl.uniform4f(colorUniformLocation, 0, 0, 1, 1);
+        
+                gl.uniform4f(colorUniformLocation, 0, 1, 0.5, 1);
                 gl.drawArrays(gl.LINE_LOOP, 0, 4);
                 gl.drawArrays(gl.LINE_LOOP, 4, 4);
                 gl.drawArrays(gl.LINE_LOOP, 8, 4);
                 gl.drawArrays(gl.LINE_LOOP, 12, 4);
-                //head
-                gl.uniform4f(colorUniformLocation, 0, 1, 0, 1);
-                gl.drawArrays(gl.LINE_LOOP, 16, 4);
-                gl.drawArrays(gl.LINE_LOOP, 20, 4);
-                //conus
-                gl.uniform4f(colorUniformLocation, 1, 0, 0, 1);
-                gl.drawArrays(gl.LINE_LOOP, 24, 4);
-                gl.drawArrays(gl.LINE_LOOP, 28, 4);
-                gl.drawArrays(gl.LINE_LOOP, 31, 4);
-                }
-*/
-            //piles
-        /*    for ( let i = 36; i < mesh.length; i+= ( step_xy + 2 ) * 2 ) {
-
-                if ( colorMulti ) { gl.uniform4f(colorUniformLocation, colors[i], colors[i+1], colors[i+2], colors[i+3]); 
-                } else { gl.uniform4f(colorUniformLocation, 0.0,  0.0,  1.0,  1.0); };
-
-                if ( meshView == 'mesh' ) { gl.drawArrays(gl.LINE_STRIP,  i, ( step_xy + 1 ) * 2 ); 
-                } else { gl.drawArrays(gl.TRIANGLE_STRIP, i, ( step_xy + 1 ) * 2 ); }
-            }*/
-
-            //let line = 0;
-       /*     let start = 0;
-            let count = 0;
-            //console.log('strip = ',strip);
-            for ( let line = 0; line < strip.length; line ++ ) {
-                
-                //for ( let i = 36; i < mesh.length; i+= ( step_xy + 2 ) * 2 ) {
-                    //if ( strip[ line ] <> )
-                    //if ( line < strip.length ) {
-                    //start = strip[ line +1].start;
-                    count = strip[ line ].count;
-                    let i = 36 + line * ( step_xy + 2 ) * 2 + start;
-                   // }
-                   
-                    if ( colorMulti ) { gl.uniform4f(colorUniformLocation, colors[i], colors[i+1], colors[i+2], colors[i+3]); 
-                    } else { gl.uniform4f(colorUniformLocation, 0.0,  0.0,  1.0,  1.0); };
-
-                    if ( meshView == 'mesh' ) { gl.drawArrays( gl.LINE_STRIP, i, ( count + 1 ) * 2 ); 
-                    } else { gl.drawArrays(gl.TRIANGLE_STRIP, i, ( count + 1 ) * 2 ); }
-                    //line++;
             }
-            */
 
-            lastRenderTime = time;
+            //vertices = [];
 
+            if ( mode == 'location' ) {
+                //----------------------piles draw
+                for ( let i = 0; i < gPiles.length; i++ ) {
+                    //vertices = gPiles[ i ].slices;
+                    let x = gPiles[ i ].x;
+                    let y = gPiles[ i ].y;
+                    let box = gPiles[ i ].box;
+                    let angle = gPiles[ i ].angle;
+                    let count = gPiles[ i ].count;
+                    let base_countur = gPiles[ i ].slices.slice( 0, count );
+                    vertices = gPiles[ i ].mesh;
+                    vertices = RotateMatrix_Z_any( vertices , angle, 4 );
+                    vertices = MoveMatrixAny( vertices , x - Length / 2, y - Width / 2, box );
+
+                    let PileVisible = 1;
+                    if ( currentPile == i ) { PileVisible = 1;
+                    } else PileVisible = 0.2 ;
+
+                    base_countur = RotateMatrix_Z_any( base_countur , angle, 4 );
+                    base_countur = MoveMatrixAny( base_countur , x - Length / 2, y - Width / 2, box );
+
+                    // box
+                    gl.uniform4f(colorUniformLocation, 1, 0, 1, PileVisible );
+                    if ( box > 0 ) {
+                        for ( let i = 0; i < 5; i++ ) {
+                            let vertices_box = MoveMatrixAny( base_countur , 0, 0, -box / 5 * i );
+                            gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+                            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices_box),  gl.STATIC_DRAW);
+                            //mesh
+                            gl.drawArrays(gl.LINE_STRIP, 0, count / 4 );
+                            //solid
+                        // gl.drawArrays(gl.TRIANGLE_STRIP, 0, count * 2 / 4 );
+                        }
+                    }
+
+                    // base contur
+                    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+                    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(base_countur),  gl.STATIC_DRAW);
+                    gl.drawArrays(gl.LINE_STRIP, 0, count / 4 );
+
+                    //normal = gPiles[ i ].normal;
+/*
+                    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+                    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normal), gl.STATIC_DRAW);
+*/
+                    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+                    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),  gl.STATIC_DRAW);
+                    gl.uniform4f(colorUniformLocation, 0, 0, 1, PileVisible );
+
+                    // mesh - hat
+                    for ( let i =0; i < slice_step; i++ ) {
+                        gl.drawArrays(gl.LINE_STRIP, i * count /2, count *2 / 4 +1 );
+                    }
+/*
+                    // solid - hat
+                    for ( let i =0; i < slice_step; i++ ) {
+                        gl.drawArrays(gl.TRIANGLE_STRIP, i * count /2, count *2 / 4 +1 );
+                    }*/
+
+                }
+            } else { // only current Pile
+                let x = gPiles[ 0 ].x;
+                let y = gPiles[ 0 ].y;
+                let box = gPiles[ 0 ].box;
+                let angle = gPiles[ 0 ].angle;
+                let count = gPiles[ 0 ].count;
+                let base_countur = gPiles[ 0 ].slices.slice( 0, count );
+                vertices = gPiles[ 0 ].mesh;
+                //vertices = RotateMatrix_Z_any( vertices , angle, 4 );
+                //vertices = MoveMatrixAny( vertices , x - Length / 2, y - Width / 2, box );
+                vertices = MoveMatrixAny( vertices , 0, 0, box );
+
+                let PileVisible = 1;
+
+                //base_countur = RotateMatrix_Z_any( base_countur , angle, 4 );
+                base_countur = MoveMatrixAny( base_countur ,0, 0, box );
+
+                // box
+                gl.uniform4f(colorUniformLocation, 1, 0, 1, PileVisible );
+                if ( box > 0 ) {
+                        for ( let i = 0; i < 5; i++ ) {
+                            let vertices_box = MoveMatrixAny( base_countur , 0, 0, -box / 5 * i );
+                            gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+                            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices_box),  gl.STATIC_DRAW);
+                            //mesh
+                            gl.drawArrays(gl.LINE_STRIP, 0, count / 4 );
+                            //solid
+                        // gl.drawArrays(gl.TRIANGLE_STRIP, 0, count * 2 / 4 );
+                        }
+                }
+
+                // base contur
+                gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(base_countur),  gl.STATIC_DRAW);
+                gl.drawArrays(gl.LINE_STRIP, 0, count / 4 );
+
+                    //normal = gPiles[ i ].normal;
+/*
+                    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+                    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normal), gl.STATIC_DRAW);
+*/
+                gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),  gl.STATIC_DRAW);
+                gl.uniform4f(colorUniformLocation, 0, 0, 1, PileVisible );
+
+                // mesh - hat
+                for ( let i =0; i < slice_step; i++ ) {
+                    gl.drawArrays(gl.LINE_STRIP, i * count /2, count *2 / 4 +1 );
+                }
+            }
+            //----------------------
+
+            //lastRenderTime = time;
             
         }
  //----------------------------------------------------------------------       
@@ -464,16 +553,16 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
     return (
 
         <div class="container">
-            <canvas id="canvas" ref={canvasRef} {...props} style={{ width: '100%' }} />
+            <canvas id="canvas" ref={canvasRef} style={{ width: '100%' }} />
             <div id="overlay">
-                <div>Volume: <span id="floor_volume">{Elevators.get_Floor_Volume} (m³)</span></div>
+                <div>Volume of selected Pile: <span id="floor_volume">{Elevators.get_Pile_Volume( props.currentPile )} (m³)</span></div>
             </div>
         </div>
             
 
     );
   }
-
+ 
   export default PilesViewCanvas;
 //-----------------------------------------------------------------
 

@@ -294,14 +294,14 @@ const FloorViewCanvas = props => {
             colorMulti = Elevators.get_Floor_Multicolor;
 
         // Запрашиваем рендеринг на следующий кадр
-            //requestAnimationFrame(render);
+            requestAnimationFrame(render);
         
         // Получаем время прошедшее с прошлого кадра
             var time = Date.now();
             var dt = lastRenderTime - time;
 
         //--------------------------------------------  Вращаем куб относительно оси Z
-          // mat4.rotateZ(modelMatrix, modelMatrix, dt / 4000);
+           mat4.rotateZ(modelMatrix, modelMatrix, dt / 4000);
         //----------------------------------------------------------------------
             gl.clearColor(1.0, 1.0, 1.0, 1.0);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);

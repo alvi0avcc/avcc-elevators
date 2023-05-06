@@ -290,29 +290,28 @@ function a11yPropsPile(index) {
 function Piles(propsPiles){
     const [valuePiles, setValuePiles] = React.useState(0);
     const [updatePiles, setUpdatePiles] = React.useState(true);
+    const [ currentPile, setCurrentPile ] = React.useState( 0 );
+    const [ mode, setMode ] = React.useState( 'model' );
+    const [ view, setView ] = React.useState( { x: -3.14*70/180, y: 3.14*25/180, z: -3.14*20/180 } );
+
     return (
     <div>
 
         <div  >
             <div className='block_row' style={{ border: 'none', padding: 0, margin: 0 }} >
 
-                <Pile_Side_Menu updateState={ updatePiles } callback={(data)=> setUpdatePiles( data ) } />
+                <Pile_Side_Menu updateState={ updatePiles } callback={(data)=> setUpdatePiles( data ) } currentPile={ currentPile } callbackPile={(data)=> setCurrentPile( data ) } mode={ mode } callbackMode={(data)=> setMode( data ) } />
 
                 <div className='block' style={{ width: '100%' }}>
-                    { Elevators.FloorFound ?  <PilesViewCanvas/> : '' }
+                    { Elevators.FloorFound ?  <PilesViewCanvas currentPile={ currentPile } callback={(data)=> setCurrentPile( data ) } view={ view } mode={ mode } /> : '' }
                 </div>
-                <div className='block' style={{ position: 'relative', right: '0px', width: '150px' }}>
-                view menu
+
+                <div className='block' style={{ position: 'relative', right: '0px', width: '120px' }}>
+                    <Pile_Side_3D_menu view={ view } callbackView={(data)=> setView( data ) } updateState={ updatePiles } callback={(data)=> setUpdatePiles( data ) }  mode={ mode } callbackMode={(data)=> setMode( data ) } />
                 </div>
+
             </div>
         </div>
-
-
-            <div className='block'>
-                {Elevators.PilesList.map((name, index ) => (  
-                    <Pile key = {index} name = {name} index = {index} updateState={propsPiles.updateState} callback={(data)=> propsPiles.callback( data ) } {...a11yPropsPile(index)} />
-                ))}
-            </div>
 
     </div>
     )
@@ -775,20 +774,22 @@ function FloorSidePanel_3D( props ) {
 
 
 function Pile_Side_Menu(props){
-    const [valuePile, setValuePile] = React.useState(0);
+    //const [valuePile, setValuePile] = React.useState(0);
 
-    const [ index, setIndex ] =React.useState(0)
+    const [ index, setIndex ] =React.useState( props.currentPile )
     //let pile = Elevators.PileGet( index );
 
     const [ pile, setPile ] = React.useState( Elevators.PileGet( index ) );
 
     const [value, setValue] = React.useState(false);
-    const [mode, setMode] = React.useState('model');
+    //const [mode, setMode] = React.useState('model');
+    let mode = props.mode;
 
     const changePileCurrent = (event) => {
         setIndex( event.target.value );
         setPile( Elevators.PileGet( event.target.value ) );
-        props.callback( !props.updateState );
+        props.callbackPile( event.target.value );
+        //props.callback( !props.updateState );
     };
 
     const ChangeName = (event) => {
@@ -817,39 +818,45 @@ function Pile_Side_Menu(props){
     const ChangeX = (event) => {
         pile.X = event.target.value;
         Elevators.setPile_Location ( index, pile.X, pile.Y, pile.angle );
-        setMode('location');
+        //setMode('location');
         setValue(!value);
+        props.callbackMode( 'location' );
         props.callback( !props.updateState );
     };
     const ChangeY = (event) => {
         pile.Y = event.target.value;
         Elevators.setPile_Location ( index, pile.X, pile.Y, pile.angle );
-        setMode('location');
+        //setMode('location');
         setValue(!value);
+        props.callbackMode( 'location' );
         props.callback( !props.updateState );
     };
     const ChangeAngle = (event) => {
         pile.angle = event.target.value;
         Elevators.setPile_Location ( index, pile.X, pile.Y, pile.angle );
-        setMode('location');
+        //setMode('location');
         setValue(!value);
+        props.callbackMode( 'location' );
         props.callback( !props.updateState );
     };
     const ChangeHeight = (event) => {
         pile.Height = event.target.value;
         Elevators.setPile_Height ( index, pile.Height );
         setValue(!value);
+        props.callback( !props.updateState );
     };
     const ChangeUnderBase_Height = (event) => {
         pile.underBase_Height = event.target.value;
        if ( pile.underBase_Height < 0 ) pile.underBase_Height = 0;
         Elevators.setPile_underBase_Height ( index, pile.underBase_Height);
         setValue(!value);
+        props.callback( !props.updateState );
     };
     const ChangeBase_length = (event) => {
         pile.Base.length = event.target.value;
         Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
         setValue(!value);
+        props.callback( !props.updateState );
     };
     const setBaseLength_max = () => {
         pile.Base.length = Elevators.FloorCurrentDimensions.Length;
@@ -857,6 +864,7 @@ function Pile_Side_Menu(props){
         Elevators.setPile_Location ( index, pile.X, pile.Y, pile.angle );
         Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
         setValue(!value);
+        props.callback( !props.updateState );
     }
     const setBaseWidth_max = () => {
         pile.Base.width = Elevators.FloorCurrentDimensions.Width;
@@ -864,41 +872,49 @@ function Pile_Side_Menu(props){
         Elevators.setPile_Location ( index, pile.X, pile.Y, pile.angle );
         Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
         setValue(!value);
+        props.callback( !props.updateState );
     }
     const setBase_Square = () => {
         pile.Tension_Base = 1.753;
         Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
         setValue(!value);
+        props.callback( !props.updateState );
     }
     const setBase_Round = () => {
         pile.Tension_Base = 0.837;
         Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
         setValue(!value);
+        props.callback( !props.updateState );
     }
     const ChangeBase_width = (event) => {
         pile.Base.width = event.target.value;
         Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
         setValue(!value);
+        props.callback( !props.updateState );
     };
     const ChangeTensionBase = (event) => {
         pile.Tension_Base = event.target.value;
         Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
         setValue(!value);
+        props.callback( !props.updateState );
     };
     const ChangeTensionVolume = (event) => {
         pile.Tension_Volume = event.target.value;
         Elevators.setPile_TopContur ( index, pile.Top.length, pile.Top.width, pile.Tension_Volume );
         setValue(!value);
+        props.callback( !props.updateState );
     };
     const ChangeTop_length = (event) => {
         pile.Top.length = event.target.value;
         Elevators.setPile_TopContur ( index, pile.Top.length, pile.Top.width, pile.Tension_Volume );
         setValue(!value);
+        props.callback( !props.updateState );
     };
     const ChangeTop_width = (event) => {
         pile.Top.width = event.target.value;
         Elevators.setPile_TopContur ( index, pile.Top.length, pile.Top.width, pile.Tension_Volume );
         setValue(!value);
+        props.callback( !props.updateState );
     };
 
     return (
@@ -930,7 +946,7 @@ function Pile_Side_Menu(props){
             <div><hr/></div>
 
             <div className='rowPile' style={{ width: 250 }}>
-                <label>Selected Pile:</label>
+                <label><strong>Selected Pile:</strong></label>
                 <select 
                     style={{ width: '150px' }}
                     id = 'pile_select'
@@ -1107,3 +1123,209 @@ function Pile_Side_Menu(props){
         </div>
         );
 };
+
+
+function Pile_Side_3D_menu( props ) {
+
+    const [ mode, setMode ] = React.useState( props.mode );
+    //const [ view, setView] = React.useState( props.view );
+    let view = props.view ;
+
+    let pile = Elevators.PileGet( props.currentPile );
+
+   // const [ mesh, setMesh ] = React.useState([]);
+
+    /*const calcMesh = () => {
+        setMesh(Elevators.get_Volume_Piles(Elevators.WarehouseSelected).mesh);
+        console.log('calcMesh = ',mesh);
+    };*/
+
+    const setModeModel = (event) => {
+        setMode('model');
+        props.callbackMode( 'model' );
+    };
+
+    const setModeLocation = (event) => {
+        setMode('location');
+        props.callbackMode( 'location' );
+    };
+
+    /*const changeAngleX = (event) => {
+        pile.angle_X = event.target.value;
+        Elevators.setAngleView( props.currentPile, pile.angle_X, pile.angle_Y, pile.angle_Z );
+        //setValue(!value);
+        props.callback( !props.updateState );
+    };*/
+
+    const changeAngleX_minus = (event) => {
+        //pile.angle_X = pile.angle_X - 0.1;
+        view.x = view.x - 0.1;
+        props.callbackView( view );
+       // Elevators.setAngleView( props.currentPile, pile.angle_X, pile.angle_Y, pile.angle_Z );
+        //setValue(!value);
+        props.callback( !props.updateState );
+    };
+
+    const changeAngleX_plus = (event) => {
+        //pile.angle_X = pile.angle_X + 0.1;
+        view.x = view.x + 0.1;
+        props.callbackView( view );
+        //Elevators.setAngleView( props.currentPile, pile.angle_X, pile.angle_Y, pile.angle_Z );
+        //setValue(!value);
+        props.callback( !props.updateState );
+    };
+
+    const changeAngleY_minus = (event) => {
+        //pile.angle_Z = pile.angle_Z + 0.1;
+        view.z = view.z + 0.1;
+        props.callbackView( view );
+        //Elevators.setAngleView( props.currentPile, pile.angle_X, pile.angle_Y, pile.angle_Z );
+        //setValue(!value);
+        props.callback( !props.updateState );
+    };
+
+    const changeAngleY_plus = (event) => {
+        //pile.angle_Z = pile.angle_Z - 0.1;
+        view.z = view.z - 0.1;
+        props.callbackView( view );
+        //Elevators.setAngleView( props.currentPile, pile.angle_X, pile.angle_Y, pile.angle_Z );
+        //setValue(!value);
+        props.callback( !props.updateState );
+    };
+
+    /*const changeAngleZ = (event) => {
+        pile.angle_Z = event.target.value;
+        Elevators.setAngleView( props.currentPile, pile.angle_X, pile.angle_Y, pile.angle_Z );
+        //setValue(!value);
+        props.callback( !props.updateState );
+    };*/
+
+    const viewUp = () => {
+        view.x = 0;
+        view.y = 0;
+        view.z = 0;
+        props.callbackView( view );
+        //Elevators.setAngleView( props.currentPile, pile.angle_X, pile.angle_Y, pile.angle_Z ); 
+        props.callback( !props.updateState );
+    }
+
+    const viewFront = () => {
+        view.x = -3.14/2;
+        view.y = 0;
+        view.z = 0;
+        props.callbackView( view );
+       // Elevators.setAngleView( props.currentPile, pile.angle_X, pile.angle_Y, pile.angle_Z ); 
+        props.callback( !props.updateState );
+    }
+
+    const viewSide = () => {
+        view.x = -3.14/2;
+        view.y = 0;
+        view.z = -3.14/2;
+        props.callbackView( view );
+        //Elevators.setAngleView( props.currentPile, pile.angle_X, pile.angle_Y, pile.angle_Z ); 
+        props.callback( !props.updateState );
+    }
+
+    const view3D = () => {
+        view.x = -3.14*70/180;
+        view.y = 3.14*25/180;
+        view.z = -3.14*20/180;
+        props.callbackView( view );
+        //Elevators.setAngleView( props.currentPile, pile.angle_X, pile.angle_Y, pile.angle_Z ); 
+        props.callback( !props.updateState );
+    }
+
+    return (
+        <div>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+    
+                    <button
+                    className='myButton'
+                    style={{ width: 80 }}
+                    onClick={ viewUp }
+                    >
+                    Up
+                    </button>
+    
+                    <button 
+                    className='myButton'
+                    style={{ width: 80 }}
+                    onClick={ viewFront }
+                    >
+                    Front
+                    </button>
+    
+                    <button 
+                    className='myButton'
+                    style={{ width: 80 }}
+                    onClick={ viewSide }
+                    >
+                    Side
+                    </button>
+                
+                    <button 
+                    className='myButton'
+                    style={{ width: 80 }}
+                    onClick={ view3D }
+                    >
+                    3D
+                    </button>
+    
+                    <div><hr/></div>
+                    
+                    <div style={{ margin: -3 }}>
+    
+                        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                            <button
+                            className='myButtonRound'
+                            style={{ width: 30, height: 30 }}
+                            onClick={changeAngleX_minus}
+                            >▲</button>
+                        </div>
+    
+                        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: -7, marginBottom: -7 }}>   
+                        
+                            <button
+                                className='myButtonRound'
+                                style={{ width: 30, height: 30 }}
+                                onClick={changeAngleY_plus}
+                            >◄</button>
+    
+                            <button
+                                className='myButtonRound'
+                                style={{ width: 30, height: 30 }}
+                                onClick={changeAngleY_minus}
+                            >►</button>
+                                
+                        </div>
+    
+                        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                            <button
+                            className='myButtonRound'
+                            style={{ width: 30, height: 30 }}
+                            onClick={changeAngleX_plus}
+                            >▼</button>
+                        </div>
+    
+                    </div>
+    
+                    <div><hr/></div>
+    
+                    <label className='myText'>View Mode:</label>
+    
+                    <button
+                            className='myButton'
+                            style={{ width: 80, height: 30 }}
+                            onClick={ setModeModel }
+                            >Model</button>
+    
+                        <button
+                            className='myButton'
+                            style={{ width: 80, height: 30 }}
+                            onClick={ setModeLocation }
+                            >Location</button>
+                    </div>
+        </div>
+      )
+    };
