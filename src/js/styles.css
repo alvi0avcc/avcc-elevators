@@ -365,11 +365,24 @@ input[type="range"]::-moz-range-thumb {
 .container {
   position: relative;
 }
-#overlay {
+#overlay{
   position: absolute;
   left: 10px;
   bottom: 10px;
+  border-radius: 10px;
   background-color: rgba(117, 190, 218, 0.5);
+  color: black;
+  font-family: serif;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 0.5em;
+}
+#overlay_control {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  border-radius: 10px;
+  background-color: rgba(117, 190, 218, 0.2);
   color: black;
   font-family: serif;
   font-size: 18px;

@@ -551,14 +551,15 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
       }, [draw])
     
     return (
+        <div class="container" style={{ height: 610 }} >
 
-        <div class="container">
-            <canvas id="canvas" ref={canvasRef} style={{ width: '100%' }} />
+            <canvas id="canvasPile" ref={canvasRef} style={{ height: '100%', width: '100%' }} />
+            
             <div id="overlay">
                 <div>Volume of selected Pile: <span id="floor_volume">{Elevators.get_Pile_Volume( props.currentPile )} (m³)</span></div>
             </div>
+
         </div>
-            
 
     );
   }

@@ -154,7 +154,13 @@ function FloorSize(propsSize){
         };
 
     return (
-        <div className='block' style={{ display: 'flex', flexDirection: 'row', minWidth: 1000 }}>
+    <div className='block' style={{ minWidth: 1000, marginTop: '10px' }}>
+
+        <div style={{ width: 85, marginTop: -15, backgroundColor: 'white', backgroundClip: 'content-box' }}>
+            <span>Warehouse</span>
+        </div>
+
+        <div className='block_row' style={{ border: 'none', padding: 0, margin: 0 }}>
 
         <div 
             className='block'
@@ -246,10 +252,12 @@ function FloorSize(propsSize){
             <div className='block' style={{ width: '100%' }}>
                 { Elevators.FloorFound ?  <FloorViewCanvas/> : '' }
             </div>
-
-            <FloorSidePanel_3D updateState={value} callback={(data)=> setValue( data ) }/>
-                
+            
+            <div className='block' style={{ position: 'relative', right: '0px', width: '120px' }}>
+                <FloorSidePanel_3D updateState={value} callback={(data)=> setValue( data ) }/>
+            </div>   
         </div>
+    </div>
     )
 };
 
@@ -295,9 +303,6 @@ function Piles(propsPiles){
     const [ view, setView ] = React.useState( { x: -3.14*70/180, y: 3.14*25/180, z: -3.14*20/180 } );
 
     return (
-    <div>
-
-        <div  >
             <div className='block_row' style={{ border: 'none', padding: 0, margin: 0 }} >
 
                 <Pile_Side_Menu updateState={ updatePiles } callback={(data)=> setUpdatePiles( data ) } currentPile={ currentPile } callbackPile={(data)=> setCurrentPile( data ) } mode={ mode } callbackMode={(data)=> setMode( data ) } />
@@ -311,9 +316,6 @@ function Piles(propsPiles){
                 </div>
 
             </div>
-        </div>
-
-    </div>
     )
 }
 
@@ -707,7 +709,7 @@ function FloorSidePanel_3D( props ) {
 
 
     return (
-        <div className='block'>
+        <div>
                 <button
                     className='myButton'
                     style={{ width: 90 }}

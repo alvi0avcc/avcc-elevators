@@ -7,6 +7,8 @@ import * as Calc from './calc.js';
 const FloorViewCanvas = props => {
 
     let time1 = new Date().getTime(); //time control
+
+    const [ auto_rotate, setAuto_rotate ] = React.useState( false );
     
     const canvasRef = useRef(null)
 
@@ -294,14 +296,14 @@ const FloorViewCanvas = props => {
             colorMulti = Elevators.get_Floor_Multicolor;
 
         // Запрашиваем рендеринг на следующий кадр
-            requestAnimationFrame(render);
+        requestAnimationFrame(render);
         
         // Получаем время прошедшее с прошлого кадра
             var time = Date.now();
             var dt = lastRenderTime - time;
 
         //--------------------------------------------  Вращаем куб относительно оси Z
-           mat4.rotateZ(modelMatrix, modelMatrix, dt / 4000);
+        if ( auto_rotate ) mat4.rotateZ(modelMatrix, modelMatrix, dt / 4000);
         //----------------------------------------------------------------------
             gl.clearColor(1.0, 1.0, 1.0, 1.0);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -422,26 +424,37 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
       const canvas = canvasRef.current;
       const { width, height } = canvas.getBoundingClientRect();
       //canvas.height = window.innerHeight;
-      canvas.height = 450;
-      canvas.width = window.innerWidth - 460;
-      const gl = canvas.getContext('webgl')
+      canvas.height = height;
+      canvas.width = width;
+      const gl = canvas.getContext('webgl', { antialias: true } )
   
         draw(gl)
   
       }, [draw])
     
     return (
-    <div style={{ display: 'flex', flexDirection: 'row', height: 450 }}>
 
-        <div class="container">
-            <canvas id="canvas" ref={canvasRef} {...props} />
+        <div class="container" style={{ height: 450 }} >
+
+            <canvas id="canvasFlor" ref={canvasRef} style={{ height: '100%', width: '100%' }} />
+            
+            <div id="overlay_control" style={{ bottom: '60px' }}>
+                <label id="label_autorotate" htmlFor='input_autorotate' >Auto rotate</label>
+                <input 
+                    id='input_autorotate' 
+                    type='checkbox' 
+                    checked={auto_rotate}
+                    onChange={ ()=>{ setAuto_rotate( !auto_rotate ) } }
+                    />
+            </div>
+
             <div id="overlay">
                 <div>Volume: <span id="floor_volume">{Elevators.get_Floor_Volume} (m³)</span></div>
             </div>
+
         </div>
             
 
-    </div>
     );
   }
   
