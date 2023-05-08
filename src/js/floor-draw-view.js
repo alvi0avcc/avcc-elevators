@@ -388,7 +388,7 @@ const FloorViewCanvas = props => {
                    // }
                    
                     if ( colorMulti ) { gl.uniform4f(colorUniformLocation, colors[i], colors[i+1], colors[i+2], colors[i+3]); 
-                    } else { gl.uniform4f(colorUniformLocation, 0.0,  0.0,  1.0,  1.0); };
+                    } else { gl.uniform4f(colorUniformLocation, 1,  1,  0.0,  1.0); };
 
                     if ( meshView == 'mesh' ) { gl.drawArrays( gl.LINE_STRIP, i, ( count + 1 ) * 2 ); 
                     } else { gl.drawArrays(gl.TRIANGLE_STRIP, i, ( count + 1 ) * 2 ); }

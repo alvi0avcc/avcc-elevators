@@ -467,17 +467,17 @@ const PilesViewCanvas = props => {
                     // compute a clipspace position
                     // using the matrix we computed for the F
                     var clipspace = transformVector( mat, [ xx, yy, zz, 1 ]);
-                    console.log('modelMatrix = ',modelMatrix);
-                    console.log('clipspace 1= ',clipspace);
+                    //console.log('modelMatrix = ',modelMatrix);
+                    //console.log('clipspace 1= ',clipspace);
                     // divide X and Y by W just like the GPU does.
                     clipspace[0] /= clipspace[3];
                     clipspace[1] /= clipspace[3];
-                    console.log('clipspace 2= ',clipspace);
+                    //console.log('clipspace 2= ',clipspace);
                     // convert from clipspace to pixels
                     var pixelX = (clipspace[0] *  0.5 + 0.5) * gl.canvas.width;
                     var pixelY = (clipspace[1] * -0.5 + 0.5) * gl.canvas.height;
-                    console.log('pixelX = ',pixelX);
-                    console.log('pixelY = ',pixelY);
+                    //console.log('pixelX = ',pixelX);
+                    //console.log('pixelY = ',pixelY);
 
                     //gl.drawingBufferWidth, gl.drawingBufferHeight
                     let x_center = ctx.canvas.clientWidth / 2;
@@ -492,16 +492,6 @@ const PilesViewCanvas = props => {
                     matrix_text  = RotateMatrix_Y_any( matrix_text, ay );
                     matrix_text  = RotateMatrix_Z_any( matrix_text, -az );
                     matrix_text  = MoveMatrixAny( matrix_text, x_center, 0, zz );
-                    //matrix_text  = MoveMatrixAny( matrix_text, x_center, y_center, 0 );
-                    //let p2 = slices.slice( 0, 2 );
-
-                    //matrix_text = MoveMatrixAny( matrix_text , x - Length / 2, y - Width / 2, box );
-                    //mat4.rotateZ(matrix_text, matrix_text, angle_Z);
-                    console.log('matrix_text = ',matrix_text);
-                    console.log('matrix_text = ',matrix_text);
-                    console.log('matrix_text = ',matrix_text);
-                    console.log('matrix_text = ',matrix_text);
-                    //console.log('vertices = ',vertices);
 
                     ctx.fillStyle = 'red';
                     ctx.font = "18px serif";

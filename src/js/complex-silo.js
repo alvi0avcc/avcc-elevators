@@ -300,7 +300,7 @@ function ComplexSiloInfo(props) {
                     <Stack 
                       justifyContent={'center'}
                       direction='row'>
-                      <span><strong>{Elevators.massaComplexSiloGet(index,index2).weight} (MT)</strong></span>
+                      <span style={{ fontSize: '0.6rem' }} ><strong>{Elevators.massaComplexSiloGet(index,index2).weight} (MT)</strong></span>
                     </Stack>
                   </Stack>
           </Paper>
@@ -381,7 +381,7 @@ function ComplexSiloInfo(props) {
                     <Stack 
                       justifyContent={'center'}
                       direction='row'>
-                      <span><strong>{Elevators.massaComplexSiloGet(index,index3).weight} (MT)</strong></span>
+                      <span style={{ fontSize: '0.6rem' }} ><strong>{Elevators.massaComplexSiloGet(index,index3).weight} (MT)</strong></span>
                     </Stack>
                   </Stack>
                 </Paper>
