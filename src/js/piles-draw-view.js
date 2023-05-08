@@ -5,12 +5,17 @@ import { mat3, mat4, vec3, vec4 } from 'gl-matrix';
 import * as Calc from './calc.js';
 import cgPile from './pile_class.js'
 import { get_Max_Y_3D, getCurvePoints, drawLines, drawCurve, getPoint, drawPoint, drawPoints, getSlice, drawSlice, drawContur, getContur, getPoints_by_Y } from './spline.js';
-import { MoveMatrix, MoveMatrixAny, RotateMatrix_X, RotateMatrix_X_any, RotateMatrix_Y, RotateMatrix_Y_any, RotateMatrix_Z, RotateMatrix_Z_any, ScaleMatrix, ScaleMatrixAny, ScaleMatrixAny1zoom } from './3d-matrix.js';
+import { transformVector, MoveMatrix, MoveMatrixAny, RotateMatrix_X, RotateMatrix_X_any, RotateMatrix_Y, RotateMatrix_Y_any, RotateMatrix_Z, RotateMatrix_Z_any, ScaleMatrix, ScaleMatrixAny, ScaleMatrixAny1zoom } from './3d-matrix.js';
 import { draw_Line_3D, draw_PLine_3D, draw_PLine_3D_between, draw_underBase, draw_Point_3D } from './draw.js';
 
 const PilesViewCanvas = props => {
 
     const canvasRef = useRef(null)
+    const canvasTextRef = useRef(null)
+
+    const [ update, setUpdate ] = React.useState( true );
+    //const [ pos, setPos  ] = React.useState( { x: 0, y: 0 } );
+    let pos = { x: 0, y: 0, name: '' };
 
     let currentPile = 0;
     currentPile = props.currentPile;
@@ -37,11 +42,11 @@ const PilesViewCanvas = props => {
 
     
 
-    let mesh = [];
+    //let mesh = [];
     //mesh = Elevators.get_Floor_Mesh_3D;
     //mesh = matrix.MoveMatrixAny( mesh, -Length/2, -Width/2, -Height/2 );
 
-    let strip = [];
+    //let strip = [];
     //strip = Elevators.get_Floor_Strip;
 
     // Korpus                
@@ -91,6 +96,30 @@ const PilesViewCanvas = props => {
     //normal = normal.concat( [ 0,0,0 ] );
     //console.log('normal = ', normal);
 
+    //--------------------------------------
+/*
+    // look up the divcontainer
+    let divContainerElement = document.querySelector("#divcontainer");
+
+    // make the div
+    let div = document.createElement("div");
+    // assign it a CSS class
+    div.className = "floating-div";
+    // make a text node for its content
+    let textNode = document.createTextNode("");
+    div.appendChild(textNode);
+
+    // add it to the divcontainer
+    divContainerElement.appendChild(div);*/
+    /*var divContainerElement = document.getElementById('divcontainer');
+    console.log('divContainerElement =',divContainerElement);
+    var div = document.createElement("div");
+    div.innerHTML = "new div";*/
+   // divContainerElement.appendChild(div);
+
+    //addDiv();
+
+
     //---------------------------------------
 
     let gPile = new cgPile();
@@ -119,7 +148,15 @@ const PilesViewCanvas = props => {
                 volume = gPile.get_Volume;
                 Elevators.set_Pile_Volume( currentPile, volume.volume );
             }
-            gPiles.push( gPile.get_Mesh( slice_step ) ) ;
+
+            let mesh = gPile.get_Mesh( slice_step );
+            gPiles.push( mesh ) ;
+
+            pos.x = mesh.x;
+            pos.y = mesh.y;
+            pos.name = index + 1 ;
+
+
         }
     } else {
         let pile = Elevators.PileGet( currentPile );
@@ -141,7 +178,7 @@ const PilesViewCanvas = props => {
 
     //---------------------------------------
 
-    const draw = (gl) => {
+    const draw = ( gl, ctx ) => {
 
     // Запомним время последней отрисовки кадра
     let lastRenderTime = Date.now();
@@ -240,7 +277,6 @@ const PilesViewCanvas = props => {
 
     //--------------------------------------------Устанавливаем вьюпорт у WebGL
         //gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-        gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
     //--------------------------------------------Получим местоположение переменных в программе шейдеров
         let uModelView = gl.getUniformLocation(program, 'u_modelView');
@@ -313,13 +349,12 @@ const PilesViewCanvas = props => {
                 zoom = Math.min( zoom_L, zoom_W, zoom_H );
             }
 
-
             zoom = zoom * 0.7;
 
             mat4.ortho(projectionMatrix, 0, gl.drawingBufferWidth, 0, gl.drawingBufferHeight, -500, 500);
             if ( mode == 'location') {
-                mat4.translate(projectionMatrix, projectionMatrix, [ gl.drawingBufferWidth / 2, gl.drawingBufferHeight / 2 - Height*0.8*zoom/2, 0 ]);
-            } else mat4.translate(projectionMatrix, projectionMatrix, [ gl.drawingBufferWidth / 2, gl.drawingBufferHeight / 2 - h*0.8*zoom/2, 0 ]);
+                mat4.translate(projectionMatrix, projectionMatrix, [ gl.drawingBufferWidth / 2, gl.drawingBufferHeight / 2, 0 ]);
+            } else mat4.translate(projectionMatrix, projectionMatrix, [ gl.drawingBufferWidth / 2, gl.drawingBufferHeight / 2, 0 ]);
 
             mat4.scale( modelMatrix, modelMatrix, [ zoom, zoom, zoom ] );
             mat4.rotateX(modelMatrix, modelMatrix, angle_X);
@@ -342,8 +377,11 @@ const PilesViewCanvas = props => {
         //--------------------------------------------  Вращаем куб относительно оси Z
           // mat4.rotateZ(modelMatrix, modelMatrix, dt / 4000);
         //----------------------------------------------------------------------
+            gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+
             gl.clearColor(1.0, 1.0, 1.0, 1.0);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+            ctx.clearRect(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
         //----------------------------------------------------------------------
             gl.enable(gl.DEPTH_TEST);
             //gl.enable(gl.CULL_FACE);
@@ -391,6 +429,7 @@ const PilesViewCanvas = props => {
 
             if ( mode == 'location') {
                 vertices = korpus_draw;
+                vertices = MoveMatrixAny( vertices , 0, 0, -Height/2 );
 
                 gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
                 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),  gl.STATIC_DRAW);
@@ -416,14 +455,63 @@ const PilesViewCanvas = props => {
                     let base_countur = gPiles[ i ].slices.slice( 0, count );
                     vertices = gPiles[ i ].mesh;
                     vertices = RotateMatrix_Z_any( vertices , angle, 4 );
-                    vertices = MoveMatrixAny( vertices , x - Length / 2, y - Width / 2, box );
+                    vertices = MoveMatrixAny( vertices , x - Length / 2, y - Width / 2, box - Height/2 );
+
+                    let xx = x - Length / 2;
+                    let yy = y - Width / 2;
+                    let zz = -box + Height/2;
+                    let matrix_text = [ xx, yy, zz, 1 ];
+
+                    // compute a clipspace position
+                    // using the matrix we computed for the F
+                    var clipspace = transformVector(vertices, [ 0, 0, 0, 1 ]);
+                    console.log('clipspace 1= ',clipspace);
+                    // divide X and Y by W just like the GPU does.
+                    clipspace[0] /= clipspace[3];
+                    clipspace[1] /= clipspace[3];
+                    console.log('clipspace 2= ',clipspace);
+                    // convert from clipspace to pixels
+                    var pixelX = (clipspace[0] *  0.5 + 0.5) * gl.canvas.width;
+                    var pixelY = (clipspace[1] * -0.5 + 0.5) * gl.canvas.height;
+                    console.log('pixelX = ',pixelX);
+                    console.log('pixelY = ',pixelY);
+
+                    //gl.drawingBufferWidth, gl.drawingBufferHeight
+                    let x_center = ctx.canvas.clientWidth / 2;
+                    let y_center = ctx.canvas.clientHeight / 2;
+
+                    //matrix_text  = MoveMatrixAny( matrix_text, x, y, 0 );
+                    let ax = angle_X * 180 / 3.14;
+                    let ay = angle_Y * 180 / 3.14;
+                    let az = angle_Z * 180 / 3.14;
+                    matrix_text  = ScaleMatrixAny1zoom( matrix_text, zoom );
+                    matrix_text  = RotateMatrix_X_any( matrix_text, ax );
+                    matrix_text  = RotateMatrix_Y_any( matrix_text, ay );
+                    matrix_text  = RotateMatrix_Z_any( matrix_text, -az );
+                    matrix_text  = MoveMatrixAny( matrix_text, x_center, 0, zz );
+                    //matrix_text  = MoveMatrixAny( matrix_text, x_center, y_center, 0 );
+                    //let p2 = slices.slice( 0, 2 );
+
+                    //matrix_text = MoveMatrixAny( matrix_text , x - Length / 2, y - Width / 2, box );
+                    //mat4.rotateZ(matrix_text, matrix_text, angle_Z);
+                    console.log('matrix_text = ',matrix_text);
+                    console.log('matrix_text = ',matrix_text);
+                    console.log('matrix_text = ',matrix_text);
+                    console.log('matrix_text = ',matrix_text);
+                    //console.log('vertices = ',vertices);
+
+                    ctx.fillStyle = 'red';
+                    ctx.font = "18px serif";
+                    //ctx.fillText("Pile "+ (i+1), matrix_text[0], 610/2 - matrix_text[1]);
+                    ctx.fillText("Pile "+ (i+1), pixelX, 610/2 - pixelY);
+
 
                     let PileVisible = 1;
                     if ( currentPile == i ) { PileVisible = 1;
                     } else PileVisible = 0.2 ;
 
                     base_countur = RotateMatrix_Z_any( base_countur , angle, 4 );
-                    base_countur = MoveMatrixAny( base_countur , x - Length / 2, y - Width / 2, box );
+                    base_countur = MoveMatrixAny( base_countur , x - Length / 2, y - Width / 2, box - Height/2 );
 
                     // box
                     gl.uniform4f(colorUniformLocation, 1, 0, 1, PileVisible );
@@ -457,6 +545,31 @@ const PilesViewCanvas = props => {
                     for ( let i =0; i < slice_step; i++ ) {
                         gl.drawArrays(gl.LINE_STRIP, i * count /2, count *2 / 4 +1 );
                     }
+
+/*
+                    //----------------------------------------------------------------------
+                    // choose a point in the local space of the 'F'.
+                    var point = [100, 0, 0, 1];  // this is the front top right corner
+
+                    // compute a clipspace position
+                    // using the matrix we computed for the F
+                    //var clipspace = m4.transformVector(matrix, [100, 0, 0, 1]);
+
+                    var clipspace = point;
+
+                    // divide X and Y by W just like the GPU does.
+                    clipspace[0] /= clipspace[3];
+                    clipspace[1] /= clipspace[3];
+
+                    // convert from clipspace to pixels
+                    var pixelX = (clipspace[0] *  0.5 + 0.5) * gl.canvas.width;
+                    var pixelY = (clipspace[1] * -0.5 + 0.5) * gl.canvas.height;
+
+                    // position the div
+                    div.style.left = Math.floor(pixelX) + "px";
+                    div.style.top  = Math.floor(pixelY) + "px";
+*/
+                    //----------------------------------------------------------------------
 /*
                     // solid - hat
                     for ( let i =0; i < slice_step; i++ ) {
@@ -474,12 +587,12 @@ const PilesViewCanvas = props => {
                 vertices = gPiles[ 0 ].mesh;
                 //vertices = RotateMatrix_Z_any( vertices , angle, 4 );
                 //vertices = MoveMatrixAny( vertices , x - Length / 2, y - Width / 2, box );
-                vertices = MoveMatrixAny( vertices , 0, 0, box );
+                vertices = MoveMatrixAny( vertices , 0, 0, box - h/2 );
 
                 let PileVisible = 1;
 
                 //base_countur = RotateMatrix_Z_any( base_countur , angle, 4 );
-                base_countur = MoveMatrixAny( base_countur ,0, 0, box );
+                base_countur = MoveMatrixAny( base_countur ,0, 0, box - h/2 );
 
                 // box
                 gl.uniform4f(colorUniformLocation, 1, 0, 1, PileVisible );
@@ -515,7 +628,6 @@ const PilesViewCanvas = props => {
                 }
             }
             //----------------------
-
             //lastRenderTime = time;
             
         }
@@ -545,15 +657,21 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
       canvas.height = height;
       canvas.width = width;
       const gl = canvas.getContext('webgl', { antialias: true } );
+
+      const canvasText = canvasTextRef.current;
+      canvasText.height = height;
+      canvasText.width = width;
+      const ctx = canvasText.getContext( '2d', { antialias: true } );
   
-        draw(gl)
+        draw( gl, ctx )
   
       }, [draw])
     
     return (
         <div class="container" style={{ height: 610 }} >
-
-            <canvas id="canvasPile" ref={canvasRef} style={{ height: '100%', width: '100%' }} />
+            
+            <canvas id="canvasPile" ref={canvasRef} style={{ height: '100%', width: '100%', backgroundColor: 'transparent' }} />
+            <canvas id="canvasText" ref={canvasTextRef} style={{ height: '100%', width: '100%', zIndex: 10, backgroundColor: 'transparent', position: 'absolute', left: '0px', top: '0px' }} />
             
             <div id="overlay">
                 <div>Volume of selected Pile: <span id="floor_volume">{Elevators.get_Pile_Volume( props.currentPile )} (m³)</span></div>
@@ -625,3 +743,27 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
   
    return program;
  };
+
+
+ function addDiv() {
+    var objTo = document.getElementById('container');
+    var divtest = document.createElement("div");
+    divtest.innerHTML = "new div";
+    objTo.appendChild(divtest);
+}
+
+function AddLabelPile( props ){
+    let x = props.left+'px';
+    let y = props.bottom+'px';
+    let name = props.name;
+    console.log('name=',name);
+    console.log('x=',x);
+    console.log('y=',y);
+    return (
+        <div 
+            id = 'overlay'
+            style={{ left: x, bottom: y }}
+            left = '50px'
+        >{name}</div>
+    )
+}

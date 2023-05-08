@@ -220,7 +220,6 @@ const FloorViewCanvas = props => {
 
     //--------------------------------------------Устанавливаем вьюпорт у WebGL
         //gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-        gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
     //--------------------------------------------Получим местоположение переменных в программе шейдеров
         let uModelView = gl.getUniformLocation(program, 'u_modelView');
@@ -305,6 +304,7 @@ const FloorViewCanvas = props => {
         //--------------------------------------------  Вращаем куб относительно оси Z
         if ( auto_rotate ) mat4.rotateZ(modelMatrix, modelMatrix, dt / 4000);
         //----------------------------------------------------------------------
+            gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
             gl.clearColor(1.0, 1.0, 1.0, 1.0);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         //----------------------------------------------------------------------

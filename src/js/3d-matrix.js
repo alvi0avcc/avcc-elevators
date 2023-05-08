@@ -273,6 +273,28 @@ export function RotateMatrix_Z_any( matrix, angle, type = 4 ) {
   };
   return result;
 }
+
+/**
+   * Takes a  matrix and a vector with 4 entries, transforms that vector by
+   * the matrix, and returns the result as a vector with 4 entries.
+   * @param {Matrix4} m The matrix.
+   * @param {Vector4} v The point in homogenous coordinates.
+   * @param {Vector4} dst optional vector4 to store result
+   * @return {Vector4} dst or new Vector4 if not provided
+   * @memberOf module:webgl-3d-math
+   */
+export function transformVector(m, v, dst) {
+  let MatType = Float32Array;
+  dst = dst || new MatType(4);
+  for (var i = 0; i < 4; ++i) {
+    dst[i] = 0.0;
+    for (var j = 0; j < 4; ++j) {
+      dst[i] += v[j] * m[j * 4 + i];
+    }
+  }
+  return dst;
+}
+
 //------------------------------------------------------------------------------------------------
 
 class Vector {
