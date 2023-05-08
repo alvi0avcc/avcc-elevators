@@ -16,7 +16,7 @@ const FloorViewCanvas = props => {
 
     let meshView = true;
     let houseView =true;
-    let colorMulti = true;
+    let colorMulti = false;
 
     let Length = floor.Length;
     let Width = floor.Width;
