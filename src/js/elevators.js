@@ -86,13 +86,13 @@ class cWarehouse {
     constructor() {
     this.id          = '';    
     this.Name        = 'NewWarehouse';
-    this.Dimensions  = { Length: 0, Width: 0, Height: 0, Conus_height: 0, Conus_L: 0, Conus_W: 0, Conus_X: 0, Conus_Y: 0 };
+    this.Dimensions  = { Length: 50, Width: 20, Height: 10, Conus_height: 0, Conus_L: 45, Conus_W: 1, Conus_X: 25, Conus_Y: 10 };
     this.Pile        = [];
     this.Cargo       = {Name: '', Natura: 0 };
     this.MeshStep   = 50;
     this.MeshStyle  = ( 'solid', 'mesh' );
     this.ShowHouse  = true;
-    this.Multicolor = true;
+    this.Multicolor = false;
     this.Mesh       = [];
     this.Mesh_3D    = [];
     this.Strip      = [];
@@ -381,6 +381,7 @@ class cElevators {
         return( result );
     }
     get_Pile_Volume( index = 0 ){
+        if ( index >= this.PileFound ) index = 0;
         if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Volume == undefined ) return ( 0 );
         return ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Volume );
     }
@@ -548,6 +549,20 @@ class cElevators {
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].angle_Y = angle_Y;
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].angle_Z = angle_Z;
         };
+    }
+    get Piles_List(){
+        let List = [];
+        if ( this.FloorFound > 0) {
+            //let List = [];
+            let ii = this.Elevators[this.Selected].Warehouse[ this.WarehouseSelected ].Pile.length;
+            let data;
+            if (ii > 0 ) {    
+                for( let i =0 ; i < ii ; i++){
+                    data = this.Elevators[this.Selected].Warehouse[ this.WarehouseSelected ].Pile[ i ].Name;
+                    List.push( data );
+                }
+            }};
+        return List;
     }
     get ComplexList(){
         let List = [];

@@ -308,7 +308,7 @@ function Piles(propsPiles){
                 <Pile_Side_Menu updateState={ updatePiles } callback={(data)=> setUpdatePiles( data ) } currentPile={ currentPile } callbackPile={(data)=> setCurrentPile( data ) } mode={ mode } callbackMode={(data)=> setMode( data ) } />
 
                 <div className='block' style={{ width: '100%' }}>
-                    { Elevators.FloorFound ?  <PilesViewCanvas currentPile={ currentPile } callback={(data)=> setCurrentPile( data ) } view={ view } mode={ mode } /> : '' }
+                    { Elevators.FloorFound ?  <PilesViewCanvas updateState={ updatePiles } callback={(data)=> setUpdatePiles( data ) } currentPile={ currentPile } callbackPile={(data)=> setCurrentPile( data ) } view={ view } mode={ mode } /> : '' }
                 </div>
 
                 <div className='block' style={{ position: 'relative', right: '0px', width: '120px' }}>
@@ -776,12 +776,20 @@ function FloorSidePanel_3D( props ) {
 
 
 function Pile_Side_Menu(props){
-    //const [valuePile, setValuePile] = React.useState(0);
 
-    const [ index, setIndex ] =React.useState( props.currentPile )
-    //let pile = Elevators.PileGet( index );
+    const [ index, setIndex ] =React.useState( props.currentPile );
 
     const [ pile, setPile ] = React.useState( Elevators.PileGet( index ) );
+
+    if ( props.currentPile != index ) {
+        if ( props.currentPile < Elevators.PileFound ) {
+            setIndex( props.currentPile );
+            setPile( Elevators.PileGet( props.currentPile ) );
+        } else {
+            setIndex( 0 );
+            setPile( 0 )
+        }
+    }
 
     const [value, setValue] = React.useState(false);
     //const [mode, setMode] = React.useState('model');

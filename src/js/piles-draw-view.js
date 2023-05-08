@@ -8,17 +8,65 @@ import { get_Max_Y_3D, getCurvePoints, drawLines, drawCurve, getPoint, drawPoint
 import { transformVector, MoveMatrix, MoveMatrixAny, RotateMatrix_X, RotateMatrix_X_any, RotateMatrix_Y, RotateMatrix_Y_any, RotateMatrix_Z, RotateMatrix_Z_any, ScaleMatrix, ScaleMatrixAny, ScaleMatrixAny1zoom } from './3d-matrix.js';
 import { draw_Line_3D, draw_PLine_3D, draw_PLine_3D_between, draw_underBase, draw_Point_3D } from './draw.js';
 
+
+function a11yProps(index) {
+    return {
+      id: `pile-label-${index}`,
+      'aria-controls': `Pile-labell-${index}`,
+    };
+  }
+
+function a11yPropsButton(index) {
+    return {
+      id: `pile-button-${index}`,
+      'aria-controls': `Pile-button-${index}`,
+      name: `${index}`
+    };
+}
+
+
 const PilesViewCanvas = props => {
+
+    //------------------------------------
+    function PileSelectButton( propsPileSelect ){
+        let index = propsPileSelect.index + 1;
+
+        const pileSelect = (event) => {
+            props.callbackPile( Number(event.target.name) - 1 );
+            props.callback( !props.updatePiles );
+        }
+
+        return (
+        <div className = 'overlay-control' {...a11yProps(index)} hidden style={{ zIndex: 2 }}>
+            <button 
+                className='myButtonPile'
+                key = { index } 
+                {...a11yPropsButton(index)}
+                onClick={ pileSelect }
+                >
+                { index }
+            </button>
+         </div>
+        )
+    }
+
+    //------------------------------------
 
     const canvasRef = useRef(null)
     const canvasTextRef = useRef(null)
 
     const [ update, setUpdate ] = React.useState( true );
-    //const [ pos, setPos  ] = React.useState( { x: 0, y: 0 } );
+   
+
+    let pile_label_position = [];
+
+    let pile_label = [];
     let pos = { x: 0, y: 0, name: '' };
 
     let currentPile = 0;
     currentPile = props.currentPile;
+
+    if ( currentPile >= Elevators.PileFound ) currentPile = 0;
 
     let mode = props.mode;
 
@@ -152,9 +200,9 @@ const PilesViewCanvas = props => {
             let mesh = gPile.get_Mesh( slice_step );
             gPiles.push( mesh ) ;
 
-            pos.x = mesh.x;
-            pos.y = mesh.y;
-            pos.name = index + 1 ;
+            //pos.x = mesh.x;
+            //pos.y = mesh.y;
+            //pos.name = index + 1 ;
 
 
         }
@@ -443,6 +491,9 @@ const PilesViewCanvas = props => {
 
             //vertices = [];
 
+            let pile_position = [];
+
+
             if ( mode == 'location' ) {
                 //----------------------piles draw
                 for ( let i = 0; i < gPiles.length; i++ ) {
@@ -465,19 +516,14 @@ const PilesViewCanvas = props => {
                     let mat = mat4.create();
                     mat4.multiply( mat, projectionMatrix, modelMatrix );
                     // compute a clipspace position
-                    // using the matrix we computed for the F
                     var clipspace = transformVector( mat, [ xx, yy, zz, 1 ]);
-                    //console.log('modelMatrix = ',modelMatrix);
-                    //console.log('clipspace 1= ',clipspace);
                     // divide X and Y by W just like the GPU does.
                     clipspace[0] /= clipspace[3];
                     clipspace[1] /= clipspace[3];
-                    //console.log('clipspace 2= ',clipspace);
                     // convert from clipspace to pixels
                     var pixelX = (clipspace[0] *  0.5 + 0.5) * gl.canvas.width;
                     var pixelY = (clipspace[1] * -0.5 + 0.5) * gl.canvas.height;
-                    //console.log('pixelX = ',pixelX);
-                    //console.log('pixelY = ',pixelY);
+                    pile_position.push( { x: pixelX, y: pixelY } );
 
                     //gl.drawingBufferWidth, gl.drawingBufferHeight
                     let x_center = ctx.canvas.clientWidth / 2;
@@ -493,10 +539,17 @@ const PilesViewCanvas = props => {
                     matrix_text  = RotateMatrix_Z_any( matrix_text, -az );
                     matrix_text  = MoveMatrixAny( matrix_text, x_center, 0, zz );
 
-                    ctx.fillStyle = 'red';
-                    ctx.font = "18px serif";
-                    //ctx.fillText("Pile "+ (i+1), matrix_text[0], 610/2 - matrix_text[1]);
-                    ctx.fillText("Pile "+ (i+1), pixelX, pixelY);
+                   // ctx.fillStyle = 'red';
+                    //ctx.font = "18px serif";
+                    //ctx.fillText( (i+1), pixelX, pixelY);
+                    let div = document.getElementById('pile-label-'+(i+1));
+                    if ( div ) {
+                        div.style.left = Math.floor(pixelX) + "px";
+                        div.style.top  = Math.floor(pixelY) + "px";
+                        if ( currentPile == i ) { div.hidden = true;
+                        } else div.hidden = false;
+                    }
+
 
 
                     let PileVisible = 1;
@@ -569,8 +622,16 @@ const PilesViewCanvas = props => {
                         gl.drawArrays(gl.TRIANGLE_STRIP, i * count /2, count *2 / 4 +1 );
                     }*/
 
-                }
+                } 
             } else { // only current Pile
+
+                for ( let i = 0; i < Elevators.PileFound; i++ ) {
+                    let div = document.getElementById('pile-label-'+(i+1));
+                    if ( div ) {
+                        div.hidden = true;
+                    }
+                }
+
                 let x = gPiles[ 0 ].x;
                 let y = gPiles[ 0 ].y;
                 let box = gPiles[ 0 ].box;
@@ -621,6 +682,7 @@ const PilesViewCanvas = props => {
                 }
             }
             //----------------------
+            
             //lastRenderTime = time;
             
         }
@@ -663,9 +725,11 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
     return (
         <div class="container" style={{ height: 610 }} >
             
-            <canvas id="canvasPile" ref={canvasRef} style={{ height: '100%', width: '100%', backgroundColor: 'transparent' }} />
-            <canvas id="canvasText" ref={canvasTextRef} style={{ height: '100%', width: '100%', zIndex: 10, backgroundColor: 'transparent', position: 'absolute', left: '0px', top: '0px' }} />
+            <canvas id="canvasPile" ref={canvasRef} style={{ height: '100%', width: '100%', backgroundColor: 'transparent', zIndex: 0 }} />
+            <canvas id="canvasText" ref={canvasTextRef} style={{ height: '100%', width: '100%', zIndex: 1, backgroundColor: 'transparent', position: 'absolute', left: '0px', top: '0px' }} />
             
+            {Elevators.PilesList.map((name, index ) => ( <PileSelectButton index={index}/> ))}
+
             <div id="overlay">
                 <div>Volume of selected Pile: <span id="floor_volume">{Elevators.get_Pile_Volume( props.currentPile )} (m³)</span></div>
             </div>
@@ -760,3 +824,4 @@ function AddLabelPile( props ){
         >{name}</div>
     )
 }
+
