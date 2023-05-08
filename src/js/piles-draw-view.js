@@ -459,12 +459,15 @@ const PilesViewCanvas = props => {
 
                     let xx = x - Length / 2;
                     let yy = y - Width / 2;
-                    let zz = -box + Height/2;
+                    let zz = box - Height/2;
                     let matrix_text = [ xx, yy, zz, 1 ];
 
+                    let mat = mat4.create();
+                    mat4.multiply( mat, projectionMatrix, modelMatrix );
                     // compute a clipspace position
                     // using the matrix we computed for the F
-                    var clipspace = transformVector(vertices, [ 0, 0, 0, 1 ]);
+                    var clipspace = transformVector( mat, [ xx, yy, zz, 1 ]);
+                    console.log('modelMatrix = ',modelMatrix);
                     console.log('clipspace 1= ',clipspace);
                     // divide X and Y by W just like the GPU does.
                     clipspace[0] /= clipspace[3];
@@ -503,7 +506,7 @@ const PilesViewCanvas = props => {
                     ctx.fillStyle = 'red';
                     ctx.font = "18px serif";
                     //ctx.fillText("Pile "+ (i+1), matrix_text[0], 610/2 - matrix_text[1]);
-                    ctx.fillText("Pile "+ (i+1), pixelX, 610/2 - pixelY);
+                    ctx.fillText("Pile "+ (i+1), pixelX, pixelY);
 
 
                     let PileVisible = 1;
