@@ -9,32 +9,80 @@ import { transformVector, MoveMatrix, MoveMatrixAny, RotateMatrix_X, RotateMatri
 import { draw_Line_3D, draw_PLine_3D, draw_PLine_3D_between, draw_underBase, draw_Point_3D } from './draw.js';
 
 
-function a11yProps(index) {
-    return {
-      id: `pile-label-${index}`,
-      'aria-controls': `Pile-labell-${index}`,
-    };
-  }
 
-function a11yPropsButton(index) {
-    return {
-      id: `pile-button-${index}`,
-      'aria-controls': `Pile-button-${index}`,
-      name: `${index}`
-    };
-}
 
 
 const PilesViewCanvas = props => {
+
+    const [ posMouse, setPosMouse ] = React.useState( { x: 0, y: 0, angle: 0 } );
+    const [ initPosMouse, setInitPosMouse ] = React.useState( { x: 0, y: 0, angle: 0 } );
+    const [ changePilePos, setChangePilePos] = React.useState( false );
+
+    let Pile_x = 0;
+    let Pile_y = 0;
+    let Pile_angle = 0;
+
+    function a11yProps(index) {
+        return {
+          id: `pile-label-${index}`,
+          'aria-controls': `Pile-labell-${index}`,
+        };
+      }
+    
+    function a11yPropsButton(index) {
+        return {
+          id: `pile-button-${index}`,
+          'aria-controls': `Pile-button-${index}`,
+          name: `${index}`
+        };
+    }
+
+    const pileMove = (event) => {
+        //props.callbackPile( Number(event.target.name) - 1 );
+        //props.callback( !props.updatePiles );
+        //console.log('event = ', event.buttons );
+        if ( event.buttons == 1 ) {
+            let d_angle = 0;
+            let d_x = 0;
+            let d_y  =0;
+            setChangePilePos( true );
+            if ( event.ctrlKey ) {
+                d_angle = ( event.clientX - initPosMouse.x ) * 0.2 + ( event.clientY - initPosMouse.y ) * 0.2;
+            } else {
+                d_x = event.clientX - initPosMouse.x;
+                d_y = event.clientY - initPosMouse.y
+            }
+            //console.log('event = ', event )
+            setPosMouse( { x: d_x, y: d_y, angle: d_angle } );
+        }
+    }
+
+    const pileStartMove = (event) => {
+        setInitPosMouse({ x: event.clientX, y: event.clientY, angle: 0 });
+    }
+
+    const pileEndMove = (event) => {
+        if ( changePilePos ) 
+            if ( window.confirm('accept?') ) {
+                Elevators.setPile_Location( props.currentPile, Pile_x, Pile_y, Pile_angle );
+                props.callback( !props.updatePiles );
+            }
+        setChangePilePos( false );
+        setInitPosMouse( { x: 0, y: 0 } );
+        setPosMouse( { x: 0, y: 0 } );
+    }
 
     //------------------------------------
     function PileSelectButton( propsPileSelect ){
         let index = propsPileSelect.index + 1;
 
         const pileSelect = (event) => {
+
             props.callbackPile( Number(event.target.name) - 1 );
             props.callback( !props.updatePiles );
         }
+
+        
 
         return (
         <div className = 'overlay-control' {...a11yProps(index)} hidden style={{ zIndex: 2 }}>
@@ -186,6 +234,20 @@ const PilesViewCanvas = props => {
 
             let pile = Elevators.PileGet( index );
             if ( pile.numOfSegments == undefined ) pile.numOfSegments = 10;
+
+            if ( changePilePos )
+            if ( currentPile == index ){
+                let zoom = 0.1;
+                let x = posMouse.x * zoom;
+                let y = posMouse.y * zoom;
+                let angle = posMouse.angle;
+                pile.X += x;
+                pile.Y -= y;
+                pile.angle += angle;
+                Pile_x = pile.X;
+                Pile_y = pile.Y;
+                Pile_angle = pile.angle;
+            }
             piles.push ( pile );
 
             gPile.set_Initial_Data_Complex ( pile, pile.numOfSegments );//initialisation Pile
@@ -548,6 +610,8 @@ const PilesViewCanvas = props => {
                         div.style.top  = Math.floor(pixelY) + "px";
                         if ( currentPile == i ) { div.hidden = true;
                         } else div.hidden = false;
+                        //if ( currentPile == i ) { div.style.cursor = 'move'}
+                        //div.hidden = false
                     }
 
 
@@ -726,7 +790,14 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
         <div class="container" style={{ height: 610 }} >
             
             <canvas id="canvasPile" ref={canvasRef} style={{ height: '100%', width: '100%', backgroundColor: 'transparent', zIndex: 0 }} />
-            <canvas id="canvasText" ref={canvasTextRef} style={{ height: '100%', width: '100%', zIndex: 1, backgroundColor: 'transparent', position: 'absolute', left: '0px', top: '0px' }} />
+            <canvas 
+                id="canvasText" 
+                ref={canvasTextRef} 
+                onMouseMove={ pileMove }
+                onMouseDown={ pileStartMove }
+                onMouseUp={ pileEndMove }
+                style={{ height: '100%', width: '100%', zIndex: 1, backgroundColor: 'transparent', position: 'absolute', left: '0px', top: '0px' }} 
+                />
             
             {Elevators.PilesList.map((name, index ) => ( <PileSelectButton index={index}/> ))}
 

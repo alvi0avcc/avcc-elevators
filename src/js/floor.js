@@ -777,14 +777,16 @@ function FloorSidePanel_3D( props ) {
 
 function Pile_Side_Menu(props){
 
-    const [ index, setIndex ] =React.useState( props.currentPile );
+    let currentPile = props.currentPile;
 
-    const [ pile, setPile ] = React.useState( Elevators.PileGet( index ) );
+    const [ index, setIndex ] =React.useState( currentPile );
 
-    if ( props.currentPile != index ) {
-        if ( props.currentPile < Elevators.PileFound ) {
-            setIndex( props.currentPile );
-            setPile( Elevators.PileGet( props.currentPile ) );
+    const [ pile, setPile ] = React.useState( Elevators.PileGet( currentPile ) );
+
+    if ( currentPile != index ) {
+        if ( currentPile < Elevators.PileFound ) {
+            setIndex( currentPile );
+            setPile( Elevators.PileGet( currentPile ) );
         } else {
             setIndex( 0 );
             setPile( 0 )
