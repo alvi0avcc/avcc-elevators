@@ -66,6 +66,7 @@ const PilesViewCanvas = props => {
             if ( window.confirm('accept?') ) {
                 Elevators.setPile_Location( props.currentPile, Pile_x, Pile_y, Pile_angle );
                 props.callback( !props.updatePiles );
+                props.callbackPileInfo( !props.changePileInfo );
             }
         setChangePilePos( false );
         setInitPosMouse( { x: 0, y: 0 } );
