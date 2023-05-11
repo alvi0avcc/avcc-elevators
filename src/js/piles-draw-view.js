@@ -14,9 +14,20 @@ import { draw_Line_3D, draw_PLine_3D, draw_PLine_3D_between, draw_underBase, dra
 
 const PilesViewCanvas = props => {
 
+    const canvasRef = useRef(null)
+    const canvasTextRef = useRef(null)
+
+    //const [ update, setUpdate ] = React.useState( true );
+
     const [ posMouse, setPosMouse ] = React.useState( { x: 0, y: 0, angle: 0 } );
     const [ initPosMouse, setInitPosMouse ] = React.useState( { x: 0, y: 0, angle: 0 } );
     const [ changePilePos, setChangePilePos] = React.useState( false );
+
+    let currentPile = 0;
+    currentPile = Elevators.get_Pile_Selected;
+
+
+    let mode = props.mode;
 
     let Pile_x = 0;
     let Pile_y = 0;
@@ -41,6 +52,7 @@ const PilesViewCanvas = props => {
         //props.callbackPile( Number(event.target.name) - 1 );
         //props.callback( !props.updatePiles );
         //console.log('event = ', event.buttons );
+        if ( mode == 'location' )
         if ( event.buttons == 1 ) {
             let d_angle = 0;
             let d_x = 0;
@@ -63,8 +75,8 @@ const PilesViewCanvas = props => {
 
     const pileEndMove = (event) => {
         if ( changePilePos ) 
-            if ( window.confirm('accept?') ) {
-                Elevators.setPile_Location( props.currentPile, Pile_x, Pile_y, Pile_angle );
+            if ( window.confirm('Accept new position for Pile?') ) {
+                Elevators.setPile_Location( props.currentPile, Calc.MyRound( Pile_x, 2 ), Calc.MyRound( Pile_y, 2 ), Calc.MyRound( Pile_angle, 2 ) );
                 props.callback( !props.updatePiles );
                 props.callbackPileInfo( !props.changePileInfo );
             }
@@ -78,8 +90,9 @@ const PilesViewCanvas = props => {
         let index = propsPileSelect.index + 1;
 
         const pileSelect = (event) => {
-
-            props.callbackPile( Number(event.target.name) - 1 );
+            let index = Number(event.target.name) - 1;
+            Elevators.set_Pile_Selected = index;
+            props.callbackPile( index );
             props.callback( !props.updatePiles );
         }
 
@@ -101,23 +114,17 @@ const PilesViewCanvas = props => {
 
     //------------------------------------
 
-    const canvasRef = useRef(null)
-    const canvasTextRef = useRef(null)
-
-    const [ update, setUpdate ] = React.useState( true );
+   
    
 
-    let pile_label_position = [];
+    //let pile_label_position = [];
 
-    let pile_label = [];
-    let pos = { x: 0, y: 0, name: '' };
+    //let pile_label = [];
+    //let pos = { x: 0, y: 0, name: '' };
 
-    let currentPile = 0;
-    currentPile = props.currentPile;
 
-    if ( currentPile >= Elevators.PileFound ) currentPile = 0;
 
-    let mode = props.mode;
+    //if ( currentPile >= Elevators.PileFound ) currentPile = 0;
 
     let floor = Elevators.FloorCurrentDimensions;
 
@@ -602,9 +609,13 @@ const PilesViewCanvas = props => {
                     matrix_text  = RotateMatrix_Z_any( matrix_text, -az );
                     matrix_text  = MoveMatrixAny( matrix_text, x_center, 0, zz );
 
-                   // ctx.fillStyle = 'red';
-                    //ctx.font = "18px serif";
-                    //ctx.fillText( (i+1), pixelX, pixelY);
+                    if ( i == props.currentPile && changePilePos == true ) {
+                        ctx.fillStyle = 'red';
+                        ctx.font = "18px serif";
+                        ctx.fillText( 'Position X = '+ Calc.MyRound( x , 2 ) +' m', 20, 20);
+                        ctx.fillText( 'Position Y = '+ Calc.MyRound( y , 2 ) +' m', 20, 40);
+                        ctx.fillText( 'angle = '+ Calc.MyRound( angle , 2 ) +' deg', 20, 60);
+                    }
                     let div = document.getElementById('pile-label-'+(i+1));
                     if ( div ) {
                         div.style.left = Math.floor(pixelX) + "px";
@@ -627,7 +638,7 @@ const PilesViewCanvas = props => {
                     // box
                     gl.uniform4f(colorUniformLocation, 1, 0, 1, PileVisible );
                     if ( box > 0 ) {
-                        for ( let i = 0; i < 5; i++ ) {
+                        for ( let i = 0; i <= 5; i++ ) {
                             let vertices_box = MoveMatrixAny( base_countur , 0, 0, -box / 5 * i );
                             gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
                             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices_box),  gl.STATIC_DRAW);
@@ -803,7 +814,7 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
             {Elevators.PilesList.map((name, index ) => ( <PileSelectButton index={index}/> ))}
 
             <div id="overlay">
-                <div>Volume of selected Pile: <span id="floor_volume">{Elevators.get_Pile_Volume( props.currentPile )} (m³)</span></div>
+                <div>Volume of selected Pile: <span id="floor_volume">{Elevators.get_Pile_Volume( Elevators.get_Pile_Selected )} (m³)</span></div>
             </div>
 
         </div>

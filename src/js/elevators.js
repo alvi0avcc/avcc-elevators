@@ -87,6 +87,7 @@ class cWarehouse {
     this.id          = '';    
     this.Name        = 'NewWarehouse';
     this.Dimensions  = { Length: 50, Width: 20, Height: 10, Conus_height: 0, Conus_L: 45, Conus_W: 1, Conus_X: 25, Conus_Y: 10 };
+    this.PileSelected = 0;
     this.Pile        = [];
     this.Cargo       = {Name: '', Natura: 0 };
     this.MeshStep   = 50;
@@ -112,7 +113,7 @@ class cElevator {
         this.ContactName     = '';
         this.ContactPosition = '';
         this.ContactPhone    = '';
-        this.Date            = '';
+        this.Date            = new Date().toISOString().slice(0,-14);
         this.InspectorName   = '';
         this.Client          = '';
         this.Silo            = [];
@@ -131,7 +132,6 @@ class cElevators {
         this.Selected               = 0;
         this.SiloSelected           = 0;
         this.WarehouseSelected      = 0;
-        this.PileSelected           = 0;
         this.ComplexSelected        = 0;
         this.ComplexSiloSelected    = 0;
         this.Elevators              = []
@@ -141,6 +141,18 @@ class cElevators {
             return  this.ComplexAll.TotalDimension;
         } else return null;
     };
+    get ElevatorSelected(){
+        let selected = 0;
+        let found = this.ElevatorsFound;
+        selected = this.Selected;
+        //if ( typeof( selected ) != Number ) selected = 0;
+        if ( found < selected + 1 ) selected = found - 1;
+        if ( found <= 0 ) selected = 0;
+        if ( selected < 0  ) selected = 0;
+        this.Selected = selected;
+        
+        return selected;
+    }
     set setComplexDimension_Length( data ){ this.Elevators[this.Selected].Complex[this.ComplexSelected].TotalDimension.Length = data };
     set setComplexDimension_Width( data ){ this.Elevators[this.Selected].Complex[this.ComplexSelected].TotalDimension.Width = data };
     set setComplexDimension_Height( data ){ this.Elevators[this.Selected].Complex[this.ComplexSelected].TotalDimension.Height = data };
@@ -187,6 +199,21 @@ class cElevators {
                 else return 0;
             }
         else return 0;
+    };
+    /**
+     * @param {number} index
+     */
+    set set_Pile_Selected( index ){ this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].PileSelected  = index ; }
+    get get_Pile_Selected(){ 
+        let found = this.PileFound;
+        if ( found <= 0 ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].PileSelected = 0;
+            return 0;
+        }
+        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].PileSelected > found - 1 ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].PileSelected = found - 1;
+        }
+        return this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].PileSelected 
     };
     get ComplexSiloFound(){
         if ( this.ComplexFound > 0 ) {
@@ -241,7 +268,7 @@ class cElevators {
 
     get ComplexAll(){
         if ( this.ComplexFound > 0 ) {
-            let data = structuredClone( this.Elevators[this.Selected].Complex[this.ComplexSelected] ).Silo;
+            let data = structuredClone( this.Elevators[this.ElevatorSelected].Complex[this.ComplexSelected] ).Silo;
         for ( let row=0; row < data.length; row++ ) {
             for ( let col = 0; col < data[row].length; col++ ) {
                 data[row][col].row = row+1;
@@ -411,10 +438,13 @@ class cElevators {
         this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].MeshStyle = style;
     }
     get get_Floor_MeshStyle (){
-        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].MeshStyle  == undefined ) {
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].MeshStyle = 'mesh';
+        let state = 'mesh';
+        if ( this.Elevators[this.ElevatorSelected].Warehouse[this.WarehouseSelected] ) {
+            if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].MeshStyle ){
+                state = this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].MeshStyle;
+            }
         }
-        return this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].MeshStyle
+        return state;
     }
     get get_Floor_Mesh(){
         if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Mesh  == undefined ) {
@@ -429,20 +459,20 @@ class cElevators {
         return this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Mesh_3D;
     }
     get get_Floor_Strip(){
-        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Strip  == undefined ) {
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Strip = [];
+        if ( this.Elevators[this.ElevatorSelected].Warehouse[this.WarehouseSelected].Strip  == undefined ) {
+            this.Elevators[this.ElevatorSelected].Warehouse[this.WarehouseSelected].Strip = [];
         }
         return this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Strip;
     }
     get get_Floor_Volume(){
-        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Volume  == undefined ) {
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Volume = 0;
+        if ( this.Elevators[this.ElevatorSelected].Warehouse[this.WarehouseSelected].Volume  == undefined ) {
+            this.Elevators[this.ElevatorSelected].Warehouse[this.WarehouseSelected].Volume = 0;
         }
         return this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Volume;
     }
     get get_Floor_MeshStep(){
-        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].MeshStep == undefined ) {
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].MeshStep = 50;
+        if ( this.Elevators[this.ElevatorSelected].Warehouse[this.WarehouseSelected].MeshStep == undefined ) {
+            this.Elevators[this.ElevatorSelected].Warehouse[this.WarehouseSelected].MeshStep = 50;
         }
         return this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].MeshStep;
     }
@@ -451,19 +481,26 @@ class cElevators {
         this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].MeshStep = step;
     }
     get get_Floor_ShowHouse(){
-        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].ShowHouse == undefined ) {
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].ShowHouse = true;
-        }
-        return this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].ShowHouse;
+        let state = true;
+        if ( this.Elevators[this.ElevatorSelected].Warehouse[this.WarehouseSelected] ) 
+            if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].ShowHouse != undefined ) {
+            state = this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].ShowHouse;
+            } else {
+                this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].ShowHouse = true;
+            }
+        return state;
     }
     set set_Floor_ShowHouse( showHouse ){
         this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].ShowHouse = showHouse;
     }
     get get_Floor_Multicolor(){
-        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Multicolor == undefined ) {
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Multicolor = true;
+        let state = true;
+        if ( this.Elevators[this.ElevatorSelected].Warehouse[this.WarehouseSelected]) {
+            if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Multicolor != undefined ) {
+                state = this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Multicolor;
+            } else this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Multicolor = true;
         }
-        return this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Multicolor;
+        return state;
     }
     set set_Floor_Multicolor( multicolor ){
         this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Multicolor = multicolor;
@@ -512,6 +549,23 @@ class cElevators {
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].purpose = purpose;
         } 
     }
+    set_Pile_Name ( name ){
+        if ( this.PileFound ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].Name = name;
+        } 
+    }
+    get get_Pile_Name (){
+        let name = '';
+        if ( this.PileFound > 0 ) {
+            name = this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].Name;
+        }
+        return name;
+    }
+    set_Pile_Type ( type ){
+        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ] ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].Type = type;
+        } 
+    }
     setPile_Location ( index, X, Y, angle ){
         if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] ) {
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].X = Number( X );
@@ -519,15 +573,78 @@ class cElevators {
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].angle = Number( angle );
         } 
     }
-    setPile_Height ( index, Height ){
-        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] ) {
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Height = Number( Height );
+    set_Pile_Location ( X = 0, Y = 0, angle = 0 ){
+        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ] ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].X = Number( X );
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].Y = Number( Y );
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].angle = Number( angle );
         } 
     }
-    setPile_underBase_Height ( index, underBase_Height ){
-        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] ) {
-            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].underBase_Height = Number( underBase_Height );
+    set_Pile_Location_X ( X = 0){
+        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ] ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].X = Number( X );
         } 
+    }
+    set_Pile_Location_Y ( Y = 0){
+        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ] ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].Y = Number( Y );
+        } 
+    }
+    set_Pile_Location_angle ( angle = 0 ){
+        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ] ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].angle = Number( angle );
+        } 
+    }
+    get get_Pile_Location_X (){
+        let x = 0;
+        if ( this.PileFound > 0 ) {
+            x = this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].X;
+        } 
+        return ( x );
+    }
+    get get_Pile_Location_Y (){
+        let y = 0;
+        if ( this.PileFound > 0 ) {
+            y = this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].Y;
+        } 
+        return ( y );
+    }
+    get get_Pile_Location_angle (){
+        let angle = 0;
+        if ( this.PileFound > 0 ) {
+            angle = this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].angle;
+        } 
+        return ( angle );
+    }
+    set_Pile_Height ( Height = 0 ){
+        if ( this.PileFound > 0 ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].Height = Number( Height );
+        } 
+    }
+    get get_Pile_Height (){
+        let Height = 0;
+        if ( this.PileFound > 0 ) {
+            Height = this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].Height;
+        } 
+        return Height;
+    }
+    set_Pile_underBase_Height ( underBase_Height = 0 ){
+        if ( this.PileFound ) {
+            if ( underBase_Height < 0 ) underBase_Height = 0;
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].underBase_Height = Number( underBase_Height );
+        } 
+    }
+    get get_Pile_underBase_Height (){
+        let underBase_Height = 0; 
+        if ( this.PileFound > 0 ) {
+            underBase_Height = this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].underBase_Height;
+        } 
+        if ( underBase_Height < 0 ) {
+            underBase_Height = 0;
+            this.set_Pile_underBase_Height( underBase_Height );
+        }
+
+        return underBase_Height;
     }
     setPile_TopContur ( index, Top_length, Top_width, Tension_Volume ){
         if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] ) {
@@ -536,12 +653,84 @@ class cElevators {
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Tension_Volume = Number( Tension_Volume );
         } 
     }
+    set_Pile_Top_lengt ( Top_length ){
+        if ( this.PileFound > 0 ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].Top.length = Number( Top_length );
+        } 
+    }
+    get get_Pile_Top_lengt (){
+        let Top_length = 0;
+        if ( this.PileFound > 0 ) {
+            Top_length = this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].Top.length;
+        } 
+        return Top_length;
+    }
+    set_Pile_Top_width ( Top_width ){
+        if ( this.PileFound > 0 ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].Top.width = Number( Top_width );
+        } 
+    }
+    get get_Pile_Top_width (){
+        let Top_width = 0;
+        if ( this.PileFound > 0 ) {
+            Top_width = this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].Top.width;
+        } 
+        return Top_width;
+    }
+    set_Pile_Top_Tension ( Tension_Volume = 0 ){
+        if ( this.PileFound > 0 ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].Tension_Volume = Number( Tension_Volume );
+        } 
+    }
+    get get_Pile_Top_Tension (){
+        let Tension_Volume = 0;
+        if ( this.PileFound > 0 ) {
+            Tension_Volume = this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].Tension_Volume;
+        } 
+        return Tension_Volume;
+    }
     setPile_BaseContur ( index, Base_length, Base_width, Tension_Base ){
         if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] ) {
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Base.length = Number( Base_length );
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Base.width = Number( Base_width );
             this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Tension_Base = Number( Tension_Base );
         } 
+    }
+    set_Pile_Base_length ( Base_length = 0 ){
+        if ( this.PileFound > 0) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].Base.length = Number( Base_length );
+        } 
+    }
+    get get_Pile_Base_length (){
+        let Base_length = 0;
+        if ( this.PileFound > 0 ) {
+            Base_length = this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].Base.length;
+        } 
+        return Base_length;
+    }
+    set_Pile_Base_width ( Base_width = 0 ){
+        if ( this.PileFound > 0 ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].Base.width = Number( Base_width );
+        } 
+    }
+    get get_Pile_Base_width (){
+        let Base_width = 0;
+        if ( this.PileFound > 0 ) {
+            Base_width = this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].Base.width;
+        } 
+        return Base_width;
+    }
+    set_Pile_Base_Tension ( Tension_Base = 0 ){
+        if ( this.PileFound > 0 ) {
+            this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].Tension_Base = Number( Tension_Base );
+        } 
+    }
+    get get_Pile_Base_Tension (){
+        let Tension_Base = 0;
+        if ( this.PileFound > 0 ) {
+            Tension_Base = this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ this.get_Pile_Selected ].Tension_Base;
+        } 
+        return Tension_Base;
     }
     setAngleView( index, angle_X, angle_Y, angle_Z ){
         if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] ) {
@@ -607,11 +796,11 @@ class cElevators {
     }
     get ComplexFound(){
         if ( this.ElevatorsFound ) {
-            if ( this.Elevators[this.Selected].Complex ) {
-                if ( this.Elevators[this.Selected].Complex.length > 0 ) { 
-                        if ( this.ComplexSelected > this.Elevators[this.Selected].Complex.length - 1 ) 
-                            this.SetComplexSelected = this.Elevators[this.Selected].Complex.length -1
-                            return this.Elevators[this.Selected].Complex.length;
+            if ( this.Elevators[this.ElevatorSelected].Complex ) {
+                if ( this.Elevators[this.ElevatorSelected].Complex.length > 0 ) { 
+                        if ( this.ComplexSelected > this.Elevators[this.ElevatorSelected].Complex.length - 1 ) 
+                            this.SetComplexSelected = this.Elevators[this.ElevatorSelected].Complex.length -1
+                            return this.Elevators[this.ElevatorSelected].Complex.length;
                         } else return 0;
             } else return -1;
             }
@@ -765,55 +954,55 @@ class cElevators {
             else return 0
     }
     get ElevatorsName(){
-        if ( this.ElevatorsFound ) return this.Elevators[this.Selected].Name
+        if ( this.ElevatorsFound > 0) return this.Elevators[this.ElevatorSelected].Name
         else return ''
     }
     get ElevatorsDate(){
-        if ( this.ElevatorsFound ) return this.Elevators[this.Selected].Date
+        if ( this.ElevatorsFound > 0) return this.Elevators[this.ElevatorSelected].Date
         else return ''
     }
     set setName(data){ this.Elevators[this.Selected].Name = data }
     set setDate(data){ if ( this.ElevatorsFound ) this.Elevators[this.Selected].Date = data }
     get ElevatorAdress(){
-        if ( this.ElevatorsFound) return this.Elevators[this.Selected].Adress
+        if ( this.ElevatorsFound > 0) return this.Elevators[this.ElevatorSelected].Adress
         else return ''
     }
-    set setAdress(data) { if ( this.ElevatorsFound ) this.Elevators[this.Selected].Adress = data }
+    set setAdress(data) { if ( this.ElevatorsFound > 0) this.Elevators[this.Selected].Adress = data }
     get ElevatorOwner(){
-        if ( this.ElevatorsFound) return this.Elevators[this.Selected].Owner
+        if ( this.ElevatorsFound > 0) return this.Elevators[this.ElevatorSelected].Owner
         else return ''
     }
-    set setOwner(data) { if ( this.ElevatorsFound ) this.Elevators[this.Selected].Owner = data }
+    set setOwner(data) { if ( this.ElevatorsFound > 0) this.Elevators[this.Selected].Owner = data }
     get ElevatorClient(){
-        if ( this.ElevatorsFound) return this.Elevators[this.Selected].Client
+        if ( this.ElevatorsFound > 0) return this.Elevators[this.ElevatorSelected].Client
         else return ''
     }
-    set setClient(data) { if ( this.ElevatorsFound ) this.Elevators[this.Selected].Client = data }
+    set setClient(data) { if ( this.ElevatorsFound > 0) this.Elevators[this.Selected].Client = data }
     get ElevatorContactName(){
-        if ( this.ElevatorsFound) return this.Elevators[this.Selected].ContactName
+        if ( this.ElevatorsFound > 0) return this.Elevators[this.ElevatorSelected].ContactName
         else return ''
     }
-    set setContactName(data) { if ( this.ElevatorsFound ) this.Elevators[this.Selected].ContactName = data }
+    set setContactName(data) { if ( this.ElevatorsFound > 0) this.Elevators[this.Selected].ContactName = data }
     get ElevatorContactPosition(){
-        if ( this.ElevatorsFound) return this.Elevators[this.Selected].ContactPosition
+        if ( this.ElevatorsFound > 0 ) return this.Elevators[this.ElevatorSelected].ContactPosition
         else return ''
     }
-    set setContactPosition(data) { if ( this.ElevatorsFound ) this.Elevators[this.Selected].ContactPosition = data }
+    set setContactPosition(data) { if ( this.ElevatorsFound > 0 ) this.Elevators[this.Selected].ContactPosition = data }
     get ElevatorContactPhone(){
-        if ( this.ElevatorsFound) return this.Elevators[this.Selected].ContactPhone
+        if ( this.ElevatorsFound > 0 ) return this.Elevators[this.ElevatorSelected].ContactPhone
         else return ''
     }
-    set setContactPhone(data) { if ( this.ElevatorsFound ) this.Elevators[this.Selected].ContactPhone = data }
+    set setContactPhone(data) { if ( this.ElevatorsFound > 0  ) this.Elevators[this.Selected].ContactPhone = data }
     get ElevatorInspectorName(){
-        if ( this.ElevatorsFound) return this.Elevators[this.Selected].InspectorName
+        if ( this.ElevatorsFound > 0 ) return this.Elevators[this.ElevatorSelected].InspectorName
         else return ''
     }
-    set setInspectorName(data) { if ( this.ElevatorsFound ) this.Elevators[this.Selected].InspectorName = data }
+    set setInspectorName(data) { if ( this.ElevatorsFound  > 0 ) this.Elevators[this.Selected].InspectorName = data }
     get ElevatorComments(){
-        if ( this.ElevatorsFound) return this.Elevators[this.Selected].Comments
+        if ( this.ElevatorsFound > 0 ) return this.Elevators[this.ElevatorSelected].Comments
         else return ''
     }
-    set setComments(data) { if ( this.ElevatorsFound ) this.Elevators[this.Selected].Comments = data }
+    set setComments(data) { if ( this.ElevatorsFound  > 0 ) this.Elevators[this.Selected].Comments = data }
     set setElevators(data){
         this.Elevators = data;
         if ( data || null ) { this.State = 'open' } else this.State = 'closed';

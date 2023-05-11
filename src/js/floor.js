@@ -306,7 +306,7 @@ function Piles(propsPiles){
     return (
             <div className='block_row' style={{ border: 'none', padding: 0, margin: 0 }} >
 
-                <Pile_Side_Menu updateState={ updatePiles } callback={(data)=> setUpdatePiles( data ) } changePileInfo={ changePileInfo } callbackPileInfo={(data)=> setChangePileInfo( data ) } currentPile={ currentPile } callbackPile={(data)=> setCurrentPile( data ) } mode={ mode } callbackMode={(data)=> setMode( data ) } />
+                <Pile_Side_Menu updateState={ updatePiles } callback={(data)=> setUpdatePiles( data ) }  mode={ mode } callbackMode={(data)=> setMode( data ) } />
 
                 <div className='block' style={{ width: '100%' }}>
                     { Elevators.FloorFound ?  <PilesViewCanvas updateState={ updatePiles }  changePileInfo={ changePileInfo } callbackPileInfo={(data)=> setChangePileInfo( data ) } callback={(data)=> setUpdatePiles( data ) } currentPile={ currentPile } callbackPile={(data)=> setCurrentPile( data ) } view={ view } mode={ mode } /> : '' }
@@ -778,14 +778,14 @@ function FloorSidePanel_3D( props ) {
 
 function Pile_Side_Menu(propsSide){
 
-    let currentPile = propsSide.currentPile;
+    //let currentPile = propsSide.currentPile;
 
-    const [ index, setIndex ] = React.useState( currentPile );
+    //const [ index, setIndex ] = React.useState( currentPile );
 
-    const [ pile, setPile ] = React.useState( Elevators.PileGet( currentPile ) );
+    //const [ pile, setPile ] = React.useState( Elevators.PileGet( currentPile ) );
 
-    const [ updateSideMenu, setUpdateUpdateSideMenu ] = React.useState( propsSide.changePileInfo );
-
+    //const [ updateSideMenu, setUpdateUpdateSideMenu ] = React.useState( propsSide.changePileInfo );
+/*
     if ( updateSideMenu != propsSide.changePileInfo) {
         console.log('changePileInfo = ', propsSide.changePileInfo );
         setPile( Elevators.PileGet( currentPile ) );
@@ -802,139 +802,146 @@ function Pile_Side_Menu(propsSide){
             setPile( currentPile )
         }
     }
-
+*/
     const [value, setValue] = React.useState(false);
     //const [mode, setMode] = React.useState('model');
-    let mode = propsSide.mode;
+    //let mode = propsSide.mode;
 
     const changePileCurrent = (event) => {
-        setIndex( event.target.value );
-        setPile( Elevators.PileGet( event.target.value ) );
-        propsSide.callbackPile( event.target.value );
-        //props.callback( !props.updateState );
+        let newIndex = Number( event.target.value );
+        Elevators.set_Pile_Selected = newIndex;
+        //setIndex( newIndex );
+        //setPile( Elevators.PileGet( newIndex ) );
+        //propsSide.callbackPile( newIndex );
+        propsSide.callback( !propsSide.updateState );
     };
 
     const ChangeName = (event) => {
-        pile.Name = event.target.value;
-        Elevators.setPile_BaseInfo ( index, pile.Name, pile.type, pile.type_location, pile.purpose );
+        //pile.Name = event.target.value;
+        Elevators.set_Pile_Name( event.target.value );
+        //Elevators.setPile_BaseInfo ( index, pile.Name, pile.type, pile.type_location, pile.purpose );
         setValue(!value);
+        propsSide.callback( !propsSide.updateState );
     };
     const ChangeType = (event) => {
-        pile.type = event.target.value;
-        Elevators.setPile_BaseInfo ( index, pile.Name, pile.type, pile.type_location, pile.purpose );
+        //pile.type = event.target.value;
+        Elevators.set_Pile_Type( event.target.value );
+        //Elevators.setPile_BaseInfo ( index, pile.Name, pile.type, pile.type_location, pile.purpose );
         setValue(!value);
         propsSide.callback( !propsSide.updateState );
     };
     const ChangeTypeLocation = (event) => {
-        pile.type_location = event.target.value;
+        /*pile.type_location = event.target.value;
         Elevators.setPile_BaseInfo ( index, pile.Name, pile.type, pile.type_location, pile.purpose );
         setValue(!value);
-        propsSide.callback( !propsSide.updateState );
+        propsSide.callback( !propsSide.updateState );*/
     };
     const ChangePurpose = (event) => {
-        pile.purpose = event.target.value;
+        /*pile.purpose = event.target.value;
         Elevators.setPile_BaseInfo ( index, pile.Name, pile.type, pile.type_location, pile.purpose );
         setValue(!value);
-        propsSide.callback( !propsSide.updateState );
+        propsSide.callback( !propsSide.updateState );*/
     };
     const ChangeX = (event) => {
-        pile.X = event.target.value;
-        Elevators.setPile_Location ( index, pile.X, pile.Y, pile.angle );
+        //pile.X = event.target.value;
+        Elevators.set_Pile_Location_X( event.target.value );
+        //Elevators.setPile_Location ( index, pile.X, pile.Y, pile.angle );
         //setMode('location');
         setValue(!value);
         propsSide.callbackMode( 'location' );
         propsSide.callback( !propsSide.updateState );
     };
     const ChangeY = (event) => {
-        pile.Y = event.target.value;
-        Elevators.setPile_Location ( index, pile.X, pile.Y, pile.angle );
+        //pile.Y = event.target.value;
+        Elevators.set_Pile_Location_Y( event.target.value )
+        //Elevators.setPile_Location ( index, pile.X, pile.Y, pile.angle );
         //setMode('location');
         setValue(!value);
         propsSide.callbackMode( 'location' );
         propsSide.callback( !propsSide.updateState );
     };
     const ChangeAngle = (event) => {
-        pile.angle = event.target.value;
-        Elevators.setPile_Location ( index, pile.X, pile.Y, pile.angle );
+        //pile.angle = event.target.value;
+        Elevators.set_Pile_Location_angle( event.target.value )
+        //Elevators.setPile_Location ( index, pile.X, pile.Y, pile.angle );
         //setMode('location');
         setValue(!value);
         propsSide.callbackMode( 'location' );
         propsSide.callback( !propsSide.updateState );
     };
     const ChangeHeight = (event) => {
-        pile.Height = event.target.value;
-        Elevators.setPile_Height ( index, pile.Height );
+        //pile.Height = event.target.value;
+        Elevators.set_Pile_Height ( event.target.value );
         setValue(!value);
         propsSide.callback( !propsSide.updateState );
     };
     const ChangeUnderBase_Height = (event) => {
-        pile.underBase_Height = event.target.value;
-       if ( pile.underBase_Height < 0 ) pile.underBase_Height = 0;
-        Elevators.setPile_underBase_Height ( index, pile.underBase_Height);
+        //pile.underBase_Height = event.target.value;
+        Elevators.set_Pile_underBase_Height ( event.target.value );
         setValue(!value);
         propsSide.callback( !propsSide.updateState );
     };
     const ChangeBase_length = (event) => {
-        pile.Base.length = event.target.value;
-        Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
+        //pile.Base.length = event.target.value;
+        Elevators.set_Pile_Base_length ( event.target.value );
         setValue(!value);
         propsSide.callback( !propsSide.updateState );
     };
     const setBaseLength_max = () => {
-        pile.Base.length = Elevators.FloorCurrentDimensions.Length;
-        pile.X = pile.Base.length/2;
-        Elevators.setPile_Location ( index, pile.X, pile.Y, pile.angle );
-        Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
+        let length = Elevators.FloorCurrentDimensions.Length;
+        let x = length/2;
+        Elevators.set_Pile_Location_X ( x );
+        Elevators.set_Pile_Base_length ( length );
         setValue(!value);
         propsSide.callback( !propsSide.updateState );
     }
     const setBaseWidth_max = () => {
-        pile.Base.width = Elevators.FloorCurrentDimensions.Width;
-        pile.Y = pile.Base.width/2;
-        Elevators.setPile_Location ( index, pile.X, pile.Y, pile.angle );
-        Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
+        let width = Elevators.FloorCurrentDimensions.Width;
+        let y = width/2;
+        Elevators.set_Pile_Location_Y ( y );
+        Elevators.set_Pile_Base_width ( width );
         setValue(!value);
         propsSide.callback( !propsSide.updateState );
     }
     const setBase_Square = () => {
-        pile.Tension_Base = 1.753;
-        Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
+        let Tension_Base = 1.753;
+        Elevators.set_Pile_Base_Tension ( Tension_Base );
         setValue(!value);
         propsSide.callback( !propsSide.updateState );
     }
     const setBase_Round = () => {
-        pile.Tension_Base = 0.837;
-        Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
+        let Tension_Base = 0.837;
+        Elevators.set_Pile_Base_Tension ( Tension_Base );
         setValue(!value);
         propsSide.callback( !propsSide.updateState );
     }
     const ChangeBase_width = (event) => {
-        pile.Base.width = event.target.value;
-        Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
+        //pile.Base.width = event.target.value;
+        Elevators.set_Pile_Base_width ( event.target.value );
         setValue(!value);
         propsSide.callback( !propsSide.updateState );
     };
     const ChangeTensionBase = (event) => {
-        pile.Tension_Base = event.target.value;
-        Elevators.setPile_BaseContur ( index, pile.Base.length, pile.Base.width, pile.Tension_Base );
+        //pile.Tension_Base = event.target.value;
+        Elevators.set_Pile_Base_Tension ( event.target.value );
         setValue(!value);
         propsSide.callback( !propsSide.updateState );
     };
     const ChangeTensionVolume = (event) => {
-        pile.Tension_Volume = event.target.value;
-        Elevators.setPile_TopContur ( index, pile.Top.length, pile.Top.width, pile.Tension_Volume );
+        //pile.Tension_Volume = event.target.value;
+        Elevators.set_Pile_Top_Tension ( event.target.value );
         setValue(!value);
         propsSide.callback( !propsSide.updateState );
     };
     const ChangeTop_length = (event) => {
-        pile.Top.length = event.target.value;
-        Elevators.setPile_TopContur ( index, pile.Top.length, pile.Top.width, pile.Tension_Volume );
+        //pile.Top.length = event.target.value;
+        Elevators.set_Pile_Top_lengt ( event.target.value );
         setValue(!value);
         propsSide.callback( !propsSide.updateState );
     };
     const ChangeTop_width = (event) => {
-        pile.Top.width = event.target.value;
-        Elevators.setPile_TopContur ( index, pile.Top.length, pile.Top.width, pile.Tension_Volume );
+        //pile.Top.width = event.target.value;
+        Elevators.set_Pile_Top_width ( event.target.value );
         setValue(!value);
         propsSide.callback( !propsSide.updateState );
     };
@@ -953,14 +960,14 @@ function Pile_Side_Menu(propsSide){
 
                 <button 
                     className='myButton'
-                    onClick={()=>( Elevators.PileClone(index), propsSide.callback( !propsSide.updateState ) )}
+                    onClick={()=>( Elevators.PileClone( Elevators.get_Pile_Selected ), propsSide.callback( !propsSide.updateState ) )}
                 >clone</button>
             </div>
 
                 <button
                     className='myButton'
                     disabled = { Elevators.FloorFound ? false : true }
-                    onClick={()=>( Elevators.PileDel( index ), propsSide.callback( !propsSide.updateState ) )}
+                    onClick={()=>( Elevators.PileDel( Elevators.get_Pile_Selected ), propsSide.callback( !propsSide.updateState ) )}
                 >del</button>
 
             </div>
@@ -973,7 +980,7 @@ function Pile_Side_Menu(propsSide){
                     style={{ width: '150px' }}
                     id = 'pile_select'
                     label = 'pile_select'
-                    value={ index }
+                    value={ Elevators.get_Pile_Selected }
                     onChange={ changePileCurrent }
                 >
                     {Elevators.PilesList.map((name, index ) => (
@@ -989,7 +996,7 @@ function Pile_Side_Menu(propsSide){
                 <input 
                     className='inputPile' 
                     style={{ width: 180 }}
-                    value = {pile.Name}
+                    value = { Elevators.get_Pile_Name }
                     onChange={ ChangeName }
                 />
             </div>
@@ -999,8 +1006,8 @@ function Pile_Side_Menu(propsSide){
                     disabled
                     className='inputPile' 
                     style={{ width: 87 }}
-                    value = { pile.type }
-                    onChange={ ChangeType }
+                    //value = { pile.type }
+                    //onChange={ ChangeType }
                     >
                         <option value='box'>Box</option>
                         <option value='pile'>Pile</option>
@@ -1012,8 +1019,8 @@ function Pile_Side_Menu(propsSide){
                     disabled
                     className='inputPile' 
                     style={{ width: 87 }}
-                    value = { pile.type_location }
-                    onChange={ ChangeTypeLocation }
+                    //value = { pile.type_location }
+                    //onChange={ ChangeTypeLocation }
                     >
                         <option value='true'>Botoom</option>
                         <option value='false'>Upper</option>
@@ -1025,8 +1032,8 @@ function Pile_Side_Menu(propsSide){
                     disabled
                     className='inputPile' 
                     style={{ width: 87 }}
-                    value = {pile.purpose}
-                    onChange={ ChangePurpose }
+                    //value = {pile.purpose}
+                    //onChange={ ChangePurpose }
                     >
                         <option value='add'>Add</option>
                         <option value='remove'>Remove</option>
@@ -1035,24 +1042,24 @@ function Pile_Side_Menu(propsSide){
             <div><hr/></div>
             <div className='rowPile'>
                 <label>Location X:</label>
-                <input className='inputPile' type ='number' min = '0' step = '0.05' value = {pile.X} onChange={ ChangeX }/>
+                <input className='inputPile' type ='number' min = '0' step = '0.05' value = { Elevators.get_Pile_Location_X } onChange={ ChangeX }/>
             </div>
             <div className='rowPile'>
                 <label>Location Y:</label>
-                <input className='inputPile' type ='number' min = '0' step = '0.05' value = {pile.Y} onChange={ ChangeY }/>
+                <input className='inputPile' type ='number' min = '0' step = '0.05' value = { Elevators.get_Pile_Location_Y } onChange={ ChangeY }/>
             </div>
             <div className='rowPile'>
                 <label>Orientation (angle):</label>
-                <input className='inputPile' type ='number' value = {pile.angle} onChange={ ChangeAngle }/>
+                <input className='inputPile' type ='number' value = { Elevators.get_Pile_Location_angle } onChange={ ChangeAngle }/>
             </div>
             <div><hr/></div>
             <div className='rowPile'>
                 <label><strong>Pile height (hat):</strong></label>
                 <input
                     className='inputPile'
-                    style={{ backgroundColor: ( +pile.Height > 0  ? '' : 'yellow' ) }}
+                    style={{ backgroundColor: ( +Elevators.get_Pile_Height > 0  ? '' : 'yellow' ) }}
                     type ='number' 
-                    min = '0' step='0.01' value = {pile.Height} onChange={ ChangeHeight }/>
+                    min = '0' step='0.01' value = { Elevators.get_Pile_Height } onChange={ ChangeHeight }/>
             </div>
 
             <div><hr/></div>
@@ -1062,7 +1069,7 @@ function Pile_Side_Menu(propsSide){
                 <div className='rowPile'>
                 <label>length:</label>
                 <input className='inputPile' type ='number' min={0.01} step={0.01}
-                    value = {pile.Top.length} onChange={ ChangeTop_length }/>
+                    value = { Elevators.get_Pile_Top_lengt } onChange={ ChangeTop_length }/>
                 </div>
             </div>
 
@@ -1070,7 +1077,7 @@ function Pile_Side_Menu(propsSide){
                 <div className='rowPile'>
                 <label>width:</label>
                 <input className='inputPile' type ='number' min={0.01} step={0.01}
-                    value = {pile.Top.width} onChange={ ChangeTop_width }/>
+                    value = { Elevators.get_Pile_Top_width } onChange={ ChangeTop_width }/>
                 </div>
             </div>
            
@@ -1085,7 +1092,7 @@ function Pile_Side_Menu(propsSide){
                     style={{ height: 20, fontSize: '0.9rem' }}
                     onClick={setBaseLength_max}
                     >max</button>
-                <input className='inputPile' style={{ height: 18.8 }} type ='number' min={0.01} step={0.01} value = {pile.Base.length} onChange={ ChangeBase_length }/>
+                <input className='inputPile' style={{ height: 18.8 }} type ='number' min={0.01} step={0.01} value = { Elevators.get_Pile_Base_length } onChange={ ChangeBase_length }/>
                 </div>
             </div>
             <div className='rowPile'>
@@ -1096,7 +1103,7 @@ function Pile_Side_Menu(propsSide){
                     style={{ height: 20, fontSize: '0.9rem' }}
                     onClick={setBaseWidth_max}
                     >max</button>
-                <input className='inputPile' style={{ height: 18.8 }} type ='number' min={0.01} step={0.01} value = {pile.Base.width} onChange={ ChangeBase_width }/>
+                <input className='inputPile' style={{ height: 18.8 }} type ='number' min={0.01} step={0.01} value = { Elevators.get_Pile_Base_width } onChange={ ChangeBase_width }/>
                 </div>
             </div>
 
@@ -1113,22 +1120,22 @@ function Pile_Side_Menu(propsSide){
                         style={{ height: 20, width: 20, fontSize: '0.7rem' }}
                         onClick={setBase_Round}
                         >R</button>
-                    <input className='inputPile' type ='number' min="0" max="2" step="0.01" value = {pile.Tension_Base} onChange={ ChangeTensionBase }/>
+                    <input className='inputPile' type ='number' min="0" max="2" step="0.01" value = { Elevators.get_Pile_Base_Tension } onChange={ ChangeTensionBase }/>
                 </div>
             </div>
-            <input style={{ width: '97%' }} type ='range' min="0" max="2" step="0.01" value = {pile.Tension_Base} onChange={ ChangeTensionBase }/>
+            <input style={{ width: '97%' }} type ='range' min="0" max="2" step="0.01" value = { Elevators.get_Pile_Base_Tension } onChange={ ChangeTensionBase }/>
 
             <div className='rowPile' >
                 <label >Tension Volume:</label>
-                <input className='inputPile'  type ='number' min="0" max="1" step="0.01" value = {pile.Tension_Volume} onChange={ ChangeTensionVolume }/>
+                <input className='inputPile'  type ='number' min="0" max="1" step="0.01" value = { Elevators.get_Pile_Top_Tension } onChange={ ChangeTensionVolume }/>
             </div>
-            <input style={{ width: '97%' }} type ='range' min="0" max="1" step="0.01" value = {pile.Tension_Volume} onChange={ ChangeTensionVolume }/>
+            <input style={{ width: '97%' }} type ='range' min="0" max="1" step="0.01" value = { Elevators.get_Pile_Top_Tension } onChange={ ChangeTensionVolume }/>
 
             <div><hr/></div>
 
             <div className='rowPile' >
                 <label ><strong>Box Height:</strong></label>
-                <input className='inputPile' type ='number' min="0" step="0.01" value = {pile.underBase_Height} onChange={ ChangeUnderBase_Height }/>
+                <input className='inputPile' type ='number' min="0" step="0.01" value = { Elevators.get_Pile_underBase_Height } onChange={ ChangeUnderBase_Height }/>
             </div>
 
             <div><hr/></div>
