@@ -309,6 +309,8 @@ const FloorViewCanvas = props => {
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         //----------------------------------------------------------------------
             gl.enable(gl.DEPTH_TEST);
+            gl.enable(gl.BLEND);
+            gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
             gl.enable(gl.CULL_FACE);
         //----------------------------------------------------------------------
             gl.useProgram(program);
@@ -387,8 +389,8 @@ const FloorViewCanvas = props => {
                     let i = 36 + line * ( step_xy + 2 ) * 2 + start;
                    // }
                    
-                    if ( colorMulti ) { gl.uniform4f(colorUniformLocation, colors[i], colors[i+1], colors[i+2], colors[i+3]); 
-                    } else { gl.uniform4f(colorUniformLocation, 1,  1,  0.0,  1.0); };
+                    if ( colorMulti ) { gl.uniform4f(colorUniformLocation, colors[i], colors[i+1], colors[i+2], 0.9); 
+                    } else { gl.uniform4f(colorUniformLocation, 1,  1,  0.0,  0.9); };
 
                     if ( meshView == 'mesh' ) { gl.drawArrays( gl.LINE_STRIP, i, ( count + 1 ) * 2 ); 
                     } else { gl.drawArrays(gl.TRIANGLE_STRIP, i, ( count + 1 ) * 2 ); }

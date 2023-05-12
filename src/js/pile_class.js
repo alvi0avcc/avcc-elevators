@@ -200,10 +200,10 @@ set_Contur_Arc_Widht(){
 }
 
 get_Slice_Base( level ) {
-    if ( this.Height == 0 ) {
+ /*   if ( this.Height == 0 ) {
         console.log(' Error - Pile height (hat) = 0 !');
         return ( [] );
-    }
+    }*/
     let xyz = [];  
     let contur_L = this.Length_Arc_Points;
     let contur_W = this.Widht_Arc_Points;
@@ -242,10 +242,27 @@ return dx;
 
 get_Mesh( slice_step = 25 ) {
 
+    let x = this.X;
+    let y = this.Y;
+    let box = this.underBase_Height;
+    let height = this.Height;
+    let angle = this.angle;
+    let count = 0;
+
     let mesh = [];
     let slices = [];
     let normal = [];
     let _normal = [];
+
+    
+    if ( this.Height == 0 ) {
+        console.log(' Warning - Pile height (hat) = 0 !');
+        slices = this.get_Slice_Base( 0 );
+        count = slices.length;
+        return ( { slices, mesh, normal,  x, y, box, angle, count } );
+    }
+
+    
     let slice;
     let slice_old;
     let max = get_Max_Y_3D( this.get_Contur_Arc_Length ) - 0.0001;
@@ -284,14 +301,12 @@ get_Mesh( slice_step = 25 ) {
 
 
     };
-    let x = this.X;
-    let y = this.Y;
-    let box = this.underBase_Height;
-    let angle = this.angle;
-    let count = slice.length;
+    
+    count = slice.length;
+
     //console.log('mesh normal = ',normal);
     //console.log('mesh slice = ',mesh);
-    return ( { slices, mesh, normal,  x, y, box, angle, count } );
+    return ( { slices, mesh, normal,  x, y, box, height, angle, count } );
 }
 
 get get_Volume(){
@@ -299,10 +314,13 @@ get get_Volume(){
     let slice_step = 50;
     let slices1, slices2;
     let volume = 0; // total
-    let volume1 = 0; // underBase
-    let volume2 = 0; // Pile
+    let volume1 = 0; // box
+    let volume2 = 0; // Pile Hat
+    let h_box = this.underBase_Height;
 
-    volume1 = MyRound( this.Base_Length * this.Base_Width * this.underBase_Height, 3 );
+    //volume1 = MyRound( this.Base_Length * this.Base_Width * this.underBase_Height, 3 );
+    //box Volume
+    volume1 = MyRound( Square_by_slice( this.get_Slice_Base( 0 ) ) * h_box, 3 );
 
     if ( this.Height > 0 ) {
         let max = get_Max_Y_3D( this.get_Contur_Arc_Length ) - 0.0001;
@@ -311,7 +329,7 @@ get get_Volume(){
             slices1 = this.get_Slice_Base( max / slice_step * i );
             slices2 = this.get_Slice_Base( max / slice_step * (i+1) );
             for ( let j = 0; j < slices1.length-4; j+=4 ) {
-            volume2 = volume2 + Volume_Pillers( slices1[j],slices1[1+j],slices1[2+j], slices2[j],slices2[1+j],slices2[2+j], slices2[4+j],slices2[5+j],slices2[6+j], slices1[4+j],slices1[5+j],slices1[6+j] );
+            volume2 = volume2 + Volume_Pillers( slices1[j],slices1[1+j],slices1[2+j], slices2[j],slices2[1+j],slices2[2+j], slices2[4+j],slices2[5+j],slices2[6+j], slices1[4+j],slices1[5+j],slices1[6+j], 0 );
             }
         }
     }

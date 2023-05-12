@@ -228,7 +228,7 @@ const PilesViewCanvas = props => {
 
     let gPile = new cgPile();
     let piles = [];
-    let result = { mesh: [], x: 0, y: 0 };
+    //let result = { mesh: [], x: 0, y: 0 };
     let gPiles = [];
     let count = Elevators.PileFound;
     let slice_step = 25;
@@ -502,6 +502,8 @@ const PilesViewCanvas = props => {
             ctx.clearRect(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
         //----------------------------------------------------------------------
             gl.enable(gl.DEPTH_TEST);
+            gl.enable(gl.BLEND);
+            gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
             //gl.enable(gl.CULL_FACE);
 
         //----------------------------------------------------------------------
@@ -629,8 +631,8 @@ const PilesViewCanvas = props => {
 
 
                     let PileVisible = 1;
-                    if ( currentPile == i ) { PileVisible = 1;
-                    } else PileVisible = 0.2 ;
+                    if ( currentPile == i ) { PileVisible = 0.9;
+                    } else PileVisible = 0.5 ;
 
                     base_countur = RotateMatrix_Z_any( base_countur , angle, 4 );
                     base_countur = MoveMatrixAny( base_countur , x - Length / 2, y - Width / 2, box - Height/2 );
@@ -664,9 +666,21 @@ const PilesViewCanvas = props => {
                     gl.uniform4f(colorUniformLocation, 0, 0, 1, PileVisible );
 
                     // mesh - hat
-                    for ( let i =0; i < slice_step; i++ ) {
-                        gl.drawArrays(gl.LINE_STRIP, i * count /2, count *2 / 4 +1 );
-                    }
+                    if ( gPiles[ i ].height > 0 )
+                        for ( let i =0; i < slice_step; i++ ) {
+                            gl.drawArrays(gl.LINE_STRIP, i * count /2, count *2 / 4 +1 );
+                        } else {
+                            //vertices = [ 0, 0, 0, 1 ];
+                            //vertices = vertices.concat( gPiles[ i ].slices.slice( 0, count ) );
+                            //vertices = MoveMatrixAny( vertices , 0, 0, box - h/2 );
+                            //vertices = base_countur;
+
+                            gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+                            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array( base_countur ),  gl.STATIC_DRAW);
+                            gl.uniform4f(colorUniformLocation, 0, 0, 1, PileVisible );
+
+                            gl.drawArrays(gl.TRIANGLE_FAN, 0, count / 4 );
+                        }
 
 /*
                     //----------------------------------------------------------------------
@@ -708,27 +722,23 @@ const PilesViewCanvas = props => {
                     }
                 }
 
-                let x = gPiles[ 0 ].x;
-                let y = gPiles[ 0 ].y;
+                //let x = gPiles[ 0 ].x;
+                //let y = gPiles[ 0 ].y;
                 let box = gPiles[ 0 ].box;
-                let angle = gPiles[ 0 ].angle;
+                //let angle = gPiles[ 0 ].angle;
                 let count = gPiles[ 0 ].count;
                 let base_countur = gPiles[ 0 ].slices.slice( 0, count );
-                vertices = gPiles[ 0 ].mesh;
-                //vertices = RotateMatrix_Z_any( vertices , angle, 4 );
-                //vertices = MoveMatrixAny( vertices , x - Length / 2, y - Width / 2, box );
-                vertices = MoveMatrixAny( vertices , 0, 0, box - h/2 );
+               
 
-                let PileVisible = 1;
+                let PileVisible = 0.9;
 
-                //base_countur = RotateMatrix_Z_any( base_countur , angle, 4 );
-                base_countur = MoveMatrixAny( base_countur ,0, 0, box - h/2 );
+                let _base_countur = MoveMatrixAny( base_countur ,0, 0, box - h/2 );
 
                 // box
                 gl.uniform4f(colorUniformLocation, 1, 0, 1, PileVisible );
                 if ( box > 0 ) {
-                        for ( let i = 0; i < 5; i++ ) {
-                            let vertices_box = MoveMatrixAny( base_countur , 0, 0, -box / 5 * i );
+                        for ( let i = 0; i <= 5; i++ ) {
+                            let vertices_box = MoveMatrixAny( _base_countur , 0, 0, -box / 5 * i );
                             gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
                             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices_box),  gl.STATIC_DRAW);
                             //mesh
@@ -740,7 +750,7 @@ const PilesViewCanvas = props => {
 
                 // base contur
                 gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(base_countur),  gl.STATIC_DRAW);
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(_base_countur),  gl.STATIC_DRAW);
                 gl.drawArrays(gl.LINE_STRIP, 0, count / 4 );
 
                     //normal = gPiles[ i ].normal;
@@ -748,13 +758,32 @@ const PilesViewCanvas = props => {
                     gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
                     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normal), gl.STATIC_DRAW);
 */
-                gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),  gl.STATIC_DRAW);
-                gl.uniform4f(colorUniformLocation, 0, 0, 1, PileVisible );
 
                 // mesh - hat
-                for ( let i =0; i < slice_step; i++ ) {
-                    gl.drawArrays(gl.LINE_STRIP, i * count /2, count *2 / 4 +1 );
+                if ( gPiles[ 0 ].height > 0 ) {
+                    //console.log('H = ', gPiles[ 0 ].height);
+                    vertices = gPiles[ 0 ].mesh;
+                    vertices = MoveMatrixAny( vertices , 0, 0, box - h/2 );
+
+                    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+                    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),  gl.STATIC_DRAW);
+                    gl.uniform4f(colorUniformLocation, 0, 0, 1, PileVisible );
+
+                    for ( let i =0; i < slice_step; i++ ) {
+                        gl.drawArrays(gl.LINE_STRIP, i * count /2, count *2 / 4 +1 );
+                    }
+                } else {
+                    //vertices = [ 0, 0, 0, 1 ];
+                    //vertices = vertices.concat( gPiles[ 0 ].slices.slice( 0, count ) );
+                    vertices = MoveMatrixAny( base_countur , 0, 0, box - h/2 );
+                    //vertices = base_countur;
+
+                    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+                    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),  gl.STATIC_DRAW);
+                    gl.uniform4f(colorUniformLocation, 0, 0, 1, PileVisible );
+
+                    gl.drawArrays(gl.TRIANGLE_FAN, 0, count / 4 );
+
                 }
             }
             //----------------------
@@ -787,7 +816,7 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
       const { width, height } = canvas.getBoundingClientRect();
       canvas.height = height;
       canvas.width = width;
-      const gl = canvas.getContext('webgl', { antialias: true } );
+      const gl = canvas.getContext('webgl', { antialias: true, alpha: true } );
 
       const canvasText = canvasTextRef.current;
       canvasText.height = height;
