@@ -3,6 +3,7 @@ import { interpolation, MyRound, Volume_Pillers, DistanceBetweenPoints, Square_b
 import { MoveMatrix, MoveMatrixAny, RotateMatrix_X, RotateMatrix_X_any, RotateMatrix_Y, RotateMatrix_Y_any, RotateMatrix_Z, RotateMatrix_Z_any, ScaleMatrix, ScaleMatrixAny, ScaleMatrixAny1zoom } from './3d-matrix.js';
 import { Elevators } from './elevators.js';
 import * as Calc from './calc.js';
+import { CoPresentOutlined } from '@mui/icons-material';
 
 export default class cgPile{
     constructor() {
@@ -200,31 +201,61 @@ set_Contur_Arc_Widht(){
 }
 
 get_Slice_Base( level ) {
- /*   if ( this.Height == 0 ) {
-        console.log(' Error - Pile height (hat) = 0 !');
-        return ( [] );
-    }*/
-    let xyz = [];  
-    let contur_L = this.Length_Arc_Points;
-    let contur_W = this.Widht_Arc_Points;
-    let xy_L = getPoints_by_Y( level , contur_L );
-    let xy_W = getPoints_by_Y( level , contur_W );
-    let x1 = interpolation( level , xy_L[0][0], xy_L[0][1], xy_L[0][2], xy_L[0][3] );
-    let x2 = interpolation( level , xy_W[0][0], xy_W[0][1], xy_W[0][2], xy_W[0][3] );
-    let points = [];
-    points[0] = -x1;//l
-    points[1] = 0;
-    points[2] = 0;
-    points[3] = -x2;//w
-    points[4] = x1;//l
-    points[5] = 0;
-    points[6] = 0;
-    points[7] = x2;//w
-    let xy = getCurvePoints( points, this.Tension_Base, true, this.numOfSegments );
-    for ( let i = 0; i < xy.length; i+=2 ){
-        //xyz = xyz.concat( [ xy[i], xy[i+1], level, 1 ] );
-        xyz.push( xy[i], xy[i+1], level, 1 );
+
+    let xyz = [];  //result
+    let points = [];//control points
+    let x1 = 0; let x2 = 0;
+
+    //console.log('Height = ',this.Height );
+    if ( this.underBase_Height == 0 || level > 0 ) {
+        let contur_L = this.Length_Arc_Points;
+        let contur_W = this.Widht_Arc_Points;
+        let xy_L = getPoints_by_Y( level , contur_L );
+        let xy_W = getPoints_by_Y( level , contur_W );
+        let x1 = interpolation( level , xy_L[0][0], xy_L[0][1], xy_L[0][2], xy_L[0][3] );
+        let x2 = interpolation( level , xy_W[0][0], xy_W[0][1], xy_W[0][2], xy_W[0][3] );
+        points[0] = -x1;//l
+        points[1] = 0;
+        points[2] = 0;
+        points[3] = -x2;//w
+        points[4] = x1;//l
+        points[5] = 0;
+        points[6] = 0;
+        points[7] = x2;//w
+        let xy = getCurvePoints( points, this.Tension_Base, true, this.numOfSegments );
+        for ( let i = 0; i < xy.length; i+=2 ){
+            //xyz = xyz.concat( [ xy[i], xy[i+1], level, 1 ] );
+            xyz.push( xy[i], xy[i+1], level, 1 );
+        }
+        console.log('xyz-spline = ',xyz );
+    } else {
+        //x1 = interpolation( level , this.Base_Length, this.Base_Width, xy_L[0][2], xy_L[0][3] );
+        let l = this.Base_Length;
+        //x2 = interpolation( level , xy_W[0][0], xy_W[0][1], xy_W[0][2], xy_W[0][3] );
+        let w = this.Base_Width;
+        let xyz_square_1 = [];
+        let xyz_square_2 = [];
+        let xyz_square_3 = [];
+        let xyz_square_4 = [];
+        let x = 0; let y = 0;
+
+        for ( let i = 0 ; i <= this.numOfSegments; i++ ) {
+            x = l / this.numOfSegments * i;
+            y = w / this.numOfSegments * i;
+            xyz_square_1.push( l/2, -w/2 + y, 0, 1 );
+            xyz_square_2.push( l/2 - x, w/2, 0, 1 );
+            xyz_square_3.push( -l/2, w/2 - y, 0, 1 );
+            xyz_square_4.push( -l/2 + x, -w/2, 0, 1 );
+        }
+        //console.log('xyz_square_4 = ',xyz_square_4 );
+        xyz = xyz_square_1.slice( this.numOfSegments / 2 * 4, ( this.numOfSegments) *4 );
+        xyz = xyz.concat( xyz_square_2, xyz_square_3, xyz_square_4, xyz_square_1.slice( 0, ( this.numOfSegments / 2 +1) * 4 ) );
+        console.log('xyz-plate = ',xyz );
+        //xyz = xyz_square_4.slice( this.numOfSegments / 2, this.numOfSegments );
+        //xyz = xyz_square_4.slice( this.numOfSegments / 2, this.numOfSegments ).concat( xyz_square_1, xyz_square_2, xyz_square_3, xyz_square_4.slice( 0, this.numOfSegments / 2) );
+
     }
+
     return xyz;
 }
 

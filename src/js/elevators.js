@@ -1590,7 +1590,7 @@ pile_slicing: for ( let index = 0; index < floor.Pile.length; index++ ){ //Pile 
     
                                             let find_Point = { z: _z, finded: false };
                                             find_Point = Find_Point_inside_Triangle_v2( x0, y0, z0, x1, y1, z1, x2, y2, z2, x*dx, y*dy );
-                                            if ( find_Point.finded ) console.log('find_Point = ',find_Point);
+                                            //if ( find_Point.finded ) console.log('find_Point = ',find_Point);
                                             if ( find_Point.finded ) {
     
                                                 _z = find_Point.z;
@@ -1726,6 +1726,11 @@ function Find_Point_inside_Triangle_v2( x1, y1, z1, x2, y2, z2, x3, y3, z3, x_dx
         find_Point.z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x2, y2, z2 ], [ x3, y3, z3 ], [ x_dx, y_dx, 0 ], [ 0, 0, 1 ] );
         find_Point.finded = true;
     }
+/*
+    if ( Calc.Point_inside_Triangle( x1, y1, x3, y3, x2, y2, x_dx, y_dx )  ) {
+        find_Point.z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x3, y3, z3 ], [ x2, y2, z2 ], [ x_dx, y_dx, 0 ], [ 0, 0, 1 ] );
+        find_Point.finded = true;
+    }*/
 /*
     if ( Calc.Point_inside_Triangle( x1, y1, x4, y4, x2, y2, x_dx, y_dx )  ) {
         find_Point.z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x4, y4, z4 ], [ x2, y2, z2 ], [ x_dx, y_dx, 0 ], [ 0, 0, 1 ] );
