@@ -1460,13 +1460,13 @@ pile_slicing: for ( let index = 0; index < floor.Pile.length; index++ ){ //Pile 
                         slices[index].push( _slice[ s ] );
                     }
                 }
-                
+
                 xy_gab = Spline.get_Max_Gabarit_ver2( slices[ index ], count );
                 xy_gab.box = box;
                 //slices[index] = slices[index].concat( xy_gab );
                 slices[index].push( xy_gab );
             }//Pile slicing
-            console.log('slices = ',slices);
+            //console.log('slices = ',slices);
 
 
             let dx = Length / step_xy;
@@ -1494,13 +1494,15 @@ pile_slicing: for ( let index = 0; index < floor.Pile.length; index++ ){ //Pile 
 
                         let slice_Index = slices[index];
 
-                        _xy_gab = slice_Index[ slices[ index ].length -1 ];
+                        _xy_gab = slice_Index[ slice_Index.length -1 ];
 
                         // check X position for each Pile
                         if ( _xy_gab.x_min <= ( x * dx ) && ( x * dx ) <= _xy_gab.x_max ) {
                             // check Y position for each Pile
                             if ( _xy_gab.y_min <= ( y * dy ) && ( y * dy ) <= _xy_gab.y_max ) {
-                                
+
+                                let h = Elevators.PileGet( index ).Height;
+                                if ( h > 0 ) {
                                 slises: for ( let i = 0; i < step; i++ ){
 
                                     let count_i = count * i;
@@ -1553,6 +1555,68 @@ pile_slicing: for ( let index = 0; index < floor.Pile.length; index++ ){ //Pile 
 
                                     } //segments
                                 } //slises
+                                } else { //if Pile = plate
+                                    //slises: for ( let i = 0; i < step; i++ ){
+                                        //let  i = 0; 
+
+                                    let count_a = 0;
+                                    let count_b = 0;
+
+                                    let x0 = slice_Index[ 0 ];
+                                    let y0 = slice_Index[ 1 ];
+                                    let z0 = slice_Index[ 2 ];
+                                    
+                                    //console.log('slice_Index = ',slice_Index);
+
+                                    plate_segments: for ( let i = 0; i < count - 1; i+=4 ){
+                                            count_a = i + 4;
+                                            count_b = i + 8;
+    
+                                            x1 = slice_Index[ count_a ];
+                                            y1 = slice_Index[ count_a + 1 ];
+                                            z1 = slice_Index[ count_a + 2 ];
+    
+                                            x2 = slice_Index[ count_b + 4 ];
+                                            y2 = slice_Index[ count_b + 5 ];
+                                            z2 = slice_Index[ count_b + 6 ];
+    
+                                            //x3 = slice_Index[ count_i + count_j ];
+                                            //y3 = slice_Index[ count_i + count_j + 1 ];
+                                            //z3 = slice_Index[ count_i + count_j + 2 ];
+    
+                                            //x4 = slice_Index[ count_i + count_j + 4 ];
+                                            //y4 = slice_Index[ count_i + count_j + 5 ];
+                                            //z4 = slice_Index[ count_i + count_j + 6 ];
+    
+                                            let find_Point = { z: _z, finded: false };
+                                            find_Point = Find_Point_inside_Triangle_v2( x0, y0, z0, x1, y1, z1, x2, y2, z2, x*dx, y*dy );
+                                            if ( find_Point.finded ) console.log('find_Point = ',find_Point);
+                                            if ( find_Point.finded ) {
+    
+                                                _z = find_Point.z;
+    
+                                                if ( _z[ 2 ] > z[ 2 ] ) { z = _z.slice(0); }
+    /*
+                                                if ( _xy_gab.box > 0 ) {
+                                                    if ( !strip_triger ) {
+                                                        strip_triger = true;
+                                                        strip[ strip.length -1 ].count += 1;
+                                                        mesh.push( z[ 0 ], z[ 1 ], z[ 2 ], 1 );
+                                                    } 
+                                                    else {
+                                                        if ( _z[ 2 ] == 0 ) {
+                                                            strip_triger = false;
+                                                            strip[ strip.length -1 ].count += 1 ;
+                                                            mesh.push( z[ 0 ], z[ 1 ], z[ 2 ], 1 );
+                                                        }
+                                                    }
+                                                }*/
+                                                break plate_segments;
+                                            } 
+    
+                                    } //plate segments
+                                    //} //slises
+                                }
                             }
 
                         }
@@ -1651,5 +1715,32 @@ function Find_Point_inside_Triangle( x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4,
         find_Point.finded = true;
     }
 
+    return ( find_Point );
+}
+
+function Find_Point_inside_Triangle_v2( x1, y1, z1, x2, y2, z2, x3, y3, z3, x_dx, y_dx ){
+
+    let find_Point = { z: 0, finded: false };
+
+    if ( Calc.Point_inside_Triangle( x1, y1, x2, y2, x3, y3, x_dx, y_dx )  ) {
+        find_Point.z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x2, y2, z2 ], [ x3, y3, z3 ], [ x_dx, y_dx, 0 ], [ 0, 0, 1 ] );
+        find_Point.finded = true;
+    }
+/*
+    if ( Calc.Point_inside_Triangle( x1, y1, x4, y4, x2, y2, x_dx, y_dx )  ) {
+        find_Point.z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x4, y4, z4 ], [ x2, y2, z2 ], [ x_dx, y_dx, 0 ], [ 0, 0, 1 ] );
+        find_Point.finded = true;
+    }*/
+/*
+    if ( Calc.Point_inside_Triangle( x1, y1, x3, y3, x4, y4, x_dx, y_dx ) ) {
+        find_Point.z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x3, y3, z3 ], [ x4, y4, z4 ], [ x_dx, y_dx, 0 ], [ 0, 0, 1 ] );
+        find_Point.finded = true;
+    }
+
+    if ( Calc.Point_inside_Triangle( x1, y1, x4, y4, x3, y3, x_dx, y_dx ) ) {
+        find_Point.z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x3, y3, z3 ], [ x4, y4, z4 ], [ x_dx, y_dx, 0 ], [ 0, 0, 1 ] );
+        find_Point.finded = true;
+    }
+*/
     return ( find_Point );
 }
