@@ -1699,11 +1699,11 @@ function Find_Point_inside_Triangle( x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4,
         find_Point.z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x2, y2, z2 ], [ x4, y4, z4 ], [ x_dx, y_dx, 0 ], [ 0, 0, 1 ] );
         find_Point.finded = true;
     }
-/*
+
     if ( Calc.Point_inside_Triangle( x1, y1, x4, y4, x2, y2, x_dx, y_dx )  ) {
         find_Point.z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x4, y4, z4 ], [ x2, y2, z2 ], [ x_dx, y_dx, 0 ], [ 0, 0, 1 ] );
         find_Point.finded = true;
-    }*/
+    }
 
     if ( Calc.Point_inside_Triangle( x1, y1, x3, y3, x4, y4, x_dx, y_dx ) ) {
         find_Point.z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x3, y3, z3 ], [ x4, y4, z4 ], [ x_dx, y_dx, 0 ], [ 0, 0, 1 ] );
@@ -1726,11 +1726,11 @@ function Find_Point_inside_Triangle_v2( x1, y1, z1, x2, y2, z2, x3, y3, z3, x_dx
         find_Point.z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x2, y2, z2 ], [ x3, y3, z3 ], [ x_dx, y_dx, 0 ], [ 0, 0, 1 ] );
         find_Point.finded = true;
     }
-/*
+
     if ( Calc.Point_inside_Triangle( x1, y1, x3, y3, x2, y2, x_dx, y_dx )  ) {
         find_Point.z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x3, y3, z3 ], [ x2, y2, z2 ], [ x_dx, y_dx, 0 ], [ 0, 0, 1 ] );
         find_Point.finded = true;
-    }*/
+    }
 /*
     if ( Calc.Point_inside_Triangle( x1, y1, x4, y4, x2, y2, x_dx, y_dx )  ) {
         find_Point.z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x4, y4, z4 ], [ x2, y2, z2 ], [ x_dx, y_dx, 0 ], [ 0, 0, 1 ] );

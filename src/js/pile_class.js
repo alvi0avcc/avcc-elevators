@@ -227,7 +227,7 @@ get_Slice_Base( level ) {
             //xyz = xyz.concat( [ xy[i], xy[i+1], level, 1 ] );
             xyz.push( xy[i], xy[i+1], level, 1 );
         }
-        console.log('xyz-spline = ',xyz );
+        //console.log('xyz-spline = ',xyz );
     } else {
         //x1 = interpolation( level , this.Base_Length, this.Base_Width, xy_L[0][2], xy_L[0][3] );
         let l = this.Base_Length;
@@ -250,7 +250,7 @@ get_Slice_Base( level ) {
         //console.log('xyz_square_4 = ',xyz_square_4 );
         xyz = xyz_square_1.slice( this.numOfSegments / 2 * 4, ( this.numOfSegments) *4 );
         xyz = xyz.concat( xyz_square_2, xyz_square_3, xyz_square_4, xyz_square_1.slice( 0, ( this.numOfSegments / 2 +1) * 4 ) );
-        console.log('xyz-plate = ',xyz );
+        //console.log('xyz-plate = ',xyz );
         //xyz = xyz_square_4.slice( this.numOfSegments / 2, this.numOfSegments );
         //xyz = xyz_square_4.slice( this.numOfSegments / 2, this.numOfSegments ).concat( xyz_square_1, xyz_square_2, xyz_square_3, xyz_square_4.slice( 0, this.numOfSegments / 2) );
 
@@ -287,7 +287,7 @@ get_Mesh( slice_step = 25 ) {
 
     
     if ( this.Height == 0 ) {
-        console.log(' Warning - Pile height (hat) = 0 !');
+        //console.log(' Warning - Pile height (hat) = 0 !');
         slices = this.get_Slice_Base( 0 );
         count = slices.length;
         return ( { slices, mesh, normal,  x, y, box, angle, count } );
