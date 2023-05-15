@@ -340,7 +340,7 @@ get_Mesh( slice_step = 25 ) {
     return ( { slices, mesh, normal,  x, y, box, height, angle, count } );
 }
 
-get get_Volume(){
+get get_Volume_by_pillers(){
     
     let slice_step = 50;
     let slices1, slices2;
@@ -372,6 +372,49 @@ get get_Volume(){
     volume = MyRound( volume1 + volume2 + volume3 , 3 );
 
     return { volume, volume1, volume2, volume3 };
+}
+
+get get_Volume_by_Slice(){
+    // v = h/3 * ( s1 + root( s1 * s2 ) + s2 )
+    let slice_step = 50;
+    let slices1, slices2;
+    let volume_total = 0; // total
+    let volume_box = 0; // box
+    let volume_hat = 0; // Pile Hat
+    let h_box = this.underBase_Height;
+    let h_between_slice = this.Height / slice_step;
+
+    //box Volume
+    if ( h_box > 0 ) volume_box = MyRound( Square_by_slice( this.get_Slice_Base( 0 ) ) * h_box, 3 );
+
+    if ( this.Height > 0 ) {
+        //let max = get_Max_Y_3D( this.get_Contur_Arc_Length ) - 0.0001;
+        let max = this.Height;
+
+        slices1 = this.get_Slice_Base( 0 );
+        let square1 = Square_by_slice( slices1 );
+
+        for ( let i = 0; i < slice_step; i ++ ){
+            //slices1 = this.get_Slice_Base( max / slice_step * i );
+            slices2 = this.get_Slice_Base( max / slice_step * (i+1) );
+            let square2 = Square_by_slice( slices2 );
+            volume_hat = volume_hat + h_between_slice / 3  * ( square1 + Math.sqrt( square1 * square2 ) + square2 );
+            //console.log( 'square1 = ',square1 );
+            square1 = square2;
+            /*
+            for ( let j = 0; j < slices1.length-4; j+=4 ) {
+            volume2 = volume2 + Volume_Pillers( slices1[j],slices1[1+j],slices1[2+j], slices2[j],slices2[1+j],slices2[2+j], slices2[4+j],slices2[5+j],slices2[6+j], slices1[4+j],slices1[5+j],slices1[6+j], 0 );
+            }*/
+        }
+    }
+    //let check = this.get_Check_Pile_Mesh( slices2 );
+    //let square = Square_by_slice( slices2 );
+    //let volume3 = MyRound( square * this.Height, 3 );
+    
+    volume_hat = MyRound( volume_hat, 3 );
+    volume_total = MyRound( volume_box + volume_hat, 3 );
+
+    return { volume_total, volume_box, volume_hat };
 }
 
 

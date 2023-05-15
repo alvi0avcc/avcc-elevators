@@ -277,8 +277,8 @@ const PilesViewCanvas = props => {
             //get & put calculated Volume current Pile
             if ( index == currentPile ) {
                 let volume = 0;
-                volume = gPile.get_Volume;
-                Elevators.set_Pile_Volume( currentPile, volume.volume );
+                volume = gPile.get_Volume_by_Slice;
+                Elevators.set_Pile_Volume( currentPile, volume.volume_total );
             }
 
             let mesh = gPile.get_Mesh( slice_step );
@@ -299,8 +299,8 @@ const PilesViewCanvas = props => {
 
         //get & put calculated Volume current Pile
         let volume = 0;
-        volume = gPile.get_Volume;
-        Elevators.set_Pile_Volume( currentPile, volume.volume );
+        volume = gPile.get_Volume_by_Slice;
+        Elevators.set_Pile_Volume( currentPile, volume.volume_total );
         gPiles.push( gPile.get_Mesh( slice_step ) ) ;
     }
 

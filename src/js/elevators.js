@@ -73,7 +73,7 @@ class cPile {
             this.Base   = { length: 10, width: 10 }; //base plane
             this.underBase_Height = 0;//Height of Box under Pile
             this.Top    = { length: 2, width: 2 }; //upper plane
-            this.Tension_Base = 0.837;
+            this.Tension_Base = 0.83888;
             this.Tension_Volume = 0.5;
             this.angle_X = -70;
             this.angle_Y = 15;
