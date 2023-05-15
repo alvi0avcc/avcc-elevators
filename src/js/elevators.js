@@ -1502,7 +1502,7 @@ pile_slicing: for ( let index = 0; index < floor.Pile.length; index++ ){ //Pile 
                             if ( _xy_gab.y_min <= ( y * dy ) && ( y * dy ) <= _xy_gab.y_max ) {
 
                                 let h = Elevators.PileGet( index ).Height;
-                                if ( h > 0 ) {
+                                if ( h > 0 ) { // if Pile Hat -  true
                                 slises: for ( let i = 0; i < step; i++ ){
 
                                     let count_i = count * i;
@@ -1529,6 +1529,20 @@ pile_slicing: for ( let index = 0; index < floor.Pile.length; index++ ){ //Pile 
 
                                         let find_Point = { z: _z, finded: false };
                                         find_Point = Find_Point_inside_Triangle( x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x*dx, y*dy );
+                                        
+                                        if ( i == step-1 && !find_Point.finded ) {
+                                            let x0 = slice_Index[ count_i + count ];
+                                            let y0 = slice_Index[ count_i + count + 1 ];
+                                            let z0 = slice_Index[ count_i + count + 2 ];
+                                            find_Point = Find_Point_inside_Triangle_v2( x0, y0, z0, x3, y3, z3, x4, y4, z4, x*dx, y*dy );
+                                            /*
+                                            console.log('1 = ',x1,y1,z1);
+                                            console.log('2 = ',x2,y2,z2);
+                                            console.log('3 = ',x3,y3,z3);
+                                            console.log('4 = ',x4,y4,z4);
+                                            console.log('dx, dy = ',x*dx,y*dy);
+                                            console.log('find_Point = ',find_Point);*/
+                                        }
 
                                         if ( find_Point.finded ) {
 
@@ -1552,7 +1566,6 @@ pile_slicing: for ( let index = 0; index < floor.Pile.length; index++ ){ //Pile 
                                             }*/
                                             break slises;
                                         } 
-
                                     } //segments
                                 } //slises
                                 } else { //if Pile = plate
@@ -1683,7 +1696,7 @@ pile_slicing: for ( let index = 0; index < floor.Pile.length; index++ ){ //Pile 
         console.log('get_Volume_Piles_v2 - (time working) = ', time2 - time1, ' ms');
         
         return { mesh, mesh_3D, strip, volume };
-    };//get_Volume_Piles ver.2
+    };//get_Volume_Piles
 
 };
 
@@ -1692,7 +1705,20 @@ export let Elevators = new cElevators();
 //-------------------------------------------------------------------------------------
 
 function Find_Point_inside_Triangle( x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, x_dx, y_dx ){
-
+/*
+    x1 = Calc.MyRound( x1, 3 );
+    y1 = Calc.MyRound( y1, 3 );
+    z1 = Calc.MyRound( z1, 3 );
+    x2 = Calc.MyRound( x2, 3 );
+    y2 = Calc.MyRound( y2, 3 );
+    z2 = Calc.MyRound( z2, 3 );
+    x3 = Calc.MyRound( x3, 3 );
+    y3 = Calc.MyRound( y3, 3 );
+    z3 = Calc.MyRound( z3, 3 );
+    x4 = Calc.MyRound( x4, 3 );
+    y4 = Calc.MyRound( y4, 3 );
+    z4 = Calc.MyRound( z4, 3 );
+*/
     let find_Point = { z: 0, finded: false };
 
     if ( Calc.Point_inside_Triangle( x1, y1, x2, y2, x4, y4, x_dx, y_dx )  ) {
@@ -1711,7 +1737,7 @@ function Find_Point_inside_Triangle( x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4,
     }
 
     if ( Calc.Point_inside_Triangle( x1, y1, x4, y4, x3, y3, x_dx, y_dx ) ) {
-        find_Point.z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x3, y3, z3 ], [ x4, y4, z4 ], [ x_dx, y_dx, 0 ], [ 0, 0, 1 ] );
+        find_Point.z = Calc.rayPlaneIntersection(  [ x1, y1, z1 ], [ x4, y4, z4 ], [ x3, y3, z3 ], [ x_dx, y_dx, 0 ], [ 0, 0, 1 ] );
         find_Point.finded = true;
     }
 

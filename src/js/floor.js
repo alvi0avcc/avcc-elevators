@@ -904,7 +904,7 @@ function Pile_Side_Menu(propsSide){
         propsSide.callback( !propsSide.updateState );
     }
     const setBase_Square = () => {
-        let Tension_Base = 1.753;
+        let Tension_Base = 1.65;
         Elevators.set_Pile_Base_Tension ( Tension_Base );
         setValue(!value);
         propsSide.callback( !propsSide.updateState );

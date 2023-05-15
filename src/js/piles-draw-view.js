@@ -676,7 +676,7 @@ const PilesViewCanvas = props => {
                     ctx.fillStyle = 'red';
                     ctx.font = "18px serif";
                     ctx.fillText( i + 1, pixelX-4, pixelY+5 );
-
+                    //-----------------------------------------------graph button for selecting Piles
 
                     let PileVisible = 1;
                     if ( currentPile == i ) { PileVisible = 0.9;
@@ -714,9 +714,18 @@ const PilesViewCanvas = props => {
                     gl.uniform4f(colorUniformLocation, 0, 0, 1, PileVisible );
 
                     // mesh - hat
-                    if ( gPiles[ i ].height > 0 )
+                    if ( gPiles[ i ].height > 0 ) {
                         for ( let i =0; i < slice_step; i++ ) {
                             gl.drawArrays(gl.LINE_STRIP, i * count /2, count *2 / 4 +1 );
+                        }
+                        //upper plate
+                        vertices = gPiles[ i ].slices.slice( - count, gPiles[ i ].slices.length );
+                        vertices = RotateMatrix_Z_any( vertices , angle, 4 );
+                        vertices = MoveMatrixAny( vertices , x - Length / 2, y - Width / 2, box - Height/2 );
+                        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+                        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),  gl.STATIC_DRAW);
+                        gl.uniform4f(colorUniformLocation, 0, 0, 1, PileVisible );
+                        gl.drawArrays(gl.TRIANGLE_FAN, 0, count / 4 );
                         } else {
                             //vertices = [ 0, 0, 0, 1 ];
                             //vertices = vertices.concat( gPiles[ i ].slices.slice( 0, count ) );
@@ -729,6 +738,7 @@ const PilesViewCanvas = props => {
 
                             gl.drawArrays(gl.TRIANGLE_FAN, 0, count / 4 );
                         }
+
 
 /*
                     //----------------------------------------------------------------------
@@ -820,6 +830,14 @@ const PilesViewCanvas = props => {
                     for ( let i =0; i < slice_step; i++ ) {
                         gl.drawArrays(gl.LINE_STRIP, i * count /2, count *2 / 4 +1 );
                     }
+                    //upper plate
+                    vertices = gPiles[ 0 ].slices.slice( - count, gPiles[ 0 ].slices.length );
+                    vertices = MoveMatrixAny( vertices , 0, 0, box - h/2 );
+                    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+                    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),  gl.STATIC_DRAW);
+                    gl.uniform4f(colorUniformLocation, 0, 0, 1, PileVisible );
+                    gl.drawArrays(gl.TRIANGLE_FAN, 0, count / 4 );
+
                 } else {
                     //vertices = [ 0, 0, 0, 1 ];
                     //vertices = vertices.concat( gPiles[ 0 ].slices.slice( 0, count ) );
