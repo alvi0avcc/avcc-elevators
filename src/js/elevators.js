@@ -79,6 +79,7 @@ class cPile {
             this.angle_Y = 15;
             this.angle_Z = -10;
             this.Volume = 0;
+            this.Weight = 0;
         }
     }
 
@@ -437,8 +438,25 @@ class cElevators {
         if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Volume == undefined ) return ( 0 );
         return ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Volume );
     }
+    get_Pile_Weight( index = 0 ){
+        if ( index >= this.PileFound ) index = 0;
+        if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Weight == undefined ) return ( 0 );
+        return ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Weight );
+    }
     set_Pile_Volume( index = 0, volume = 0 ){
         this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Volume = volume;
+        this.set_Pile_Weight = index;
+    }
+    /**
+     * @param {number} index index of Pile for calculate weigth
+     */
+    set set_Pile_Weight( index ){
+        let volume = this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Volume;
+        let tw = this.get_Floor_CargoTW;
+        let weight = 0;
+        if (  tw > 100 ) weight = volume * tw / 1000
+        else weight = volume * tw / 100;
+        this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Weight = Calc.MyRound( weight, 3 );
     }
     get FloorCurrent(){
         let result;

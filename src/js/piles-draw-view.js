@@ -910,6 +910,7 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
             
             <div id="overlay">
                 <div>Volume of selected Pile: <span id="floor_volume">{Elevators.get_Pile_Volume( Elevators.get_Pile_Selected )} (m³)</span></div>
+                <div>Weigth of selected Pile: <span id="floor_volume">{Elevators.get_Pile_Weight( Elevators.get_Pile_Selected )} (MT)</span></div>
             </div>
 
         </div>
