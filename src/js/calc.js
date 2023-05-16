@@ -1,5 +1,6 @@
 import { Elevators } from './elevators.js';
 import cPile from './pile_class.js'
+import { mat3, mat4, vec3, vec4 } from 'gl-matrix';
 import { get_Max_Y_3D, getCurvePoints, drawLines, drawCurve, getPoint, drawPoint, drawPoints, getSlice, drawSlice, drawContur, getContur, getPoints_by_Y } from './spline.js';
 
 export function MyRound(value, decimal){
@@ -324,6 +325,7 @@ Mod - вычисление остатка от целочисленного де
   }
 
   export function Normal_from_3points( point1 = [], point2 = [], point3 = [] ){
+
 /*
     point[0][0] = points[ 0 ];//x1
     point[0][1] = points[ 1 ];//y1
@@ -379,5 +381,21 @@ Mod - вычисление остатка от целочисленного де
     let Vy = (vDirection3*vDirection4-vDirection1*vDirection6);
     let Vz = Math.abs(vDirection1*vDirection5-vDirection2*vDirection4);
 */
-    return ( [ Vx, Vy, Vz ] );
+//let result = vec3.create();
+let result = [];
+/*
+let v1 = vec3.fromValues( point1[ 0 ] - point2[ 0 ], point1[ 1 ] - point2[ 1 ], point1[ 2 ] - point2[ 2 ] );
+let v2 = vec3.fromValues( point1[ 0 ] - point3[ 0 ], point1[ 1 ] - point3[ 1 ], point1[ 2 ] - point3[ 2 ] );
+vec3.multiply( result, v1, v2 );
+result [ 0 ] = Math.abs( result[ 0 ] );
+result [ 1 ] = Math.abs( result[ 1 ] );
+result [ 2 ] = Math.abs( result[ 2 ] );*/
+//vec3.normalize( result, result );
+//if ( result[ 2 ] < 0 ) vec3.negate( result, result );
+
+result = [ Vx, Vy, Vz ];
+//vec3.normalize( result, result );
+
+  //  return ( [ Vx, Vy, Vz ] );
+  return result;
   }
