@@ -436,11 +436,11 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
     
     return (
 
-        <div class="container" style={{ height: 450 }} >
+        <div class="container" style={{ height: 500 }} >
 
             <canvas id="canvasFlor" ref={canvasRef} style={{ height: '100%', width: '100%' }} />
             
-            <div id="overlay_control" style={{ bottom: '60px' }}>
+            <div id="overlay_control" style={{ bottom: '90px' }}>
                 <label id="label_autorotate" htmlFor='input_autorotate' >Auto rotate</label>
                 <input 
                     id='input_autorotate' 
@@ -452,6 +452,7 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
 
             <div id="overlay">
                 <div>Volume: <span id="floor_volume">{Elevators.get_Floor_Volume} (m³)</span></div>
+                <div>Weight: <span id="floor_volume">{Elevators.get_Floor_Weight} (MT)</span></div>
             </div>
 
         </div>

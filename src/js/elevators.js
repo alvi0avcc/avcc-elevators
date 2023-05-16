@@ -98,6 +98,7 @@ class cWarehouse {
     this.Mesh_3D    = [];
     this.Strip      = [];
     this.Volume     = 0;
+    this.Weight     = 0;
     this.Comments    = ''
     }
 };
@@ -261,6 +262,30 @@ class cElevators {
     get FloorName(){
         if ( this.FloorFound > 0 ) return this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Name
         else return 'empty'
+    };
+    get get_Floor_CargoName(){
+        if ( this.FloorFound > 0 ) return this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Cargo.Name
+        else return ''
+    };
+    get get_Floor_CargoTW(){
+        if ( this.FloorFound > 0 ) return this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Cargo.Natura
+        else return '0'
+    };
+    /**
+     * @param {string} name name of cargo in warehouse
+     */
+    set set_Floor_CargoName( name ){
+        this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Cargo.Name = name;
+    };
+    /**
+     * @param {number} tw test weight of cargo in warehouse
+     */
+    set set_Floor_CargoTW( tw ){
+        if ( tw < 0  ) tw = 0;
+        this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Cargo.Natura = tw;
+        let volume = this.get_Floor_Volume;
+        if ( tw > 100 ) this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Weight = Calc.MyRound( volume * tw / 1000, 3 )
+        else  this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Weight = Calc.MyRound( volume * tw / 100, 3 );
     };
     SetComplexSiloName (name, col, row){
         this.Elevators[this.Selected].Complex[this.ComplexSelected].Silo[col][row].Name = name;
@@ -432,7 +457,8 @@ class cElevators {
         this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Mesh = structuredClone( result.mesh );
         this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Mesh_3D = structuredClone( result.mesh_3D );
         this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Strip = structuredClone( result.strip );
-        this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Volume = structuredClone( result.volume );
+        this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Volume = result.volume;
+        this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Weight = result.weight;
     }
     set set_Floor_MeshStyle ( style ){
         this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].MeshStyle = style;
@@ -469,6 +495,12 @@ class cElevators {
             this.Elevators[this.ElevatorSelected].Warehouse[this.WarehouseSelected].Volume = 0;
         }
         return this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Volume;
+    }
+    get get_Floor_Weight(){
+        if ( this.Elevators[this.ElevatorSelected].Warehouse[this.WarehouseSelected].Weight  == undefined ) {
+            this.Elevators[this.ElevatorSelected].Warehouse[this.WarehouseSelected].Weight = 0;
+        }
+        return this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Weight;
     }
     get get_Floor_MeshStep(){
         if ( this.Elevators[this.ElevatorSelected].Warehouse[this.WarehouseSelected].MeshStep == undefined ) {
@@ -1379,6 +1411,7 @@ class cElevators {
         let mesh = [];
         let mesh_3D = [];
         let volume = 0;
+        let weight = 0;
         let Length = 0;
         let Width = 0;
         let dx_X = 0;
@@ -1687,6 +1720,10 @@ pile_slicing: for ( let index = 0; index < floor.Pile.length; index++ ){ //Pile 
                 mesh_3D.push( mesh[ m_step + 4 ], mesh[ m_step + 5 ], mesh[ m_step + 6 ], mesh[ m_step + 7 ] );
             }
             volume = Calc.MyRound( volume * 2, 3 );
+            if ( Elevators.get_Floor_CargoTW > 100 ) {
+                weight = Calc.MyRound( volume * Elevators.get_Floor_CargoTW / 1000, 3 );
+            } else weight = Calc.MyRound( volume * Elevators.get_Floor_CargoTW / 100, 3 );
+            //console.log('get_Floor_CargoTW = ',Elevators.get_Floor_CargoTW);
             //console.log('mesh_3D = ',mesh_3D);
             //console.log('strip = ',strip);
             //console.log('volume = ',volume);
@@ -1695,7 +1732,7 @@ pile_slicing: for ( let index = 0; index < floor.Pile.length; index++ ){ //Pile 
         let time2 = new Date().getTime(); // time control
         console.log('get_Volume_Piles_v2 - (time working) = ', time2 - time1, ' ms');
         
-        return { mesh, mesh_3D, strip, volume };
+        return { mesh, mesh_3D, strip, volume, weight };
     };//get_Volume_Piles
 
 };

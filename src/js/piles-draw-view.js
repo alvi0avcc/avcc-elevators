@@ -661,21 +661,23 @@ const PilesViewCanvas = props => {
                         ctx.fillStyle = 'rgba(255, 255, 0, 0.5)';
                     }
 
-                    ctx.beginPath();
-                    ctx.lineWidth = 2;
-                    ctx.strokeStyle  = 'red';
-                    ctx.arc( pixelX, pixelY, 15, 0, 2*3.14, false );
-                    ctx.stroke();
-                    ctx.beginPath();
-                    ctx.lineWidth = 2;
-                    ctx.strokeStyle  = 'green';
-                    ctx.arc( pixelX, pixelY, 13, 0, 2*3.14, false );
-                    ctx.fill();
-                    ctx.stroke();
+                    if ( i != props.currentPile ) {
+                        ctx.beginPath();
+                        ctx.lineWidth = 2;
+                        ctx.strokeStyle  = 'red';
+                        ctx.arc( pixelX, pixelY, 15, 0, 2*3.14, false );
+                        ctx.stroke();
+                        ctx.beginPath();
+                        ctx.lineWidth = 2;
+                        ctx.strokeStyle  = 'green';
+                        ctx.arc( pixelX, pixelY, 13, 0, 2*3.14, false );
+                        ctx.fill();
+                        ctx.stroke();
 
-                    ctx.fillStyle = 'red';
-                    ctx.font = "18px serif";
-                    ctx.fillText( i + 1, pixelX-4, pixelY+5 );
+                        ctx.fillStyle = 'red';
+                        ctx.font = "18px serif";
+                        ctx.fillText( i + 1, pixelX-4, pixelY+5 );
+                    }
                     //-----------------------------------------------graph button for selecting Piles
 
                     let PileVisible = 1;

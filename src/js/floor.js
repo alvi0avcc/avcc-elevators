@@ -152,6 +152,14 @@ function FloorSize(propsSize){
         Elevators.setFloorDimensions ( Length, Width , Height , Conus_height , Conus_L , Conus_W , Conus_X , Conus_Y );
         setValue(!value);
         };
+    const changeCargoName = (event) => {
+        Elevators.set_Floor_CargoName = event.target.value;
+        setValue(!value);
+    }
+    const changeCargoTW = (event) => {
+        Elevators.set_Floor_CargoTW = +event.target.value;
+        setValue(!value);
+    }
 
     return (
     <div className='block' style={{ minWidth: 1000, marginTop: '10px' }}>
@@ -246,6 +254,28 @@ function FloorSize(propsSize){
         value={Conus_Y}
         onChange={ Conus_Y_Change }
         ></TextField>
+        <div className='block'>
+            <div className='rowPile'>
+                <label>Cargo Name</label>
+                <input
+                    className='inputPile' 
+                    style={{ width: '140px' }} 
+                    value={Elevators.get_Floor_CargoName}
+                    onChange={changeCargoName}
+                    />
+            </div>
+
+            <div className='rowPile'>
+                <label>Test Weight</label>
+                <input 
+                    className='inputPile' 
+                    type ='number' 
+                    value={Elevators.get_Floor_CargoTW}
+                    onChange={changeCargoTW}
+                    />
+            </div>
+
+        </div>
 
         </div>
 
@@ -1009,11 +1039,11 @@ function Pile_Side_Menu(propsSide){
                     //value = { pile.type }
                     //onChange={ ChangeType }
                     >
-                        <option value='box'>Box</option>
                         <option value='pile'>Pile</option>
+                        <option value='box'>Box</option>
                 </select>
             </div>
-            <div className='rowPile'>
+            <div className='rowPile' style={{ display: 'none' }} >
                 <label>Placement Level:</label>
                 <select 
                     disabled
