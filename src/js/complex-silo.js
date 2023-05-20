@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { UpdateContext } from '../App'
+import { UpdateContext } from '../Main'
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import SettingsTwoToneIcon from '@mui/icons-material/SettingsTwoTone';

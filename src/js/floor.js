@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import { Elevators } from './elevators.js';
 import * as iolocal from './iolocal';
 import * as Dialogs from './dialogs';
@@ -7,7 +8,6 @@ import PilesViewCanvas from './piles-draw-view.js';
 import PileViewCanvas from './pile-draw-view.js';
 import { Divider, Tab, Tabs, Button, TextField , IconButton, Tooltip } from '@mui/material';
 import SettingsTwoToneIcon from '@mui/icons-material/SettingsTwoTone';
-import { Margin } from '@mui/icons-material';
 
 export default function Floor(){
     const [update, setUpdate] = React.useState(true);
@@ -280,7 +280,7 @@ function FloorSize(propsSize){
         </div>
 
             <div className='block' style={{ width: '100%' }}>
-                { Elevators.FloorFound ?  <FloorViewCanvas/> : '' }
+                { Elevators.FloorFound ?  <FloorViewCanvas report={false} /> : '' }
             </div>
             
             <div className='block' style={{ position: 'relative', right: '0px', width: '120px' }}>
@@ -338,8 +338,8 @@ function Piles(propsPiles){
 
                 <Pile_Side_Menu updateState={ updatePiles } callback={(data)=> setUpdatePiles( data ) }  mode={ mode } callbackMode={(data)=> setMode( data ) } />
 
-                <div className='block' style={{ width: '100%' }}>
-                    { Elevators.FloorFound ?  <PilesViewCanvas updateState={ updatePiles }  changePileInfo={ changePileInfo } callbackPileInfo={(data)=> setChangePileInfo( data ) } callback={(data)=> setUpdatePiles( data ) } currentPile={ currentPile } callbackPile={(data)=> setCurrentPile( data ) } view={ view } mode={ mode } /> : '' }
+                <div className='block' style={{ height: '610px', width: '100%' }}>
+                    { Elevators.FloorFound ?  <PilesViewCanvas updateState={ updatePiles }  changePileInfo={ changePileInfo } callbackPileInfo={(data)=> setChangePileInfo( data ) } callback={(data)=> setUpdatePiles( data ) } currentPile={ currentPile } callbackPile={(data)=> setCurrentPile( data ) } view={ view } mode={ mode } report={false}/> : '' }
                 </div>
 
                 <div className='block' style={{ position: 'relative', right: '0px', width: '120px' }}>
@@ -738,6 +738,7 @@ function FloorSidePanel_3D( props ) {
         setValue(!value);
     }
 
+    const [showModal, setShowModal] = React.useState(false);
 
     return (
         <div>
@@ -797,6 +798,18 @@ function FloorSidePanel_3D( props ) {
                     id="colorMulti" name="colorMulti"
                     onChange={ changeMulticolor }
                     />
+                
+                </div>
+
+                <div className='block'>
+                <button 
+                    className='myButton'
+                    style={{ width: '80px' }}
+                    onClick={ ()=>{ 
+                        var canvas = document.getElementById("canvasFlor");
+                        canvas.toBlob( (blob) => { saveBlob( blob, `screencapture-${canvas.width}x${canvas.height}.png` ); })
+                    } }
+                    >Image</button>
                 
                 </div>
 
@@ -1388,3 +1401,15 @@ function Pile_Side_3D_menu( props ) {
         </div>
       )
     };
+
+    const saveBlob = (function() {
+        const a = document.createElement('a');
+        document.body.appendChild(a);
+        a.style.display = 'none';
+        return function saveData(blob, fileName) {
+           const url = window.URL.createObjectURL(blob);
+           a.href = url;
+           a.download = fileName;
+           a.click();
+        };
+      }())

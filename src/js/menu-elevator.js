@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {useEffect, useState} from "react";
 import { useContext } from 'react';
-import { UpdateContext } from '../App'
+import { UpdateContext } from '../Main'
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';

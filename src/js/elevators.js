@@ -1054,8 +1054,26 @@ class cElevators {
     }
     set setComments(data) { if ( this.ElevatorsFound  > 0 ) this.Elevators[this.Selected].Comments = data }
     set setElevators(data){
-        this.Elevators = data;
-        if ( data || null ) { this.State = 'open' } else this.State = 'closed';
+        if ( data != null ) { 
+            this.State = 'open';
+            this.Elevators = data.Elevators;
+
+            if ( this.ElevatorsFound > data.Selected ) this.Selected = data.Selected
+            else this.Selected = 0;
+
+            if ( this.ComplexFound > data.ComplexSelected ) this.ComplexSelected = data.ComplexSelected
+            else this.ComplexSelected = 0;
+
+            if ( this.SiloFound > data.SiloSelected ) this.SiloSelected = data.SiloSelected
+            else this.SiloSelected = 0;
+
+            if ( this.FloorFound > data.WarehouseSelected ) this.WarehouseSelected = data.WarehouseSelected
+            else this.WarehouseSelected = 0;
+
+            this.ComplexSiloSelected = data.ComplexSiloSelected;
+
+
+        } else this.State = 'closed';
          }
     AddElevator(){
         this.Elevators.push(new cElevator());

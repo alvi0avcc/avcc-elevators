@@ -1,10 +1,13 @@
 import React from 'react';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import {useEffect, useState} from "react";
 import { useContext } from 'react';
 //import MenuApp from './js/menuapp.js';
 import TopHeader from './js/top_header.js';
 import ElevatorMenu from './js/menu-elevator.js';
 import { Elevators } from './js/elevators.js';
+import FileMenuButton from './js/file_menu.js';
+
 import ElevatorTab from './js/elevator-tab.js';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
@@ -12,18 +15,20 @@ import { Button, ButtonGroup, Box } from '@mui/material';
 import { Elevator, Label } from '@mui/icons-material';
 import LocalServiceWorkerRegister from './js/sw-register';
 import registerServiceWorker from './js/sw-register';
-import FileMenuButton from './js/file_menu.js';
 
-export const UpdateContext = React.createContext(false);
-UpdateContext.displayName = 'UpdateContext';
+import Main from './Main.js'
+import Layout from './layout.js';
+import Report_Floor from './report/report_floor.js';
+import NoPage from "./404.js";
 
-function App(props) {
-  const [update, setUpdate] = useState();
+
+
+
+function App() {
   registerServiceWorker();
 
   return (
     <>
-    <UpdateContext.Provider value={ [update, setUpdate] }>
       <link rel="manifest" href="manifest.json" />
       <meta name="mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -31,11 +36,21 @@ function App(props) {
       <meta name="apple-mobile-web-app-title" content="PWA Workshop" />
       <meta name="msapplication-starturl" content="/index.html" />
       <meta name="viewport" content="initial-scale=1, width=device-width" />
-      <Box sx={{ width: 'fullWidth' }}>
-        <TopHeader/>
-        <FileMenuButton/>
-        <ElevatorMenu />
-        <Divider/>
+
+    <BrowserRouter>
+
+      <Routes>
+        <Route exact path='/' element={<Layout />}>
+          <Route index element={<Main />}/>
+          <Route exact path='/report_elevator' element={< label />}/>
+          <Route exact path='/report_complex' element={< label />}/>
+          <Route exact path='/report_silo' element={< label />}/>
+          <Route exact path='/report_warehouse' element={< Report_Floor />}/>
+          <Route path="*" element={<NoPage />}/>
+        </Route>
+      </Routes>
+
+    
 
       <Stack
       direction={'row'}
@@ -54,8 +69,11 @@ function App(props) {
     </Stack>
     <Divider/>
     
-    </Box>
-    </UpdateContext.Provider>
+    
+
+    
+
+    </BrowserRouter>
     </>
   );
 } export default App;

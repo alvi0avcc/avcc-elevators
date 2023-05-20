@@ -51,7 +51,7 @@ export function OpenElevator() {
 
 export function SaveElevator() {
     if ( Elevators.ElevatorsFound )
-        localStorage.setItem("Elevator", JSON.stringify(Elevators.Elevators))
+        localStorage.setItem("Elevator", JSON.stringify(Elevators))
         else alert('The elevator database is empty! Nothing to save.');
 };
 

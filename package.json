@@ -23,6 +23,7 @@
     "gl-matrix": "^3.4.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.11.2",
     "react-scripts": "5.0.1",
     "rhino3dm": "^8.0.0-beta",
     "three": "^0.151.3",

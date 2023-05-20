@@ -109,6 +109,30 @@ input[type="range"]::-moz-range-thumb {
   background-color: whitesmoke;
 }
 
+.myButtonNav{
+  display: inline-block;
+  text-decoration: none;
+  border-radius: 10px;
+  border-width: 0;
+  width: 100px;
+  margin: 3px;
+  height: 25px;
+  background-color: white;
+  color: #1976d2;
+  font-size: 1rem;
+  text-align: center;
+  text-shadow: 1px 1px 1px #000;
+  background-image: linear-gradient(to top left, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2) 30%, rgba(0, 0, 0, 0));
+  box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.6), inset -1px -1px 2px rgba(0, 0, 0, 0.6);
+}
+.myButtonNav:active {
+  box-shadow: inset -1px -1px 2px rgba(255, 255, 255, 0.6), inset 1px 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.myButtonNav:hover {
+  background-color: whitesmoke;
+}
+
 .inputRangeVertical {
   margin-left: -10px;
   transform: translate(-50%, 210px ) rotate(-90deg);
@@ -436,4 +460,101 @@ input[type="range"]::-moz-range-thumb {
 .myButtonPile:hover {
   background-color: whitesmoke;
   cursor: inherit;
+}
+
+.modal-header h2 {
+  color: #555;
+  font-size: 20px;
+  font-weight: normal;
+  line-height: 1;
+  margin: 0;
+}
+
+.modal .btn-close {
+  color: #aaa;
+  cursor: pointer;
+  font-size: 30px;
+  text-decoration: none;
+  position: absolute;
+  right: 5px;
+  top: 0;
+}
+
+.modal {
+  background: #fefefe;
+  border: 1px solid black;
+  border-radius: 5px;
+  position: fixed;
+  width: 400px;
+  top: 50px;
+  left: 50%;
+  margin-left: -200px;
+  z-index: 103;
+  background-color: #f2f2f2;
+}
+.modal-body {
+  padding: 20px;
+}
+.modal-body p {
+  margin: 0;
+}
+.modal-header,
+.modal-footer {
+  padding: 20px 20px;
+}
+.modal-header {
+  border-bottom: #eaeaea solid 1px;
+}
+.modal-header h2 {
+  font-size: 20px;
+  margin: 0;
+}
+.modal-footer {
+  border-top: #eaeaea solid 1px;
+  text-align: right;
+}
+.btn {
+  background: #fff;
+  border: #555 solid 1px;
+  border-radius: 3px;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 14px;
+  padding: 8px 15px;
+  text-decoration: none;
+  text-align: center;
+  min-width: 60px;
+  position: relative;
+}
+.btn:hover,
+.btn:focus {
+  background: #f2f2f2;
+}
+.btn-primary {
+  background: #428bca;
+  border-color: #357ebd;
+  color: #fff;
+}
+.btn-primary:hover {
+  background: #66a1d3;
+}
+
+.tableHeadInfo {
+  width: 300px;
+}
+
+.tableObjectInfo {
+  color:black;
+  border-collapse : collapse;
+  border-style :  solid;
+  border-width : 1px;
+  border-color : grey; 
+  width: 100%;
+  table-layout: fixed;
+}
+
+.tableObjectInfo td {
+  border-style :  solid;
+  border-width : 1px;
+  border-color : grey;
 }

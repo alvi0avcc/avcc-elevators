@@ -8,6 +8,9 @@ const FloorViewCanvas = props => {
 
     let time1 = new Date().getTime(); //time control
 
+    let report = false;
+    report = props.report;
+
     const [ auto_rotate, setAuto_rotate ] = React.useState( false );
     
     const canvasRef = useRef(null)
@@ -428,9 +431,30 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
       //canvas.height = window.innerHeight;
       canvas.height = height;
       canvas.width = width;
-      const gl = canvas.getContext('webgl', { antialias: true } )
+      //canvas.height = 768;
+      //canvas.width = 960;
+      //canvas.width = height * 1.25;
+      //canvas.style.height = height + 'px';
+
+      //canvas.style.width = height * 1.25 + 'px';
+      canvas.style.width = '100%';
+      const gl = canvas.getContext( 'webgl', { antialias: true, preserveDrawingBuffer: true } )
+      
+        //const offscreen = new OffscreenCanvas(1000, 1000);
+        //const gl = offscreen.getContext( 'webgl', { antialias: true, preserveDrawingBuffer: true } );
+        //const one = document.getElementById("canvasFlor").getContext("bitmaprenderer");
+
+        draw(gl);
+
+        //const bitmapOne = offscreen.transferToImageBitmap();
+        //one.transferFromImageBitmap(bitmapOne);
+
+        //console.log('bitmapOne  =',bitmapOne);
+        //console.log('canvas  =',canvas);
+        //console.log('gl  =',gl);
+        //console.log('one  =',one);
   
-        draw(gl)
+        //draw(gl)
   
       }, [draw])
     
@@ -438,9 +462,12 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
 
         <div class="container" style={{ height: 500 }} >
 
-            <canvas id="canvasFlor" ref={canvasRef} style={{ height: '100%', width: '100%' }} />
+            <canvas id="canvasFlor" ref={canvasRef} style={{ height: '100%' }}/>
             
-            <div id="overlay_control" style={{ bottom: '90px' }}>
+            <div 
+                id="overlay_control" 
+                style={{ bottom: '90px', display: ( report ? 'none' : 'block' ) }}
+                >
                 <label id="label_autorotate" htmlFor='input_autorotate' >Auto rotate</label>
                 <input 
                     id='input_autorotate' 

@@ -26,7 +26,10 @@ const PilesViewCanvas = props => {
     const [ changePilePos, setChangePilePos] = React.useState( false );
 
     let currentPile = 0;
-    currentPile = Elevators.get_Pile_Selected;
+    let report = false;
+    report = props.report;
+    if ( report ) currentPile = props.currentPile
+    else currentPile = Elevators.get_Pile_Selected;
 
 
     let mode = props.mode;
@@ -250,6 +253,8 @@ const PilesViewCanvas = props => {
     let angle_X = props.view.x;
     let angle_Y = props.view.y;
     let angle_Z = props.view.z;
+
+    
 
     if ( mode == 'location' ) {
         for ( let index = 0; index < count; index++ ) {
@@ -481,7 +486,7 @@ const PilesViewCanvas = props => {
                 zoom = Math.min( zoom_L, zoom_W, zoom_H );
             }
 
-            zoom = zoom * 0.7;
+            zoom = zoom * 0.9;
 
             mat4.ortho(projectionMatrix, 0, gl.drawingBufferWidth, 0, gl.drawingBufferHeight, -500, 500);
             if ( mode == 'location') {
@@ -896,7 +901,7 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
       }, [draw])
     
     return (
-        <div class="container" style={{ height: 610 }} >
+        <div class="container" style={{ height: 'inherit' }} >
             
             <canvas id="canvasPile" ref={canvasRef} style={{ height: '100%', width: '100%', backgroundColor: 'transparent', zIndex: 0 }} />
             <canvas 
@@ -908,7 +913,7 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
                 style={{ height: '100%', width: '100%', zIndex: 1, backgroundColor: 'transparent', position: 'absolute', left: '0px', top: '0px' }} 
                 />
             
-            <div id="overlay">
+            <div id="overlay" style={{ display: ( report ? 'none' : 'block' ) }}>
                 <div>Volume of selected Pile: <span id="floor_volume">{Elevators.get_Pile_Volume( Elevators.get_Pile_Selected )} (m³)</span></div>
                 <div>Weigth of selected Pile: <span id="floor_volume">{Elevators.get_Pile_Weight( Elevators.get_Pile_Selected )} (MT)</span></div>
             </div>
