@@ -20,7 +20,7 @@ export function NewElevator(props) {
     } else {
         Elevators.AddElevator();
         Elevators.State = 'created new Elevator';
-        localStorage.setItem( "Elevator" , JSON.stringify(Elevators.Elevators));
+        localStorage.setItem( "Elevator" , JSON.stringify(Elevators));
         console.log("New Empty Elevator Created !")
         };
     return(

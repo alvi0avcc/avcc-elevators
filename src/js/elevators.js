@@ -1054,7 +1054,7 @@ class cElevators {
     }
     set setComments(data) { if ( this.ElevatorsFound  > 0 ) this.Elevators[this.Selected].Comments = data }
     set setElevators(data){
-        if ( data != null ) { 
+        if ( data != undefined ) { 
             this.State = 'open';
             this.Elevators = data.Elevators;
 
