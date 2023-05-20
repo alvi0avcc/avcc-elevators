@@ -999,7 +999,7 @@ class cElevators {
     }
     set setSelected(data) { this.Selected = data }
     get ElevatorsFound(){
-        if ( this.Elevators != null )
+        if ( this.Elevators != undefined )
         if ( this.Elevators.length > 0 ) return this.Elevators.length
             else return 0
     }
