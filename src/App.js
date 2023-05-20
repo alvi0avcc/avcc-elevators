@@ -22,13 +22,19 @@ import Layout from './layout.js';
 import Report_Floor from './report/report_floor.js';
 import NoPage from "./404.js";
 
-function App() {
-  registerServiceWorker();
-
+export function RoutePath(){
   let site_path = SitePath();
   let route_path = '';
   if ( site_path == 'http://localhost:3000/' ) route_path = '/';
   if ( site_path == 'https://alvi0avcc.github.io/avcc-elevators/' ) route_path = '/avcc-elevators/';
+  return route_path;
+}
+
+function App() {
+  registerServiceWorker();
+
+  //let site_path = SitePath();
+  let route_path = RoutePath();
 
   return (
     <>
@@ -45,10 +51,10 @@ function App() {
       <Routes>
         <Route path={route_path} element={<Layout />}>
           <Route index element={<Main />}/>
-          <Route path='/report_elevator' element={< label />}/>
-          <Route path='/report_complex' element={< label />}/>
-          <Route path='/report_silo' element={< label />}/>
-          <Route path='/report_warehouse' element={< Report_Floor />}/>
+          <Route path={route_path +'report_elevator'} element={< label />}/>
+          <Route path={route_path +'report_complex'} element={< label />}/>
+          <Route path={route_path +'report_silo'} element={< label />}/>
+          <Route path={route_path +'report_warehouse'} element={< Report_Floor />}/>
           <Route path="*" element={<NoPage />}/>
         </Route>
       </Routes>

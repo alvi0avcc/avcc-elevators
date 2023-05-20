@@ -7,6 +7,7 @@ import FileMenuButton from './js/file_menu.js';
 import ElevatorMenu from './js/menu-elevator.js';
 import Divider from '@mui/material/Divider';
 import { Elevators } from './js/elevators.js';
+import { RoutePath } from './App.js';
 
 
 export const UpdateContext = React.createContext(false);
@@ -14,6 +15,7 @@ UpdateContext.displayName = 'UpdateContext';
 
 const Main = () => {
   const [update, setUpdate] = useState();
+  let route_path = RoutePath();
 
   return (
     <>
@@ -29,8 +31,8 @@ const Main = () => {
             >
             <nav>
                 <label className='myText' >Reports →</label>
-                <Link style={{ display: 'none' }} className='myButtonNav' to="/report_elevator" target='_blank' >Elevator</Link>
-                <Link className='myButtonNav' to="/report_warehouse" target='_blank' >Warehouse</Link>
+                <Link style={{ display: 'none' }} className='myButtonNav' to={route_path +"report_elevator"} target='_blank' >Elevator</Link>
+                <Link className='myButtonNav' to={route_path +"report_warehouse"} target='_blank' >Warehouse</Link>
             </nav>
         </div>
 
