@@ -15,7 +15,7 @@ import { Button, ButtonGroup, Box } from '@mui/material';
 import { Elevator, Label } from '@mui/icons-material';
 import LocalServiceWorkerRegister from './js/sw-register';
 import registerServiceWorker from './js/sw-register';
-//import { SitePath } from './js/sw-register';
+import { SitePath } from './js/sw-register';
 
 import Main from './Main.js'
 import Layout from './layout.js';
@@ -25,10 +25,10 @@ import NoPage from "./404.js";
 function App() {
   registerServiceWorker();
 
-  //let site_path = SitePath();
-  //let route_path = '';
-  //if ( site_path == 'http://localhost:3000/' ) route_path = '/';
-  //if ( site_path == 'https://alvi0avcc.github.io/' ) route_path = '/avcc-elevators/';
+  let site_path = SitePath();
+  let route_path = '';
+  if ( site_path == 'http://localhost:3000/' ) route_path = '/';
+  if ( site_path == 'https://alvi0avcc.github.io/avcc-elevators/' ) route_path = '/avcc-elevators/';
 
   return (
     <>
@@ -43,7 +43,7 @@ function App() {
     <BrowserRouter>
 
       <Routes>
-        <Route path='/' element={<Layout />}>
+        <Route path={site_path} element={<Layout />}>
           <Route index element={<Main />}/>
           <Route path='/report_elevator' element={< label />}/>
           <Route path='/report_complex' element={< label />}/>
