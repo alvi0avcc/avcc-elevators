@@ -1100,17 +1100,19 @@ class cElevators {
     }
     get ElevatorList(){
         let List = [];
-        let ii = this.Elevators.length;
-        let data;
-        if (ii > 0 ) {    
-            for( let i =0 ; i < ii ; i++){
-                data = this.Elevators[i].id + this.Elevators[i].Name + ' - ' + this.Elevators[i].Date;
-                List.push( data );
+
+        if ( this.ElevatorsFound > 0 ) {
+            let ii = this.Elevators.length;
+            let data;
+            if (ii > 0 ) {    
+                for( let i =0 ; i < ii ; i++){
+                    data = this.Elevators[i].id + this.Elevators[i].Name + ' - ' + this.Elevators[i].Date;
+                    List.push( data );
+                }
             }
         }
-        return(
-            List
-        )
+
+        return( List );
     }
     get SiloTotalInfo(){
         let info = []; 
