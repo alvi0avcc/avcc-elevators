@@ -16,6 +16,7 @@ UpdateContext.displayName = 'UpdateContext';
 const Main = () => {
   const [update, setUpdate] = useState();
   let route_path = RoutePath();
+  console.log('route_path = ',route_path);
 
   return (
     <>
