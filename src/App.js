@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { HashRouter, BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import {useEffect, useState} from "react";
 import { useContext } from 'react';
 //import MenuApp from './js/menuapp.js';
@@ -47,7 +47,7 @@ function App() {
       <meta name="msapplication-starturl" content="/index.html" />
       <meta name="viewport" content="initial-scale=1, width=device-width" />
 
-    <BrowserRouter>
+    <HashRouter>
 
       <Routes>
         <Route path={route_path} element={<Layout />}>
@@ -83,7 +83,7 @@ function App() {
 
     
 
-    </BrowserRouter>
+    </HashRouter>
     </>
   );
 } export default App;
