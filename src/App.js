@@ -43,7 +43,7 @@ function App() {
     <BrowserRouter>
 
       <Routes>
-        <Route path={site_path} element={<Layout />}>
+        <Route path={route_path} element={<Layout />}>
           <Route index element={<Main />}/>
           <Route path='/report_elevator' element={< label />}/>
           <Route path='/report_complex' element={< label />}/>
