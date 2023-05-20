@@ -40,12 +40,12 @@ function App() {
     <BrowserRouter>
 
       <Routes>
-        <Route exact path='/' element={<Layout />}>
+        <Route exact path='/avcc-elevators/' element={<Layout />}>
           <Route index element={<Main />}/>
-          <Route exact path='/report_elevator' element={< label />}/>
-          <Route exact path='/report_complex' element={< label />}/>
-          <Route exact path='/report_silo' element={< label />}/>
-          <Route exact path='/report_warehouse' element={< Report_Floor />}/>
+          <Route exact path='/avcc-elevators/report_elevator' element={< label />}/>
+          <Route exact path='/avcc-elevators/report_complex' element={< label />}/>
+          <Route exact path='/avcc-elevators/report_silo' element={< label />}/>
+          <Route exact path='/avcc-elevators/report_warehouse' element={< Report_Floor />}/>
           <Route path="*" element={<NoPage />}/>
         </Route>
       </Routes>

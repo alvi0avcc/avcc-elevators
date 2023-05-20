@@ -29,8 +29,8 @@ const Main = () => {
             >
             <nav>
                 <label className='myText' >Reports →</label>
-                <Link style={{ display: 'none' }} className='myButtonNav' to="/report_elevator" target='_blank' >Elevator</Link>
-                <Link className='myButtonNav' to="/report_warehouse" target='_blank' >Warehouse</Link>
+                <Link style={{ display: 'none' }} className='myButtonNav' to="/avcc-elevators/report_elevator" target='_blank' >Elevator</Link>
+                <Link className='myButtonNav' to="/avcc-elevators/report_warehouse" target='_blank' >Warehouse</Link>
             </nav>
         </div>
 
