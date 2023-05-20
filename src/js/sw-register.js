@@ -1,6 +1,12 @@
+export function SitePath (){
+  let site_path = window.location.href;
+  console.log('SitePath=',site_path);
+  return site_path;
+}
+
 export default function registerServiceWorker(){
-  const Path = window.location.href;
-    console.log('Path=',Path);
+  const Path = SitePath();
+    //console.log('SitePath=',Path);
     if ( Path == 'http://localhost:3000/' ) { console.log('local') }
     else {
       console.log('external');
