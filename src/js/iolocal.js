@@ -119,7 +119,7 @@ function fromBinary(binary) {
 
 function FileSave (props) {
     if ( Elevators.ElevatorsFound ) {
-        let data = WarehouseToJSON(Elevators.Elevators);
+        let data = WarehouseToJSON(Elevators);
         let a=document.createElement("a");
         let name = 'Elevators.json';
         console.log("File save",name);
