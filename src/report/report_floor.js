@@ -114,7 +114,10 @@ function PileInfo( props ){
   //document.body.appendChild(Elevators.get_Pile_Image(index));
 
   return (
-    <div id={'PileInfo-'+index} style={{ display:'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+    <div 
+      id={'PileInfo-'+index} 
+      className='block'
+      style={{ display:'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
       
       <div style={{ width: '70%' }}>
       <table className='tableObjectInfo'>
@@ -156,8 +159,11 @@ function PileInfo( props ){
       </table>
       </div>
 
-      <div id={'div-pile-'+index} style={{ height: '200px', width: '29%', display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-        <canvas id={'canvas-pile-'+index} alt={'canvas-pile-'+index} height={'200px'} width={'200px'}></canvas>
+      <div 
+        id={'div-pile-'+index} 
+        className='block'
+        style={{ height: '200px', width: '29%', display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+        <img id={'img-pile-'+index} alt={'img-pile-'+index} />
       </div>
 
     </div>

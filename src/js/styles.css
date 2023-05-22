@@ -569,6 +569,9 @@ input[type="range"]::-moz-range-thumb {
       margin-top: 5mm;
       margin-bottom: 5mm;
   }
+  table {
+    page-break-inside: avoid;
+ }
   #menu{
       display:none!Important;
   }

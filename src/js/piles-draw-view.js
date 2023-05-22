@@ -790,9 +790,12 @@ const PilesViewCanvas = props => {
 
                     //report
                     if ( report ) {
-                        let one = document.getElementById('canvas-pile-' + i ).getContext("bitmaprenderer");
-                        const bitmapOne = offscreen.transferToImageBitmap();
-                        one.transferFromImageBitmap(bitmapOne);
+                        //let one = document.getElementById('canvas-pile-' + i ).getContext("bitmaprenderer");
+                        let one = document.getElementById('img-pile-' + i );
+                        //const bitmapOne = offscreen.transferToImageBitmap();
+                        offscreen.convertToBlob().then((blob) => ( one.src = URL.createObjectURL( blob ) ) );
+                        
+                        //one.transferFromImageBitmap(bitmapOne);
                         
                         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                     }
