@@ -104,7 +104,7 @@ const PileViewCanvas = props => {
   }, [draw])
   
 /*
-  <div class="container">
+  <div className="container">
   <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }}/>
       <div id="overlay">
           <div>Volume: <span id="floor_volume">{ Elevators.get_Pile_Volume( +props.index ) } (m³)</span></div>

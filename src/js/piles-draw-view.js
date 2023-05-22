@@ -14,8 +14,11 @@ import { draw_Line_3D, draw_PLine_3D, draw_PLine_3D_between, draw_underBase, dra
 
 const PilesViewCanvas = props => {
 
-    const canvasRef = useRef(null)
-    const canvasTextRef = useRef(null)
+    const canvasRef = useRef(null);
+    const canvasTextRef = useRef(null);
+    const offscreen = new OffscreenCanvas(500, 500);
+    //const canvasOffScreenRef = useRef(null);
+    const newImg = document.createElement("img");
 
     //const [ update, setUpdate ] = React.useState( true );
 
@@ -474,7 +477,7 @@ const PilesViewCanvas = props => {
             let modelMatrix = mat4.create();
             //mat4.scale(modelMatrix, modelMatrix, [ 10, 10, 10 ]);
             let zoom = 1;
-            if ( mode == 'location' ) {
+            if ( mode == 'location' && !report ) {
                 let zoom_L = gl.drawingBufferWidth / Length;
                 let zoom_W = gl.drawingBufferHeight / Width;
                 let zoom_H = gl.drawingBufferHeight / Height;
@@ -566,7 +569,7 @@ const PilesViewCanvas = props => {
 
             //------------------------------- corpus draw
 
-            if ( mode == 'location') {
+            if ( mode == 'location' && !report ) {
                 vertices = korpus_draw;
                 vertices = MoveMatrixAny( vertices , 0, 0, -Height/2 );
 
@@ -596,8 +599,10 @@ const PilesViewCanvas = props => {
                     let count = gPiles[ i ].count;
                     let base_countur = gPiles[ i ].slices.slice( 0, count );
                     vertices = gPiles[ i ].mesh;
-                    vertices = RotateMatrix_Z_any( vertices , angle, 4 );
-                    vertices = MoveMatrixAny( vertices , x - Length / 2, y - Width / 2, box - Height/2 );
+                    if ( !report ) {
+                        vertices = RotateMatrix_Z_any( vertices , angle, 4 );
+                        vertices = MoveMatrixAny( vertices , x - Length / 2, y - Width / 2, box - Height/2 );
+                    }
 
                     let xx = x - Length / 2;
                     let yy = y - Width / 2;
@@ -686,11 +691,17 @@ const PilesViewCanvas = props => {
                     //-----------------------------------------------graph button for selecting Piles
 
                     let PileVisible = 1;
-                    if ( currentPile == i ) { PileVisible = 0.9;
-                    } else PileVisible = 0.5 ;
+                    if ( report ) { PileVisible = 0.9 
+                    } else 
+                        {
+                            if ( currentPile == i ) { PileVisible = 0.9;
+                            } else PileVisible = 0.5 ;
+                        }
 
-                    base_countur = RotateMatrix_Z_any( base_countur , angle, 4 );
-                    base_countur = MoveMatrixAny( base_countur , x - Length / 2, y - Width / 2, box - Height/2 );
+                    if ( !report ) {
+                        base_countur = RotateMatrix_Z_any( base_countur , angle, 4 );
+                        base_countur = MoveMatrixAny( base_countur , x - Length / 2, y - Width / 2, box - Height/2 );
+                    }
 
                     // box
                     gl.uniform4f(colorUniformLocation, 1, 0, 1, PileVisible );
@@ -776,6 +787,16 @@ const PilesViewCanvas = props => {
                     for ( let i =0; i < slice_step; i++ ) {
                         gl.drawArrays(gl.TRIANGLE_STRIP, i * count /2, count *2 / 4 +1 );
                     }*/
+
+                    //report
+                    if ( report ) {
+                        let one = document.getElementById('canvas-pile-' + i ).getContext("bitmaprenderer");
+                        const bitmapOne = offscreen.transferToImageBitmap();
+                        one.transferFromImageBitmap(bitmapOne);
+                        
+                        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+                    }
+
 
                 } 
             } else { // only current Pile
@@ -863,6 +884,49 @@ const PilesViewCanvas = props => {
             
             //lastRenderTime = time;
             
+            //if ( report ) {
+            //if ( mode == 'model' ) {
+                //var canvas = document.getElementById("canvasFlor");
+                //        canvas.toBlob( (blob) => { saveBlob( blob, `screencapture-${canvas.width}x${canvas.height}.png` ); })
+                //    }
+                //canvasRef.current.toBlob( (blob) => { saveBlob( blob, `screencapture-${currentPile}.png` ); });
+
+                //let one = document.getElementById("canvasPile").getContext("bitmaprenderer");
+            //    let one = document.getElementById('canvas-pile-' + currentPile).getContext("bitmaprenderer");
+            //    const bitmapOne = offscreen.transferToImageBitmap();
+            //    one.transferFromImageBitmap(bitmapOne);
+
+/*
+                canvasRef.current.toBlob((blob) => {
+                    //newImg = document.createElement("img");
+                    const url = URL.createObjectURL(blob);
+                  
+                    newImg.onload = () => {
+                      URL.revokeObjectURL(url);
+                    };
+                  
+                    newImg.src = url;
+                    //console.log('newImg = ',newImg);
+                    //Elevators.set_Pile_Image( currentPile, newImg );
+                    //document.body.appendChild(Elevators.get_Pile_Image(currentPile));
+                    let doc = document.getElementById( 'img-pile-' + currentPile );
+                    //doc.append( Elevators.get_Pile_Image(currentPile) );
+                    //doc.appendChild( newImg );
+
+                    //let doc = document.getElementById("canvasPile").getContext("bitmaprenderer");
+                    console.log('doc = ',doc);
+
+                    //const bitmapOne = offscreen.transferToImageBitmap();
+                    //doc.transferFromImageBitmap(bitmapOne);
+
+                    doc.src = newImg.src;
+
+                    //console.log('Elevators = ',Elevators);
+
+                });
+                */
+            //}
+            
         }
  //----------------------------------------------------------------------       
 
@@ -885,32 +949,51 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
     
     useEffect(() => {
       
-      const canvas = canvasRef.current;
-      const { width, height } = canvas.getBoundingClientRect();
-      canvas.height = height;
-      canvas.width = width;
-      const gl = canvas.getContext('webgl', { antialias: true, alpha: true } );
+        let gl;
+        const canvas = canvasRef.current;
+        const { width, height } = canvas.getBoundingClientRect();
+        canvas.height = height;
+        canvas.width = width;
 
-      const canvasText = canvasTextRef.current;
-      canvasText.height = height;
-      canvasText.width = width;
-      const ctx = canvasText.getContext( '2d', { antialias: true } );
-  
-        draw( gl, ctx )
+        const canvasText = canvasTextRef.current;
+        canvasText.height = height;
+        canvasText.width = width;
+        const ctx = canvasText.getContext( '2d', { antialias: true } )
+
+        //const offscreen = canvasOffScreenRef.current;
+        //const offscreen = new OffscreenCanvas(1000, 1000);
+        //offscreen.height = 1000;
+        //offscreen.width = 1000;
+
+      if ( report ) {
+        //const offscreen = new OffscreenCanvas(1000, 1000);
+        gl = offscreen.getContext( 'webgl', { antialias: true, alpha: true, preserveDrawingBuffer: true } );
+        //const one = document.getElementById("canvasPile").getContext("bitmaprenderer");
+        //const bitmapOne = offscreen.transferToImageBitmap();
+        //one.transferFromImageBitmap(bitmapOne);
+      } else {
+        gl = canvas.getContext('webgl', { antialias: true, alpha: true, preserveDrawingBuffer: true  } );
+      }
+
+        draw( gl, ctx );
   
       }, [draw])
     
     return (
-        <div class="container" style={{ height: 'inherit' }} >
+        <div className="container" style={{ height: 'inherit' }} >
             
-            <canvas id="canvasPile" ref={canvasRef} style={{ height: '100%', width: '100%', backgroundColor: 'transparent', zIndex: 0 }} />
+            <canvas 
+                id="canvasPile" 
+                ref={canvasRef} 
+                style={{ height: '100%', width: '100%', backgroundColor: 'transparent', zIndex: 0 }} 
+                />
             <canvas 
                 id="canvasText" 
                 ref={canvasTextRef} 
                 onMouseMove={ pileMove }
                 onMouseDown={ pileStartMove }
                 onMouseUp={ pileEndMove }
-                style={{ height: '100%', width: '100%', zIndex: 1, backgroundColor: 'transparent', position: 'absolute', left: '0px', top: '0px' }} 
+                style={{ display: ( report ? 'none' : 'block' ), height: '100%', width: '100%', zIndex: 1, backgroundColor: 'transparent', position: 'absolute', left: '0px', top: '0px' }} 
                 />
             
             <div id="overlay" style={{ display: ( report ? 'none' : 'block' ) }}>
@@ -1009,3 +1092,15 @@ function AddLabelPile( props ){
     )
 }
 */
+
+const saveBlob = (function() {
+    const a = document.createElement('a');
+    document.body.appendChild(a);
+    a.style.display = 'none';
+    return function saveData(blob, fileName) {
+       const url = window.URL.createObjectURL(blob);
+       a.href = url;
+       a.download = fileName;
+       a.click();
+    };
+  }())

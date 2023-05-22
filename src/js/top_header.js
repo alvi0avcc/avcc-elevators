@@ -8,9 +8,7 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 
 export default function TopHeader(){
-
     return (
-        <>
         <AppBar style={{ position: 'static' }}>
         <Toolbar sx={{ alignContent: 'space-between' }}>
             <Box sx={{ flexGrow: 1 }}></Box>
@@ -33,6 +31,5 @@ export default function TopHeader(){
           <Avatar alt="AVCC" src="favicon.ico" />
         </Toolbar>
         </AppBar>
-        </>
     );
 }

@@ -460,7 +460,7 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
     
     return (
 
-        <div class="container" style={{ height: 500 }} >
+        <div className="container" style={{ height: 500 }} >
 
             <canvas id="canvasFlor" ref={canvasRef} style={{ height: '100%' }}/>
             

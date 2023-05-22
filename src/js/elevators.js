@@ -80,6 +80,7 @@ class cPile {
             this.angle_Z = -10;
             this.Volume = 0;
             this.Weight = 0;
+            this.image = new Image();
         }
     }
 
@@ -429,7 +430,8 @@ class cElevators {
     PileGet( index ){
         let result;
         if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] ) {
-            result =structuredClone( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] );
+            //result =structuredClone( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] );
+            result = this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ];
             }
         return( result );
     }
@@ -446,6 +448,14 @@ class cElevators {
     set_Pile_Volume( index = 0, volume = 0 ){
         this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Volume = volume;
         this.set_Pile_Weight = index;
+    }
+    set_Pile_Image( index = 0, image ){
+        this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].image = image;
+    }
+    get_Pile_Image( index = 0 ){
+        //if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].image )
+        return this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].image
+        //else return null;
     }
     /**
      * @param {number} index index of Pile for calculate weigth
@@ -1163,7 +1173,7 @@ class cElevators {
         if ( this.ComplexFound ) {
             data = structuredClone( this.ComplexAll.Silo );
             data = [].concat(...data);
-            console.log('ComplexTotalInfo - data = ',data);
+            //console.log('ComplexTotalInfo - data = ',data);
             let ii = data.length;
             for ( let i = 0; i < ii ; i++ ) { 
                     if ( data[i].CargoName && data[i].Using ) {
@@ -1184,17 +1194,17 @@ class cElevators {
             for ( let ii = 0; ii < dataTotal.length; ii++  ) {
                 //let complexName = this.Elevators[this.Selected].Complex[ii].Name;
                 let complex = structuredClone(dataTotal[ii].Silo);
-                console.log('ComplexTotalInfo (complex)= ',complex);
+                //console.log('ComplexTotalInfo (complex)= ',complex);
                 //for ( let c = 0; c < complex.length; c++ ) {
                 //    for (let cc = 0; cc < complex[c].length; cc++ ){
                 //        complex[c][cc].ComplexName = complexName;
                 //    }
                 //}
                 data = data.concat(complex);
-                console.log('ComplexTotalInfo (!)= ',data);
+                //console.log('ComplexTotalInfo (!)= ',data);
             }
             data = [].concat(...data);
-            console.log('ComplexTotalInfo (!data)= ',data);
+            //console.log('ComplexTotalInfo (!data)= ',data);
             let ii = data.length;
             for ( let i = 0; i < ii ; i++ ) { 
                 if ( data[i].CargoName && data[i].Using ) {
@@ -1259,12 +1269,12 @@ class cElevators {
     }
     area_circle( diameter ){
         let area = 3.14 * Math.pow( diameter / 2, 2 );
-        console.log('area_circle = ',area);
+        //console.log('area_circle = ',area);
         return area;
     }
     area_star( diameter ){
         let area = diameter*diameter - 3.14 * Math.pow( diameter / 2, 2 );
-        console.log('area_circle = ',area);
+        //console.log('area_circle = ',area);
         return area;
     }
     volume_cilinder( height, diameter, area ){
@@ -1296,14 +1306,14 @@ class cElevators {
     }
     volume_square( height, length, width, area ){
         let volume;
-        console.log('volume_square data = ', height, length, width, area);
-        console.log('volume_square area = ', area);
+        //console.log('volume_square data = ', height, length, width, area);
+        //console.log('volume_square area = ', area);
         if ( area == 0 || area == null || area == '' ){
             volume = length * width * height;
         } else {
             volume = height * area;
         }
-        console.log('volume_square volume = ', volume);
+        //console.log('volume_square volume = ', volume);
         return volume;
     }
     volume_conus_circle( height, diameter, area  ){
@@ -1337,7 +1347,7 @@ class cElevators {
         return volume;
     }
     volume_mineSilo( type, sound, ullage, height, length, width, diameter, conus_height, area ){
-        console.log('voume_mineSilo data = ', type, sound, ullage, height, length, width, diameter, conus_height, area);
+        //console.log('voume_mineSilo data = ', type, sound, ullage, height, length, width, diameter, conus_height, area);
         let volume = 0;
         let err_mes = '';
         let wokrHeight = sound - ullage;
@@ -1410,7 +1420,7 @@ class cElevators {
         let volume =0;
         let weight =0;
         let silo = this.ComplexSiloGet(row,col);
-        console.log('silo = ',silo);
+        //console.log('silo = ',silo);
         if ( silo.found ) {
             silo = silo.result
             volume = this.volume_mineSilo( silo.Type, silo.Sound, silo.Ullage, silo.Height, silo.Length, silo.Width, silo.Diameter, silo.Conus_height, silo.Area ).volume;

@@ -64,6 +64,7 @@ function App() {
     
 
       <Stack
+      id='menu'
       direction={'row'}
       justifyContent={'space-around'}
       divider={<Divider orientation="vertical" flexItem />} >

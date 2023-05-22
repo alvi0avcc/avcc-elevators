@@ -558,3 +558,19 @@ input[type="range"]::-moz-range-thumb {
   border-width : 1px;
   border-color : grey;
 }
+
+
+
+@media print{
+
+  @page{
+      margin-left: 20mm;
+      margin-right: 5mm;
+      margin-top: 5mm;
+      margin-bottom: 5mm;
+  }
+  #menu{
+      display:none!Important;
+  }
+
+}

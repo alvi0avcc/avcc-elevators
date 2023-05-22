@@ -224,8 +224,8 @@ export default function ElevatorMenu () {
     const [update, setUpdate] = useContext(UpdateContext);
     const [checked, setChecked] = React.useState(true);
 
-    console.log( 'ElevatorMenu, Elevator.ElevatorsName = ', Elevators.ElevatorsName );
-    console.log( 'ElevatorMenu, Elevator = ', Elevators );
+    //console.log( 'ElevatorMenu, Elevator.ElevatorsName = ', Elevators.ElevatorsName );
+    //console.log( 'ElevatorMenu, Elevator = ', Elevators );
     if ( Elevators.State == 'closed' ) return (<></>)
     else
     return (

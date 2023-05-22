@@ -272,7 +272,7 @@ function TableRow(props){
             <>
             <td className='myTable'>
             <input
-            class = 'myInputLong'
+            className = 'myInputLong'
             type="text"
             id = { `row-${item.row-1}`+`/col-${item.col-1}` }
             label={ `SiloComments-row ${row}`}
@@ -455,7 +455,7 @@ function TableRow(props){
 
             <td className={clsx( 'myTable' )}> 
             <select 
-            class = 'mySelect'
+            className = 'mySelect'
             id = { `row-${item.row-1}`+`/col-${item.col-1}` }
             label={ `SiloType-row ${row}`}
             value={value_T}
@@ -469,7 +469,7 @@ function TableRow(props){
 
             <td className='myTable'>
             <input
-            class = 'myInputShort'
+            className = 'myInputShort'
             type="text"
             id = { `row-${item.row-1}`+`/col-${item.col-1}` }
             label={ `SiloSplit-row ${row}`}
@@ -480,7 +480,7 @@ function TableRow(props){
 
             <td className='myTable'>
             <input
-            class = 'myInputShort'
+            className = 'myInputShort'
             type="text"
             id = { `row-${item.row-1}`+`/col-${item.col-1}` }
             label={ `SiloLinked-row ${row}`}
@@ -491,7 +491,7 @@ function TableRow(props){
 
             <td className={clsx( 'myTable' )}> 
             <input
-            //class = 'myTableSide'
+            //className = 'myTableSide'
             type="checkbox"
             id = { `row-${item.row-1}`+`/col-${item.col-1}` }
             label={ `SiloUsing-row ${row}`}

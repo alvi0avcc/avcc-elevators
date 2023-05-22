@@ -28,7 +28,7 @@ const Main = () => {
 
         <div 
             className="block"
-            style={{ display: ( Elevators.State == 'open' ? 'block' : 'none' ) }}
+            style={{ display: ( Elevators.State != 'closed' ? 'block' : 'none' ) }}
             >
             <nav>
                 <label className='myText' >Reports →</label>

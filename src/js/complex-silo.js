@@ -216,7 +216,7 @@ function ComplexSiloInfo(props) {
           if ( max <= (data[i].length - split/2) ) { max = data[i].length - split/2 };
         };
       max = max * ( 110 + 10 );
-      console.log('split = ',split);
+      //console.log('split = ',split);
       return max;  
     }
 
