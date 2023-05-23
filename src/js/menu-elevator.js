@@ -1,7 +1,4 @@
 import * as React from 'react';
-import {useEffect, useState} from "react";
-import { useContext } from 'react';
-import { UpdateContext } from '../Main'
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -24,21 +21,17 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 
 
 
-function ElevatorSelectMenu () {
-    const [update, setUpdate] = useContext(UpdateContext);
-    const [ElevatorName, SetElevatorName] = useState("");
+function ElevatorSelectMenu (props) {
+    const [update, setUpdate] = React.useState( true );
+    const [ElevatorName, SetElevatorName] = React.useState("");
 
     const handleChangeElevator = (event) => {
       Elevators.setSelected = event.target.selectedIndex;
       SetElevatorName(event.target.value);
+      props.callBackUpdate( !props.update );
       setUpdate ( !update );
       };
-    const handleClickElevatorMenu = (event, index) => {
-            Elevators.setSelected = index;
-            console.log('handleClickElevatorMenu2 = ',event);
-            //SetElevatorName(event.target.value);
-            setUpdate ( !update )
-        }
+      
     return (
       <div
       className='block'
@@ -87,8 +80,8 @@ function ElevatorSelectMenu () {
     );
   };
 
-function ElevatorMenuBase(){
-  const [update, setUpdate] = useContext(UpdateContext);
+function ElevatorMenuBase(props){
+  const [update, setUpdate] = React.useState(true);
   const [checked, setChecked] = React.useState(false);
 
   const handleChange_ElDet = (event) => {
@@ -97,7 +90,7 @@ function ElevatorMenuBase(){
 
   return (
     <>
-      <ElevatorSelectMenu/>
+      <ElevatorSelectMenu update={props.update} callBackUpdate={ (data)=>( props.callBackUpdate( data ) ) } />
       <div
       className='block'
       style={{ paddingTop: 8 }}
@@ -145,7 +138,7 @@ function ElevatorMenuBase(){
 }
 
 function ElevatorMenuDetail(props){
-  const [update, setUpdate] = useContext(UpdateContext);
+  const [update, setUpdate] = React.useState( true );
 
   if ( !props.show ) return (<></>)
   else
@@ -221,17 +214,14 @@ return (
 }
 
 export default function ElevatorMenu () {
-    const [update, setUpdate] = useContext(UpdateContext);
-    const [checked, setChecked] = React.useState(true);
+    const [update, setUpdate] = React.useState(true);
 
-    //console.log( 'ElevatorMenu, Elevator.ElevatorsName = ', Elevators.ElevatorsName );
-    //console.log( 'ElevatorMenu, Elevator = ', Elevators );
     if ( Elevators.State == 'closed' ) return (<></>)
     else
     return (
       <>
         <Box component="main" sx={{ p: 2 }}>
-            <ElevatorMenuBase/>
+            <ElevatorMenuBase update={ update } callBackUpdate={ (data)=>( setUpdate(data) )}/>
         </Box>
 
         <ElevatorTab />

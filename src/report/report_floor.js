@@ -16,6 +16,9 @@ function a11yProps(index) {
 export default function  Report_Floor (){
 
   Elevators.setElevators =  iolocal.OpenElevator();
+  Elevators.OpenCurrent();
+  
+  //console.log('current = ',props.index);
 
   return(
     <div className='block' >
@@ -169,7 +172,3 @@ function PileInfo( props ){
     </div>
   )
 }
-
-//<div id={'div-pile-'+index} style={{ height: '200px', width: '29%' }}>
-//{ Elevators.FloorFound ?  <PilesViewCanvas updateState={ true }  changePileInfo={ true } callbackPileInfo={(data)=> {} } callback={(data)=> {} } currentPile={ index } callbackPile={(data)=> {} } view={ { x: -3.14*70/180, y: 3.14*25/180, z: -3.14*20/180 } } mode={ 'model' } report={true} /> : '' }
-//</div>

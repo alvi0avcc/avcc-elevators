@@ -1,24 +1,15 @@
 import React from 'react';
 import { HashRouter, BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import {useEffect, useState} from "react";
-import { useContext } from 'react';
-//import MenuApp from './js/menuapp.js';
-import TopHeader from './js/top_header.js';
-import ElevatorMenu from './js/menu-elevator.js';
-import { Elevators } from './js/elevators.js';
-import FileMenuButton from './js/file_menu.js';
-
-import ElevatorTab from './js/elevator-tab.js';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
-import { Button, ButtonGroup, Box } from '@mui/material';
-import { Elevator, Label } from '@mui/icons-material';
+import { Button } from '@mui/material';
 import LocalServiceWorkerRegister from './js/sw-register';
 import registerServiceWorker from './js/sw-register';
 import { SitePath } from './js/sw-register';
 
 import Main from './Main.js'
 import Layout from './layout.js';
+import Report_Floors from './report/report_floors.js';
 import Report_Floor from './report/report_floor.js';
 import NoPage from "./404.js";
 
@@ -56,7 +47,8 @@ function App() {
           <Route path={route_path+'report_elevator'} element={< label />}/>
           <Route path={route_path+'report_complex'} element={< label />}/>
           <Route path={route_path +'report_silo'} element={< label />}/>
-          <Route path={'report_warehouse'} element={< Report_Floor />}/>
+          <Route path={'report_warehouses'} element={<Report_Floors/>}/>
+          <Route path={'report_warehouse'} element={<Report_Floor/>}/>
           <Route path="*" element={<NoPage />}/>
         </Route>
       </Routes>
@@ -81,10 +73,6 @@ function App() {
     </Stack>
     <Divider/>
     
-    
-
-    
-
     </HashRouter>
     </>
   );

@@ -80,7 +80,6 @@ class cPile {
             this.angle_Z = -10;
             this.Volume = 0;
             this.Weight = 0;
-            this.image = new Image();
         }
     }
 
@@ -249,10 +248,35 @@ class cElevators {
         }
     return( List )
     };
-    set SetSiloSelected(data){ this.SiloSelected = data };
-    set SetFloorSelected(data){ this.WarehouseSelected = data };
-    set SetComplexSelected(data){ this.ComplexSelected = data };
-    set SetComplexSiloSelected(data){ this.ComplexSiloSelected = data };
+    set SetSiloSelected(data){ this.SiloSelected = data; this.SaveCurrent() };
+    set SetFloorSelected(data){ this.WarehouseSelected = data; this.SaveCurrent() };
+    set SetComplexSelected(data){ this.ComplexSelected = data; this.SaveCurrent() };
+    set SetComplexSiloSelected(data){ this.ComplexSiloSelected = data; this.SaveCurrent() };
+
+    SaveCurrent(){
+        let data = { Elevator: 0, Complex: 0, Silo: 0, Warehouse: 0 };
+
+        data.Elevator = this.Selected;
+        data.Complex = this.ComplexSelected;
+        data.Silo = this.SiloSelected;
+        data.Warehouse = this.WarehouseSelected;
+
+        localStorage.setItem("ElevatorSelected", JSON.stringify(data));
+    }
+    OpenCurrent(){
+        let data = localStorage.getItem("ElevatorSelected");
+        if ( data ) { data = JSON.parse(data) }
+        else {
+                data = { Elevator: 0, Complex: 0, Silo: 0, Warehouse: 0 };
+            }
+
+        this.Selected = data.Elevator;
+        this.ComplexSelected = data.Complex;
+        this.SiloSelected = data.Silo;
+        this.WarehouseSelected = data.Warehouse;
+        return data;
+    }
+
     get SiloName(){
         if ( this.SiloFound ) return this.Elevators[this.Selected].Silo[this.SiloSelected].Name
         else return 'empty'
@@ -413,6 +437,28 @@ class cElevators {
             }
         return( List );
     }
+    get get_FloorListInfo(){
+        let List = [];
+        if ( this.FloorFound) {
+            let ii = this.Elevators[this.Selected].Warehouse.length;
+            let name = '';
+            let cargoName = '';
+            let tw = 0;
+            let volume = 0;
+            let weight = 0;
+            if (ii > 0 ) {    
+                for( let i =0 ; i < ii ; i++){
+                    name = this.Elevators[this.Selected].Warehouse[i].Name;
+                    cargoName = this.Elevators[this.Selected].Warehouse[i].Cargo.Name;
+                    tw = this.Elevators[this.Selected].Warehouse[i].Cargo.Natura;
+                    volume = this.Elevators[this.Selected].Warehouse[i].Volume;
+                    weight = this.Elevators[this.Selected].Warehouse[i].Weight;
+                    List.push( {name: name, cargoName: cargoName, tw: tw, volume: volume, weight: weight} );
+                }
+            }
+            }
+        return( List );
+    }
     get PilesList(){
         let List = [];
         if ( this.PileFound) {
@@ -476,6 +522,13 @@ class cElevators {
     get FloorCurrentDimensions(){
         let result;
         if ( this.FloorFound) { result = structuredClone( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Dimensions ); }
+        return( result );
+    }
+    get_FloorDimensions_Index( index ){
+        let result;
+        if ( this.FloorFound) 
+            if ( this.Elevators[this.Selected].Warehouse[ index ] ) 
+                { result = structuredClone( this.Elevators[this.Selected].Warehouse[ index ].Dimensions ); }
         return( result );
     }
     set set_Floor_Mesh( step = 50 ){
@@ -1007,7 +1060,13 @@ class cElevators {
             }
         }    
     }
-    set setSelected(data) { this.Selected = data }
+    set setSelected(data) { 
+        this.Selected = data; 
+        this.ComplexSelected = 0;
+        this.SiloSelected = 0;
+        this.WarehouseSelected = 0;
+        this.SaveCurrent();
+    }
     get ElevatorsFound(){
         if ( this.Elevators != undefined )
         if ( this.Elevators.length > 0 ) return this.Elevators.length
@@ -1105,8 +1164,24 @@ class cElevators {
             this.State = 'Elevator cloned'
             let i = this.Elevators.length - 1;
             this.Elevators[i] = structuredClone( this.Elevators[this.Selected] );
-            this.Elevators[i].Date = '';
+            this.Elevators[i].Date = new Date().toISOString().slice(0,-14);
         } else alert ('Error adding Elevator !')  
+    }
+    get cleared (){
+        let _Elevators = structuredClone ( this.Elevators );
+        for ( let i = 0; i < this.ElevatorsFound; i++) {
+            let currentElevator = _Elevators[ i ];
+            if ( currentElevator.Warehouse.length > 0 )
+                for ( let f = 0 ; f < currentElevator.Warehouse.length; f++ ) {
+                    let currentWarehouse = currentElevator.Warehouse[ f ];
+                    delete currentWarehouse.Mesh;
+                    delete currentWarehouse.Mesh_3D;
+                    delete currentWarehouse.Strip;
+                }
+
+        }
+
+        return _Elevators;
     }
     get ElevatorList(){
         let List = [];

@@ -1,5 +1,6 @@
 import { Outlet, Link } from "react-router-dom";
 import TopHeader from './js/top_header.js';
+import { Elevators } from "./js/elevators.js";
 
 const Layout = (props) => {
   let site_path = window.location.hash;
@@ -9,7 +10,7 @@ const Layout = (props) => {
 
     { site_path =='' ? '' : <AdditionalReportMenu/> }   
 
-    <Outlet />
+    <Outlet/>
     </>
   )
 };

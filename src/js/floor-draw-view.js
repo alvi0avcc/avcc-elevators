@@ -10,12 +10,16 @@ const FloorViewCanvas = props => {
 
     let report = false;
     report = props.report;
+    let currentFloor = 0;
+    if ( props.index != undefined ) currentFloor = props.index
+    else currentFloor = Elevators.WarehouseSelected;
 
     const [ auto_rotate, setAuto_rotate ] = React.useState( false );
     
     const canvasRef = useRef(null)
 
-    let floor = Elevators.FloorCurrentDimensions;
+    //let floor = Elevators.FloorCurrentDimensions;
+    let floor = Elevators.get_FloorDimensions_Index( currentFloor );
 
     let meshView = true;
     let houseView =true;
@@ -37,6 +41,10 @@ const FloorViewCanvas = props => {
 
     let mesh = [];
     mesh = Elevators.get_Floor_Mesh_3D;
+    if ( mesh.length == 0 ) {
+        Elevators.set_Floor_Mesh = step_xy;
+    }
+
     mesh = matrix.MoveMatrixAny( mesh, -Length/2, -Width/2, -Height/2 );
 
     let strip = [];

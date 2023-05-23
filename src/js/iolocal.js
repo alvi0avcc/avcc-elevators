@@ -50,9 +50,13 @@ export function OpenElevator() {
 };
 
 export function SaveElevator() {
-    if ( Elevators.ElevatorsFound )
-        localStorage.setItem("Elevator", JSON.stringify(Elevators))
-        else alert('The elevator database is empty! Nothing to save.');
+    if ( Elevators.ElevatorsFound ){
+
+        let _Elevators = structuredClone( Elevators );
+        _Elevators.Elevators = Elevators.cleared;
+
+        localStorage.setItem("Elevator", JSON.stringify(_Elevators))
+    } else alert('The elevator database is empty! Nothing to save.');
 };
 
 function ImportWarehouse(props) {
@@ -119,7 +123,11 @@ function fromBinary(binary) {
 
 function FileSave (props) {
     if ( Elevators.ElevatorsFound ) {
-        let data = WarehouseToJSON(Elevators);
+
+        let _Elevators = structuredClone( Elevators );
+        _Elevators.Elevators = Elevators.cleared;
+
+        let data = WarehouseToJSON(_Elevators);
         let a=document.createElement("a");
         let name = 'Elevators.json';
         console.log("File save",name);

@@ -280,7 +280,7 @@ function FloorSize(propsSize){
         </div>
 
             <div className='block' style={{ width: '100%' }}>
-                { Elevators.FloorFound ?  <FloorViewCanvas report={false} /> : '' }
+                { Elevators.FloorFound ?  <FloorViewCanvas report={false} index={ Elevators.WarehouseSelected }/> : '' }
             </div>
             
             <div className='block' style={{ position: 'relative', right: '0px', width: '120px' }}>
