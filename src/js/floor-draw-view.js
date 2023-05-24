@@ -6,49 +6,73 @@ import * as Calc from './calc.js';
 
 const FloorViewCanvas = props => {
 
+    let show = props.show;
+    if ( props.show == undefined ) show = 'current';
+
     let time1 = new Date().getTime(); //time control
 
     let report = false;
     report = props.report;
     let currentFloor = 0;
-    if ( props.index != undefined ) currentFloor = props.index
-    else currentFloor = Elevators.WarehouseSelected;
+    //if ( props.index != undefined ) currentFloor = props.index
+    //else currentFloor = Elevators.WarehouseSelected;
+
+    //console.log('props.show = ',props.show);
+    //console.log('typeof= ',typeof( props.show ));
+    if ( props.show == 'current' || props.show == undefined ) currentFloor = Elevators.WarehouseSelected
+    else currentFloor = props.show;
 
     const [ auto_rotate, setAuto_rotate ] = React.useState( false );
     
     const canvasRef = useRef(null)
+    const offscreen = new OffscreenCanvas(500, 500);
 
     //let floor = Elevators.FloorCurrentDimensions;
-    let floor = Elevators.get_FloorDimensions_Index( currentFloor );
+    //let floor = Elevators.get_FloorDimensions_Index( currentFloor );
+    let floor = Elevators.get_FloorByIndex( currentFloor );
+
+    let step_xy = 50;
+    step_xy = floor.MeshStep;
+
+    let mesh = [];
+    if ( !floor.Mesh_3D ) Elevators.set_Floor_Mesh_index( currentFloor, step_xy );
+    floor = Elevators.get_FloorByIndex( currentFloor );
+
+    console.log('floor = ',floor);
+
+    //mesh = Elevators.get_Floor_Mesh_3D;
+    mesh = floor.Mesh_3D;
+
+    let strip = [];
+    //strip = Elevators.get_Floor_Strip;
+    strip = floor.Strip;
 
     let meshView = true;
     let houseView =true;
     let colorMulti = false;
 
-    let Length = floor.Length;
-    let Width = floor.Width;
-    let Height = floor.Height;
-    let Conus_height = floor.Conus_height;
-    let Conus_L = floor.Conus_L;
-    let Conus_W = floor.Conus_W;
-    let Conus_X = floor.Conus_X;
-    let Conus_Y = floor.Conus_Y;
-
-    let step_xy = 50;
-    step_xy = Elevators.get_Floor_MeshStep;
-
-    
-
-    let mesh = [];
-    mesh = Elevators.get_Floor_Mesh_3D;
-    if ( mesh.length == 0 ) {
-        Elevators.set_Floor_Mesh = step_xy;
-    }
+    let Length = floor.Dimensions.Length;
+    let Width = floor.Dimensions.Width;
+    let Height = floor.Dimensions.Height;
+    let Conus_height = floor.Dimensions.Conus_height;
+    let Conus_L = floor.Dimensions.Conus_L;
+    let Conus_W = floor.Dimensions.Conus_W;
+    let Conus_X = floor.Dimensions.Conus_X;
+    let Conus_Y = floor.Dimensions.Conus_Y;
 
     mesh = matrix.MoveMatrixAny( mesh, -Length/2, -Width/2, -Height/2 );
 
-    let strip = [];
-    strip = Elevators.get_Floor_Strip;
+
+    
+
+    //let mesh = [];
+    //mesh = Elevators.get_Floor_Mesh_3D;
+    //if ( mesh.length == 0 ) {
+    //    Elevators.set_Floor_Mesh = step_xy;
+    //}
+
+
+
 
     // Korpus                
     let korpus_draw = [ -Length/2, -Width/2, -Height/2, 1,
@@ -301,9 +325,12 @@ const FloorViewCanvas = props => {
 //----------------------------------------------------------------------
         function render() {
 
-            houseView = Elevators.get_Floor_ShowHouse;
-            meshView = Elevators.get_Floor_MeshStyle;
-            colorMulti = Elevators.get_Floor_Multicolor;
+            //houseView = Elevators.get_Floor_ShowHouse;
+            houseView = floor.ShowHouse;
+            //meshView = Elevators.get_Floor_MeshStyle;
+            meshView = floor.MeshStyle;
+            // = Elevators.get_Floor_Multicolor;
+            colorMulti = floor.Multycolor;
 
         // Запрашиваем рендеринг на следующий кадр
         requestAnimationFrame(render);
@@ -411,8 +438,13 @@ const FloorViewCanvas = props => {
 
             lastRenderTime = time;
 
+            if ( report && show != 'current' && show != undefined ) {
+                let one = document.getElementById('img-floor-' + currentFloor );
+                offscreen.convertToBlob().then((blob) => ( one.src = URL.createObjectURL( blob ) ) );
+                gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+            }
             
-        }
+        }//render
  //----------------------------------------------------------------------       
 
 render();
@@ -434,6 +466,7 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
     
     useEffect(() => {
       
+        let gl;
       const canvas = canvasRef.current;
       const { width, height } = canvas.getBoundingClientRect();
       //canvas.height = window.innerHeight;
@@ -446,24 +479,15 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
 
       //canvas.style.width = height * 1.25 + 'px';
       canvas.style.width = '100%';
-      const gl = canvas.getContext( 'webgl', { antialias: true, preserveDrawingBuffer: true } )
+      //const gl = canvas.getContext( 'webgl', { antialias: true, preserveDrawingBuffer: true } )
+      if ( report && show != 'current' && show != undefined ) {
+        gl = offscreen.getContext( 'webgl', { antialias: true, alpha: true, preserveDrawingBuffer: true } );
+      } else {
+        gl = canvas.getContext('webgl', { antialias: true, alpha: true, preserveDrawingBuffer: true  } );
+      }
       
-        //const offscreen = new OffscreenCanvas(1000, 1000);
-        //const gl = offscreen.getContext( 'webgl', { antialias: true, preserveDrawingBuffer: true } );
-        //const one = document.getElementById("canvasFlor").getContext("bitmaprenderer");
-
         draw(gl);
 
-        //const bitmapOne = offscreen.transferToImageBitmap();
-        //one.transferFromImageBitmap(bitmapOne);
-
-        //console.log('bitmapOne  =',bitmapOne);
-        //console.log('canvas  =',canvas);
-        //console.log('gl  =',gl);
-        //console.log('one  =',one);
-  
-        //draw(gl)
-  
       }, [draw])
     
     return (

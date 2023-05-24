@@ -43,15 +43,6 @@ export default function  Report_Floor (){
 
       <FloorsHouseInfo/>
 
-
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-        <div className='block' style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-          { Elevators.FloorFound ?  <FloorViewCanvas report={true}/> : '' }
-        </div>
-      </div>
-
-
-
     </div>
     )
 };
@@ -59,12 +50,12 @@ export default function  Report_Floor (){
 
 function FloorHouseInfo(){
   let dim = Elevators.FloorCurrentDimensions;
-  console.log( Elevators.get_FloorListInfo );
+  //console.log( Elevators.get_FloorListInfo );
 
   return (
     <div className="block">
         <table className='tableObjectInfo'>
-        <caption>Inspected the next warehouses №: {Elevators.FloorList.map((name, index ) => ( name + ', ' )) }</caption>
+        <caption>Inspected the next warehouses №: {Elevators.get_FloorListInfo.map((data, index ) => ( data.cargoName != '' ? data.name + ', ' : '' )) }</caption>
         <tbody>
 
         {Elevators.get_FloorListInfo.map((data, index ) => ( data.cargoName != '' ? <FlorInfoBase index={index} data={data} {...floorSimpleProps(index)}/> : '' )) }
@@ -98,10 +89,7 @@ function FloorsHouseInfo(){
 
   return (
     <>
-    { Elevators.FloorList.map((name, index ) => ( <FloorInfo index = {index} {...floorProps(index)} /> )) }
-    <div style={{ display: 'none' }}>
-      { Elevators.FloorFound ?  <PilesViewCanvas updateState={ true }  changePileInfo={ true } callbackPileInfo={(data)=> {} } callback={(data)=> {} } currentPile={ index } callbackPile={(data)=> {} } view={ { x: -3.14*70/180, y: 3.14*25/180, z: -3.14*20/180 } } mode={ 'location' } report={true} /> : '' }
-    </div>
+        { Elevators.FloorList.map((name, index ) => ( <FloorInfo index = {index} {...floorProps(index)} /> )) }
     </>
   )
 }
@@ -113,7 +101,7 @@ function FloorInfo( props ){
 
   let floor = Elevators.get_FloorByIndex(index);
 
-  console.log('Elevators.get_FloorByIndex(index) = ',floor);
+  //console.log('Elevators.get_FloorByIndex(index) = ',floor);
 
   return (
     <div 
@@ -143,6 +131,8 @@ function FloorInfo( props ){
             <td>Test Weight = { floor.Cargo.Natura } { floor.Cargo.Natura > 100 ? '(g/L)' : '(Kg/hL)'}</td>
         </tr>
 
+        <td colSpan="3">The warehouse consists of {floor.Pile.length} piles</td>
+
         <tr>
           <td colSpan="3"><strong>Volume = { floor.Volume } (m³)</strong></td>
         </tr>
@@ -160,6 +150,10 @@ function FloorInfo( props ){
         style={{ height: '200px', width: '40%', display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
         <img id={'img-floor-'+index} alt={'img-floor-'+index} />
       </div>
+
+        <div style={{ display: 'none' }}>
+            { Elevators.FloorFound ?  <FloorViewCanvas report={true} show={index}/> : '' }
+        </div>
 
     </div>
   )

@@ -34,7 +34,7 @@ export default function  Report_Floor (){
 
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
         <div className='block' style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-          { Elevators.FloorFound ?  <FloorViewCanvas report={true}/> : '' }
+          { Elevators.FloorFound ?  <FloorViewCanvas report={true} show={'current'}/> : '' }
         </div>
       </div>
 

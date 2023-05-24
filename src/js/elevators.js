@@ -481,6 +481,14 @@ class cElevators {
             }
         return( result );
     }
+    PileGet_index( warehouse_index, pile_index ){
+        let result;
+        if ( this.Elevators[this.Selected].Warehouse[warehouse_index].Pile[ pile_index ] ) {
+            //result =structuredClone( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] );
+            result = this.Elevators[this.Selected].Warehouse[warehouse_index].Pile[ pile_index ];
+            }
+        return( result );
+    }
     get_Pile_Volume( index = 0 ){
         if ( index >= this.PileFound ) index = 0;
         if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Volume == undefined ) return ( 0 );
@@ -540,6 +548,16 @@ class cElevators {
         this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Strip = structuredClone( result.strip );
         this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Volume = result.volume;
         this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Weight = result.weight;
+    }
+    set_Floor_Mesh_index( index, step = 50){
+        step = Math.trunc( step / 2 ) * 2;
+        this.Elevators[this.Selected].Warehouse[index].MeshStep = step;
+        let result = this.get_Volume_Piles( index, step );
+        this.Elevators[this.Selected].Warehouse[index].Mesh = structuredClone( result.mesh );
+        this.Elevators[this.Selected].Warehouse[index].Mesh_3D = structuredClone( result.mesh_3D );
+        this.Elevators[this.Selected].Warehouse[index].Strip = structuredClone( result.strip );
+        this.Elevators[this.Selected].Warehouse[index].Volume = result.volume;
+        this.Elevators[this.Selected].Warehouse[index].Weight = result.weight;
     }
     set set_Floor_MeshStyle ( style ){
         this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].MeshStyle = style;
@@ -1579,7 +1597,7 @@ class cElevators {
 
 pile_slicing: for ( let index = 0; index < floor.Pile.length; index++ ){ //Pile slicing
             //for ( let index = 0; index < 1; index++ ){ //Pile slicing
-                pile = Elevators.PileGet( index );
+                pile = Elevators.PileGet_index( Warehouse_Index, index );
                 gPile.set_Initial_Data_Complex ( pile, numOfSegments );//initialisation Pile
                 Pile_H = pile.Height;
                 dx_X = pile.X;
@@ -1657,7 +1675,7 @@ pile_slicing: for ( let index = 0; index < floor.Pile.length; index++ ){ //Pile 
                             // check Y position for each Pile
                             if ( _xy_gab.y_min <= ( y * dy ) && ( y * dy ) <= _xy_gab.y_max ) {
 
-                                let h = Elevators.PileGet( index ).Height;
+                                let h = Elevators.PileGet_index( Warehouse_Index, index ).Height;
                                 if ( h > 0 ) { // if Pile Hat -  true
                                 slises: for ( let i = 0; i < step; i++ ){
 
