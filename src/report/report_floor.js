@@ -21,7 +21,7 @@ export default function  Report_Floor (){
   //console.log('current = ',props.index);
 
   return(
-    <div className='block' >
+    <div className='block'>
 
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         <ElevatorInfo/>
@@ -41,8 +41,7 @@ export default function  Report_Floor (){
       <h4><center>--- Details ---</center></h4>
 
       <PilesInfo/>
-
-
+      
     </div>
     )
 };

@@ -1,10 +1,11 @@
 {
   "files": {
-    "main.css": "/avcc-elevators/static/css/main.7b16fe43.css",
-    "main.js": "/avcc-elevators/static/js/main.92e64202.js",
+    "main.css": "/avcc-elevators/static/css/main.304f735c.css",
+    "main.js": "/avcc-elevators/static/js/main.72b795d4.js",
     "static/js/787.dc98cd1f.chunk.js": "/avcc-elevators/static/js/787.dc98cd1f.chunk.js",
     "static/media/roboto-all-300-normal.woff": "/avcc-elevators/static/media/roboto-all-300-normal.168d6383e73339293ac3.woff",
     "static/media/roboto-latin-300-normal.woff2": "/avcc-elevators/static/media/roboto-latin-300-normal.c48fb6765a9fcb00b330.woff2",
+    "static/media/192.png": "/avcc-elevators/static/media/192.3c2f937e0d783199b5f2.png",
     "static/media/roboto-cyrillic-ext-300-normal.woff2": "/avcc-elevators/static/media/roboto-cyrillic-ext-300-normal.4777461b144e55145268.woff2",
     "static/media/roboto-latin-ext-300-normal.woff2": "/avcc-elevators/static/media/roboto-latin-ext-300-normal.dc7dcec8e3f654e0ed63.woff2",
     "static/media/roboto-cyrillic-300-normal.woff2": "/avcc-elevators/static/media/roboto-cyrillic-300-normal.1431d1cef06ad04f5458.woff2",
@@ -12,12 +13,12 @@
     "static/media/roboto-vietnamese-300-normal.woff2": "/avcc-elevators/static/media/roboto-vietnamese-300-normal.32fc45a3d1e8ea11fabc.woff2",
     "static/media/roboto-greek-ext-300-normal.woff2": "/avcc-elevators/static/media/roboto-greek-ext-300-normal.35b9d6be04b95f0f0530.woff2",
     "index.html": "/avcc-elevators/index.html",
-    "main.7b16fe43.css.map": "/avcc-elevators/static/css/main.7b16fe43.css.map",
-    "main.92e64202.js.map": "/avcc-elevators/static/js/main.92e64202.js.map",
+    "main.304f735c.css.map": "/avcc-elevators/static/css/main.304f735c.css.map",
+    "main.72b795d4.js.map": "/avcc-elevators/static/js/main.72b795d4.js.map",
     "787.dc98cd1f.chunk.js.map": "/avcc-elevators/static/js/787.dc98cd1f.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.7b16fe43.css",
-    "static/js/main.92e64202.js"
+    "static/css/main.304f735c.css",
+    "static/js/main.72b795d4.js"
   ]
 }

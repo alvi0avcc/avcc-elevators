@@ -13,66 +13,96 @@ const FloorViewCanvas = props => {
 
     let report = false;
     report = props.report;
-    let currentFloor = 0;
-    //if ( props.index != undefined ) currentFloor = props.index
-    //else currentFloor = Elevators.WarehouseSelected;
+    //let currentFloor = 0;
+    let currentFloor = props.show;
+    if ( props.show == 'current' || props.show == undefined ) currentFloor = Elevators.WarehouseSelected;
+    if ( props.show == 'all' ) currentFloor = -1;
 
-    //console.log('props.show = ',props.show);
-    //console.log('typeof= ',typeof( props.show ));
-    if ( props.show == 'current' || props.show == undefined ) currentFloor = Elevators.WarehouseSelected
-    else currentFloor = props.show;
+    console.log('props.show = ',props.show );
+    console.log('currentFloor = ',currentFloor );
 
     const [ auto_rotate, setAuto_rotate ] = React.useState( false );
     
     const canvasRef = useRef(null)
-    const offscreen = new OffscreenCanvas(500, 500);
+    const offscreen = new OffscreenCanvas(1000, 500);
 
-    //let floor = Elevators.FloorCurrentDimensions;
-    //let floor = Elevators.get_FloorDimensions_Index( currentFloor );
-    let floor = Elevators.get_FloorByIndex( currentFloor );
+    //let floor = Elevators.get_FloorByIndex( currentFloor );
 
-    let step_xy = 50;
-    step_xy = floor.MeshStep;
+    let floor;
 
-    let mesh = [];
-    if ( !floor.Mesh_3D ) Elevators.set_Floor_Mesh_index( currentFloor, step_xy );
-    floor = Elevators.get_FloorByIndex( currentFloor );
+    let Length = 0;
+    let Width = 0;
+    let Height = 0;
+    let Conus_height = 0;
+    let Conus_L = 0;
+    let Conus_W = 0;
+    let Conus_X = 0;
+    let Conus_Y = 0;
 
-    console.log('floor = ',floor);
-
-    //mesh = Elevators.get_Floor_Mesh_3D;
-    mesh = floor.Mesh_3D;
-
-    let strip = [];
-    //strip = Elevators.get_Floor_Strip;
-    strip = floor.Strip;
+    let step_xy = [];
 
     let meshView = true;
     let houseView =true;
     let colorMulti = false;
 
-    let Length = floor.Dimensions.Length;
-    let Width = floor.Dimensions.Width;
-    let Height = floor.Dimensions.Height;
-    let Conus_height = floor.Dimensions.Conus_height;
-    let Conus_L = floor.Dimensions.Conus_L;
-    let Conus_W = floor.Dimensions.Conus_W;
-    let Conus_X = floor.Dimensions.Conus_X;
-    let Conus_Y = floor.Dimensions.Conus_Y;
+    let vertices = [];
+    let vertices_normal = [];
+    let normal = [];
+    let _normal = [];
+    let colors = [];
+    let house_vertices = [];
+    let zoom = [];
+    //let strip = [];
 
-    mesh = matrix.MoveMatrixAny( mesh, -Length/2, -Width/2, -Height/2 );
+    let mesh = [];
+
+    let floor_count = 0;
+    if ( currentFloor == -1 ) floor_count = Elevators.FloorFound
+    else floor_count = 1;
+    //floor_count = Elevators.FloorFound;
+    let _currentFloor = 0;
+
+    for ( let i=0; i < floor_count; i++ ) {
+        if ( floor_count == 1 ) _currentFloor = currentFloor
+        else _currentFloor = i;
+
+        floor = Elevators.get_FloorByIndex( _currentFloor );
+
+        step_xy.push( floor.MeshStep );
+
+        if ( !floor.Mesh_3D || floor.Mesh_3D.length == 0 ) Elevators.set_Floor_Mesh_index( _currentFloor, step_xy[i] );
+        floor = Elevators.get_FloorByIndex( _currentFloor );
+
+        Length = floor.Dimensions.Length;
+        Width = floor.Dimensions.Width;
+        Height = floor.Dimensions.Height;
+        Conus_height = floor.Dimensions.Conus_height;
+        Conus_L = floor.Dimensions.Conus_L;
+        Conus_W = floor.Dimensions.Conus_W;
+        Conus_X = floor.Dimensions.Conus_X;
+        Conus_Y = floor.Dimensions.Conus_Y;
 
 
+        if ( report ) {
+            let zoom_L = offscreen.width / Length;
+            let zoom_W = offscreen.height / Width;
+            let zoom_H = offscreen.height / Height;
+            zoom.push( Math.min( zoom_L, zoom_W, zoom_H ) * 0.7 );
+        }
+
+       // console.log('zoom = ',zoom);
+        //zoom = zoom * 0.7;
+
+        //console.log('floor = ',floor);
+
+        mesh = floor.Mesh_3D;
+
+        //strip.push( floor.Strip );
+        //console.log('floor.Strip = ',floor.Strip);
+        //console.log('mesh = ',mesh);
+        mesh = matrix.MoveMatrixAny( mesh, -Length/2, -Width/2, -Height/2 );
+        vertices.push( mesh );
     
-
-    //let mesh = [];
-    //mesh = Elevators.get_Floor_Mesh_3D;
-    //if ( mesh.length == 0 ) {
-    //    Elevators.set_Floor_Mesh = step_xy;
-    //}
-
-
-
 
     // Korpus                
     let korpus_draw = [ -Length/2, -Width/2, -Height/2, 1,
@@ -124,20 +154,10 @@ const FloorViewCanvas = props => {
                        -Length/2 + Conus_X - Conus_L/2 , -Width/2 + Conus_Y - Conus_W/2, -Height/2 - Conus_height, 1
                 ];
 
-    //let vertices = mesh.concat( korpus_draw, head_draw, conus_draw  );
-    let vertices = korpus_draw.concat( head_draw, conus_draw, mesh );
-    //vertices = matrix.ScaleMatrixAny1zoom( vertices, 10 );
-    //let vertices = mesh ;
+    house_vertices.push( korpus_draw.concat( head_draw, conus_draw) );
+    //let vertices = korpus_draw.concat( head_draw, conus_draw, mesh );
 
-    let colors = [];
-    let normal = [];
-    for ( let i = 0; i < 36; i++ ){
-        //normal = normal.concat( [ 0, 0, 1 ] );
-        normal.push( 0, 0, 1 );
-    }
-
-    //let normal = [];
-    let _normal = [];
+    normal = [];
     for ( let i = 0; i < mesh.length; i+=4 ) {
         //colors = colors.concat( Math.random(), Math.random(), Math.random(), 1 );
         colors.push( Math.random(), Math.random(), Math.random(), 1 );
@@ -146,6 +166,21 @@ const FloorViewCanvas = props => {
         //normal = normal.concat( _normal );
         normal.push( _normal[0], _normal[1], _normal[2] );
     }
+    vertices_normal.push( normal );
+
+    console.log('floor = ', floor);
+    //console.log('vertices_normal = ', vertices_normal);
+
+    }
+
+    //console.log('strip = ', strip);
+
+    let normal_house = [];
+    for ( let i = 0; i < 36; i++ ){
+        normal_house.push( 0, 0, 1 );
+    }
+
+    
 
     //normal = normal.concat( [ 0,0,0 ] );
     //console.log('normal = ', normal);
@@ -272,16 +307,15 @@ const FloorViewCanvas = props => {
 
     //--------------------------------------------
         let vertexBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),  gl.STATIC_DRAW);
+        //gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+        //gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),  gl.STATIC_DRAW);
             
         let colorBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 
         let normalBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normal), gl.STATIC_DRAW);    
+           
 
             /*let textures = [];
             let _textures = [];
@@ -308,16 +342,22 @@ const FloorViewCanvas = props => {
             mat4.translate(projectionMatrix, projectionMatrix, [ gl.drawingBufferWidth / 2, gl.drawingBufferHeight / 2 , 0 ]);
 
             let modelMatrix = mat4.create();
+            let _modelMatrix = mat4.create();
             //mat4.scale(modelMatrix, modelMatrix, [ 10, 10, 10 ]);
-            let zoom_L = gl.drawingBufferWidth / Length;
-            let zoom_W = gl.drawingBufferHeight / Width;
-            let zoom_H = gl.drawingBufferHeight / Height;
-            let zoom = Math.min( zoom_L, zoom_W, zoom_H );
-            zoom = zoom * 0.7;
-
-            mat4.scale( modelMatrix, modelMatrix, [ zoom, zoom, zoom ] );
             mat4.rotateX(modelMatrix, modelMatrix, -3.14/3);
             mat4.rotateZ(modelMatrix, modelMatrix, -3.14/6);
+            
+            //let zoom = 1;
+            if ( !report ) {
+                let zoom_L = gl.drawingBufferWidth / Length;
+                let zoom_W = gl.drawingBufferHeight / Width;
+                let zoom_H = gl.drawingBufferHeight / Height;
+                let zoom = Math.min( zoom_L, zoom_W, zoom_H ) * 0.7;
+                mat4.scale( _modelMatrix, modelMatrix, [ zoom, zoom, zoom ] );
+            }
+
+           // mat4.scale( modelMatrix, modelMatrix, [ zoom, zoom, zoom ] );
+
 
 
             let time2 = new Date().getTime(); // time control draw
@@ -325,22 +365,19 @@ const FloorViewCanvas = props => {
 //----------------------------------------------------------------------
         function render() {
 
-            //houseView = Elevators.get_Floor_ShowHouse;
             houseView = floor.ShowHouse;
-            //meshView = Elevators.get_Floor_MeshStyle;
             meshView = floor.MeshStyle;
-            // = Elevators.get_Floor_Multicolor;
             colorMulti = floor.Multycolor;
 
         // Запрашиваем рендеринг на следующий кадр
-        requestAnimationFrame(render);
+        if ( !report ) requestAnimationFrame(render);
         
         // Получаем время прошедшее с прошлого кадра
             var time = Date.now();
             var dt = lastRenderTime - time;
 
-        //--------------------------------------------  Вращаем куб относительно оси Z
-        if ( auto_rotate ) mat4.rotateZ(modelMatrix, modelMatrix, dt / 4000);
+        //--------------------------------------------  Вращаем модель относительно оси Z
+        if ( auto_rotate ) mat4.rotateZ(_modelMatrix, _modelMatrix, dt / 4000);
         //----------------------------------------------------------------------
             gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
             gl.clearColor(1.0, 1.0, 1.0, 1.0);
@@ -369,7 +406,7 @@ const FloorViewCanvas = props => {
         */
         //----------------------------------------------------------------------
 
-            gl.uniformMatrix4fv(uModelView, false, modelMatrix);
+            //gl.uniformMatrix4fv(uModelView, false, modelMatrix);
             gl.uniformMatrix4fv(uProjection, false, projectionMatrix);
 
             //let light_vector = [0.5, 0.7, 1];
@@ -385,64 +422,69 @@ const FloorViewCanvas = props => {
             let shininess = 50;
             gl.uniform1f(shininessLocation, shininess);
 
-            if ( houseView ) {
-                //korpus
-                gl.uniform4f(colorUniformLocation, 0, 0, 1, 1);
-                gl.drawArrays(gl.LINE_LOOP, 0, 4);
-                gl.drawArrays(gl.LINE_LOOP, 4, 4);
-                gl.drawArrays(gl.LINE_LOOP, 8, 4);
-                gl.drawArrays(gl.LINE_LOOP, 12, 4);
-                //head
-                gl.uniform4f(colorUniformLocation, 0, 1, 0, 1);
-                gl.drawArrays(gl.LINE_LOOP, 16, 4);
-                gl.drawArrays(gl.LINE_LOOP, 20, 4);
-                //conus
-                gl.uniform4f(colorUniformLocation, 1, 0, 0, 1);
-                gl.drawArrays(gl.LINE_LOOP, 24, 4);
-                gl.drawArrays(gl.LINE_LOOP, 28, 4);
-                gl.drawArrays(gl.LINE_LOOP, 31, 4);
-                }
+
+            for ( let f = 0; f < floor_count; f++ ) {
+
+                if ( report ) mat4.scale( _modelMatrix, modelMatrix, [ zoom[f], zoom[f], zoom[f] ] );
+                gl.uniformMatrix4fv(uModelView, false, _modelMatrix);
+
+                if ( houseView ) {
+
+                    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+                    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(house_vertices[f]),  gl.STATIC_DRAW);
+    
+                    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+                    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normal_house), gl.STATIC_DRAW); 
+    
+                    //korpus
+                    gl.uniform4f(colorUniformLocation, 0, 0, 1, 1);
+                    gl.drawArrays(gl.LINE_LOOP, 0, 4);
+                    gl.drawArrays(gl.LINE_LOOP, 4, 4);
+                    gl.drawArrays(gl.LINE_LOOP, 8, 4);
+                    gl.drawArrays(gl.LINE_LOOP, 12, 4);
+                    //head
+                    gl.uniform4f(colorUniformLocation, 0, 1, 0, 1);
+                    gl.drawArrays(gl.LINE_LOOP, 16, 4);
+                    gl.drawArrays(gl.LINE_LOOP, 20, 4);
+                    //conus
+                    gl.uniform4f(colorUniformLocation, 1, 0, 0, 1);
+                    gl.drawArrays(gl.LINE_LOOP, 24, 4);
+                    gl.drawArrays(gl.LINE_LOOP, 28, 4);
+                    gl.drawArrays(gl.LINE_LOOP, 31, 4);
+                    }
 
             //piles
-        /*    for ( let i = 36; i < mesh.length; i+= ( step_xy + 2 ) * 2 ) {
+                gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices[f]),  gl.STATIC_DRAW);
 
-                if ( colorMulti ) { gl.uniform4f(colorUniformLocation, colors[i], colors[i+1], colors[i+2], colors[i+3]); 
-                } else { gl.uniform4f(colorUniformLocation, 0.0,  0.0,  1.0,  1.0); };
+                gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices_normal[f]), gl.STATIC_DRAW); 
 
-                if ( meshView == 'mesh' ) { gl.drawArrays(gl.LINE_STRIP,  i, ( step_xy + 1 ) * 2 ); 
-                } else { gl.drawArrays(gl.TRIANGLE_STRIP, i, ( step_xy + 1 ) * 2 ); }
-            }*/
+                let count = step_xy[f];
 
-            //let line = 0;
-            let start = 0;
-            let count = 0;
-            //console.log('strip = ',strip);
-            for ( let line = 0; line < strip.length; line ++ ) {
-                
-                //for ( let i = 36; i < mesh.length; i+= ( step_xy + 2 ) * 2 ) {
-                    //if ( strip[ line ] <> )
-                    //if ( line < strip.length ) {
-                    //start = strip[ line +1].start;
-                    count = strip[ line ].count;
-                    let i = 36 + line * ( step_xy + 2 ) * 2 + start;
-                   // }
+                for ( let line = 0; line < count; line ++ ) {
+                    let i = line * ( count + 2 ) * 2;
                    
-                    if ( colorMulti ) { gl.uniform4f(colorUniformLocation, colors[i], colors[i+1], colors[i+2], 0.9); 
+                    if ( floor.Multicolor ) { gl.uniform4f(colorUniformLocation, colors[i], colors[i+1], colors[i+2], 0.9); 
                     } else { gl.uniform4f(colorUniformLocation, 1,  1,  0.0,  0.9); };
 
-                    if ( meshView == 'mesh' ) { gl.drawArrays( gl.LINE_STRIP, i, ( count + 1 ) * 2 ); 
+                    if ( floor.MeshStyle == 'mesh' ) { gl.drawArrays( gl.LINE_STRIP, i, ( count + 1 ) * 2 ); 
                     } else { gl.drawArrays(gl.TRIANGLE_STRIP, i, ( count + 1 ) * 2 ); }
                     //line++;
+                }
+
+                if ( report && show =='all') {
+                    let one = document.getElementById('img-floor-' + f );
+                    offscreen.convertToBlob().then((blob) => ( one.src = URL.createObjectURL( blob ) ) );
+                    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+                }
+
             }
             
 
             lastRenderTime = time;
 
-            if ( report && show != 'current' && show != undefined ) {
-                let one = document.getElementById('img-floor-' + currentFloor );
-                offscreen.convertToBlob().then((blob) => ( one.src = URL.createObjectURL( blob ) ) );
-                gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-            }
+           
             
         }//render
  //----------------------------------------------------------------------       

@@ -92,12 +92,12 @@ class cWarehouse {
     this.Pile        = [];
     this.Cargo       = {Name: '', Natura: 0 };
     this.MeshStep   = 50;
-    this.MeshStyle  = ( 'solid', 'mesh' );
+    this.MeshStyle  = ( 'mesh', 'solid' );
     this.ShowHouse  = true;
     this.Multicolor = false;
     this.Mesh       = [];
     this.Mesh_3D    = [];
-    this.Strip      = [];
+    //this.Strip      = [];
     this.Volume     = 0;
     this.Weight     = 0;
     this.Comments    = ''
@@ -545,7 +545,7 @@ class cElevators {
         let result = this.get_Volume_Piles( this.WarehouseSelected, step );
         this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Mesh = structuredClone( result.mesh );
         this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Mesh_3D = structuredClone( result.mesh_3D );
-        this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Strip = structuredClone( result.strip );
+        //this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Strip = structuredClone( result.strip );
         this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Volume = result.volume;
         this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Weight = result.weight;
     }
@@ -555,7 +555,7 @@ class cElevators {
         let result = this.get_Volume_Piles( index, step );
         this.Elevators[this.Selected].Warehouse[index].Mesh = structuredClone( result.mesh );
         this.Elevators[this.Selected].Warehouse[index].Mesh_3D = structuredClone( result.mesh_3D );
-        this.Elevators[this.Selected].Warehouse[index].Strip = structuredClone( result.strip );
+        //this.Elevators[this.Selected].Warehouse[index].Strip = structuredClone( result.strip );
         this.Elevators[this.Selected].Warehouse[index].Volume = result.volume;
         this.Elevators[this.Selected].Warehouse[index].Weight = result.weight;
     }
@@ -1562,8 +1562,8 @@ class cElevators {
 
         let count_strip = 0; // quantity items in strip
         let index_strip = 0; // index in array start current strip
-        let strip = []; // strip info
-        let strip_triger = false;
+        //let strip = []; // strip info
+        //let strip_triger = false;
 
         let floor = this.get_FloorByIndex( Warehouse_Index );
 
@@ -1653,9 +1653,9 @@ pile_slicing: for ( let index = 0; index < floor.Pile.length; index++ ){ //Pile 
             
             coord_X: for ( let x = x_start; x <= x_end; x++ ) {
 
-                strip.push({ start: 0, count: 0 });
-                strip_triger  = false;
-                strip[ strip.length - 1 ].count = y_end;
+                //strip.push({ start: 0, count: 0 });
+                //strip_triger  = false;
+                //strip[ strip.length - 1 ].count = y_end;
 
                 coord_Y: for ( let y = y_start; y <= y_end; y++ ) {
 
@@ -1814,7 +1814,7 @@ pile_slicing: for ( let index = 0; index < floor.Pile.length; index++ ){ //Pile 
                     mesh.push( z[ 0 ], z[ 1 ], z[ 2 ], 1 );
 
                 }// coord_Y
-                strip_triger = false;
+                //strip_triger = false;
             }// coord_X
             
             let n = 0;
@@ -1873,7 +1873,7 @@ pile_slicing: for ( let index = 0; index < floor.Pile.length; index++ ){ //Pile 
         let time2 = new Date().getTime(); // time control
         console.log('get_Volume_Piles_v2 - (time working) = ', time2 - time1, ' ms');
         
-        return { mesh, mesh_3D, strip, volume, weight };
+        return { mesh, mesh_3D, volume, weight };
     };//get_Volume_Piles
 
 };

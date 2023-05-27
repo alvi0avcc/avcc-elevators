@@ -43,6 +43,10 @@ export default function  Report_Floor (){
 
       <FloorsHouseInfo/>
 
+        <div style={{ display: 'none' }}>
+            { Elevators.FloorFound ?  <FloorViewCanvas report={true} show={'all'}/> : '' }
+        </div>
+
     </div>
     )
 };
@@ -105,7 +109,7 @@ function FloorInfo( props ){
 
   return (
     <div 
-      id={'PileInfo-'+index} 
+      id={'PileInfo'} 
       className='block'
       style={{ display:'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
       
@@ -151,9 +155,7 @@ function FloorInfo( props ){
         <img id={'img-floor-'+index} alt={'img-floor-'+index} />
       </div>
 
-        <div style={{ display: 'none' }}>
-            { Elevators.FloorFound ?  <FloorViewCanvas report={true} show={index}/> : '' }
-        </div>
+
 
     </div>
   )
