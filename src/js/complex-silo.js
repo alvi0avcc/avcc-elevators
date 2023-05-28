@@ -157,7 +157,7 @@ function ComplexSiloInfo(props) {
 
     const getState = (state) => {
       let stateColor = '';
-      if ( !state.CargoName ) stateColor = 'yellow';
+      if ( state.CargoName ) stateColor = 'yellow';
       if ( state.Ullage < 0 ) stateColor = 'red';
       if ( state.Sound-state.Ullage > state.Height ) stateColor = 'red';
       if ( state.Sound-state.Ullage < 0 ) stateColor = 'red';
@@ -168,7 +168,8 @@ function ComplexSiloInfo(props) {
     const getStateUllage = (state) => {
       let stateColor = '';
       if ( !state.Using) return stateColor = '';
-      if ( state.Ullage == 0 ) return stateColor = 'yellow';
+      if ( state.CargoName && state.Ullage != 0 ) return stateColor = 'yellow';
+      if ( state.CargoName && state.Ullage == 0 ) return stateColor = 'white';
       return stateColor;  
     }
 

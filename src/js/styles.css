@@ -559,6 +559,13 @@ input[type="range"]::-moz-range-thumb {
   border-color : grey;
 }
 
+thead th {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  background: white;
+}
+
 
 @media print{
 

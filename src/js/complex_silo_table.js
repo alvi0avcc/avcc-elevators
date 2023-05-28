@@ -184,8 +184,10 @@ return (
             Apply  
           </Button>
     </div>
-    <Box sx={{ height: 500, width: '100%', overflow: 'auto' }} >
+
+    <div style={{ height: 600, width: '100%', overflow: 'auto' }} >
     <table className='myTable'>
+    <thead>
         <tr style={{ height: 90 }}>
             <th className={show ? 'myTable' : 'myHide' }>№</th>
             <th className='myTable'><div className= 'myTableSide'>Selected</div></th>
@@ -193,7 +195,7 @@ return (
             <th className={ show ? 'myTable' : 'myHide' }><div className='myTableSide'>columns</div></th>
             <th className='myTable'>№ Name</th>
             <th className='myTable'>Cargo Name</th>
-            <th className='myTable'>
+            <th className='myTable' style={{ maxWidth: '50px' }}>
                 Cargo Test Weight <br/>
                 <span className='TableTW_dstu'>(g/l)</span><br/>
                 <span className='TableTW_iso'>(Kg/hL)</span> </th>
@@ -214,15 +216,15 @@ return (
             <th className={clsx( 'myOutput' )}>Cargo weight (MT)</th>
             <th className={clsx( 'myTable' )}>Comments</th>
         </tr>
+    </thead>
 
-        {
-        data_table.map((item, row ) => (
-            <TableRow data={data_table }item={item} row={row} show={show}/>
-        ))
-        }
+    <tbody>
+        { data_table.map((item, row ) => ( <TableRow data={data_table }item={item} row={row} show={show}/> )) }
+    </tbody>
 
     </table>
-    </Box>
+
+    </div>
     </>
 )
 }
