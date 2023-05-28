@@ -519,7 +519,7 @@ class cElevators {
         let tw = this.get_Floor_CargoTW;
         let weight = 0;
         if (  tw > 100 ) weight = volume * tw / 1000
-        else weight = volume * tw;
+        else weight = volume * tw / 100;
         this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Weight = Calc.MyRound( weight, 3 );
     }
     get FloorCurrent(){
@@ -1864,7 +1864,7 @@ pile_slicing: for ( let index = 0; index < floor.Pile.length; index++ ){ //Pile 
             let floor_tw = this.Elevators[this.Selected].Warehouse[ Warehouse_Index ].Cargo.Natura;
             if ( floor_tw > 100 ) {
                 weight = Calc.MyRound( volume * floor_tw / 1000, 3 );
-            } else weight = Calc.MyRound( volume * floor_tw, 3 );
+            } else weight = Calc.MyRound( volume * floor_tw / 100, 3 );
             this.Elevators[this.Selected].Warehouse[ Warehouse_Index ].Volume = volume;
             this.Elevators[this.Selected].Warehouse[ Warehouse_Index ].Weight = weight;
             //console.log('get_Floor_CargoTW = ',Elevators.get_Floor_CargoTW);
