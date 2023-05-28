@@ -568,9 +568,6 @@ input[type="range"]::-moz-range-thumb {
       margin-top: 5mm;
       margin-bottom: 5mm;
   }
-  body{
-    background-image: url("/public/192.png");
-  }
   table {
     page-break-inside: avoid;
  }

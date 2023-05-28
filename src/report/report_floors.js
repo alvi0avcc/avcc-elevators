@@ -54,6 +54,7 @@ export default function  Report_Floor (){
 
 function FloorHouseInfo(){
   let dim = Elevators.FloorCurrentDimensions;
+  let floor_data = Elevators.get_Warehouses_Info();
   //console.log( Elevators.get_FloorListInfo );
 
   return (
@@ -65,8 +66,10 @@ function FloorHouseInfo(){
         {Elevators.get_FloorListInfo.map((data, index ) => ( data.cargoName != '' ? <FlorInfoBase index={index} data={data} {...floorSimpleProps(index)}/> : '' )) }
 
         <tr>
-          <td>Total:</td>
+          <td colSpan="5">Total:</td>
         </tr>
+
+        {floor_data.map( (data, index) => ( data[0] != '' ? <tr><td colSpan="4">{data[0]}</td><td>{data[1]} (MT)</td></tr> : '' ) ) }
 
         </tbody>
       </table>
@@ -78,7 +81,7 @@ function FlorInfoBase(props){
 return (
     <tr>
           <td>Warehouse № { props.data.name }</td>
-          <td>Cargo name: { props.data.cargoName }</td>
+          <td>Cargo: { props.data.cargoName }</td>
           <td>Test Weight = { props.data.tw } { props.data.tw > 100 ? '(g/L)' : '(Kg/hL)'}</td>
           <td>Volume = { props.data.volume } (m³)</td>
           <td>Weight = { props.data.weight } (MT)</td>

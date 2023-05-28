@@ -519,7 +519,7 @@ class cElevators {
         let tw = this.get_Floor_CargoTW;
         let weight = 0;
         if (  tw > 100 ) weight = volume * tw / 1000
-        else weight = volume * tw / 100;
+        else weight = volume * tw;
         this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ].Weight = Calc.MyRound( weight, 3 );
     }
     get FloorCurrent(){
@@ -1861,9 +1861,12 @@ pile_slicing: for ( let index = 0; index < floor.Pile.length; index++ ){ //Pile 
                 mesh_3D.push( mesh[ m_step + 4 ], mesh[ m_step + 5 ], mesh[ m_step + 6 ], mesh[ m_step + 7 ] );
             }
             volume = Calc.MyRound( volume * 2, 3 );
-            if ( Elevators.get_Floor_CargoTW > 100 ) {
-                weight = Calc.MyRound( volume * Elevators.get_Floor_CargoTW / 1000, 3 );
-            } else weight = Calc.MyRound( volume * Elevators.get_Floor_CargoTW / 100, 3 );
+            let floor_tw = this.Elevators[this.Selected].Warehouse[ Warehouse_Index ].Cargo.Natura;
+            if ( floor_tw > 100 ) {
+                weight = Calc.MyRound( volume * floor_tw / 1000, 3 );
+            } else weight = Calc.MyRound( volume * floor_tw, 3 );
+            this.Elevators[this.Selected].Warehouse[ Warehouse_Index ].Volume = volume;
+            this.Elevators[this.Selected].Warehouse[ Warehouse_Index ].Weight = weight;
             //console.log('get_Floor_CargoTW = ',Elevators.get_Floor_CargoTW);
             //console.log('mesh_3D = ',mesh_3D);
             //console.log('strip = ',strip);
@@ -1875,6 +1878,48 @@ pile_slicing: for ( let index = 0; index < floor.Pile.length; index++ ){ //Pile 
         
         return { mesh, mesh_3D, volume, weight };
     };//get_Volume_Piles
+
+    get_Warehouses_Info(){
+        let cargo = [];
+        if ( this.Elevators[ this.Selected ] ) {
+            let data = [];
+            //let data = this.SiloTotalInfo;
+            for ( let i = 0; i < this.Elevators[ this.Selected ].Warehouse.length; i++ ) {
+                let floor_data = this.get_Volume_Piles( i, this.Elevators[ this.Selected ].Warehouse[ i ].MeshStep );
+                data.push( [this.Elevators[ this.Selected ].Warehouse[ i ].Name, 
+                            this.Elevators[ this.Selected ].Warehouse[ i ].Cargo.Name, 
+                            this.Elevators[ this.Selected ].Warehouse[ i ].Cargo.Natura,
+                            floor_data.volume, 
+                            floor_data.weight] );
+            }
+            //console.log('get_Warehouses_Info = ',data );
+            
+           let cargo_name = new Set();
+            let q;
+            for (let i = 0; i < data.length; i++) {
+                cargo_name.add( data[i][1] );
+            }
+            //console.log('cargo_name = ',cargo_name );
+            cargo_name = Array.from(cargo_name);
+            //console.log('cargo_name = ',cargo_name );
+            let cargo_filter =[];
+            for ( let ii = 0; ii < cargo_name.length; ii++ ) {
+                q = data.filter( ([n, cargo, m]) => cargo == cargo_name[ii] );
+                cargo_filter.push(q); 
+            }
+            //console.log('cargo_filter = ',cargo_filter );
+        for ( let i = 0; i < cargo_filter.length; i++) {
+            let m = 0;
+            for ( let ii = 0; ii < cargo_filter[i].length; ii++ ) {
+                m = m + cargo_filter[i][ii][4];
+            }
+            m = Calc.MyRound( m , 3);
+            cargo.push( [ cargo_filter[i][0][1], m ] )
+        }
+        }
+        console.log('cargo = ',cargo );
+        return cargo;    
+    }
 
 };
 
