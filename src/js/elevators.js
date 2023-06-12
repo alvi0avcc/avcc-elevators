@@ -331,6 +331,90 @@ class cElevators {
         }
         else return null
     };
+    get_ComplexSilo_SimpleInfo( complexIndex ){
+        //let list = [];
+        let cargos = [];
+        let volume = 0;
+        let weight;
+        let silo;
+        let data = structuredClone( this.Elevators[this.ElevatorSelected].Complex[ complexIndex ] );
+        for ( let i = 0; i < this.Elevators[this.ElevatorSelected].Complex[ complexIndex ].Silo.length; i++ ) {
+            for ( let j = 0; j < this.Elevators[this.ElevatorSelected].Complex[ complexIndex ].Silo[i].length; j++ ) {
+                silo = this.Elevators[this.ElevatorSelected].Complex[ complexIndex ].Silo[i][j];
+                if ( silo.CargoName != '0' ) {
+                    volume = this.volume_mineSilo( silo.Type, silo.Sound, silo.Ullage, silo.Height, silo.Length, silo.Width, silo.Diameter, silo.Conus_height, silo.Area ).volume;
+                    volume = Calc.MyRound( volume, 3 );
+                    if ( silo.CargoTW > 100 ) { 
+                        weight = volume * silo.CargoTW / 1000;      //DSTU
+                    } else weight = volume * silo.CargoTW / 100;   //ISO
+                    weight = Calc.MyRound( weight, 3 );
+
+                    cargos.push( { 
+                        name: silo.Name,
+                        cargo: silo.CargoName, 
+                        tw: silo.CargoTW,
+                        volume: volume,
+                        weight: weight
+                    });
+                }
+            }
+        }
+        //console.log('get_ComplexSilo_CargosName = ', data);
+        //console.log('cargos = ', cargos);
+
+        return cargos;
+    }
+    get_ComplexSilo_Cargos( complexIndex ){
+        let silo;
+        let list = new Set;
+        let q;
+        let cargo = [];
+        let data = this.get_ComplexSilo_SimpleInfo( complexIndex );
+        //console.log('data = ',data);
+
+        for ( let i = 0; i < this.Elevators[this.ElevatorSelected].Complex[ complexIndex ].Silo.length; i++ ) {
+            for ( let j = 0; j < this.Elevators[this.ElevatorSelected].Complex[ complexIndex ].Silo[i].length; j++ ) {
+                silo = this.Elevators[this.ElevatorSelected].Complex[ complexIndex ].Silo[i][j];
+                if ( silo.CargoName != '' ) {
+                    list.add( silo.CargoName );
+                }
+            }
+        }
+        list = Array.from(list);
+        //console.log('list = ',list);
+        let cargo_filter =[];
+        for ( let i = 0; i < list.length; i++ ) {
+            q = data.filter( (value, index, array) => value.cargo == list[i] );
+            cargo_filter.push(q); 
+        }
+        console.log('cargo_filter = ',cargo_filter);
+
+        for ( let i = 0; i < cargo_filter.length; i++) {
+            let name = '';
+            let m = 0;
+            let v = 0;
+            for ( let ii = 0; ii < cargo_filter[i].length; ii++ ) {
+                m = m + cargo_filter[i][ii].weight;
+                v = v + cargo_filter[i][ii].volume;
+                name = name + cargo_filter[i][ii].name + ', ';
+            }
+            let tw = cargo_filter[i][0].tw;
+            m = Calc.MyRound( m , 3);
+            v = Calc.MyRound( v , 3);
+            cargo.push( { cargoName: cargo_filter[i][0].cargo, volume: v, weight: m, tw: tw, name: name } )
+        }
+        //console.log('cargo = ',cargo);
+
+    return cargo;
+    }
+    get_ComplexSilo_Cargos_Total() {
+        let data = [];
+        for ( let i = 0; i < this.ComplexFound; i++ ) {
+            data.push( this.get_ComplexSilo_Cargos ( i ) );
+        }
+        console.log('data = ',data);
+    return data;
+    }
     ComplexSiloGet( row, col ){
         let result;
         let found = false;
@@ -1518,7 +1602,10 @@ class cElevators {
             silo = silo.result
             volume = this.volume_mineSilo( silo.Type, silo.Sound, silo.Ullage, silo.Height, silo.Length, silo.Width, silo.Diameter, silo.Conus_height, silo.Area ).volume;
             volume = Calc.MyRound( volume, 3 );
-            weight = volume * silo.CargoTW / 1000;
+            //weight = volume * silo.CargoTW / 1000;
+            if ( silo.CargoTW > 100 ) { 
+                weight = volume * silo.CargoTW / 1000;      //DSTU
+            } else weight = volume * silo.CargoTW / 100;   //ISO
             weight = Calc.MyRound( weight, 3 );
         } else { volume =0; weight =0; console.log('massaComplexSiloGet = error');}
         return {volume, weight};

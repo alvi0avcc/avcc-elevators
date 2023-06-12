@@ -29,6 +29,7 @@ const Main = () => {
             <nav>
                 <label className='myText' >Reports →</label>
                 <Link style={{ display: 'none' }} className='myButtonNav' to="/report_elevator" target='_blank' >Elevator</Link>
+                <Link className='myButtonNav' to="/report_complex_silo" target='_blank' >Silo Complex</Link>
                 <Link className='myButtonNav' to="/report_warehouses" target='_blank' >Warehouses</Link>
                 <Link className='myButtonNav' to="/report_warehouse" target='_blank' >Warehouse</Link>
             </nav>
