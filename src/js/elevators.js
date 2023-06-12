@@ -387,7 +387,7 @@ class cElevators {
             q = data.filter( (value, index, array) => value.cargo == list[i] );
             cargo_filter.push(q); 
         }
-        console.log('cargo_filter = ',cargo_filter);
+        //console.log('cargo_filter = ',cargo_filter);
 
         for ( let i = 0; i < cargo_filter.length; i++) {
             let name = '';
@@ -410,28 +410,47 @@ class cElevators {
     get_ComplexSilo_Cargos_Total() {
         let q;
         let data = [];
+        let cargo = [];
         for ( let i = 0; i < this.ComplexFound; i++ ) {
-            data.push( this.get_ComplexSilo_Cargos ( i ) );
+            data = data.concat( this.get_ComplexSilo_Cargos ( i ) );
         }
-        console.log('data = ',data);
+        //console.log('data = ',data);
         let list = new Set;
 
         for ( let i = 0; i < data.length; i++ ) {
-            for ( let ii = 0; ii < data[i].length; ii++ ) {
-                list.add( data[i][ii].cargoName );
-            }
+            //for ( let ii = 0; ii < data[i].length; ii++ ) {
+                //list.add( data[i][ii].cargoName );
+                list.add( data[i].cargoName );
+            //}
         }
         list = Array.from(list);
-        console.log('list = ',list);
+        //console.log('list = ',list);
 
         let cargo_filter =[];
         for ( let i = 0; i < list.length; i++ ) {
-            q = data.filter( (value, index, array) => value.cargo == list[i] );
+            q = data.filter( (value, index, array) => value.cargoName == list[i] );
             cargo_filter.push(q); 
         }
-        //console.log('cargo_filter = ',cargo_filter);
+        //console.log('cargo_filter total= ',cargo_filter);
 
-    return data;
+        for ( let i = 0; i < cargo_filter.length; i++) {
+            let name = '';
+            let m = 0;
+            let v = 0;
+            for ( let ii = 0; ii < cargo_filter[i].length; ii++ ) {
+                m = m + cargo_filter[i][ii].weight;
+                v = v + cargo_filter[i][ii].volume;
+                name = name + cargo_filter[i][ii].name + ', ';
+            }
+            let tw = cargo_filter[i][0].tw;
+            m = Calc.MyRound( m , 3);
+            v = Calc.MyRound( v , 3);
+            cargo.push( { cargoName: cargo_filter[i][0].cargoName, volume: v, weight: m, tw: tw, name: name } )
+        }
+        console.log('cargo total = ',cargo);
+
+
+    return cargo;
     }
     ComplexSiloGet( row, col ){
         let result;
