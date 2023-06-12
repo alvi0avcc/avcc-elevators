@@ -408,11 +408,29 @@ class cElevators {
     return cargo;
     }
     get_ComplexSilo_Cargos_Total() {
+        let q;
         let data = [];
         for ( let i = 0; i < this.ComplexFound; i++ ) {
             data.push( this.get_ComplexSilo_Cargos ( i ) );
         }
         console.log('data = ',data);
+        let list = new Set;
+
+        for ( let i = 0; i < data.length; i++ ) {
+            for ( let ii = 0; ii < data[i].length; ii++ ) {
+                list.add( data[i][ii].cargoName );
+            }
+        }
+        list = Array.from(list);
+        console.log('list = ',list);
+
+        let cargo_filter =[];
+        for ( let i = 0; i < list.length; i++ ) {
+            q = data.filter( (value, index, array) => value.cargo == list[i] );
+            cargo_filter.push(q); 
+        }
+        //console.log('cargo_filter = ',cargo_filter);
+
     return data;
     }
     ComplexSiloGet( row, col ){
