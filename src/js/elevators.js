@@ -597,16 +597,16 @@ class cElevators {
     PileGet( index ){
         let result;
         if ( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] ) {
-            //result =structuredClone( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] );
-            result = this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ];
+            result =structuredClone( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] );
+            //result = this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ];
             }
         return( result );
     }
     PileGet_index( warehouse_index, pile_index ){
         let result;
         if ( this.Elevators[this.Selected].Warehouse[warehouse_index].Pile[ pile_index ] ) {
-            //result =structuredClone( this.Elevators[this.Selected].Warehouse[this.WarehouseSelected].Pile[ index ] );
-            result = this.Elevators[this.Selected].Warehouse[warehouse_index].Pile[ pile_index ];
+            result =structuredClone( this.Elevators[this.Selected].Warehouse[ warehouse_index ].Pile[ pile_index ] );
+            //result = this.Elevators[this.Selected].Warehouse[warehouse_index].Pile[ pile_index ];
             }
         return( result );
     }

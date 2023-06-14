@@ -91,12 +91,15 @@ const PilesViewCanvas = props => {
         if ( changePilePos ) 
             if ( window.confirm('Accept new position for Pile?') ) {
                 Elevators.setPile_Location( props.currentPile, Calc.MyRound( Pile_x, 2 ), Calc.MyRound( Pile_y, 2 ), Calc.MyRound( Pile_angle, 2 ) );
-                props.callback( !props.updatePiles );
-                props.callbackPileInfo( !props.changePileInfo );
+                //props.callback( !props.updatePiles );
+                //props.callbackPileInfo( !props.changePileInfo );
             }
         setChangePilePos( false );
         setInitPosMouse( { x: 0, y: 0 } );
         setPosMouse( { x: 0, y: 0 } );
+
+        props.callback( !props.updatePiles );
+        props.callbackPileInfo( !props.changePileInfo );
     }
     function PileSelectButtonCheck( x, y ){
         let dx = x - currPosMouse.x;
@@ -263,6 +266,7 @@ const PilesViewCanvas = props => {
         for ( let index = 0; index < count; index++ ) {
 
             let pile = Elevators.PileGet( index );
+            //let pile = structuredClone( Elevators.PileGet( index ) );
             if ( pile.numOfSegments == undefined ) pile.numOfSegments = 10;
 
             if ( changePilePos )
