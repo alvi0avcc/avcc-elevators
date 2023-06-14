@@ -198,6 +198,18 @@ const PilesViewCanvas = props => {
                          Length/2,  Width/2, 0, 1
                         ];
 
+    let ruler_X = [];
+    for ( let x = 0; x < Length; x++ ){
+        ruler_X.push( -Length/2 + x, -Width/2, 0, 1,
+                    -Length/2 + x, Width/2, 0, 1 );
+    }
+    let ruler_Y = [];
+    for ( let y = 0; y < Width; y++ ){
+        ruler_Y.push( -Length/2, -Width/2 + y, 0, 1,
+                    Length/2, -Width/2 + y, 0, 1 );
+    }
+    //console.log('ruler_X = ',ruler_X);
+
     let vertices = [];
 
     let colors = [];
@@ -585,6 +597,33 @@ const PilesViewCanvas = props => {
                 gl.drawArrays(gl.LINE_LOOP, 4, 4);
                 gl.drawArrays(gl.LINE_LOOP, 8, 4);
                 gl.drawArrays(gl.LINE_LOOP, 12, 4);
+            }
+
+            //------------------------------- ruler_X draw
+            if ( mode == 'location' && !report ) {
+                vertices = ruler_X;
+                vertices = MoveMatrixAny( vertices , 0, 0, -Height/2 );
+
+                gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),  gl.STATIC_DRAW);
+        
+                gl.uniform4f(colorUniformLocation, 0.753, 0.753, 0.753, 0.9);
+                for ( let i = 0; i <= Length; i+=2) {
+                    gl.drawArrays(gl.LINES, i, i+2);
+                }
+            }
+            //------------------------------- ruler_Y draw
+            if ( mode == 'location' && !report ) {
+                vertices = ruler_Y;
+                vertices = MoveMatrixAny( vertices , 0, 0, -Height/2 );
+
+                gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),  gl.STATIC_DRAW);
+        
+                gl.uniform4f(colorUniformLocation, 0.753, 0.753, 0.753, 0.9);
+                for ( let i = 0; i <= Width; i+=2) {
+                    gl.drawArrays(gl.LINES, i, i+2);
+                }
             }
 
             //vertices = [];
