@@ -5,15 +5,23 @@ import { useContext } from 'react';
 import { UpdateContext } from '../Main'
 import { Elevators } from './elevators.js';
 import * as iolocal from './iolocal';
+import { User } from './user';
+import ServerMenu from './server_menu';
+
 
 export default function FileMenuButton(){
 const [update, setUpdate] = useContext(UpdateContext);
+const [updateView, setUpdateView] = React.useState(false);
 
 const handleImport = (e)=>{
     iolocal.FileImport(e.target.files[0]).then( (result) => { Elevators.setElevators = result; setUpdate( !update ) } );
 }
+
+    //console.log('status = ',status);
     return (
     <>
+    <ServerMenu/>
+
     <Stack height={25} style={{ margin: 3 }} direction={'row'} justifyContent={'space-between'} >
         <Stack  spacing={1} direction={'row'} >
             <Button variant='outlined'

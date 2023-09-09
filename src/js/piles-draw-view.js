@@ -612,6 +612,24 @@ const PilesViewCanvas = props => {
                     gl.drawArrays(gl.LINES, i, i+2);
                 }
             }
+/*
+            for ( let i = 0; i < Length; i ++ ) {
+                let xr = - Length / 2 + i;
+                let yr =  Width / 2;
+                let zr = - Height/2;
+                    //let matrix_text = [ xx, yy, zz, 1 ];
+
+                let mat = mat4.create();
+                mat4.multiply( mat, projectionMatrix, modelMatrix );
+                    // compute a clipspace position
+                var clipspace = transformVector( mat, [ xr, yr, zr, 1 ]);
+                    // divide X and Y by W just like the GPU does.
+                clipspace[0] /= clipspace[3];
+                clipspace[1] /= clipspace[3];
+                    // convert from clipspace to pixels
+                var pixelX = (clipspace[0] *  0.5 + 0.5) * gl.canvas.width;
+                var pixelY = (clipspace[1] * -0.5 + 0.5) * gl.canvas.height;
+            }*/
             //------------------------------- ruler_Y draw
             if ( mode == 'location' && !report ) {
                 vertices = ruler_Y;

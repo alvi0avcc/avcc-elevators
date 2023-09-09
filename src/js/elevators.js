@@ -4,6 +4,7 @@ import cgPile from './pile_class.js'
 import * as matrix from './3d-matrix.js';
 import { get_Max_Y_3D, getCurvePoints, drawLines, drawCurve, getPoint, drawPoint, drawPoints, getSlice, drawSlice, drawContur, getContur, getPoints_by_Y } from './spline.js';
 import { MoveMatrix, MoveMatrixAny, RotateMatrix_X, RotateMatrix_X_any, RotateMatrix_Y, RotateMatrix_Y_any, RotateMatrix_Z, RotateMatrix_Z_any, ScaleMatrix, ScaleMatrixAny, ScaleMatrixAny1zoom } from './3d-matrix.js';
+import { CommentsDisabledOutlined } from '@mui/icons-material';
 
 let SoftVersion = '0.1.0'; 
 let DBlocalVersion = '0.1.0';
@@ -1019,6 +1020,61 @@ class cElevators {
             }};
         return List;
     }
+    get Complex(){
+        let data;
+        if ( this.ComplexFound > 0) {
+            data = structuredClone( this.Elevators[this.Selected].Complex );
+            console.log('Complex = ',data);
+            for ( let s = 0; s < data.length; s++ ) {
+                for ( let r = 0; r < data[s].Silo.length; r++ ) {
+                    for ( let c = 0; c < data[s].Silo[r].length; c++ ) {
+                        data[s].Silo[r][c].CargoName = '';
+                        data[s].Silo[r][c].CargoTW = 0;
+                        data[s].Silo[r][c].Ullage = 0;
+                    }
+                }
+            }
+            console.log('Complex cleaned= ',data);
+        }
+        return data;
+    }
+    get Silo(){
+        let data;
+        if ( this.SiloFound > 0) {
+            data = structuredClone( this.Elevators[this.Selected].Silo );
+            console.log('Silo = ',data);
+            for ( let s = 0; s < data.length; s++ ) {
+                data[s].Cargo.Name = '';
+                data[s].Cargo.Natura = 0;
+                data[s].Ullage = Number ( data[s].Dimensions.Sound );
+            }
+            console.log('Silo cleaned= ',data);
+        }
+        return data;
+    }
+    get Warehouse(){
+        let data;
+        if ( this.FloorFound > 0) {
+            data = structuredClone( this.Elevators[this.Selected].Warehouse );
+            console.log('Warehouse = ',data);
+            for ( let w = 0; w < data.length; w++ ) {
+                data[w].Cargo.Name = '';
+                data[w].Cargo.Natura = 0;
+                data[w].MeshStep = 50;
+                data[w].MeshStyle= 'solid';
+                data[w].Multicolor = false;
+                data[w].Pile = [];
+                data[w].PileSelected = 0;
+                data[w].ShowHouse = true;
+                data[w].Volume = 0;
+                data[w].Weight = 0;
+                data[w].Mesh = [];
+                data[w].Mesh_3D = [];
+            }
+            console.log('Warehouse cleaned= ',data);
+        }
+        return data;
+    }
     SiloAdd(){
         if ( this.ElevatorsFound > 0 ) {
             this.Elevators[this.Selected].Silo.push(new cSilo());
@@ -1215,6 +1271,10 @@ class cElevators {
         if ( this.ElevatorsFound > 0) return this.Elevators[this.ElevatorSelected].Name
         else return ''
     }
+    get ElevatorId(){
+        if ( this.ElevatorsFound > 0) return this.Elevators[this.ElevatorSelected].id
+        else return ''
+    }
     get ElevatorsDate(){
         if ( this.ElevatorsFound > 0) return this.Elevators[this.ElevatorSelected].Date
         else return ''
@@ -1282,7 +1342,33 @@ class cElevators {
 
 
         } else this.State = 'closed';
-         }
+    }
+    set setElevatorsFromServer(data){
+        if ( data != undefined ) { 
+            this.Elevators = [];
+            this.AddElevator();
+            this.Elevators[0].id  = data[0].id;
+            this.Elevators[0].Name  = data[0].elevator_name;
+            this.Elevators[0].Adress  = data[0].adress;
+            this.Elevators[0].Owner  = data[0].owner;
+            this.Elevators[0].Comments  = data[0].comments;
+            this.Elevators[0].Complex  = JSON.parse( data[0].complex );
+            this.Elevators[0].Silo  = JSON.parse( data[0].silo );
+            this.Elevators[0].Warehouse  = JSON.parse( data[0].warehouse );
+
+            this.Selected = 0;
+            this.ComplexSelected = 0;
+            this.SiloSelected = 0;
+            this.WarehouseSelected = 0;
+
+            this.State = 'open';
+
+            console.log('Elevators = ', this.Elevators);
+
+           // this.ComplexSiloSelected = data.ComplexSiloSelected;
+
+        } else this.State = 'closed';
+    }
     AddElevator(){
         this.Elevators.push(new cElevator());
         this.State = 'Elevator added'
@@ -1330,7 +1416,7 @@ class cElevators {
             let data;
             if (ii > 0 ) {    
                 for( let i =0 ; i < ii ; i++){
-                    data = this.Elevators[i].id + this.Elevators[i].Name + ' - ' + this.Elevators[i].Date;
+                    data = this.Elevators[i].Name + ' - ' + this.Elevators[i].Date;
                     List.push( data );
                 }
             }
