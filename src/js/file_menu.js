@@ -22,6 +22,12 @@ const handleImport = (e)=>{
     <>
     <ServerMenu/>
 
+    <div className='blockLabel'>
+        <div className='labelBlock'>
+            <span>Local</span>
+        </div>
+        <br/>
+
     <Stack height={25} style={{ margin: 3 }} direction={'row'} justifyContent={'space-between'} >
         <Stack  spacing={1} direction={'row'} >
             <Button variant='outlined'
@@ -56,6 +62,7 @@ const handleImport = (e)=>{
 
         </Stack>
     </Stack>
+    </div>
     <Divider/>
     </>
     )

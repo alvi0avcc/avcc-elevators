@@ -568,6 +568,29 @@ thead th {
   justify-content: space-between;
 }
 
+.blockLabel {
+  border: 1px solid #1976d2;
+  display: block;
+  border-radius: 4px;
+  padding: 2px;
+  margin: 2px;
+  margin-top: 15px;
+  background: none;
+}
+
+.labelBlock {
+  margin-top: -15px;
+  margin-left: 5px;
+  padding-left: 2px;
+  padding-right: 2px;
+  display: block;
+  float: left;
+  border: 1px solid #1976d2;
+  color: #1976d2;
+  border-radius: 4px;
+  background-color: white;
+}
+
 
 @media print{
 
