@@ -254,8 +254,9 @@ function Inspection_List ( props ){
         
     }
 
-    const [i_client, setI_client] = React.useState();
+    const [i_client, setI_client] = React.useState(inspections[0].client);
     const handle_i_client = (e)=>{
+        console.log('i_client=',e.target.value);
         setI_client( e.target.value );
     }
 
@@ -324,15 +325,26 @@ function Inspection_List ( props ){
         if ( inspections[selected].order_date ) { setI_date( inspections[selected].order_date) } else setI_date( '' );
         if ( inspections[selected].order_time) { setI_time( inspections[selected].order_time) } else setI_time( '' );
         if ( inspections[selected].order) { setI_order( inspections[selected].order) } else setI_order( '' );
+        if ( inspections[selected].elevator ) { setE_elevator( inspections[selected].elevator) } else setE_elevator( '' );
+        if ( inspections[selected].client ) { setI_client( inspections[selected].client) } else setI_client( '' );
         if ( inspections[selected].inspector ) { setI_inspector( inspections[selected].inspector) } else setI_inspector( '' );
-        //if ( inspections[selected].inspector ) { setI_inspector( inspections[selected].inspector) } else setI_inspector( '' );
+        if ( inspections[selected].status ) { setI_status( inspections[selected].status) } else setI_status( '' );
+        if ( inspections[selected].result ) { setI_result( inspections[selected].result) } else setI_result( '' );
+        if ( inspections[selected].commments ) { setI_comments( inspections[selected].commments) } else setI_comments( '' );
     }
     const edit_Inspection_apply = ()=>{
         setEdit(false);
-        //elevators[selected].elevator_name = e_name;
-        //elevators[selected].adress = e_adress;
-        //elevators[selected].owner = e_owner;
-        //elevators[selected].comments = e_comments;
+        inspections[selected].order_no = i_number;
+        inspections[selected].order_date = i_date;
+        inspections[selected].order_time = i_time;
+        inspections[selected].order = i_order;
+        inspections[selected].elevator = e_elevator;
+        inspections[selected].client = i_client;
+        inspections[selected].inspector = i_inspector;
+        inspections[selected].status = i_status;
+        inspections[selected].result = i_result;
+        inspections[selected].comments = i_comments;
+        console.log('inspection[selected] = ', inspections[selected]);
         //ElevatorOnline.update_Elevator_to_Server( elevators[selected] , 'simple' );
     }
 
@@ -346,6 +358,14 @@ function Inspection_List ( props ){
         setSelected( data );
         if ( inspections[data].order_no ) { setI_number( inspections[data].order_no ) } else setI_number( '' );
         if ( inspections[data].order_date ) { setI_date( date ) } else setI_date( '' );
+        if ( inspections[date].order_time) { setI_time( inspections[date].order_time) } else setI_time( '' );
+        if ( inspections[date].order) { setI_order( inspections[date].order) } else setI_order( '' );
+        if ( inspections[date].elevator ) { setE_elevator( inspections[date].elevator) } else setE_elevator( '' );
+        if ( inspections[date].client ) { setI_client( inspections[date].client) } else setI_client( '' );
+        if ( inspections[date].inspector ) { setI_inspector( inspections[date].inspector) } else setI_inspector( '' );
+        if ( inspections[date].status ) { setI_status( inspections[date].status) } else setI_status( '' );
+        if ( inspections[date].result ) { setI_result( inspections[date].result) } else setI_result( '' );
+        if ( inspections[date].commments ) { setI_comments( inspections[date].commments) } else setI_comments( '' );
         //if ( elevators[data].elevator_name ) { setE_name( elevators[data].elevator_name ) } else setE_name( '' );
         //if ( elevators[data].adress )  { setE_adress( elevators[data].adress ) } else setE_adress( '' );
         //if ( elevators[data].owner ) { setE_owner( elevators[data].owner ) } else setE_owner( '' )
@@ -353,6 +373,7 @@ function Inspection_List ( props ){
         //setE_silo ( elevators[data].silo ? 'found' : 'not found' );
         //setE_warehouse ( elevators[data].warehouse ? 'found' : 'not found' );
         //if ( elevators[data].comments ) { setE_comments( elevators[data].comments ) } else setE_comments( '' );
+        console.log('selected inspection = ',inspections[date] );
     }
 
     return(
@@ -465,7 +486,7 @@ function Inspection_List ( props ){
                         <div className='inputMenu'>
                             <label>Inspector phone</label>
                             <input 
-                            style={{ width: '303px' }}
+                            style={{ width: '300px' }}
                             //value={ ( inspector[i_inspector] ? inspector[i_inspector].phone : '' ) }
                             value={ inspectorPhone(i_inspector) }
                             //onChange={handle_i_time}
@@ -473,7 +494,7 @@ function Inspection_List ( props ){
                             readOnly
                             />
                         </div>
-                        <br/><hr/>
+                        <hr/>
                         <div className='inputMenu'>
                             <label for="firm-select">Elevator Owner</label>
                             <select 
@@ -527,6 +548,7 @@ function Inspection_List ( props ){
                                     ) )}
                                 rows="5"
                                 wrap='off'
+                                readOnly
                             />
                         </div>
                         <div className='inputMenu'>
@@ -536,10 +558,11 @@ function Inspection_List ( props ){
                                 value={e_comments}
                                 onChange={handle_e_comments}
                                 rows="3"
+                                readOnly
                             />
                         </div>
                         
-                        <br/><hr/>
+                        <hr/>
                         <div className='inputMenu'>
                             <label>Inspection Order</label>
                             <textarea 
@@ -565,15 +588,7 @@ function Inspection_List ( props ){
                                 ))}
                             </select>
                         </div>
-                        <div className='inputMenu'>
-                            <label>Comments</label>
-                            <textarea 
-                                style={{ width: '301px' }}
-                                value={i_comments}
-                                onChange={handle_i_comments}
-                                rows="3"
-                            />
-                        </div>
+                        <hr/>
                         <div className='inputMenu'>
                             <label>Inspection Status</label>
                             <select 
@@ -582,10 +597,10 @@ function Inspection_List ( props ){
                                 value={i_status}
                                 onChange={handle_i_status}
                                 >
-                                <option value='0'>preOrdered</option>
+                                <option value='0'>Pre-ordered</option>
                                 <option value='1'>Ordered</option>
-                                <option value='2'>Inprogress</option>
-                                <option value='3'>Complited</option>
+                                <option value='2'>In progress</option>
+                                <option value='3'>Completed</option>
                                 <option value='4'>Canceled</option>
                             </select>
                         </div>
@@ -597,12 +612,21 @@ function Inspection_List ( props ){
                                 value={i_result}
                                 onChange={handle_i_result}
                                 >
-                                <option value='0'>Waiting commence</option>
-                                <option value='1'>Inprogress</option>
-                                <option value='2'>OK</option>
-                                <option value='3'>Not OK</option>
-                                <option value='4'>Repeated</option>
+                                <option value='0'>Not specified</option>
+                                <option value='1'>Done</option>
+                                <option value='2'>Satisfaction</option>
+                                <option value='3'>Not satisfaction</option>
+                                <option value='4'>Re-inspection</option>
                             </select>
+                        </div>
+                        <div className='inputMenu'>
+                            <label>Comments</label>
+                            <textarea 
+                                style={{ width: '301px' }}
+                                value={i_comments}
+                                onChange={handle_i_comments}
+                                rows="3"
+                            />
                         </div>
                     </div>
 
