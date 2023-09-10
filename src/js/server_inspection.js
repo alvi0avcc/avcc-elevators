@@ -174,7 +174,7 @@ export function Inspection_List ( props ){
     }
 
     const edit_Inspection = ()=>{
-        ElevatorOnline.get_Firm_List({filter: 'all', sorted: 'true'}).then( (resolve)=>{ setFirm(resolve); setI_client(resolve); console.log('get_Firm_List = ',resolve); } );
+        ElevatorOnline.get_Firm_List({filter: 'all', sorted: 'true'}).then( (resolve)=>{ setFirm(resolve); /*setI_client(resolve);*/ console.log('get_Firm_List = ',resolve); } );
         ElevatorOnline.get_Person_List( { filter: 'all', list: 'inspector', sorted: 'name' } ).then( (resolve)=>{ setInspector(resolve); console.log('get_Inspector_List = ',resolve); } );
        
         let date = DateIsoToString( new Date ( inspections[selected].order_date ) );
@@ -216,17 +216,17 @@ export function Inspection_List ( props ){
         inspections[selected].order_time = i_time;
         inspections[selected].order = i_order;
         inspections[selected].elevator = e_elevator;
-        //inspections[selected].client = i_client;
-        console.log('i_client = ', i_client);
+        inspections[selected].client = i_client;
+        //console.log('i_client = ', i_client);
         inspections[selected].inspector = i_inspector;
         inspections[selected].status = i_status;
         inspections[selected].result = i_result;
         inspections[selected].comments = i_comments;
-        console.log('inspection[selected] apply = ', inspections[selected]);
+        //console.log('inspection[selected] apply = ', inspections[selected]);
 
         setEdit(false);
 
-        //ElevatorOnline.update_Elevator_to_Server( elevators[selected] , 'simple' );
+        ElevatorOnline.update_Inspection_to_Server( inspections[selected] , 'simple' );
     }
 
     const selected_change = (sel)=>{

@@ -188,6 +188,27 @@ class cElevatorOnline {
         })
     }
 
+    update_Inspection_to_Server( inspection, parameter ){
+        console.log('send update_INspection_to_Server = ',inspection);
+        return new Promise ( (resolve, reject) => {
+            if ( User.get_LoginStatus ) {
+
+            if ( parameter == undefined ) parameter = 'all';
+            inspection.parameter = parameter;
+            //inspection.owner = Number ( inspection.owner );
+
+            fetch( this.ServerPath + "updateinspection" , { 
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                body: JSON.stringify(inspection)
+                }).then(response => response.json()).then((data) => {
+                console.log('update_Inspection_to_Server = ',data);
+                resolve (data);
+                });
+            } else resolve ('offline');
+        })
+    }
+
     del_Inspection_from_Server( id ){
         return new Promise ( (resolve, reject) => {
             if ( User.get_LoginStatus ) {
