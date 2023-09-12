@@ -1,4 +1,6 @@
 import React from 'react';
+import { useContext } from 'react';
+import { UpdateContext } from '../Main'
 //import {useEffect, useState} from "react";
 import { Elevators } from './elevators.js';
 //import * as iolocal from './iolocal';
@@ -8,12 +10,50 @@ import { ElevatorOnline } from './elevatorOnline.js';
 //import { UpdateContext } from '../Main'
 import { DateIsoToString, monthNames } from './date_utilites.js';
 
+
 function Inspection_List_row( props ){
     let row = props.row;
     let item = props.item;
     let selected = props.selected;
 
     let date = new Date( item.order_date );
+
+    const [ elevator, setElevator ] = React.useState('');
+    if ( item.elevator > 0 )
+        ElevatorOnline.get_Elevator( item.elevator ).then( (resolve)=>{ setElevator( resolve[0].elevator_name ) } );
+
+    const [ client, setClient] = React.useState('');
+    if ( item.client > 0 )
+        ElevatorOnline.get_Firm( item.client ).then( (resolve)=>{ setClient( resolve[0].name ) } );
+
+    const [ inspector, setInspector] = React.useState('');
+    if ( item.inspector > 0 )
+        ElevatorOnline.get_Person( item.inspector ).then( (resolve)=>{ setInspector( resolve[0].name + ' ' + resolve[0].surname ) } );
+
+    let status = '';
+    if ( item.status == 0 || item.status == null )
+        status = 'Pre ordered'
+        else if ( item.status == 1 )
+        status = 'Ordered'
+        else if ( item.status == 2 )
+        status = 'In progress'
+        else if ( item.status == 3 )
+        status = 'Competed'
+        else if ( item.status == 4 )
+        status = 'Canceled'
+
+    let result = '';
+    if ( item.result == 0 || item.result == null )
+        //result = 'Not specified'
+        result = ''
+        else if ( item.result == 1 )
+        result = 'Done'
+        else if ( item.result == 2 )
+        result = 'Satisfaction'
+        else if ( item.result == 3 )
+        result = 'Not satisfaction'
+        else if ( item.result == 4 )
+        result = 'Re-inspection'
 
     const handleClick = (e)=>{
         props.callback_id(item.id);
@@ -22,29 +62,27 @@ function Inspection_List_row( props ){
     }
 
     return (
-        <tr
+        <tr 
             style={{ backgroundColor: ( selected == row ? 'lime' : '' )  }}
             onClick={handleClick}
         >
-            <td>{ item.id }</td>
-            <td>{ item.order_no }</td>
-            <td>{ ( item.order_date ? ( date.getFullYear() +' '+ monthNames[ date.getMonth() ] + ' ' + date.getDate() ) : '') }</td>
-            <td>{ item.order_time }</td>
-            <td>{ item.order }</td>
-            <td>{ item.elevator }</td>
-            <td>{ item.client }</td>
-            <td>{ item.inspector }</td>
-            <td>{ item.complex }</td>
-            <td>{ item.silo }</td>
-            <td>{ item.warehouse }</td>
-            <td>{ item.status }</td>
-            <td>{ item.result }</td>
-            <td>{ item.comments }</td>
+            <td style={{ fontSize: '50%' }}>{ item.id }</td>
+            <td width={'20%'}>{ item.order_no }</td>
+            <td align='center'>{ ( item.order_date ? ( date.getFullYear() +' '+ monthNames[ date.getMonth() ] + ' ' + date.getDate() ) : '') }</td>
+            <td align='center'>{ item.order_time }</td>
+            <td width={'40%'} style={{ fontSize: '70%'}}>{ item.order }</td>
+            <td width={'10%'} align='center'>{ item.elevator_name }</td>
+            <td width={'10%'} align='center'>{ item.client_name }</td>
+            <td width={'10%'} align='center'>{ item.inspector_name + ' ' + item.inspector_surname }</td>
+            <td align='center' style={{ fontSize: '70%'}}>{ status }</td>
+            <td align='center' style={{ fontSize: '70%'}}>{ result }</td>
+            <td style={{ fontSize: '50%'}}>{ item.comments }</td>
         </tr>
     )
 }
 
 export function Inspection_List ( props ){
+    const [update, setUpdate] = useContext(UpdateContext);
 
     let inspections = props.loaded;
     console.log('inspections = ',inspections);
@@ -185,12 +223,37 @@ export function Inspection_List ( props ){
         if ( inspections[selected].order_date ) { setI_date( date ) } else setI_date( '' );
         if ( inspections[selected].order_time) { setI_time( inspections[selected].order_time) } else setI_time( '' );
         if ( inspections[selected].order) { setI_order( inspections[selected].order) } else setI_order( '' );
-        if ( inspections[selected].elevator ) { setE_elevator( inspections[selected].elevator) } else setE_elevator( '' );
+        if ( inspections[selected].elevator ) { 
+                ElevatorOnline.get_Elevator( inspections[selected].elevator ).then( (resolve)=>{ 
+                    setE_firm( resolve[0].owner );
+                    ElevatorOnline.get_Elevator_List( { filter: 'owner', id: `${resolve[0].owner}`, sorted: 'elevator_name' } ).then( (resolve)=>{ 
+                        setElevator(resolve);
+                        setE_elevator( inspections[selected].elevator );
+                        adress: for ( let i = 0; i < resolve.length; i++ ) {
+                            if ( resolve[i].id == inspections[selected].elevator ) {
+                                setE_adress( resolve[i].adress );
+                                setE_comments( resolve[i].comments );
+                                break adress;
+                            }
+                        }
+                        ElevatorOnline.get_Person_List( { filter: 'all', list: 'elevator', id: `${inspections[selected].elevator}`, sorted: 'position' } ).then( (resolve)=>{ setE_contact_person(resolve); console.log('get_Contact_List = ',resolve); } )
+                        console.log('get_Elevator_List = ',resolve);
+                    } );
+                    //console.log('inspections[selected].elevator = ',inspections[selected].elevator);
+                 } );
+            } else {
+                setE_firm( 0 );
+                ElevatorOnline.get_Elevator_List( { filter: 'all', sorted: 'elevator_name' } ).then( (resolve)=>{ setElevator(resolve); console.log('get_Elevator_List = ',resolve); } );
+                setE_elevator( 0 );
+                setE_adress( '' );
+                setE_comments( '' );
+                setE_contact_person( [] );
+                }
         if ( inspections[selected].client ) { setI_client( inspections[selected].client) } else setI_client( '' );
         if ( inspections[selected].inspector ) { setI_inspector( inspections[selected].inspector) } else setI_inspector( '' );
         if ( inspections[selected].status ) { setI_status( inspections[selected].status) } else setI_status( '' );
         if ( inspections[selected].result ) { setI_result( inspections[selected].result) } else setI_result( '' );
-        if ( inspections[selected].commments ) { setI_comments( inspections[selected].commments) } else setI_comments( '' );
+        if ( inspections[selected].comments ) { setI_comments( inspections[selected].comments) } else setI_comments( '' );
 
         setEdit(true);
     }
@@ -217,12 +280,10 @@ export function Inspection_List ( props ){
         inspections[selected].order = i_order;
         inspections[selected].elevator = e_elevator;
         inspections[selected].client = i_client;
-        //console.log('i_client = ', i_client);
         inspections[selected].inspector = i_inspector;
         inspections[selected].status = i_status;
         inspections[selected].result = i_result;
         inspections[selected].comments = i_comments;
-        //console.log('inspection[selected] apply = ', inspections[selected]);
 
         setEdit(false);
 
@@ -234,6 +295,18 @@ export function Inspection_List ( props ){
         console.log('selected inspection = ',inspections[sel] );
     }
 
+    const handleOpenInpection = (e)=>{
+        console.log('current inspection = ',inspections[selected].id );
+        console.log('elevator inspection = ',inspections[selected].elevator );
+        ElevatorOnline.get_Elevator( inspections[selected].elevator ).then( ( resolve ) => { 
+            console.log( 'get_Elevator from inspection = ',resolve ); 
+            Elevators.setElevatorsFromServer =  resolve;
+            //setSendServer( true );
+            setUpdate( !update );
+        } );
+    }
+
+
     return(
         <div>
 
@@ -243,7 +316,7 @@ export function Inspection_List ( props ){
 
             <thead>
                 <tr>
-                    <th >id</th>
+                    <th>id</th>
                     <th>order_no</th>
                     <th>order_date</th>
                     <th>order_time</th>
@@ -251,9 +324,6 @@ export function Inspection_List ( props ){
                     <th>elevator</th>
                     <th>client</th>
                     <th>inspector</th>
-                    <th>complex</th>
-                    <th>silo</th>
-                    <th>warehouse</th>
                     <th>status</th>
                     <th>result</th>
                     <th>comments</th>
@@ -280,7 +350,7 @@ export function Inspection_List ( props ){
                 <button
                     className='myButton'
                     style={{ width: '150px' }}
-                    //onClick={handleOpenElevator}
+                    onClick={handleOpenInpection}
                     >Open from server</button>
                 <button
                     className='myButton'
@@ -360,7 +430,6 @@ export function Inspection_List ( props ){
                                 value={e_firm}
                                 onChange={handle_e_firm}
                                 >
-                                <option value="">--Please choose an option--</option>
                                 <option value='0'>--any--</option>
                                 {firm.map(( value, index ) => (
                                     <option id={index} value={ value.id }>
@@ -407,6 +476,23 @@ export function Inspection_List ( props ){
                                 wrap='off'
                                 readOnly
                             />
+                        </div>
+                        <div className='block'>
+                        <div className='inputMenu'>
+                            <label>Complex</label>
+                            <label>found/not found</label>
+                            <button>load empty tamplate</button>
+                        </div>
+                        <div className='inputMenu'>
+                            <label>Silo</label>
+                            <label>found/not found</label>
+                            <button>load empty tamplate</button>
+                        </div>
+                        <div className='inputMenu'>
+                            <label>Warehouse</label>
+                            <label>found/not found</label>
+                            <button>load empty tamplate</button>
+                        </div>
                         </div>
                         <div className='inputMenu'>
                             <label>Elevator comments</label>

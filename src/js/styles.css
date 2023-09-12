@@ -253,6 +253,7 @@ input[type="range"]::-moz-range-thumb {
             border-width : 1px;
             border-color : grey;
           }
+          
   .myTableEmptyError {
             color:black;
             background-color: red;

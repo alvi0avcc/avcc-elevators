@@ -140,6 +140,23 @@ class cElevatorOnline {
         })
     }
 
+    get_Firm( id ){
+        let data = {};
+        data.id = id;
+        return new Promise ( ( resolve, reject ) => {
+            if ( User.get_LoginStatus ) {
+                fetch( this.ServerPath + "firmdata" , { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                    body: JSON.stringify(data)
+                    }).then(response => response.json()).then((data) => {
+                    console.log('Firm_Data = ',data);
+                    resolve (data);
+                    });
+            }
+        })
+    }
+
     get_Firm_List( filter ){
         return new Promise ( (resolve, reject) => {
             if ( User.get_LoginStatus ) {
@@ -169,6 +186,23 @@ class cElevatorOnline {
                 resolve (data);
                 });
             } else resolve (null);
+        })
+    }
+
+    get_Person( id ){
+        let data = {};
+        data.id = id;
+        return new Promise ( ( resolve, reject ) => {
+            if ( User.get_LoginStatus ) {
+                fetch( this.ServerPath + "persondata" , { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                    body: JSON.stringify(data)
+                    }).then(response => response.json()).then((data) => {
+                    console.log('Person_Data = ',data);
+                    resolve (data);
+                    });
+            }
         })
     }
 
