@@ -9,6 +9,7 @@ import { ElevatorOnline } from './elevatorOnline.js';
 //import { useContext } from 'react';
 //import { UpdateContext } from '../Main'
 import { DateIsoToString, monthNames } from './date_utilites.js';
+import { parseJsonText } from 'typescript';
 
 
 function Inspection_List_row( props ){
@@ -72,6 +73,9 @@ function Inspection_List_row( props ){
             <td align='center'>{ item.order_time }</td>
             <td width={'40%'} style={{ fontSize: '70%'}}>{ item.order }</td>
             <td width={'10%'} align='center'>{ item.elevator_name }</td>
+            <td align='center'><input type='checkbox' checked={ ( item.complex_found == 'true' ? true : false ) }/></td>
+            <td align='center'><input type='checkbox' checked={ ( item.silo_found == 'true' ? true : false ) }/></td>
+            <td align='center'><input type='checkbox' checked={ ( item.warehouse_found == 'true' ? true : false ) }/></td>
             <td width={'10%'} align='center'>{ item.client_name }</td>
             <td width={'10%'} align='center'>{ item.inspector_name + ' ' + item.inspector_surname }</td>
             <td align='center' style={{ fontSize: '70%'}}>{ status }</td>
@@ -255,11 +259,19 @@ export function Inspection_List ( props ){
         if ( inspections[selected].result ) { setI_result( inspections[selected].result) } else setI_result( '' );
         if ( inspections[selected].comments ) { setI_comments( inspections[selected].comments) } else setI_comments( '' );
 
+        if ( inspections[selected].complex_found == 'true' ) { setElevator_complex_found( true ) } else setElevator_complex_found( false );
+        if ( inspections[selected].silo_found == 'true' ) { setElevator_silo_found( true ) } else setElevator_silo_found( false );
+        if ( inspections[selected].warehouse_found == 'true' ) { setElevator_warehouse_found( true ) } else setElevator_warehouse_found( false );
+
         setEdit(true);
     }
 
     const edit_Inspection_close = ()=>{
         setEdit(false);
+
+        setElevator_complex(null);
+        setElevator_silo(null);
+        setElevator_warehouse(null);
 /*
         if ( inspections[selected].order_no ) { setI_number( inspections[selected].order_no ) } else setI_number( '' );
         if ( inspections[selected].order_date ) { setI_date( inspections[selected].order_date) } else setI_date( '' );
@@ -287,7 +299,17 @@ export function Inspection_List ( props ){
 
         setEdit(false);
 
-        ElevatorOnline.update_Inspection_to_Server( inspections[selected] , 'simple' );
+        if ( elevator_complex && elevator_complex_use )
+            inspections[selected].complex  = structuredClone( elevator_complex )
+            else inspections[selected].complex = null;
+        if ( elevator_silo && elevator_silo_use )
+            inspections[selected].silo  = structuredClone( elevator_silo)
+            else inspections[selected].silo = null;
+         if ( elevator_warehouse && elevator_warehouse_use )
+            inspections[selected].warehouse  = structuredClone( elevator_warehouse )
+            else inspections[selected].warehouse = null;
+
+        ElevatorOnline.update_Inspection_to_Server( inspections[selected] , 'full' );
     }
 
     const selected_change = (sel)=>{
@@ -298,14 +320,56 @@ export function Inspection_List ( props ){
     const handleOpenInpection = (e)=>{
         console.log('current inspection = ',inspections[selected].id );
         console.log('elevator inspection = ',inspections[selected].elevator );
-        ElevatorOnline.get_Elevator( inspections[selected].elevator ).then( ( resolve ) => { 
-            console.log( 'get_Elevator from inspection = ',resolve ); 
-            Elevators.setElevatorsFromServer =  resolve;
+        ElevatorOnline.get_Inspection( inspections[selected].id ).then( ( resolve ) => { 
+            console.log( 'get_Inspection = ',resolve ); 
+            Elevators.setInspectionFromServer =  resolve;
             //setSendServer( true );
             setUpdate( !update );
         } );
     }
 
+    //const [empty_elevator, setEmpty_elevator] = React.useState({});
+    const [elevator_complex, setElevator_complex] = React.useState();
+    const [elevator_silo, setElevator_silo] = React.useState();
+    const [elevator_warehouse, setElevator_warehouse] = React.useState();
+    const [elevator_complex_use, setElevator_complex_use] = React.useState(true);
+    const [elevator_silo_use, setElevator_silo_use] = React.useState(true);
+    const [elevator_warehouse_use, setElevator_warehouse_use] = React.useState(true);
+    const [elevator_complex_found, setElevator_complex_found] = React.useState(false);
+    const [elevator_silo_found, setElevator_silo_found] = React.useState(false);
+    const [elevator_warehouse_found, setElevator_warehouse_found] = React.useState(false);
+
+    const handle_complex_use = (e)=>{
+        setElevator_complex_use( !elevator_complex_use );
+    }
+
+    const handle_silo_use = (e)=>{
+        setElevator_silo_use( !elevator_silo_use );
+    }
+
+    const handle_warehouse_use = (e)=>{
+        setElevator_warehouse_use( !elevator_warehouse_use);
+    }
+
+    const handle_load_elevator = ()=>{
+        //setE_comments( e.target.value );
+        console.log('current inspection = ',inspections[selected].id );
+        //console.log('elevator inspection = ',inspections[selected].elevator );
+        console.log('elevator inspection = ',e_elevator );
+        ElevatorOnline.get_Elevator( e_elevator ).then( ( resolve ) => { 
+            //Elevators.setElevatorsFromServer =  resolve;
+            //console.log('elevator = ',resolve );
+            setElevator_complex( JSON.parse( resolve[0].complex ) );
+            setElevator_silo( JSON.parse( resolve[0].silo ) );
+            setElevator_warehouse( JSON.parse( resolve[0].warehouse ) );
+            console.log('elevator complex = ',elevator_complex );
+            console.log('elevator silo = ',elevator_silo );
+            console.log('elevator warehouse = ',elevator_warehouse );
+            //setElevator_complex_use( ( elevator_complex ? true : false ) );
+            //setSendServer( true );
+            //setUpdate( !update );
+        } );
+    }
 
     return(
         <div>
@@ -317,16 +381,19 @@ export function Inspection_List ( props ){
             <thead>
                 <tr>
                     <th>id</th>
-                    <th>order_no</th>
-                    <th>order_date</th>
-                    <th>order_time</th>
-                    <th>order</th>
-                    <th>elevator</th>
-                    <th>client</th>
-                    <th>inspector</th>
-                    <th>status</th>
-                    <th>result</th>
-                    <th>comments</th>
+                    <th>Order №</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Order</th>
+                    <th>Elevator</th>
+                    <th title='complex'>c</th>
+                    <th title='silo'>s</th>
+                    <th title='warehouse'>w</th>
+                    <th>Client</th>
+                    <th>Inspector</th>
+                    <th>Status</th>
+                    <th>Result</th>
+                    <th>Comments</th>
                 </tr>
             </thead>
 
@@ -457,47 +524,62 @@ export function Inspection_List ( props ){
                         <div className='inputMenu'>
                             <label>Elevator Adress</label>
                             <textarea  
-                                style={{ width: '301px' }}
+                                style={{ width: '301px', resize: 'vertical' }}
                                 value={e_adress}
-                                rows="3"
+                                rows="2"
                                 readOnly
                             />
                         </div>
                         <div className='inputMenu'>
                             <label>Elevator contacts</label>
                             <textarea  
-                                style={{ width: '301px' }}
+                                style={{ width: '301px', resize: 'vertical' }}
                                 value={e_contact_person.map( (value, index ) => ( 
                                     ( value.elevator == null ? '' :
                                         ( ( index != 0 ) ? '\n' : '' )  + value.position + ' - ' + value.name + ' ' + value.surname + ', tel - ' + value.phone  + ( value.comments ? ', ' + value.comments : '' ) 
                                     )
                                     ) )}
-                                rows="5"
+                                rows="3"
                                 wrap='off'
                                 readOnly
                             />
                         </div>
+
                         <div className='block'>
-                        <div className='inputMenu'>
-                            <label>Complex</label>
-                            <label>found/not found</label>
-                            <button>load empty tamplate</button>
+                        <button onClick={handle_load_elevator}>load template from base</button>
+                            <div className='inputMenu'>
+                                <label>Complex</label>
+                                <label>{ ( elevator_complex_found ? 'exist' : 'not exist' ) }</label>
+                                <label>{ ( elevator_complex ? '' : 'not loaded' ) }</label>
+                                <div style={{ display: ( elevator_complex ? 'block' : 'none' ) }}>
+                                    <label for='complex_use' >Loaded, use for inspection</label>
+                                    <input id='complex_use' checked={elevator_complex_use} type='checkbox' onChange={handle_complex_use}/>
+                                </div>
+                            </div>
+                            <div className='inputMenu'>
+                                <label>Silo</label>
+                                <label>{ ( elevator_silo_found ? 'exist' : 'not exist' ) }</label>
+                                <label>{ ( elevator_silo ? '' : 'not loaded' ) }</label>
+                                <div style={{ display: ( elevator_silo ? 'block' : 'none' ) }}>
+                                    <label for='silo_use' >Loaded, use for inspection</label>
+                                    <input id='silo_use' checked={elevator_silo_use} type='checkbox' onChange={handle_silo_use}/>
+                                </div>
+                            </div>
+                            <div className='inputMenu'>
+                                <label>Warehouse</label>
+                                <label>{ ( elevator_warehouse_found ? 'exist' : 'not exist' ) }</label>
+                                <label>{ ( elevator_warehouse? '' : 'not loaded' ) }</label>
+                                <div style={{ display: ( elevator_warehouse ? 'block' : 'none' ) }}>
+                                    <label for='warehouse_use' >Loaded, use for inspection</label>
+                                    <input id='warehouse_use' checked={elevator_warehouse_use} type='checkbox' onChange={handle_warehouse_use}/>
+                                </div>
+                            </div>
                         </div>
-                        <div className='inputMenu'>
-                            <label>Silo</label>
-                            <label>found/not found</label>
-                            <button>load empty tamplate</button>
-                        </div>
-                        <div className='inputMenu'>
-                            <label>Warehouse</label>
-                            <label>found/not found</label>
-                            <button>load empty tamplate</button>
-                        </div>
-                        </div>
+
                         <div className='inputMenu'>
                             <label>Elevator comments</label>
                             <textarea 
-                                style={{ width: '301px' }}
+                                style={{ width: '301px', resize: 'vertical' }}
                                 value={e_comments}
                                 onChange={handle_e_comments}
                                 rows="3"
@@ -509,7 +591,7 @@ export function Inspection_List ( props ){
                         <div className='inputMenu'>
                             <label>Inspection Order</label>
                             <textarea 
-                                style={{ width: '301px' }} 
+                                style={{ width: '301px', resize: 'vertical' }} 
                                 value={i_order}
                                 onChange={handle_i_order}
                                 rows="5"
@@ -565,7 +647,7 @@ export function Inspection_List ( props ){
                         <div className='inputMenu'>
                             <label>Comments</label>
                             <textarea 
-                                style={{ width: '301px' }}
+                                style={{ width: '301px', resize: 'vertical' }}
                                 value={i_comments}
                                 onChange={handle_i_comments}
                                 rows="3"

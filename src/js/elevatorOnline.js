@@ -33,6 +33,25 @@ class cElevatorOnline {
         console.log(this.inspection[0].id);
         return (this.inspection[0].id);
     }
+    /**
+     * @param {number} id Inspection
+     */
+    get_Inspection( id ){
+        let data = {};
+        data.id = id;
+        return new Promise ( ( resolve, reject ) => {
+            if ( User.get_LoginStatus ) {
+                fetch( this.ServerPath + "inspectiondata" , { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                    body: JSON.stringify(data)
+                    }).then(response => response.json()).then((data) => {
+                    console.log('Inspection_Data = ',data);
+                    resolve (data);
+                    });
+            }
+        })
+    }
 
     get_Elevator_List( filter ){
         return new Promise ( (resolve, reject) => {
@@ -223,7 +242,8 @@ class cElevatorOnline {
     }
 
     update_Inspection_to_Server( inspection, parameter ){
-        console.log('send update_INspection_to_Server = ',inspection);
+        console.log('send update_Inspection_to_Server = ',inspection);
+        //console.log('send update_Inspection_to_Server JSON= ',JSON.stringify(inspection));
         return new Promise ( (resolve, reject) => {
             if ( User.get_LoginStatus ) {
 

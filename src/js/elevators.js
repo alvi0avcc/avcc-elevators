@@ -108,7 +108,7 @@ class cWarehouse {
 
 class cElevator {
     constructor() {
-        this.id      = '';
+        this.id      = 0;
         this.Name    = 'NewElevator';
         this.Adress  = '';
         this.Owner   = '';
@@ -1340,6 +1340,34 @@ class cElevators {
 
             this.ComplexSiloSelected = data.ComplexSiloSelected;
 
+
+        } else this.State = 'closed';
+    }
+    set setInspectionFromServer(data){
+        if ( data != undefined ) { 
+            this.Elevators = [];
+            this.AddElevator();
+            this.Elevators[0].id  = data[0].id;
+            this.Elevators[0].Name  = data[0].elevator_name;
+            this.Elevators[0].Adress  = data[0].elevator_adress;
+            this.Elevators[0].Owner  = data[0].elevator_owner_name;
+            this.Elevators[0].Client  = data[0].client_name;
+            this.Elevators[0].InspectorName  = data[0].inspector_name + ' ' + data[0].inspector_surname;
+            this.Elevators[0].Comments  = data[0].elevator_comments;
+            this.Elevators[0].Complex  = JSON.parse( data[0].complex );
+            this.Elevators[0].Silo  = JSON.parse( data[0].silo );
+            this.Elevators[0].Warehouse  = JSON.parse( data[0].warehouse );
+
+            this.Selected = 0;
+            this.ComplexSelected = 0;
+            this.SiloSelected = 0;
+            this.WarehouseSelected = 0;
+
+            this.State = 'open';
+
+            console.log('Inspection = ', this.Elevators);
+
+           // this.ComplexSiloSelected = data.ComplexSiloSelected;
 
         } else this.State = 'closed';
     }
