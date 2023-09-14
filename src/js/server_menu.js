@@ -31,8 +31,8 @@ export default function ServerMenu(){
 
       React.useEffect(() => {
         fetch("http://localhost:3001/", { method: 'GET' })
-          .then((res) => res.json())
-          .then((response) => setStatus(response.online));
+          .then((res) => res.json() )
+          .then((response) => setStatus(response.online) );
       }, []);
 
     return (
