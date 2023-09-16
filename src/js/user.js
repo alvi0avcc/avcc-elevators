@@ -65,14 +65,15 @@ class cUser {
             password: pass,
           };
 
-        this.username = login;
+        this.user = login;
         this.password = pass;
-        //console.log('SignIn');
+        console.log('SignIn=',user);
 
         return new Promise ( function(resolve, reject) {
         fetch("http://localhost:3001/connect" , { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json;charset=utf-8' },
+            credentials: 'include',
             body: JSON.stringify(user)
         } ).then(response => response.json()).then((data) => {
             User.set_ServerResponse = data;
