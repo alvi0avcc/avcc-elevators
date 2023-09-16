@@ -10,24 +10,69 @@ import { UpdateContext } from '../Main'
 
 export default function ServerMenu(){
     const [status, setStatus] = React.useState(false);
-    const [login, setLogin] = React.useState(null);
-    const [pass, setPass] = React.useState(null);
+    const [user, setUser] = React.useState('');
+
     const [loginStatus, setloginStatus] = React.useState(false);
 
-    const handleLogin = (e)=>{
-        setLogin( e.target.value );
-    }
-    
-    const handlePass = (e)=>{
-        setPass( e.target.value );
-    }
-    
-    const handleEnter = (e)=>{
-        if ( e.keyCode == 13 ) {
-            //setloginStatus( User.SignIn( login, pass ) );
-            User.SignIn( login, pass ).then ( (result) => setloginStatus(result) );
+    function LoginForm(props){
+        const [login, setLogin] = React.useState('');
+        const [pass, setPass] = React.useState('');
+
+        const handleLogin = (e)=>{ setLogin( e.target.value ) }
+
+        const handlePass = (e)=>{ setPass( e.target.value ) }
+
+        const handleEnter = (e)=>{
+            if ( e.keyCode == 13 ) {
+                //setloginStatus( User.SignIn( login, pass ) );
+                User.SignIn( login, pass ).then ( (result) => setloginStatus(result) );
+            }
         }
+
+        return (
+            <div style={{ display: ( props.show ? 'flex ' : 'none' ) }}>
+            <div className = 'block_row' style={{ display: ( !loginStatus ? 'flex ' : 'none' ) }}>
+                <div>
+                    <label for="name"> Username:</label>
+                    <input 
+                        value={login}
+                        onChange={handleLogin}
+                        onKeyUp={handleEnter}
+                        type="text" id="name" name="name" required minlength="4" maxlength="10" size="10"
+                    />
+                </div>
+                <div>
+                    <label for="pass">Password:</label>
+                    <input 
+                        value={pass}
+                        onChange={handlePass}
+                        onKeyUp={handleEnter}
+                        type="password" id="pass" name="password" minlength="8" required size="10"
+                    />
+                </div>
+
+                <button
+                    onClick={ () => User.SignIn( login, pass ).then ( (result) => {
+                        setloginStatus(result);
+                        setUser(User.get_UserFullName );
+                        } ) }
+                >Sign in</button>
+
+            </div>
+
+            <div className = 'block_row' style={{ display: ( loginStatus ? 'flex ' : 'none' ) }}>
+                <button
+                    onClick={()=> User.SignOut().then( (result) => {
+                        setloginStatus(result);
+                        setUser(User.get_UserFullName);
+                    }) }
+                >Sign out</button>
+            </div>
+
+            </div>
+        )
     }
+    
 
       React.useEffect(() => {
         fetch("http://localhost:3001/", { method: 'GET' })
@@ -40,32 +85,10 @@ export default function ServerMenu(){
         <div className='block_row'>
             <label>Server - </label>
             <label>{status ? "Online..." : "Offline..."}</label>
-
-            <div style={{ display: ( status ? 'flex' : 'none' ) }}>
-                <label for="name"> Username:</label>
-                <input 
-                    value={login}
-                    onChange={handleLogin}
-                    onKeyUp={handleEnter}
-                    type="text" id="name" name="name" required minlength="4" maxlength="10" size="10"
-                />
-
-                <label for="pass">Password:</label>
-                <input 
-                    value={pass}
-                    onChange={handlePass}
-                    onKeyUp={handleEnter}
-                    type="password" id="pass" name="password" minlength="8" required size="10"
-                />
-
-                <button
-                    onClick={ () => User.SignIn( login, pass ).then ( (result) => setloginStatus(result) ) }
-                >Sign in</button>
-
-                <label>{ loginStatus ? 'Connected as ' + User.get_UserFullName : 'Disconnected' }</label>
-            </div>
-
+            <label>{ loginStatus ? 'Connected as ' + user : 'Disconnected' }</label>
         </div>
+
+        <LoginForm show = {status}/>
 
         <div
             className='block'

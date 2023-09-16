@@ -8,6 +8,9 @@ class cElevatorOnline {
         this.ServerPath = 'http://localhost:3001/';
     }
 
+    get get_ServerPath(){
+        return this.ServerPath;
+    }
     get get_ElevatorOnline_Info() {
         return ElevatorOnline;
     }

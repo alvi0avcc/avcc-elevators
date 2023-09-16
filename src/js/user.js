@@ -2,8 +2,8 @@ import { ElevatorOnline } from './elevatorOnline.js';
 
 class cUser {
     constructor() {
-        this.username   = 'user';
-        this.password   = 'user';
+        this.username   = '';
+        this.password   = '';
         this.name       = '';
         this.surname    = '';
         this.loginStatus    = false;
@@ -52,7 +52,7 @@ class cUser {
 
     get ServerOnline(){
         let result = false;
-        fetch("http://localhost:3001/", { method: 'GET' })
+        fetch( ElevatorOnline.get_ServerPath , { method: 'GET' })
             .then((res) => res.json())
             .then((status) => result = status.online );
             
@@ -60,25 +60,40 @@ class cUser {
     }
 
     SignIn( login, pass ){
-        let user = {
-            username: login,
-            password: pass,
-          };
 
-        this.user = login;
-        this.password = pass;
-        console.log('SignIn=',user);
+        if ( login == '' || login == null ) login = 'demo';
+        if ( pass == '' || pass == null ) pass = 'demo';
+
+       // console.log('SignIn=',login,pass);
+        //console.log('{}=',{ login: login, password: pass });
+        //console.log('Path =',ElevatorOnline.get_ServerPath);
 
         return new Promise ( function(resolve, reject) {
-        fetch("http://localhost:3001/connect" , { 
+        fetch( ElevatorOnline.get_ServerPath + "login" , { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json;charset=utf-8' },
             credentials: 'include',
-            body: JSON.stringify(user)
+            body: JSON.stringify( { login: login, password: pass } )
         } ).then(response => response.json()).then((data) => {
             User.set_ServerResponse = data;
+            console.log('SignIn server response = ',data);
             //console.log(User.get_UserInfo);
             ElevatorOnline.get_Inspection_List({filter: 'all'});
+            resolve( User.loginStatus );
+            } );
+
+        });
+    }
+
+    SignOut(){
+        return new Promise ( function(resolve, reject) {
+        fetch( ElevatorOnline.get_ServerPath + "logout" , { 
+            method: 'GET',
+        } ).then(response => response.json()).then((data) => {
+            User.set_ServerResponse = data;
+            console.log('SignOut server response = ',data);
+            console.log(User.get_UserInfo);
+            //ElevatorOnline.get_Inspection_List({filter: 'all'});
             resolve( User.loginStatus );
             } );
 
