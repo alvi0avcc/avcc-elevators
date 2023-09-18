@@ -19,7 +19,6 @@ const Main = () => {
     <UpdateContext.Provider value={ [update, setUpdate] }>
       
       <div style={{ width: '100%' }}>
-
         <FileMenuButton/>
 
         <div 

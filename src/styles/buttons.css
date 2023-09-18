@@ -1,0 +1,53 @@
+button{
+  border-width: 1px;
+  border-radius: 5px;
+  margin: 2px;
+  background-color: transparent;
+  border-color: blue;
+  font-size: 1rem;
+  color: blue;
+  text-align: center;
+}
+
+button:hover {
+  background-color: whitesmoke;
+}
+
+button:disabled {
+  color: lightgrey;
+  border-color: lightgrey;
+  background-color: transparent;
+}
+
+button:disabled:hover {
+  background-color: transparent;
+}
+
+label[type="button"]{
+  border-width: 1px;
+  border-radius: 5px;
+  border-style: solid;
+  border-color: blue;
+  margin: 2px;
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: transparent;
+  font-size: 1rem;
+  color: blue;
+  text-align: center;
+}
+
+label[type="button"]:hover {
+  background-color: whitesmoke;
+}
+
+label[type="button"]:disabled {
+  color: lightgrey;
+  border-color: lightgrey;
+  background-color: transparent;
+}
+
+label[type="button"]:disabled:hover {
+  background-color: transparent;
+}
+

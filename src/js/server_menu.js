@@ -137,27 +137,22 @@ console.log('firm = ',firm);
         return(
         <div>
             <button 
-                className='myButton' 
                 style={{ width: '100px', borderWidth: ( table == 1 ? '3px'  : '0' ), borderColor: 'lime' }}
                 onClick={handleInspection}
                 >Inspections</button>
             <button 
-                className='myButton'
                 style={{ width: '100px', borderWidth: ( table == 2 ? '3px'  : '0' ), borderColor: 'lime' }}
                 onClick={handleElevators}
                 >Elevators</button>
             <button 
-                className='myButton'
                 style={{ width: '100px', borderWidth: ( table == 3 ? '3px'  : '0' ), borderColor: 'lime' }}
                 onClick={handleFirms}
                 >Firms</button>
             <button 
-                className='myButton'
                 style={{ width: '100px', borderWidth: ( table == 4 ? '3px'  : '0' ), borderColor: 'lime' }}
                 onClick={handlePersons}
                 >Persons</button>
             <button 
-                className='myButton'
                 style={{ width: '100px', borderWidth: ( table == 5 ? '3px'  : '0' ), borderColor: 'lime' }}
                 onClick={handleUsers}
                 >Users</button>
@@ -343,12 +338,10 @@ function Elevator_List ( props ){
                 style={{ justifyContent: 'space-around' }}
             >
                 <button
-                    className='myButton'
                     style={{ width: '150px' }}
                     onClick={handleOpenElevator}
                     >Open from server</button>
                 <button
-                    className='myButton'
                     style={{ width: '150px', display: ( sendServer ? 'block' : 'none' ) }}
                     onClick={handleSendServer}
                     >Send to server</button>

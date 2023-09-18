@@ -27,14 +27,14 @@ const handleImport = (e)=>{
 
     <div style={{ display:'flex', justifyContent: 'space-between' }}>
         <div>
-            <button className='myButton'
+            <button
                 style={{ width: 60, fontSize: 12}}
                 onClick={ () => ( 
                 Elevators.setElevators =  iolocal.OpenElevator() ,
                 setUpdate( !update )
                 ) }
             >Open</button>
-            <button className='myButton'
+            <button
                 style={{ width: 60, fontSize: 12}}
                 onClick={ () => ( 
                 iolocal.SaveElevator()
@@ -46,8 +46,8 @@ const handleImport = (e)=>{
 
             <label 
                 for="fileImport"
-                className='myButton'
-                style={{ display: 'inline-block', width: 60, height: 25, fontSize: 12, paddingTop: 5 }}
+                type="button"
+                style={ { fontSize: 12 }}
                 >Import</label>
             <input
                 id="fileImport"
@@ -57,7 +57,7 @@ const handleImport = (e)=>{
                 onChange={handleImport}
                 />
 
-            <button className='myButton'
+            <button 
                 style={{ width: 60, fontSize: 12}}
                 onClick={ () => (
                 iolocal.ExportWarehouse()

@@ -1,5 +1,8 @@
 import React from 'react';
 import { HashRouter, BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import "./styles/styles.css";
+import "./styles/buttons.css";
+import "./styles/tables.css";
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import { Button } from '@mui/material';

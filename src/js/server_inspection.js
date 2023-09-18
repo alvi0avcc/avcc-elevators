@@ -376,7 +376,7 @@ export function Inspection_List ( props ){
 
         <div style={{ height: 300, width: '100%', overflow: 'auto' }} >
             
-            <table className='myTable'>
+            <table>
 
             <thead>
                 <tr>
@@ -415,12 +415,10 @@ export function Inspection_List ( props ){
                 style={{ justifyContent: 'space-around' }}
             >
                 <button
-                    className='myButton'
                     style={{ width: '150px' }}
                     onClick={handleOpenInpection}
                     >Open from server</button>
                 <button
-                    className='myButton'
                     //style={{ width: '150px', display: ( sendServer ? 'block' : 'none' ) }}
                     //onClick={handleSendServer}
                     >Send to server</button>

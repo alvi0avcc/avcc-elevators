@@ -472,32 +472,8 @@ input[type="range"]::-moz-range-thumb {
   cursor: inherit;
 }
 
-.tableHeadInfo {
-  width: 300px;
-}
 
-.tableObjectInfo {
-  color:black;
-  border-collapse : collapse;
-  border-style :  solid;
-  border-width : 1px;
-  border-color : grey; 
-  width: 100%;
-  table-layout: fixed;
-}
 
-.tableObjectInfo td {
-  border-style :  solid;
-  border-width : 1px;
-  border-color : grey;
-}
-
-thead th {
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0;
-  background: white;
-}
 
 /* The Modal (background) */
 .modal {
