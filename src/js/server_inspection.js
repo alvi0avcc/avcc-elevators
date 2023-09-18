@@ -69,17 +69,17 @@ function Inspection_List_row( props ){
         >
             <td style={{ fontSize: '50%' }}>{ item.id }</td>
             <td width={'20%'}>{ item.order_no }</td>
-            <td align='center'>{ ( item.order_date ? ( date.getFullYear() +' '+ monthNames[ date.getMonth() ] + ' ' + date.getDate() ) : '') }</td>
-            <td align='center'>{ item.order_time }</td>
+            <td>{ ( item.order_date ? ( date.getFullYear() +' '+ monthNames[ date.getMonth() ] + ' ' + date.getDate() ) : '') }</td>
+            <td>{ item.order_time }</td>
             <td width={'40%'} style={{ fontSize: '70%'}}>{ item.order }</td>
             <td width={'10%'} align='center'>{ item.elevator_name }</td>
-            <td align='center'><input type='checkbox' checked={ ( item.complex_found == 'true' ? true : false ) }/></td>
-            <td align='center'><input type='checkbox' checked={ ( item.silo_found == 'true' ? true : false ) }/></td>
-            <td align='center'><input type='checkbox' checked={ ( item.warehouse_found == 'true' ? true : false ) }/></td>
+            <td><input type='checkbox' checked={ ( item.complex_found == 'true' ? true : false ) }/></td>
+            <td><input type='checkbox' checked={ ( item.silo_found == 'true' ? true : false ) }/></td>
+            <td><input type='checkbox' checked={ ( item.warehouse_found == 'true' ? true : false ) }/></td>
             <td width={'10%'} align='center'>{ item.client_name }</td>
-            <td width={'10%'} align='center'>{ item.inspector_name + ' ' + item.inspector_surname }</td>
-            <td align='center' style={{ fontSize: '70%'}}>{ status }</td>
-            <td align='center' style={{ fontSize: '70%'}}>{ result }</td>
+            <td width={'10%'} align='center'>{ ( item.inspector_name ? item.inspector_name : '' ) + ' ' + ( item.inspector_surname ? item.inspector_surname : '' ) }</td>
+            <td style={{ fontSize: '70%'}}>{ status }</td>
+            <td style={{ fontSize: '70%'}}>{ result }</td>
             <td style={{ fontSize: '50%'}}>{ item.comments }</td>
         </tr>
     )
@@ -655,12 +655,10 @@ export function Inspection_List ( props ){
 
                     <div class="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end' }}>
                         <button 
-                            className='myButton' 
                             style={{ width: '80px' }}
                             onClick={edit_Inspection_close}
                             >Cancel</button>
                         <button 
-                            className='myButton'
                             style={{ width: '80px' }}
                             onClick={edit_Inspection_apply}
                             >Apply</button>

@@ -3,6 +3,8 @@ import { HashRouter, BrowserRouter, Routes, Route, Link } from 'react-router-dom
 import "./styles/styles.css";
 import "./styles/buttons.css";
 import "./styles/tables.css";
+import "./styles/modal.css";
+import "./styles/animation.css"
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import { Button } from '@mui/material';
