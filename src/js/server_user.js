@@ -12,12 +12,12 @@ import { DateIsoToString, monthNames } from './date_utilites.js';
 import { parseJsonText } from 'typescript';
 
 
-function Inspection_List_row( props ){
+function User_List_row( props ){
     let row = props.row;
     let item = props.item;
     let selected = props.selected;
 
-    let date = new Date( item.order_date );
+    //let date = new Date( item.order_date );
 
     const [ elevator, setElevator ] = React.useState('');
     if ( item.elevator > 0 )
@@ -58,7 +58,7 @@ function Inspection_List_row( props ){
 
     const handleClick = (e)=>{
         props.callback_id(item.id);
-        props.callback_order_no(item.order_no);
+        props.callback_username(item.order_no);
         props.callback(row);
     }
 
@@ -68,83 +68,91 @@ function Inspection_List_row( props ){
             onClick={handleClick}
         >
             <td style={{ fontSize: '50%' }}>{ item.id }</td>
-            <td width={'20%'}>{ item.order_no }</td>
-            <td>{ ( item.order_date ? ( date.getFullYear() +' '+ monthNames[ date.getMonth() ] + ' ' + date.getDate() ) : '') }</td>
-            <td>{ item.order_time }</td>
-            <td width={'40%'} style={{ fontSize: '70%'}}>{ item.order }</td>
-            <td width={'10%'} align='center'>{ item.elevator_name }</td>
-            <td><input type='checkbox' readOnly checked={ ( item.complex_found == 'true' ? true : false ) }/></td>
-            <td><input type='checkbox' readOnly checked={ ( item.silo_found == 'true' ? true : false ) }/></td>
-            <td><input type='checkbox' readOnly checked={ ( item.warehouse_found == 'true' ? true : false ) }/></td>
-            <td width={'10%'} align='center'>{ item.client_name }</td>
-            <td width={'10%'} align='center'>{ ( item.inspector_name ? item.inspector_name : '' ) + ' ' + ( item.inspector_surname ? item.inspector_surname : '' ) }</td>
-            <td style={{ fontSize: '70%'}}>{ status }</td>
-            <td style={{ fontSize: '70%'}}>{ result }</td>
-            <td style={{ fontSize: '50%'}}>{ item.comments }</td>
+            <td>{ item.username }</td>
+            <td>{ item.password }</td>
+            <td>{ item.name }</td>
+            <td>{ item.surname }</td>
+            <td>{ ( item.enabled == 1 ? 'active' : 'blocked' ) }</td>
+            <td><input type='checkbox' readOnly checked={ ( item.inspection_create == 1 ? true : false ) }/></td>
+            <td><input type='checkbox' readOnly checked={ ( item.inspection_edit == 1 ? true : false ) }/></td>
+            <td><input type='checkbox' readOnly checked={ ( item.inspection_read == 1 ? true : false ) }/></td>
+            <td><input type='checkbox' readOnly checked={ ( item.elevator_create == 1 ? true : false ) }/></td>
+            <td><input type='checkbox' readOnly checked={ ( item.elevator_edit == 1 ? true : false ) }/></td>
+            <td><input type='checkbox' readOnly checked={ ( item.elevator_read == 1 ? true : false ) }/></td>
+            <td><input type='checkbox' readOnly checked={ ( item.firm_create == 1 ? true : false ) }/></td>
+            <td><input type='checkbox' readOnly checked={ ( item.firm_edit == 1 ? true : false ) }/></td>
+            <td><input type='checkbox' readOnly checked={ ( item.firm_read == 1 ? true : false ) }/></td>
+            <td><input type='checkbox' readOnly checked={ ( item.person_create == 1 ? true : false ) }/></td>
+            <td><input type='checkbox' readOnly checked={ ( item.person_edit == 1 ? true : false ) }/></td>
+            <td><input type='checkbox' readOnly checked={ ( item.person_read == 1 ? true : false ) }/></td>
+            <td><input type='checkbox' readOnly checked={ ( item.user_create == 1 ? true : false ) }/></td>
+            <td><input type='checkbox' readOnly checked={ ( item.user_edit == 1 ? true : false ) }/></td>
+            <td><input type='checkbox' readOnly checked={ ( item.user_read == 1 ? true : false ) }/></td>
+            <td>{ item.comments }</td>
         </tr>
     )
 }
 
-export function Inspection_List ( props ){
+export function User_List ( props ){
     const [update, setUpdate] = useContext(UpdateContext);
 
-    let inspections = props.loaded;
-    console.log('inspections = ',inspections);
+    let users = props.loaded;
+    console.log('users = ',users);
 
     const [selected, setSelected] = React.useState(0);
     const [id, setId] = React.useState(0);
-    const [orderNo, setOrderNo] = React.useState('');
+    const [username, setUsername] = React.useState('');
 
     const [firm, setFirm] = React.useState([]);
     const [inspector, setInspector] = React.useState([]);
     const [elevator, setElevator] = React.useState([]);
 
-    const [i_number, setI_number] = React.useState(inspections[0].order_no);
-    const handle_i_number = (e)=>{
-        setI_number( e.target.value );
-    }
+    //const [i_number, setI_number] = React.useState(inspections[0].order_no);
+    //const handle_i_number = (e)=>{
+    //    setI_number( e.target.value );
+    //}
 
-    const [i_date, setI_date] = React.useState( DateIsoToString( new Date ( inspections[0].order_date ) ) );
-    const handle_i_date = (e)=>{
-        setI_date( e.target.value );
-    }
+    //const [i_date, setI_date] = React.useState( DateIsoToString( new Date ( inspections[0].order_date ) ) );
+    //const handle_i_date = (e)=>{
+    //    setI_date( e.target.value );
+    //}
 
-    const [i_time, setI_time] = React.useState(inspections[0].order_time);
-    const handle_i_time = (e)=>{
-        setI_time( e.target.value );
-    }
+    //const [i_time, setI_time] = React.useState(inspections[0].order_time);
+    //const handle_i_time = (e)=>{
+    //    setI_time( e.target.value );
+    //}
 
-    const [i_inspector, setI_inspector] = React.useState(inspections[0].inspector);
-    const handle_i_inspector = (e)=>{
-        setI_inspector( e.target.value );
-    }
-
+    //const [i_inspector, setI_inspector] = React.useState(inspections[0].inspector);
+    //const handle_i_inspector = (e)=>{
+    //    setI_inspector( e.target.value );
+    //}
+/*
     function  inspectorPhone ( id ) {
         for ( let i = 0; i < inspector.length; i++ ) {
             if ( inspector[i].id == id ) return inspector[i].phone;
         }
         return ('');
     }
+*/
+    //const [i_order, setI_order] = React.useState(inspections[0].order);
+    //const handle_i_order = (e)=>{
+    //    setI_order( e.target.value );
+    //}
 
-    const [i_order, setI_order] = React.useState(inspections[0].order);
-    const handle_i_order = (e)=>{
-        setI_order( e.target.value );
-    }
+    //const [i_comments, setI_comments] = React.useState(inspections[0].comments);
+    //const handle_i_comments = (e)=>{
+    //    setI_comments( e.target.value );
+    //}
 
-    const [i_comments, setI_comments] = React.useState(inspections[0].comments);
-    const handle_i_comments = (e)=>{
-        setI_comments( e.target.value );
-    }
+    //const [i_status, setI_status] = React.useState(inspections[0].status);
+    //const handle_i_status = (e)=>{
+    //    setI_status( e.target.value );
+    //}
 
-    const [i_status, setI_status] = React.useState(inspections[0].status);
-    const handle_i_status = (e)=>{
-        setI_status( e.target.value );
-    }
-
-    const [i_result, setI_result] = React.useState(inspections[0].result);
-    const handle_i_result = (e)=>{
-        setI_result( e.target.value );
-    }
+    //const [i_result, setI_result] = React.useState(inspections[0].result);
+    //const handle_i_result = (e)=>{
+    //    setI_result( e.target.value );
+    //}
 
     const [e_firm, setE_firm] = React.useState();
     const handle_e_firm = (e)=>{
@@ -156,11 +164,11 @@ export function Inspection_List ( props ){
         
     }
 
-    const [i_client, setI_client] = React.useState(inspections[0].client);
-    const handle_i_client = (e)=>{
-        console.log('i_client=',e.target.value);
-        setI_client( e.target.value );
-    }
+    //const [i_client, setI_client] = React.useState(inspections[0].client);
+    //const handle_i_client = (e)=>{
+    //    console.log('i_client=',e.target.value);
+    //    setI_client( e.target.value );
+    //}
 
     const [e_elevator, setE_elevator] = React.useState();
     const handle_e_elevator = (e)=>{
@@ -212,22 +220,22 @@ export function Inspection_List ( props ){
     }
 
     const del_Inspection = ()=>{
-        if ( window.confirm('Delete Inspection - '+ orderNo +', with id = '+ id ) ) ElevatorOnline.del_Inspection_from_Server(id);
+        //if ( window.confirm('Delete User - '+ username +', with id = '+ id ) ) ElevatorOnline.del_Inspection_from_Server(id);
     }
 
     const edit_Inspection = ()=>{
         ElevatorOnline.get_Firm_List({filter: 'all', sorted: 'true'}).then( (resolve)=>{ setFirm(resolve); /*setI_client(resolve);*/ console.log('get_Firm_List = ',resolve); } );
         ElevatorOnline.get_Person_List( { filter: 'all', list: 'inspector', sorted: 'name' } ).then( (resolve)=>{ setInspector(resolve); console.log('get_Inspector_List = ',resolve); } );
        
-        let date = DateIsoToString( new Date ( inspections[selected].order_date ) );
+        //let date = DateIsoToString( new Date ( inspections[selected].order_date ) );
 
-        console.log('selected inspection =',inspections[selected]);
+        //console.log('selected inspection =',inspections[selected]);
 
-        if ( inspections[selected].order_no ) { setI_number( inspections[selected].order_no ) } else setI_number( '' );
-        if ( inspections[selected].order_date ) { setI_date( date ) } else setI_date( '' );
-        if ( inspections[selected].order_time) { setI_time( inspections[selected].order_time) } else setI_time( '' );
-        if ( inspections[selected].order) { setI_order( inspections[selected].order) } else setI_order( '' );
-        if ( inspections[selected].elevator ) { 
+        //if ( inspections[selected].order_no ) { setI_number( inspections[selected].order_no ) } else setI_number( '' );
+        //if ( inspections[selected].order_date ) { setI_date( date ) } else setI_date( '' );
+        //if ( inspections[selected].order_time) { setI_time( inspections[selected].order_time) } else setI_time( '' );
+        //if ( inspections[selected].order) { setI_order( inspections[selected].order) } else setI_order( '' );
+        /*if ( inspections[selected].elevator ) { 
                 ElevatorOnline.get_Elevator( inspections[selected].elevator ).then( (resolve)=>{ 
                     setE_firm( resolve[0].owner );
                     ElevatorOnline.get_Elevator_List( { filter: 'owner', id: `${resolve[0].owner}`, sorted: 'elevator_name' } ).then( (resolve)=>{ 
@@ -252,16 +260,16 @@ export function Inspection_List ( props ){
                 setE_adress( '' );
                 setE_comments( '' );
                 setE_contact_person( [] );
-                }
-        if ( inspections[selected].client ) { setI_client( inspections[selected].client) } else setI_client( '' );
-        if ( inspections[selected].inspector ) { setI_inspector( inspections[selected].inspector) } else setI_inspector( '' );
-        if ( inspections[selected].status ) { setI_status( inspections[selected].status) } else setI_status( '' );
-        if ( inspections[selected].result ) { setI_result( inspections[selected].result) } else setI_result( '' );
-        if ( inspections[selected].comments ) { setI_comments( inspections[selected].comments) } else setI_comments( '' );
+                }*/
+        //if ( inspections[selected].client ) { setI_client( inspections[selected].client) } else setI_client( '' );
+        //if ( inspections[selected].inspector ) { setI_inspector( inspections[selected].inspector) } else setI_inspector( '' );
+        //if ( inspections[selected].status ) { setI_status( inspections[selected].status) } else setI_status( '' );
+        //if ( inspections[selected].result ) { setI_result( inspections[selected].result) } else setI_result( '' );
+        //if ( inspections[selected].comments ) { setI_comments( inspections[selected].comments) } else setI_comments( '' );
 
-        if ( inspections[selected].complex_found == 'true' ) { setElevator_complex_found( true ) } else setElevator_complex_found( false );
-        if ( inspections[selected].silo_found == 'true' ) { setElevator_silo_found( true ) } else setElevator_silo_found( false );
-        if ( inspections[selected].warehouse_found == 'true' ) { setElevator_warehouse_found( true ) } else setElevator_warehouse_found( false );
+        //if ( inspections[selected].complex_found == 'true' ) { setElevator_complex_found( true ) } else setElevator_complex_found( false );
+        //if ( inspections[selected].silo_found == 'true' ) { setElevator_silo_found( true ) } else setElevator_silo_found( false );
+        //if ( inspections[selected].warehouse_found == 'true' ) { setElevator_warehouse_found( true ) } else setElevator_warehouse_found( false );
 
         setEdit(true);
     }
@@ -286,6 +294,7 @@ export function Inspection_List ( props ){
         */
     }
     const edit_Inspection_apply = ()=>{
+        /*
         inspections[selected].order_no = i_number;
         inspections[selected].order_date = i_date;
         inspections[selected].order_time = i_time;
@@ -296,9 +305,9 @@ export function Inspection_List ( props ){
         inspections[selected].status = i_status;
         inspections[selected].result = i_result;
         inspections[selected].comments = i_comments;
-
+*/
         setEdit(false);
-
+/*
         if ( elevator_complex && elevator_complex_use )
             inspections[selected].complex  = structuredClone( elevator_complex )
             else inspections[selected].complex = null;
@@ -310,14 +319,16 @@ export function Inspection_List ( props ){
             else inspections[selected].warehouse = null;
 
         ElevatorOnline.update_Inspection_to_Server( inspections[selected] , 'full' );
+        */
     }
 
     const selected_change = (sel)=>{
         setSelected( sel );
-        console.log('selected inspection = ',inspections[sel] );
+        console.log('selected inspection = ',users[sel] );
     }
 
     const handleOpenInpection = (e)=>{
+        /*
         console.log('current inspection = ',inspections[selected].id );
         console.log('elevator inspection = ',inspections[selected].elevator );
         ElevatorOnline.get_Inspection( inspections[selected].id ).then( ( resolve ) => { 
@@ -326,6 +337,7 @@ export function Inspection_List ( props ){
             //setSendServer( true );
             setUpdate( !update );
         } );
+        */
     }
 
     //const [empty_elevator, setEmpty_elevator] = React.useState({});
@@ -352,6 +364,7 @@ export function Inspection_List ( props ){
     }
 
     const handle_load_elevator = ()=>{
+        /*
         //setE_comments( e.target.value );
         console.log('current inspection = ',inspections[selected].id );
         //console.log('elevator inspection = ',inspections[selected].elevator );
@@ -369,6 +382,7 @@ export function Inspection_List ( props ){
             //setSendServer( true );
             //setUpdate( !update );
         } );
+        */
     }
 
     return(
@@ -380,26 +394,39 @@ export function Inspection_List ( props ){
 
             <thead>
                 <tr>
+                    <th colSpan={6}></th>
+                    <th colSpan={15}>Permissions</th>
+                    <th></th>
+                </tr>
+                <tr>
                     <th>id</th>
-                    <th>Order №</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Order</th>
-                    <th>Elevator</th>
-                    <th title='complex'>c</th>
-                    <th title='silo'>s</th>
-                    <th title='warehouse'>w</th>
-                    <th>Client</th>
-                    <th>Inspector</th>
+                    <th>User Name</th>
+                    <th>Password</th>
+                    <th>Name</th>
+                    <th>Surname</th>
                     <th>Status</th>
-                    <th>Result</th>
+                    <th title='inspection create'>ic</th>
+                    <th title='inspection edit'>ie</th>
+                    <th title='inspection read'>ir</th>
+                    <th title='elevator create'>ec</th>
+                    <th title='elevator edit'>ee</th>
+                    <th title='elevator read'>er</th>
+                    <th title='firm create'>fc</th>
+                    <th title='firm edit'>fe</th>
+                    <th title='firm read'>fr</th>
+                    <th title='person create'>pc</th>
+                    <th title='person edit'>pe</th>
+                    <th title='person read'>pr</th>
+                    <th title='user create'>uc</th>
+                    <th title='user edit'>ue</th>
+                    <th title='user read'>ur</th>
                     <th>Comments</th>
                 </tr>
             </thead>
 
                 <tbody>
 
-                { ( inspections ? inspections.map((item ,row) => ( <Inspection_List_row item={item} row={row} selected={selected} callback={(data)=> selected_change( data ) } callback_id={(data)=> setId(data)} callback_order_no={(data)=> setOrderNo(data)} /> )) : <></> ) }
+                { ( users ? users.map((item ,row) => ( <User_List_row item={item} row={row} selected={selected} callback={(data)=> selected_change( data ) } callback_id={(data)=> setId(data)} callback_username={(data)=> setUsername(data)} /> )) : <></> ) }
 
                 </tbody>
             </table>
@@ -436,8 +463,8 @@ export function Inspection_List ( props ){
                             <label>Inspection №</label>
                             <input 
                                 style={{ width: '300px' }}
-                                value={i_number}
-                                onChange={handle_i_number}
+                                //value={i_number}
+                                //onChange={handle_i_number}
                                 type="text" required minlength="3"
                             />
                         </div>
@@ -445,8 +472,8 @@ export function Inspection_List ( props ){
                             <label>Date</label>
                             <input 
                             style={{ width: '303px' }}
-                            value={i_date}
-                            onChange={handle_i_date}
+                            //value={i_date}
+                            //onChange={handle_i_date}
                             type="date"
                             />
                         </div>
@@ -454,8 +481,8 @@ export function Inspection_List ( props ){
                             <label>Time</label>
                             <input 
                             style={{ width: '303px' }}
-                            value={i_time}
-                            onChange={handle_i_time}
+                            //value={i_time}
+                            //onChange={handle_i_time}
                             type="time"
                             />
                         </div>
@@ -464,8 +491,8 @@ export function Inspection_List ( props ){
                             <select 
                                 name="inspector" id="inspector-select"
                                 style={{ width: '307px' }}
-                                value={i_inspector}
-                                onChange={handle_i_inspector}
+                                //value={i_inspector}
+                                //onChange={handle_i_inspector}
                                 >
                                 <option value="">--Please choose an option--</option>
                                 {inspector.map(( value, index ) => (
@@ -480,7 +507,7 @@ export function Inspection_List ( props ){
                             <input 
                             style={{ width: '300px' }}
                             //value={ ( inspector[i_inspector] ? inspector[i_inspector].phone : '' ) }
-                            value={ inspectorPhone(i_inspector) }
+                            //value={ inspectorPhone(i_inspector) }
                             //onChange={handle_i_time}
                             type="text"
                             readOnly
@@ -590,8 +617,8 @@ export function Inspection_List ( props ){
                             <label>Inspection Order</label>
                             <textarea 
                                 style={{ width: '301px', resize: 'vertical' }} 
-                                value={i_order}
-                                onChange={handle_i_order}
+                                //value={i_order}
+                                //onChange={handle_i_order}
                                 rows="5"
                             />
                         </div>
@@ -600,8 +627,8 @@ export function Inspection_List ( props ){
                             <select 
                                 name="firm" id="firm-select"
                                 style={{ width: '307px' }}
-                                value={i_client}
-                                onChange={handle_i_client}
+                                //value={i_client}
+                                //onChange={handle_i_client}
                                 >
                                 <option value='0'>--Please choose an option--</option>
                                 {firm.map(( value, index ) => (
@@ -617,8 +644,8 @@ export function Inspection_List ( props ){
                             <select 
                                 name="status" id="status-select"
                                 style={{ width: '307px' }}
-                                value={i_status}
-                                onChange={handle_i_status}
+                                //value={i_status}
+                                //onChange={handle_i_status}
                                 >
                                 <option value='0'>Pre-ordered</option>
                                 <option value='1'>Ordered</option>
@@ -632,8 +659,8 @@ export function Inspection_List ( props ){
                             <select 
                                 name="result" id="result-select"
                                 style={{ width: '307px' }}
-                                value={i_result}
-                                onChange={handle_i_result}
+                                //value={i_result}
+                                //onChange={handle_i_result}
                                 >
                                 <option value='0'>Not specified</option>
                                 <option value='1'>Done</option>
@@ -646,8 +673,8 @@ export function Inspection_List ( props ){
                             <label>Comments</label>
                             <textarea 
                                 style={{ width: '301px', resize: 'vertical' }}
-                                value={i_comments}
-                                onChange={handle_i_comments}
+                                //value={i_comments}
+                                //onChange={handle_i_comments}
                                 rows="3"
                             />
                         </div>

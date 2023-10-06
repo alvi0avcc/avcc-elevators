@@ -5,6 +5,7 @@ import * as iolocal from './iolocal';
 import { User } from './user';
 import { ElevatorOnline } from './elevatorOnline.js';
 import { Inspection_List } from './server_inspection.js';
+import { User_List } from './server_user.js';
 import { useContext } from 'react';
 import { UpdateContext } from '../Main'
 
@@ -64,7 +65,7 @@ export default function ServerMenu(){
                 <button
                     onClick={()=> User.SignOut().then( (result) => {
                         setloginStatus(result);
-                        setUser(User.get_UserFullName);
+                        setUser('');
                     }) }
                 >Sign out</button>
             </div>
@@ -75,7 +76,7 @@ export default function ServerMenu(){
     
 
       React.useEffect(() => {
-        fetch("http://localhost:3001/", { method: 'GET' })
+        fetch( ElevatorOnline.get_ServerPath, { method: 'GET' })
           .then((res) => res.json() )
           .then((response) => setStatus(response.online) );
       }, []);
@@ -103,16 +104,18 @@ export default function ServerMenu(){
 }
 
 function DB_List( filter ){
-    const [insp, setInsp] = React.useState(null);
+    const init = { result: null, error: 'Need sign in.' };
+    const [insp, setInsp] = React.useState( init );
     const [elev, setElev] = React.useState(null);
     const [firm, setFirm] = React.useState(null);
     const [pers, setPers] = React.useState(null);
     const [user, setUser] = React.useState(null);
-    const [table, setTable] = React.useState(1); //Inspections
+    const [table, setTable] = React.useState(1); // '1' is default - Inspections
 
     const handleInspection = (e)=>{
         setTable(1);
-        ElevatorOnline.get_Inspection_List({filter: 'all'}).then( (resolve)=>{ setInsp(resolve); console.log(resolve); } );
+        //ElevatorOnline.get_Inspection_List({filter: 'all'}).then( (resolve)=>{ setInsp(resolve.result); console.log(resolve.result); } );
+        ElevatorOnline.get_Inspection_List({filter: 'all'}).then( (resolve)=>{ setInsp(resolve); } );
     }
 
     const handleElevators = (e)=>{
@@ -132,6 +135,7 @@ function DB_List( filter ){
 
     const handleUsers = (e)=>{
         setTable(5);
+        ElevatorOnline.get_User_List({filter: 'all'}).then( (resolve)=> setUser(resolve) );
     }
 console.log('firm = ',firm);
         return(
@@ -157,11 +161,11 @@ console.log('firm = ',firm);
                 onClick={handleUsers}
                 >Users</button>
 
-            { ( table == 1 ? ( ( insp ) ? <Inspection_List loaded = {insp}/> : <div>Data Base "Inspection" not loaded !</div> )  : null ) }
+            { ( table == 1 ? ( ( insp.error == null ) ? <Inspection_List loaded = {insp.result}/> : <div>Data Base "Inspection" not loaded ! Reason - {insp.error}</div> )  : null ) }
             { ( table == 2 ? ( ( elev ) ? <Elevator_List loaded = {elev}/> : <div>Data Base "Elevator" not loaded !</div> )  : null ) }
             { ( table == 3 ? ( ( firm ) ? <Firm_List loaded = {firm}/> : <div>Data Base "Firm" not loaded !</div> ) : null ) }
             { ( table == 4 ? ( ( pers ) ? <Person_List loaded = {pers}/> : <div>Data Base "Person" not loaded !</div> ) : null ) }
-            { ( table == 5 ? <></> : <></> ) }
+            { ( table == 5 ? ( ( user ) ? <User_List loaded = {user}/> : <div>Data Base "User" not loaded !</div> ) : null ) }
         </div>
         )
 }

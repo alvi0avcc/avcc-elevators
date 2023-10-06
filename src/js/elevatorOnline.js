@@ -23,10 +23,11 @@ class cElevatorOnline {
             fetch( this.ServerPath + "inspectioninfo" , { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                credentials: 'include',
                 body: JSON.stringify(filter)
                 }).then(response => response.json()).then((data) => {
                 console.log('Inspection_List fetch= ',data);
-                this.inspection = data;
+                //this.inspection = data.result;
                 resolve (data);
                 });
             } else resolve (null);
@@ -47,6 +48,7 @@ class cElevatorOnline {
                 fetch( this.ServerPath + "inspectiondata" , { 
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                    credentials: 'include',
                     body: JSON.stringify(data)
                     }).then(response => response.json()).then((data) => {
                     console.log('Inspection_Data = ',data);
@@ -63,6 +65,7 @@ class cElevatorOnline {
             fetch( this.ServerPath + "elevatorinfo" , { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                credentials: 'include',
                 body: JSON.stringify(filter)
                 }).then(response => response.json()).then((data) => {
                 console.log('Elevator_List fetch= ',data);
@@ -86,6 +89,7 @@ class cElevatorOnline {
                 fetch( this.ServerPath + "importcomplex" , { 
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                    credentials: 'include',
                     body: JSON.stringify(complex)
                     }).then(response => response.json()).then((data) => {
                     console.log('import_Elevator_Complex = ',data);
@@ -109,6 +113,7 @@ class cElevatorOnline {
                 fetch( this.ServerPath + "importsilo" , { 
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                    credentials: 'include',
                     body: JSON.stringify(silo)
                     }).then(response => response.json()).then((data) => {
                     console.log('import_Elevator_Silo = ',data);
@@ -132,6 +137,7 @@ class cElevatorOnline {
                 fetch( this.ServerPath + "importwarehouse" , { 
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                    credentials: 'include',
                     body: JSON.stringify(warehouse)
                     }).then(response => response.json()).then((data) => {
                     console.log('import_Elevator_Warehouse = ',data);
@@ -153,6 +159,7 @@ class cElevatorOnline {
                 fetch( this.ServerPath + "elevatordata" , { 
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                    credentials: 'include',
                     body: JSON.stringify(data)
                     }).then(response => response.json()).then((data) => {
                     console.log('Elevator_Data = ',data);
@@ -170,6 +177,7 @@ class cElevatorOnline {
                 fetch( this.ServerPath + "firmdata" , { 
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                    credentials: 'include',
                     body: JSON.stringify(data)
                     }).then(response => response.json()).then((data) => {
                     console.log('Firm_Data = ',data);
@@ -186,6 +194,7 @@ class cElevatorOnline {
             fetch( this.ServerPath + "firminfo" , { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                credentials: 'include',
                 body: JSON.stringify(filter)
                 }).then(response => response.json()).then((data) => {
                 console.log('Firm_List fetch= ',data);
@@ -202,6 +211,7 @@ class cElevatorOnline {
             fetch( this.ServerPath + "personinfo" , { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                credentials: 'include',
                 body: JSON.stringify(filter)
                 }).then(response => response.json()).then((data) => {
                 console.log('Person_List fetch= ',data);
@@ -219,12 +229,31 @@ class cElevatorOnline {
                 fetch( this.ServerPath + "persondata" , { 
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                    credentials: 'include',
                     body: JSON.stringify(data)
                     }).then(response => response.json()).then((data) => {
                     console.log('Person_Data = ',data);
                     resolve (data);
                     });
             }
+        })
+    }
+
+    get_User_List( filter ){
+        return new Promise ( (resolve, reject) => {
+            //console.log(User.get_LoginStatus);
+            if ( User.get_LoginStatus ) {
+
+            fetch( this.ServerPath + "userinfo" , { 
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                credentials: 'include',
+                body: JSON.stringify(filter)
+                }).then(response => response.json()).then((data) => {
+                console.log('User_List fetch= ',data);
+                resolve (data);
+                });
+            } else resolve (null);
         })
     }
 
@@ -235,6 +264,7 @@ class cElevatorOnline {
             fetch( this.ServerPath + "newinspection" , { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                credentials: 'include',
                 body: JSON.stringify(inspection)
                 }).then(response => response.json()).then((data) => {
                 console.log('new_Inspection_to_Server = ',data);
@@ -257,6 +287,7 @@ class cElevatorOnline {
             fetch( this.ServerPath + "updateinspection" , { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                credentials: 'include',
                 body: JSON.stringify(inspection)
                 }).then(response => response.json()).then((data) => {
                 console.log('update_Inspection_to_Server = ',data);
@@ -273,6 +304,7 @@ class cElevatorOnline {
             fetch( this.ServerPath + "delinspection" , { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                credentials: 'include',
                 body: JSON.stringify({ id: id })
                 }).then(response => response.json()).then((data) => {
                 console.log('del_Inspection_from_Server = ',data);
@@ -289,6 +321,7 @@ class cElevatorOnline {
             fetch( this.ServerPath + "newelevator" , { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                credentials: 'include',
                 body: JSON.stringify(elevator)
                 }).then(response => response.json()).then((data) => {
                 console.log('new_Elevator_to_Server = ',data);
@@ -305,6 +338,7 @@ class cElevatorOnline {
             fetch( this.ServerPath + "delelevator" , { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                credentials: 'include',
                 body: JSON.stringify({ id: id })
                 }).then(response => response.json()).then((data) => {
                 console.log('del_Elevator_from_Server = ',data);
@@ -330,6 +364,7 @@ class cElevatorOnline {
             fetch( this.ServerPath + "updateelevator" , { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                credentials: 'include',
                 body: JSON.stringify(elevator)
                 }).then(response => response.json()).then((data) => {
                 console.log('update_Elevator_to_Server = ',data);
@@ -345,6 +380,7 @@ class cElevatorOnline {
             fetch( this.ServerPath + "newfirm" , { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                credentials: 'include',
                 body: JSON.stringify(firm)
                 }).then(response => response.json()).then((data) => {
                 console.log('new_Firm_to_Server = ',data);
@@ -360,6 +396,7 @@ class cElevatorOnline {
             fetch( this.ServerPath + "delfirm" , { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                credentials: 'include',
                 body: JSON.stringify({ id: id })
                 }).then(response => response.json()).then((data) => {
                 console.log('del_Firm_from_Server = ',data);
@@ -376,6 +413,7 @@ class cElevatorOnline {
             fetch( this.ServerPath + "updatefirm" , { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                credentials: 'include',
                 body: JSON.stringify(firm)
                 }).then(response => response.json()).then((data) => {
                 console.log('update_Firm_to_Server = ',data);
@@ -391,6 +429,7 @@ class cElevatorOnline {
             fetch( this.ServerPath + "newperson" , { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                credentials: 'include',
                 body: JSON.stringify(person)
                 }).then(response => response.json()).then((data) => {
                 console.log('new_Person_to_Server = ',data);
@@ -406,6 +445,7 @@ class cElevatorOnline {
             fetch( this.ServerPath + "delPerson" , { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                credentials: 'include',
                 body: JSON.stringify({ id: id })
                 }).then(response => response.json()).then((data) => {
                 console.log('del_Person_from_Server = ',data);
@@ -422,6 +462,7 @@ class cElevatorOnline {
             fetch( this.ServerPath + "updateperson" , { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                credentials: 'include',
                 body: JSON.stringify(person)
                 }).then(response => response.json()).then((data) => {
                 console.log('update_Person_to_Server = ',data);

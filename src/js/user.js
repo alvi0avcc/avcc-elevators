@@ -40,6 +40,7 @@ class cUser {
 
         if ( response.password == 'ok' ) {
             this.loginStatus = true;
+            this.username = response.username;
             this.name = response.name;
             this.surname = response.surname;
         } else {
@@ -52,7 +53,7 @@ class cUser {
 
     get ServerOnline(){
         let result = false;
-        fetch( ElevatorOnline.get_ServerPath , { method: 'GET' })
+        fetch( ElevatorOnline.get_ServerPath , { method: 'GET', credentials: 'include' })
             .then((res) => res.json())
             .then((status) => result = status.online );
             
@@ -78,7 +79,7 @@ class cUser {
             User.set_ServerResponse = data;
             console.log('SignIn server response = ',data);
             //console.log(User.get_UserInfo);
-            ElevatorOnline.get_Inspection_List({filter: 'all'});
+            //ElevatorOnline.get_Inspection_List({filter: 'all'});
             resolve( User.loginStatus );
             } );
 
@@ -89,6 +90,7 @@ class cUser {
         return new Promise ( function(resolve, reject) {
         fetch( ElevatorOnline.get_ServerPath + "logout" , { 
             method: 'GET',
+            credentials: 'include'
         } ).then(response => response.json()).then((data) => {
             User.set_ServerResponse = data;
             console.log('SignOut server response = ',data);
@@ -101,7 +103,11 @@ class cUser {
     }
 
     get get_UserFullName(){
-        return ( this.name + ' ' + this.surname );
+        let result = '';
+        if ( this.name ) result = this.name;
+        if ( this.surname ) result = result + ' ' + this.surname;
+        if ( result == '' ) result = this.username;
+        return ( result );
     }
 
     get get_UserName(){
