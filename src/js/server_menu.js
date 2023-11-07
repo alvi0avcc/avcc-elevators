@@ -87,9 +87,10 @@ export default function ServerMenu(){
     return (
     <div className='block'>
         <div className='block_row'>
-            <label>Server - </label>
+            <label>Server -&nbsp;</label>
             <label>{status ? "Online..." : "Offline..."}</label>
-            <label>{ loginStatus ? 'Connected as ' + user : 'Disconnected' }</label>
+            <label style={{ display: ( status ? 'block' : 'none' ) }}>&nbsp;{ loginStatus ? 'Connected as ' + user : 'Disconnected.' }</label>
+            <label>&nbsp;Access to the server is under development. It is now possible to use local data processing.</label>
         </div>
 
         <LoginForm show = {status}/>

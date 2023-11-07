@@ -25,6 +25,11 @@ const handleImport = (e)=>{
         </div>
         <br/>
 
+        <span>To start using the system you need to click the "Open" button, as a result a local database will be created.</span>
+        <br/>
+        <span>You can also download the demo file from the</span>
+        <a>link</a>
+        <span>and import it into the system using the "Import" button.</span>
     <div style={{ display:'flex', justifyContent: 'space-between' }}>
         <div>
             <button
