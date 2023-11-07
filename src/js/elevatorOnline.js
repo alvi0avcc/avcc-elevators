@@ -15,11 +15,39 @@ class cElevatorOnline {
         return ElevatorOnline;
     }
 
+    /**
+     * @param { JSON } request { type, filter, sort, fromDate, toDate }
+     * @param { string } type inspections / elevators / firms / persons / users
+     * @param { filter } filter all / id / date
+     * @param { Date } fromDate from date
+     * @param { Date } toDate to date
+     * @param { sort } sort name of field in DB
+     */
+    get_Info ( request ){
+        return new Promise ( (resolve, reject) => {
+            if ( User.get_LoginStatus ) {
+                console.log('info request= ',request);
+                fetch( this.ServerPath + "info" , { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json;charset=utf-8' },
+                    credentials: 'include',
+                    body: JSON.stringify(request)
+                }).then( response => response.json()).then((data) => {
+                    console.log('info response= ',data);
+                    resolve (data);
+                    });
+            } else resolve ({result: null, error: 'Need SignIn'});
+        })
+    };
+
+
+
+
     get_Inspection_List( filter ){
         return new Promise ( (resolve, reject) => {
             //console.log(User.get_LoginStatus);
             if ( User.get_LoginStatus ) {
-
+                console.log('Inspection_List filter= ',filter);
             fetch( this.ServerPath + "inspectioninfo" , { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json;charset=utf-8' },
@@ -30,7 +58,7 @@ class cElevatorOnline {
                 //this.inspection = data.result;
                 resolve (data);
                 });
-            } else resolve (null);
+            } else resolve ({result: null, error: 'Need SignIn'});
         })
     }
     get_Inspection_List_current(){

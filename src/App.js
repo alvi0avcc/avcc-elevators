@@ -71,7 +71,7 @@ function App() {
           About</Button>
           <Button onClick={ () => {
             let email = document.createElement("a");
-            email.href = "mailto:cargo.control.ua@gmail.com";
+            email.href = "mailto:alvi.ua@gmail.com";
             email.click()} }>
           FeedBack</Button>
         <Button onClick={ () => { alert( 'MIT License. Copyright (c) 2023 Aleksandr Vavilov (alvi.ua@gmail.com)' ) }} >

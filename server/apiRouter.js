@@ -13,7 +13,17 @@ const userRouter = require('./user');
  
  
 apiRouter.use(cookieParser());
- 
+
+
+apiRouter.get('/', (req, res)=>{
+    const { userId } = req.session
+    console.log(userId);
+    res.send(`
+    <h1> Welcome!</h1>
+    <a href = 'http://avcc.sytes.net/'> AVCC </a>
+    `);
+  });
+
 apiRouter.post('/register', async (req, res, next)=>{
     try{
         const userName = req.body.userName;

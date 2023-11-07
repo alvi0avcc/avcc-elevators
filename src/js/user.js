@@ -2,7 +2,7 @@ import { ElevatorOnline } from './elevatorOnline.js';
 
 class cUser {
     constructor() {
-        this.username   = '';
+        this.email   = '';
         this.password   = '';
         this.name       = '';
         this.surname    = '';
@@ -38,9 +38,9 @@ class cUser {
 
         console.log('set_ServerResponse',response);
 
-        if ( response.password == 'ok' ) {
+        if ( response.login ) {
             this.loginStatus = true;
-            this.username = response.username;
+            this.email = response.email;
             this.name = response.name;
             this.surname = response.surname;
         } else {
@@ -60,9 +60,9 @@ class cUser {
         return result;
     }
 
-    SignIn( login, pass ){
+    SignIn( email, pass ){
 
-        if ( login == '' || login == null ) login = 'demo';
+        if ( email == '' || email == null ) email = 'demo';
         if ( pass == '' || pass == null ) pass = 'demo';
 
        // console.log('SignIn=',login,pass);
@@ -74,7 +74,7 @@ class cUser {
             method: 'POST',
             headers: { 'Content-Type': 'application/json;charset=utf-8' },
             credentials: 'include',
-            body: JSON.stringify( { login: login, password: pass } )
+            body: JSON.stringify( { email: email, password: pass } )
         } ).then(response => response.json()).then((data) => {
             User.set_ServerResponse = data;
             console.log('SignIn server response = ',data);
@@ -89,7 +89,7 @@ class cUser {
     SignOut(){
         return new Promise ( function(resolve, reject) {
         fetch( ElevatorOnline.get_ServerPath + "logout" , { 
-            method: 'GET',
+            method: 'POST',
             credentials: 'include'
         } ).then(response => response.json()).then((data) => {
             User.set_ServerResponse = data;
@@ -103,10 +103,21 @@ class cUser {
     }
 
     get get_UserFullName(){
+        console.log('get_UserFullName = ', this.get_UserInfo);
         let result = '';
         if ( this.name ) result = this.name;
         if ( this.surname ) result = result + ' ' + this.surname;
-        if ( result == '' ) result = this.username;
+        if ( result == '' ) result = this.email;
+        return ( result );
+    }
+
+    get get_UserFullNameAndEmail(){
+        console.log('get_UserFullName = ', this.get_UserInfo);
+        let result = '';
+        if ( this.name ) result = this.name;
+        if ( this.surname ) result = result + ' ' + this.surname;
+        if ( result == '' ) result = this.email
+            else result = result + ' ( ' + this.email + ' )';
         return ( result );
     }
 

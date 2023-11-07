@@ -16,17 +16,20 @@ export default function ServerMenu(){
     const [loginStatus, setloginStatus] = React.useState(false);
 
     function LoginForm(props){
-        const [login, setLogin] = React.useState('');
+        const [email, setEmail] = React.useState('');
         const [pass, setPass] = React.useState('');
 
-        const handleLogin = (e)=>{ setLogin( e.target.value ) }
+        const handleEmail = (e)=>{ setEmail( e.target.value ) }
 
         const handlePass = (e)=>{ setPass( e.target.value ) }
 
         const handleEnter = (e)=>{
             if ( e.keyCode == 13 ) {
                 //setloginStatus( User.SignIn( login, pass ) );
-                User.SignIn( login, pass ).then ( (result) => setloginStatus(result) );
+                User.SignIn( email, pass ).then ( (result) => {
+                    setloginStatus(result);
+                    setUser(User.get_UserFullNameAndEmail );
+                });
             }
         }
 
@@ -34,12 +37,12 @@ export default function ServerMenu(){
             <div style={{ display: ( props.show ? 'flex ' : 'none' ) }}>
             <div className = 'block_row' style={{ display: ( !loginStatus ? 'flex ' : 'none' ) }}>
                 <div>
-                    <label for="name"> Username:</label>
+                    <label for="email"> Email:</label>
                     <input 
-                        value={login}
-                        onChange={handleLogin}
+                        value={email}
+                        onChange={handleEmail}
                         onKeyUp={handleEnter}
-                        type="text" id="name" name="name" required minlength="4" maxlength="10" size="10"
+                        type="email" id="email" name="email" required minlength="5" maxlength="100" size="20"
                     />
                 </div>
                 <div>
@@ -53,9 +56,9 @@ export default function ServerMenu(){
                 </div>
 
                 <button
-                    onClick={ () => User.SignIn( login, pass ).then ( (result) => {
+                    onClick={ () => User.SignIn( email, pass ).then ( (result) => {
                         setloginStatus(result);
-                        setUser(User.get_UserFullName );
+                        setUser(User.get_UserFullNameAndEmail );
                         } ) }
                 >Sign in</button>
 
@@ -76,7 +79,7 @@ export default function ServerMenu(){
     
 
       React.useEffect(() => {
-        fetch( ElevatorOnline.get_ServerPath, { method: 'GET' })
+        fetch( ElevatorOnline.get_ServerPath + 'status', { method: 'GET' })
           .then((res) => res.json() )
           .then((response) => setStatus(response.online) );
       }, []);
@@ -93,7 +96,7 @@ export default function ServerMenu(){
 
         <div
             className='block'
-            style={{ display: ( status ? 'flex' : 'none' ) }}
+            style={{ display: ( loginStatus ? 'flex' : 'none' ) }}
         >
             <DB_List/>
 
@@ -104,40 +107,45 @@ export default function ServerMenu(){
 }
 
 function DB_List( filter ){
-    const init = { result: null, error: 'Need sign in.' };
+    const init = { result: null, error: null };
     const [insp, setInsp] = React.useState( init );
-    const [elev, setElev] = React.useState(null);
-    const [firm, setFirm] = React.useState(null);
-    const [pers, setPers] = React.useState(null);
-    const [user, setUser] = React.useState(null);
-    const [table, setTable] = React.useState(1); // '1' is default - Inspections
+    const [elev, setElev] = React.useState( init );
+    const [firm, setFirm] = React.useState( init );
+    const [pers, setPers] = React.useState( init );
+    const [user, setUser] = React.useState( init );
+    const [table, setTable] = React.useState(0); // '0' is default - DB not selected
 
     const handleInspection = (e)=>{
         setTable(1);
         //ElevatorOnline.get_Inspection_List({filter: 'all'}).then( (resolve)=>{ setInsp(resolve.result); console.log(resolve.result); } );
-        ElevatorOnline.get_Inspection_List({filter: 'all'}).then( (resolve)=>{ setInsp(resolve); } );
+        //ElevatorOnline.get_Inspection_List({filter: 'all'}).then( (resolve)=>{ setInsp(resolve); } );
+        ElevatorOnline.get_Info({ type: 'inspections', filter: 'all', sort: 'id'}).then( resolve => { setInsp(resolve); } );
     }
 
     const handleElevators = (e)=>{
         setTable(2);
-        ElevatorOnline.get_Elevator_List({filter: 'all'}).then( (resolve)=>{ setElev(resolve); console.log(resolve); } );
+        //ElevatorOnline.get_Elevator_List({filter: 'all'}).then( (resolve)=>{ setElev(resolve); console.log(resolve); } );
+        ElevatorOnline.get_Info({ type: 'elevators', filter: 'all', sort: 'id'}).then( resolve => { setElev(resolve); } );
     }
 
     const handleFirms = (e)=>{
         setTable(3);
-        ElevatorOnline.get_Firm_List({filter: 'all', list: 'simple'}).then( (resolve)=>{ setFirm(resolve); console.log(resolve); } );
+        //ElevatorOnline.get_Firm_List({filter: 'all', list: 'simple'}).then( (resolve)=>{ setFirm(resolve); console.log(resolve); } );
+        ElevatorOnline.get_Info({ type: 'firms', filter: 'all', list: 'simple', sort: 'id'}).then( resolve => { setFirm(resolve); } )
     }
 
     const handlePersons = (e)=>{
         setTable(4);
-        ElevatorOnline.get_Person_List({filter: 'all'}).then( (resolve)=>{ setPers(resolve); console.log(resolve); } );
+        //ElevatorOnline.get_Person_List({filter: 'all'}).then( (resolve)=>{ setPers(resolve); console.log(resolve); } );
+        ElevatorOnline.get_Info({ type: 'persons', filter: 'all', sort: 'id'}).then( resolve => { setPers(resolve); } )
     }
 
     const handleUsers = (e)=>{
         setTable(5);
-        ElevatorOnline.get_User_List({filter: 'all'}).then( (resolve)=> setUser(resolve) );
+        //ElevatorOnline.get_User_List({filter: 'all'}).then( (resolve)=> setUser(resolve) );
+        ElevatorOnline.get_Info({ type: 'users', filter: 'all', sort: 'id'}).then( resolve => { setUser(resolve); } )
     }
-console.log('firm = ',firm);
+    //console.log('firm = ',firm);
         return(
         <div>
             <button 
@@ -160,12 +168,12 @@ console.log('firm = ',firm);
                 style={{ width: '100px', borderWidth: ( table == 5 ? '3px'  : '0' ), borderColor: 'lime' }}
                 onClick={handleUsers}
                 >Users</button>
-
-            { ( table == 1 ? ( ( insp.error == null ) ? <Inspection_List loaded = {insp.result}/> : <div>Data Base "Inspection" not loaded ! Reason - {insp.error}</div> )  : null ) }
-            { ( table == 2 ? ( ( elev ) ? <Elevator_List loaded = {elev}/> : <div>Data Base "Elevator" not loaded !</div> )  : null ) }
-            { ( table == 3 ? ( ( firm ) ? <Firm_List loaded = {firm}/> : <div>Data Base "Firm" not loaded !</div> ) : null ) }
-            { ( table == 4 ? ( ( pers ) ? <Person_List loaded = {pers}/> : <div>Data Base "Person" not loaded !</div> ) : null ) }
-            { ( table == 5 ? ( ( user ) ? <User_List loaded = {user}/> : <div>Data Base "User" not loaded !</div> ) : null ) }
+            { ( table == 0 ?  <div>Please select module.</div> : null ) }
+            { ( table == 1 ? ( ( insp.result ) ? <Inspection_List loaded = {insp.result}/> : <div>Data Base "Inspection" not loaded ! Reason - {insp.error}</div> )  : null ) }
+            { ( table == 2 ? ( ( elev.result ) ? <Elevator_List loaded = {elev.result}/> : <div>Data Base "Elevator" not loaded !</div> )  : null ) }
+            { ( table == 3 ? ( ( firm.result ) ? <Firm_List loaded = {firm.result}/> : <div>Data Base "Firm" not loaded !</div> ) : null ) }
+            { ( table == 4 ? ( ( pers.result ) ? <Person_List loaded = {pers.result}/> : <div>Data Base "Person" not loaded !</div> ) : null ) }
+            { ( table == 5 ? ( ( user.result ) ? <User_List loaded = {user.result}/> : <div>Data Base "User" not loaded !</div> ) : null ) }
         </div>
         )
 }

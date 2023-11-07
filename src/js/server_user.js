@@ -68,8 +68,7 @@ function User_List_row( props ){
             onClick={handleClick}
         >
             <td style={{ fontSize: '50%' }}>{ item.id }</td>
-            <td>{ item.username }</td>
-            <td>{ item.password }</td>
+            <td>{ item.email }</td>
             <td>{ item.name }</td>
             <td>{ item.surname }</td>
             <td>{ ( item.enabled == 1 ? 'active' : 'blocked' ) }</td>
@@ -394,14 +393,13 @@ export function User_List ( props ){
 
             <thead>
                 <tr>
-                    <th colSpan={6}></th>
+                    <th colSpan={5}></th>
                     <th colSpan={15}>Permissions</th>
                     <th></th>
                 </tr>
                 <tr>
                     <th>id</th>
-                    <th>User Name</th>
-                    <th>Password</th>
+                    <th>E-mail</th>
                     <th>Name</th>
                     <th>Surname</th>
                     <th>Status</th>

@@ -1,6 +1,9 @@
 require("dotenv").config();
-const port= process.env.PORT || 3001;
-const host = process.env.HOST || '127.0.0.1';
+const port= process.env.APP_PORT || 3001;
+const host = process.env.APP_HOST || '127.0.0.1';
+const IN_PROD = process.env.NODE_ENV === 'production';
+const ONE_HOURS = 1000 * 60 * 60;
+const TWO_HOURS = ONE_HOURS * 2;
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -8,36 +11,26 @@ const app = express();
 const cors = require("cors");
 const morgan = require('morgan');
 
-const passport = require('passport');
-const localStrategy = require('passport-local').Strategy;
-const flash = require('connect-flash');
-const cookieParser = require('cookie-parser');
-const apiRouter = require('./apiRouter');
-
 const session = require('express-session');
-/*
-const redis = require('redis');
-const redisStore = require('connect-redis').default;
-const redisClient = redis.createClient();
-const RedisStore = new redisStore({
-  host: host,
-  port: 6379,
-  client: redisClient
-});
 
-//const client = Redis.createClient();
-redisClient.connect().catch(console.error);
-
-redisClient.on('error', function (err) {
-  console.log('Could not establish a connection with redis. ' + err);
-});
-redisClient.on('connect', function (err) {
-  console.log('Connected to redis successfully');
-});
-*/
+const db = require('./db');
+const { hashSync, genSaltSync, compareSync } = require("bcrypt");
 
 const mysql = require('mysql');
-//const SQLiteStore = require('connect-sqlite3')(session);
+const mysqlStore = require('express-mysql-session')(session);
+const options ={
+  connectionLimit: 10,
+  password: process.env.DB_PASS,
+  user: process.env.DB_USER,
+  database: process.env.MYSQL_DB,
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  createDatabaseTable: true
+};
+
+const pool = mysql.createPool(options);
+const sessionStore = new mysqlStore(options, pool);
+
 const connection = mysql.createPool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
@@ -45,12 +38,6 @@ const connection = mysql.createPool({
   password: process.env.DB_PASS,
   database: process.env.MYSQL_DB
 });
-/*
-connection.connect(function(err) {
-  if (err) throw err;
-  console.log("MySQL DB - Connected!");
-});
-*/
 
 // Attempt to catch disconnects 
 connection.on('connection', function (stream) {
@@ -80,7 +67,6 @@ connection.on('connection', function (stream) {
   stream.on('connect', function (err) {
     console.error( Date(), 'MySQL connect', err);
   });
-
 });
 
 app.use(cors({
@@ -94,139 +80,207 @@ app.use(bodyParser.json()); // for parsing application/json
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-//app.use(cookieParser('secret key'));
-apiRouter.use(cookieParser());
-app.use('/apiRouter',apiRouter)
-
-//----------------------------------------------------------------------------auth
-
-function checkAuth( req ) {
-  console.log('checkAuth user= ',req.user);
-  console.log('checkAuth user Authenticated= ',req.isAuthenticated());
-  console.log('checkAuth message= ',req.message);
-  console.log('checkAuth cookies= ',req.cookies);
-  console.log('checkAuth sessionID= ',req.sessionID);
-  console.log('checkAuth sessionStore= ',req.sessionStore.sessions);
-  if ( req.isAuthenticated() ) return true
-    else return false;
-};
-
-passport.serializeUser((user, done) => {
-  console.log('serializeUser user = ',user);
-  done(null, user);
-});
-
-passport.deserializeUser((user, done) => {
-  console.log('de serializeUser user = ',user);
-  done(null, user)
-});
-
-
-
 
 app.use(session({
-  cookie: { maxAge: 3600000 },
-  rolling: true,
-  secret: "secret key",
+  name: process.env.SESS_NAME,
   resave: false,
-  saveUninitialized: true,
-  //store: RedisStore
+  saveUninitialized: false,
+  store: sessionStore,
+  secret: process.env.SESS_SECRET,
+  cookie: {
+      maxAge: ONE_HOURS,
+      sameSite: true,
+      secure: IN_PROD
+  },
+  rolling: true,
 }));
 
-app.use(flash());
-app.use(passport.session());
-app.use(passport.initialize());
+//------- redirects --------------------------------
+const redirectLogin = (req, res, next) =>{
+  if(!req.session.userId){
+      res.redirect('/login')
+  }else{
+          next()
+      }
+};
 
-passport.use( 'local',
-  new localStrategy( { usernameField: 'login', passwordField: 'password' },
-  ( login, password, done ) => {
-    SignIn( login, password ).then(function(result){ 
-      console.log("SignIn response:", result);
-      //response.json( result ) ;
-      if ( result.username && result.password == 'ok' && result.enabled == 1 ) return done(null, result, { message: 'SignIn' } )
-      else return done(null, false, { message: 'Wrong user/password' } );
-    }) ;
+const checkAuth = (req, res, next) =>{
+  if(!req.session.userId){
+      res.redirect('/')
+  }else{
+          next()
+      }
+};
+
+const redirectHome = (req, res, next) =>{
+  if(req.session.userId){
+      //res.redirect('/home');
+      res.send({
+        login: true,
+        userId: req.session.userId
+      });
+  }else{
+          next()
+      }
+};
+
+//-----------------------------------------------------------
+
+app.get('/', (req, res)=>{
+  const { userId } = req.session
+  console.log(userId);
+  res.send(`
+  <h1> Welcome!</h1>
+  <a href = 'http://avcc.sytes.net/'> AVCC </a>
+  `);
+});
+
+app.get('/status', (req, res)=>{
+  const { userId } = req.session
+  console.log(userId);
+  res.send(
+    ( userId ? {online: true, login: true} : {online: true, login: false} )
+  );
+});
+
+app.post('/login',redirectHome, async(req, res, next)=>{
+  try{ 
+  const email = req.body.email;
+  let password = req.body.password;
+  const user = await db.getUserByEmail(email);
+   
+  if(!user){
+      return res.send({
+          message: "Invalid email or password"
+      })
+  }
+
+  const isValidPassword = compareSync(password, user.password);
+  if(isValidPassword){
+      user.password = undefined;
+      req.session.userId = user.id
+      //return res.redirect('/home');
+      return res.send({
+        login: true,
+        userId: req.session.userId,
+        name: user.name,
+        surname: user.surname,
+        email: email
+      });
+  }  else{
+       res.send(
+           "Invalid email or password"
+      );
+      return res.redirect('/login')
+  } 
+
+  } catch(e){
+      console.log(e);
+  }
+});
+
+
+app.get('/register',redirectHome, (req,res)=>{
+  res.send(`
+  <h1>Register</h1>
+  <form method='post' action='/Register'>
+  <input type='text' name='Name' placeholder='Name' required />
+  <input type='text' name='SurName' placeholder='Surname' required />
+  <input type='email' name='email' placeholder='Email' required />
+  <input type='password' name='password' placeholder='password' required/>
+  <input type='submit' />
+  </form>
+  <a href='/login'>Login</a>
+  `)
+});
+
+app.post('/register', redirectHome, async (req, res, next)=>{
+  try{
+      const Name = req.body.Name;
+      const SurName = req.body.SurtName;
+      const email = req.body.email;
+      let password = req.body.password;
+
+
+            if (!Name || !SurName || !email || !password) {
+              return res.sendStatus(400);
+           }
+
+           const salt = genSaltSync(10);
+           password = hashSync(password, salt);
+
+            
+
+      const user =  await db.insertUser(Name, SurName, email, password).then( insertId => { return db.getUser(insertId); });
+      req.session.userId = user.id
+          return res.redirect('/register') 
+
+  } catch(e){    
+      console.log(e);
+      res.sendStatus(400);
+  }
+});
+
+
+app.post('/logout', redirectLogin, (req, res)=>{
+  req.session.destroy(err => {
+      if(err){
+          return res.redirect('/home')
+      }
+      sessionStore.close()
+      res.clearCookie(process.env.SESS_NAME)
+      //res.redirect('/login');
+      res.send({
+        login: false,
+      });
   })
-);
 
-app.get('/', (req, res) => {
-  res.json( { online: 'true' } );
+})
+
+//---request information from server ---
+
+app.post("/info", checkAuth, async (request, response, next) => {
+  try {
+    await db.getUser( request.session.userId ).then( users => { 
+      const user = users[0];
+      console.log("user id = ", user.id);
+      console.log("user email = ", user.email);
+      const req = request.body;
+      console.log("request = ", req);
+
+      if ( req.type == 'inspections') {
+        if ( user.inspection_read == 1 )
+          Inspection_List( req ).then( result => { response.json( { result: result, error: null } ) });
+          //Inspection_Data( request.body ).then(function(result){ console.log("Inpection_Data response:", result); response.json( result ) });
+        else response.json( { result: null, error: 'You don`t have permission for read `Inspection` DB.' } )
+      }
+      else if ( req.type == 'elevators') {
+        if ( user.elevator_read == 1 )
+          Elevator_List( req ).then( result => { response.json( { result: result, error: null } ) });
+        else response.json( { result: null, error: 'You don`t have permission for read `Elevator` DB.' } )
+      }
+      else if ( req.type == 'firms') {
+        if ( user.firm_read == 1 )
+          Firm_List( req ).then( result => { response.json( { result: result, error: null } ) });
+        else response.json( { result: null, error: 'You don`t have permission for read `Firm` DB.' } )
+      }
+      else if ( req.type == 'persons') {
+        if ( user.person_read == 1 )
+          Person_List( req ).then( result => { response.json( { result: result, error: null } ) });
+        else response.json( { result: null, error: 'You don`t have permission for read `Person` DB.' } )
+      }
+      else if ( req.type == 'users') {
+        if ( user.user_read == 1 )
+          User_List( req ).then( result => { response.json( { result: result, error: null } ) });
+        else response.json( { result: null, error: 'You don`t have permission for read `User` DB.' } )
+      }
+      else response.json( { result: null, error: 'incorrect request', request: req } );
+    })
+  } catch(e) { console.log(e); }
 });
 
 /*
-app.get('/login', checkAuth(), (req, res) => {
-  res.send('Login page. Please, authorize.');
-});
-*/
-app.get('/login', (req, res) => {
-  if (req.isAuthenticated()) {
-      console.log('loginned = ', req.user);
-      res.send(req.user);
-  } else {
-      res.send('loginned = null');
-  }
-});
 
-app.get('/session', (req, res) => {
-  if (req.isAuthenticated()) {
-      res.send(req.session);
-  } else {
-      res.send('session = null');
-  }
-});
-
-app.get('/logout', (req, res, next) =>{
-  req.logout((err) => {
-    if (err) { return next(err); }
-    res.send({ login: 'logout' });
-    console.log('auth out= ', req.user);
-  });
-});
-
-app.post('/login',
-  passport.authenticate('local', {
-      session: true,
-      successRedirect: '/login',
-      failureRedirect: '/fail',
-      failureFlash: true,
-  })
-);
-
-//----------------------------------------------------------------------------auth
-
-
-
-
-app.get('/', (req, res) => {
-  res.json( { online: 'true' } );
-});
-
-
-app.get("/connect", (request, response) => {
-  //console.log(request.body);
-  response.send( 'empty' );
-});
-
-/*
-app.post("/connect", (request, response) => {
-  console.log('connect: ',request.body);
-  SignIn( request.body ).then(function(result){ console.log("SignIn response:", result); response.json( result ) });
-});
-*/
-app.post("/inspectioninfo", (request, response) => {
-  const { user } = request.session.passport || {};
-  console.log('Inspection session: ',request.session);
-  console.log('Inspection info: ',request.body);
-  console.log('Inspection info user : ',user);
-  if ( request.isAuthenticated ) {
-    console.log('isAuthenticated : ok');
-/*    
-     if ( user.inspection_read == 1 ) 
-      Inspection_List( request.body ).then(function(result){ console.log("Inspection_List response:", result); response.json( { result: result, error: null } ) })
-      else response.json( { result: null, error: 'You don`t have permission for read.' } );
-*/
-  }
-});
 
 app.post("/inspectiondata", (request, response) => {
   console.log('Inspection data: ',request.body);
@@ -373,24 +427,17 @@ app.post("/updateperson", (request, response) => {
    Update_Person( request.body ).then(function(result){ console.log("Update_Person response:", result); response.json( result ) });
 });
 
+*/
+
 /*
 app.listen(port, () => {
   console.log(`app listening on port ${port}`);
 });
 */
-app.listen(port, host, function () {
+app.listen(port, host, () => {
   console.log(`Server listens http://${host}:${port}`);
 });
 
-//----------------------------------------------------------
-
-const user =  
-  {
-    username: 'user',
-    password: 'user',
-    name: 'Test',
-    surname: 'User',
-  };
 
 //----------------------------------------------------------
 
@@ -676,7 +723,8 @@ function User_List( request ){
     if ( request.filter ) filter = request.filter;
 
     if ( filter == 'all' ) 
-      connection.query("SELECT u.*, p.name, p.surname FROM `elevators`.`users` AS u LEFT JOIN `elevators`.`person` AS p ON u.person_id = p.id ORDER BY " + sort, function (err, result) {
+      //connection.query('SELECT u.*, p.name, p.surname FROM `elevators`.`users` AS u LEFT JOIN `elevators`.`person` AS p ON u.person_id = p.id ORDER BY " + sort, function (err, result) {
+      connection.query("SELECT *, '***' AS password FROM `elevators`.`users` ORDER BY " + sort, function (err, result) {
         if (err) resolve(err);
         console.log(result);
         resolve(result);
