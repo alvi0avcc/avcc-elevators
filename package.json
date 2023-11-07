@@ -5,7 +5,7 @@
     "email": "alvi.ua@gmail.com",
     "url": "http://avcc.sytes.net"
   },
-  "homepage": "https://alvi0avcc.github.io/avcc-elevators/",
+  "homepage": "http://avcc.sytes.net/elevators/",
   "version": "0.1.0",
   "description": "Calculating volume & weight the cargos at elevator",
   "private": true,

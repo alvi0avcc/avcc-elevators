@@ -25,6 +25,7 @@ export function RoutePath(){
   if ( site_path == 'http://localhost:3000/' ) route_path = '/';
   //if ( site_path == 'https://alvi0avcc.github.io/avcc-elevators/' ) route_path = '/avcc-elevators/';
   if ( site_path == 'https://alvi0avcc.github.io/avcc-elevators/' ) route_path = '/';
+  if ( site_path == 'http://avcc.sytes.net/elevators/' ) route_path = '/';
   //if ( site_path == 'https://alvi0avcc.github.io/avcc-elevators/' ) route_path = 'https://alvi0avcc.github.io/avcc-elevators/';
   return route_path;
 }
