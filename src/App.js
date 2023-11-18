@@ -1,16 +1,18 @@
 import React from 'react';
 import { HashRouter, BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import "./styles/app.css";
 import "./styles/styles.css";
+import "./styles/text.css";
+import "./styles/dialog.css";
 import "./styles/buttons.css";
 import "./styles/tables.css";
 import "./styles/modal.css";
 import "./styles/animation.css"
-import Divider from '@mui/material/Divider';
-import Stack from '@mui/material/Stack';
-import { Button } from '@mui/material';
 import LocalServiceWorkerRegister from './js/sw-register';
 import registerServiceWorker from './js/sw-register';
 import { SitePath } from './js/sw-register';
+import TopHeader from './js/top_header.js';
+import AppBottom from './app-bottom.js';
 
 import Main from './Main.js'
 import Layout from './layout.js';
@@ -37,7 +39,7 @@ function App() {
   let route_path = RoutePath();
 
   return (
-    <>
+  <div className='app'>
       <link rel="manifest" href="manifest.json" />
       <meta name="mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -46,7 +48,12 @@ function App() {
       <meta name="msapplication-starturl" content="/index.html" />
       <meta name="viewport" content="initial-scale=1, width=device-width" />
 
-    <HashRouter>
+    <div>
+      <TopHeader/>
+    </div>
+
+    <div>
+      <HashRouter>
 
       <Routes>
         <Route path={route_path} element={<Layout />}>
@@ -60,28 +67,14 @@ function App() {
         </Route>
       </Routes>
 
-    
+      </HashRouter>
+    </div>
 
-      <Stack
-      id='menu'
-      direction={'row'}
-      justifyContent={'space-around'}
-      divider={<Divider orientation="vertical" flexItem />} >
-        <Button>©&nbsp;2023&nbsp; AVCC</Button> 
-        <Button onClick={ () => { alert( 'Calculation of the volume and weight of cargo on elevators' ) }} >
-          About</Button>
-          <Button onClick={ () => {
-            let email = document.createElement("a");
-            email.href = "mailto:alvi.ua@gmail.com";
-            email.click()} }>
-          FeedBack</Button>
-        <Button onClick={ () => { alert( 'MIT License. Copyright (c) 2023 Aleksandr Vavilov (alvi.ua@gmail.com)' ) }} >
-        Legal Notices</Button>
-    </Stack>
-    <Divider/>
-    
-    </HashRouter>
-    </>
+    <div>
+      <AppBottom/>
+    </div>
+
+  </div>
   );
 } export default App;
 

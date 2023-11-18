@@ -1,12 +1,9 @@
-import { Outlet, Link } from "react-router-dom";
-import TopHeader from './js/top_header.js';
-import { Elevators } from "./js/elevators.js";
+import { Outlet } from "react-router-dom";
 
 const Layout = (props) => {
   let site_path = window.location.hash;
   return (
     <>
-    <TopHeader/>
 
     { site_path =='' ? '' : <AdditionalReportMenu/> }   
 

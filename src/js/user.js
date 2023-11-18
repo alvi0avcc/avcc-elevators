@@ -36,7 +36,7 @@ class cUser {
         this.response = response;
         this.responseDate = new Date;
 
-        console.log('set_ServerResponse',response);
+        console.log('set_ServerResponse =',response);
 
         if ( response.login ) {
             this.loginStatus = true;
@@ -47,6 +47,7 @@ class cUser {
             this.loginStatus = false;
             this.name = '';
             this.surname = '';
+            //alert('Error ! Server response - errno = ' + response.errno + ', code = ' + response.code +', syscall = ' + response.syscall);
         }
         console.log(User.get_UserInfo);
     }
@@ -74,10 +75,12 @@ class cUser {
             method: 'POST',
             headers: { 'Content-Type': 'application/json;charset=utf-8' },
             credentials: 'include',
+            keepalive: true,
             body: JSON.stringify( { email: email, password: pass } )
         } ).then(response => response.json()).then((data) => {
-            User.set_ServerResponse = data;
             console.log('SignIn server response = ',data);
+            User.set_ServerResponse = data;
+            if ( !data.login ) alert('Error ! Server response - errno = ' + data.errno + ', code = ' + data.code +', syscall = ' + data.syscall + ', message = ' + data.message);
             //console.log(User.get_UserInfo);
             //ElevatorOnline.get_Inspection_List({filter: 'all'});
             resolve( User.loginStatus );

@@ -1,8 +1,5 @@
 const mysql = require('mysql');
  
- 
- 
- 
 const pool = mysql.createPool({
     connectionLimit: 10,
     password: process.env.DB_PASS,
@@ -10,17 +7,13 @@ const pool = mysql.createPool({
     database: process.env.MYSQL_DB,
     host: process.env.DB_HOST,
     port: process.env.DB_PORT
- 
 });
- 
  
 let db = {};
  
- 
- 
 db.getUser = (id) =>{
     return new Promise((resolve, reject)=>{
-        pool.query('SELECT * FROM Users WHERE id= ?', [id], (error, user)=>{
+        pool.query('SELECT * FROM users WHERE id= ?', [id], (error, user)=>{
             if(error){
                 return reject(error);
             }
@@ -35,9 +28,10 @@ db.getUser = (id) =>{
  
 db.getUserByEmail = (email) =>{
     return new Promise((resolve, reject)=>{
-        pool.query('SELECT * FROM Users WHERE email = ?', [email], (error, users)=>{
+        pool.query('SELECT * FROM users WHERE email = ?', [email], (error, users)=>{
             if(error){
                 return reject(error);
+                //return resolve(error);
             }
             return resolve(users[0]);
         });
@@ -48,7 +42,7 @@ db.getUserByEmail = (email) =>{
  
 db.insertUser = (Name, SurName, email, password) =>{
     return new Promise((resolve, reject)=>{
-        pool.query('INSERT INTO Users (name, surname, email, password) VALUES (?, ?, ?, ?)', [Name, SurName, email, password], (error, result)=>{
+        pool.query('INSERT INTO users (name, surname, email, password) VALUES (?, ?, ?, ?)', [Name, SurName, email, password], (error, result)=>{
             if(error){
                 return reject(error);
             }

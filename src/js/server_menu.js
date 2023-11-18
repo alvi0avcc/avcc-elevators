@@ -1,99 +1,58 @@
 import React from 'react';
-import {useEffect, useState} from "react";
 import { Elevators } from './elevators.js';
-import * as iolocal from './iolocal';
-import { User } from './user';
 import { ElevatorOnline } from './elevatorOnline.js';
 import { Inspection_List } from './server_inspection.js';
 import { User_List } from './server_user.js';
 import { useContext } from 'react';
 import { UpdateContext } from '../Main'
+import LoginForm from './login.js';
 
 export default function ServerMenu(){
     const [status, setStatus] = React.useState(false);
     const [user, setUser] = React.useState('');
-
     const [loginStatus, setloginStatus] = React.useState(false);
 
-    function LoginForm(props){
-        const [email, setEmail] = React.useState('');
-        const [pass, setPass] = React.useState('');
-
-        const handleEmail = (e)=>{ setEmail( e.target.value ) }
-
-        const handlePass = (e)=>{ setPass( e.target.value ) }
-
-        const handleEnter = (e)=>{
-            if ( e.keyCode == 13 ) {
-                //setloginStatus( User.SignIn( login, pass ) );
-                User.SignIn( email, pass ).then ( (result) => {
-                    setloginStatus(result);
-                    setUser(User.get_UserFullNameAndEmail );
-                });
-            }
-        }
-
-        return (
-            <div style={{ display: ( props.show ? 'flex ' : 'none' ) }}>
-            <div className = 'block_row' style={{ display: ( !loginStatus ? 'flex ' : 'none' ) }}>
-                <div>
-                    <label for="email"> Email:</label>
-                    <input 
-                        value={email}
-                        onChange={handleEmail}
-                        onKeyUp={handleEnter}
-                        type="email" id="email" name="email" required minlength="5" maxlength="100" size="20"
-                    />
-                </div>
-                <div>
-                    <label for="pass">Password:</label>
-                    <input 
-                        value={pass}
-                        onChange={handlePass}
-                        onKeyUp={handleEnter}
-                        type="password" id="pass" name="password" minlength="8" required size="10"
-                    />
-                </div>
-
-                <button
-                    onClick={ () => User.SignIn( email, pass ).then ( (result) => {
-                        setloginStatus(result);
-                        setUser(User.get_UserFullNameAndEmail );
-                        } ) }
-                >Sign in</button>
-
-            </div>
-
-            <div className = 'block_row' style={{ display: ( loginStatus ? 'flex ' : 'none' ) }}>
-                <button
-                    onClick={()=> User.SignOut().then( (result) => {
-                        setloginStatus(result);
-                        setUser('');
-                    }) }
-                >Sign out</button>
-            </div>
-
-            </div>
-        )
-    }
-    
-
-      React.useEffect(() => {
+    React.useEffect(() => {
         fetch( ElevatorOnline.get_ServerPath + 'status', { method: 'GET' })
           .then((res) => res.json() )
           .then((response) => setStatus(response.online) );
-      }, []);
+    }, []);
 
     return (
     <div className='block'>
         <div className='block_row'>
-            <label>Server -&nbsp;</label>
-            <label>{status ? "Online..." : "Offline..."}</label>
-            <label style={{ display: ( status ? 'block' : 'none' ) }}>&nbsp;{ loginStatus ? 'Connected as ' + user : 'Disconnected.' }</label>
-            <label>&nbsp;Access to the server is under development. It is now possible to use local data processing.</label>
+            <label style={{ color: ( status ? 'green' : 'red' ) }}>{status ? "Online" : "Offline"}</label>
+            <label style={{ display: ( status ? 'block' : 'none' ), color: ( status ? 'green' : 'red' ) }}>&nbsp;{ loginStatus ? 'Connected as ' + user : 'Disconnected.' }</label>
         </div>
 
-        <LoginForm show = {status}/>
+        <div className='block_row' style={{ color: 'red' }}>
+            <label
+                style={{ 
+                    display: 'flex',
+                    justifyContent: 'center',
+                    color: 'inherit',
+                    fontSize: '1em',
+                    fontWeight: 'bold',
+                    borderStyle: 'solid',
+                    borderWidth: '1px',
+                    borderRadius: '50%',
+                    height: '23px',
+                    aspectRatio: '1/1'
+                }}
+                >i</label>
+
+            <label style={{ color: 'inherit' }}>
+            &nbsp;Access to the server is under development. It is now possible to use local data processing.
+            </label>
+        </div>
+
+        <LoginForm 
+            status = {status} 
+            user = {user}
+            loginStatus = {loginStatus}
+            callback_setUser = { (response) => { setUser(response) } }
+            callback_setLoginStatus = { (response) => { setloginStatus(response) } }
+            />
 
         <div
             className='block'
@@ -106,6 +65,10 @@ export default function ServerMenu(){
     </div>
     );
 }
+
+
+
+
 
 function DB_List( filter ){
     const init = { result: null, error: null };

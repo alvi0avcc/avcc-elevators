@@ -1,0 +1,39 @@
+.app {
+    background-color: white;
+    display: grid;
+    grid-template-rows: 64px auto 25px;
+    font-size: 1em;
+    color: blue;
+    min-height: 100vh;
+  }
+
+.app-header {
+    position: static;
+    color: white;
+    background-color: blue;
+    display: grid;
+    height: 64px;
+    grid-template-columns: 65px auto 65px;
+    align-content: center;
+    justify-items: center;
+    font-size: 2em;
+}
+
+.app-bottom {
+    background-color: inherit;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    font-size: inherit;
+    color: inherit;
+}
+
+.app-bottom button{
+    border-style: none;
+    background-color: transparent;
+}
+  
+.app-bottom button:hover {
+    color: lime;
+    background-color: transparent;
+    cursor: pointer;
+  }

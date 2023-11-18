@@ -1,19 +1,35 @@
 require("dotenv").config();
-const port= process.env.APP_PORT || 3001;
-const host = process.env.APP_HOST || '127.0.0.1';
+const os = require('os');
+console.log('hostname = ', os.hostname());
+const port = ( os.hostname() == 'NITRO' ? 3001 : process.env.APP_PORT );
+const host = ( os.hostname() == 'NITRO' ? '127.0.0.1' : process.env.APP_HOST );
+console.log('host = ', host, port);
 const IN_PROD = process.env.NODE_ENV === 'production';
 const ONE_HOURS = 1000 * 60 * 60;
 const TWO_HOURS = ONE_HOURS * 2;
 
 const express = require('express');
+
+const https = require('https');
+const fs = require('fs');
+var https_options = {
+  key: fs.readFileSync(`./cert/privkey.pem`),
+  cert: fs.readFileSync(`./cert/fullchain.pem`)
+};
+
 const bodyParser = require('body-parser');
 const app = express();
+
+https.createServer(https_options, app).listen(port, host, () => {
+  console.log(`Server listens https://${host}:${port}`);
+});
+
 const cors = require("cors");
 const morgan = require('morgan');
 
 const session = require('express-session');
 
-const db = require('./db');
+const db = require('./db/db');
 const { hashSync, genSaltSync, compareSync } = require("bcrypt");
 
 const mysql = require('mysql');
@@ -31,6 +47,7 @@ const options ={
 const pool = mysql.createPool(options);
 const sessionStore = new mysqlStore(options, pool);
 
+/*
 const connection = mysql.createPool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
@@ -38,9 +55,48 @@ const connection = mysql.createPool({
   password: process.env.DB_PASS,
   database: process.env.MYSQL_DB
 });
+*/
+
+// my modules
+const inspection = require('./db/db-inspection');
+const elevator = require('./db/db-elevator');
+const firm = require('./db/db-firm');
+const person = require('./db/db-person');
+const user = require('./db/db-user');
+
+app.use(cors({
+  //origin: 'https://' + host + ':' + port,
+  origin: 'http://localhost:3000',
+  //origin: "https://avcc.sytes.net:8433",
+  //origin : '*',
+  credentials: true
+}));
+
+app.use(morgan('dev'));// we  use morgan with the pre-defined format "dev" for developer.
+ 
+app.use(bodyParser.json()); // for parsing application/json
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use(session({
+  name: process.env.SESS_NAME,
+  resave: false,
+  saveUninitialized: false,
+  store: sessionStore,
+  secret: process.env.SESS_SECRET,
+  cookie: {
+      httpOnly: true,
+      maxAge: ONE_HOURS,
+      sameSite: 'none',
+      secure: true
+  },
+  rolling: true,
+}));
+
 
 // Attempt to catch disconnects 
-connection.on('connection', function (stream) {
+pool.on('connection', function (stream) {
   console.log('DB Connection established');
 
   stream.on('error', function (err) {
@@ -69,56 +125,13 @@ connection.on('connection', function (stream) {
   });
 });
 
-app.use(cors({
-  origin: "http://localhost:3000",
-  credentials: true
-}));
-
-app.use(morgan('dev'));// we  use morgan with the pre-defined format "dev" for developer.
- 
-app.use(bodyParser.json()); // for parsing application/json
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.use(session({
-  name: process.env.SESS_NAME,
-  resave: false,
-  saveUninitialized: false,
-  store: sessionStore,
-  secret: process.env.SESS_SECRET,
-  cookie: {
-      maxAge: ONE_HOURS,
-      sameSite: true,
-      secure: IN_PROD
-  },
-  rolling: true,
-}));
 
 //------- redirects --------------------------------
-const redirectLogin = (req, res, next) =>{
-  if(!req.session.userId){
-      res.redirect('/login')
-  }else{
-          next()
-      }
-};
 
 const checkAuth = (req, res, next) =>{
   if(!req.session.userId){
-      res.redirect('/')
-  }else{
-          next()
-      }
-};
-
-const redirectHome = (req, res, next) =>{
-  if(req.session.userId){
-      //res.redirect('/home');
-      res.send({
-        login: true,
-        userId: req.session.userId
-      });
+      //res.redirect('/')
+      res.send('error')
   }else{
           next()
       }
@@ -131,7 +144,7 @@ app.get('/', (req, res)=>{
   console.log(userId);
   res.send(`
   <h1> Welcome!</h1>
-  <a href = 'http://avcc.sytes.net/'> AVCC </a>
+  <a href = 'https://avcc.sytes.net/'> AVCC </a>
   `);
 });
 
@@ -143,15 +156,20 @@ app.get('/status', (req, res)=>{
   );
 });
 
-app.post('/login',redirectHome, async(req, res, next)=>{
+app.post('/login', async(req, res, next)=>{
   try{ 
   const email = req.body.email;
   let password = req.body.password;
-  const user = await db.getUserByEmail(email);
-   
+  //const user = await db.getUserByEmail(email).then( resolve => {return res.send( resolve )}, reject => {return res.send( reject )});
+  const user = await db.getUserByEmail(email).then( null, reject => { return res.send( reject )});
   if(!user){
       return res.send({
-          message: "Invalid email or password"
+        login: false,
+        userId: 0,
+        name: '',
+        surname: '',
+        email: '',
+        message: "Invalid email or password"
       })
   }
 
@@ -168,10 +186,16 @@ app.post('/login',redirectHome, async(req, res, next)=>{
         email: email
       });
   }  else{
-       res.send(
-           "Invalid email or password"
+       res.send({
+        login: false,
+        userId: 0,
+        name: '',
+        surname: '',
+        email: '',
+        message: "Invalid email or password"
+       }
       );
-      return res.redirect('/login')
+      //return res.redirect('/login')
   } 
 
   } catch(e){
@@ -179,7 +203,7 @@ app.post('/login',redirectHome, async(req, res, next)=>{
   }
 });
 
-
+/*
 app.get('/register',redirectHome, (req,res)=>{
   res.send(`
   <h1>Register</h1>
@@ -193,8 +217,9 @@ app.get('/register',redirectHome, (req,res)=>{
   <a href='/login'>Login</a>
   `)
 });
+*/
 
-app.post('/register', redirectHome, async (req, res, next)=>{
+app.post('/register', checkAuth, async (req, res, next)=>{
   try{
       const Name = req.body.Name;
       const SurName = req.body.SurtName;
@@ -222,7 +247,7 @@ app.post('/register', redirectHome, async (req, res, next)=>{
 });
 
 
-app.post('/logout', redirectLogin, (req, res)=>{
+app.post('/logout', (req, res)=>{
   req.session.destroy(err => {
       if(err){
           return res.redirect('/home')
@@ -249,29 +274,35 @@ app.post("/info", checkAuth, async (request, response, next) => {
       console.log("request = ", req);
 
       if ( req.type == 'inspections') {
-        if ( user.inspection_read == 1 )
-          Inspection_List( req ).then( result => { response.json( { result: result, error: null } ) });
-          //Inspection_Data( request.body ).then(function(result){ console.log("Inpection_Data response:", result); response.json( result ) });
+        if ( user.inspection_read == 1 ) {
+          if ( req.filter == 'all' ) inspection.Inspection_List( req ).then( result => { response.json( { result: result, error: null } ) });
+          if ( req.filter == 'id' ) inspection.Inspection_Data( req ).then( result => { response.json( { result: result, error: null } ) });
+        }
         else response.json( { result: null, error: 'You don`t have permission for read `Inspection` DB.' } )
       }
       else if ( req.type == 'elevators') {
-        if ( user.elevator_read == 1 )
-          Elevator_List( req ).then( result => { response.json( { result: result, error: null } ) });
+        if ( user.elevator_read == 1 ) {
+          if ( req.filter == 'all' ) elevator.Elevator_List( req ).then( result => { response.json( { result: result, error: null } ) });
+          if ( req.filter == 'id' ) elevator.Elevator_Data( req ).then( result => { response.json( { result: result, error: null } ) });
+        }
         else response.json( { result: null, error: 'You don`t have permission for read `Elevator` DB.' } )
       }
       else if ( req.type == 'firms') {
-        if ( user.firm_read == 1 )
-          Firm_List( req ).then( result => { response.json( { result: result, error: null } ) });
+        if ( user.firm_read == 1 ) {
+          if ( req.filter == 'all' ) firm.Firm_List( req ).then( result => { response.json( { result: result, error: null } ) });
+        }
         else response.json( { result: null, error: 'You don`t have permission for read `Firm` DB.' } )
       }
       else if ( req.type == 'persons') {
-        if ( user.person_read == 1 )
-          Person_List( req ).then( result => { response.json( { result: result, error: null } ) });
+        if ( user.person_read == 1 ) {
+          if ( req.filter == 'all' ) Person_List( req ).then( result => { response.json( { result: result, error: null } ) });
+        }
         else response.json( { result: null, error: 'You don`t have permission for read `Person` DB.' } )
       }
       else if ( req.type == 'users') {
-        if ( user.user_read == 1 )
-          User_List( req ).then( result => { response.json( { result: result, error: null } ) });
+        if ( user.user_read == 1 ) {
+          if ( req.filter == 'all' ) User_List( req ).then( result => { response.json( { result: result, error: null } ) });
+        }
         else response.json( { result: null, error: 'You don`t have permission for read `User` DB.' } )
       }
       else response.json( { result: null, error: 'incorrect request', request: req } );
@@ -280,13 +311,6 @@ app.post("/info", checkAuth, async (request, response, next) => {
 });
 
 /*
-
-
-app.post("/inspectiondata", (request, response) => {
-  console.log('Inspection data: ',request.body);
-  if ( request.isAuthenticated )
-    Inspection_Data( request.body ).then(function(result){ console.log("Inpection_Data response:", result); response.json( result ) });
-});
 
 app.post("/elevatorinfo", (request, response) => {
   console.log('Elevator info: ',request.body);
@@ -429,18 +453,9 @@ app.post("/updateperson", (request, response) => {
 
 */
 
-/*
-app.listen(port, () => {
-  console.log(`app listening on port ${port}`);
-});
-*/
-app.listen(port, host, () => {
-  console.log(`Server listens http://${host}:${port}`);
-});
-
-
 //----------------------------------------------------------
 
+/*
 function SignIn( login, password ){
   return new Promise ( function(resolve, reject) {
     connection.query("SELECT u.*, p.name, p.surname FROM `elevators`.`users` AS u LEFT JOIN `elevators`.`person` AS p ON u.person_id = p.id WHERE username = '"+ login +"'", function (err, result) {
@@ -461,102 +476,11 @@ function SignIn( login, password ){
     })
   })
 };
-
-
-function Inspection_List( request ){
-  return new Promise ( function(resolve, reject) {
-    connection.query(
-      "SELECT i.id, i.order_no, i.order_date, i.order_time, i.order, " +
-      "i.elevator, e.elevator_name, " +
-      "i.client, f.name AS 'client_name', " +
-      "i.inspector, p.name AS inspector_name, p.surname AS inspector_surname, " +
-      "i.comments, i.status, i.result, " + 
-      "IF ( i.complex != 'null', 'true', 'false' ) AS complex_found, " +
-      "IF ( i.silo != 'null', 'true', 'false' ) AS silo_found, " +
-      "IF ( i.warehouse != 'null', 'true', 'false' ) AS warehouse_found " +
-      "FROM `elevators`.`inspection` AS i " +
-      "LEFT JOIN `elevators`.`elevator` AS e ON i.elevator = e.id " +
-      "LEFT JOIN `elevators`.`firm` AS f ON i.client = f.id " +
-      "LEFT JOIN `elevators`.`person` AS p ON i.inspector = p.id", function (err, result) {
-      if (err) resolve(err);
-      console.log('Inspection_List = ',result);
-      resolve(result);
-    })
-  })
-};
-
-function Inspection_Data( request ){
-  return new Promise ( function(resolve, reject) {
-    connection.query(
-      "SELECT i.id, i.order_no, i.order_date, i.order_time, i.order, " +
-      "i.elevator, e.elevator_name, " +
-      "e.adress AS elevator_adress, " +
-      "e.owner AS elevator_owner, o.name AS elevator_owner_name, " +
-      "e.comments AS elevator_comments, " +
-      "i.client, f.name AS 'client_name', " +
-      "i.inspector, p.name AS inspector_name, p.surname AS inspector_surname, " +
-      "i.comments, i.status, i.result, " + 
-      "i.complex, i.silo, i.warehouse " + 
-      "FROM `elevators`.`inspection` AS i " +
-      "LEFT JOIN `elevators`.`elevator` AS e ON i.elevator = e.id " +
-      "LEFT JOIN `elevators`.`firm` AS f ON i.client = f.id " +
-      "LEFT JOIN `elevators`.`firm` AS o ON e.owner = o.id " +
-      "LEFT JOIN `elevators`.`person` AS p ON i.inspector = p.id " + 
-      "WHERE i.id = " + request.id, function (err, result) {
-      if (err) resolve(err);
-      console.log('Inspection_Data = ',result);
-      resolve(result);
-    })
-  })
-};
-
-function Elevator_List( request ){
-  return new Promise ( function(resolve, reject) {
-
-    let filter = 'all';
-    if ( request.filter ) filter = request.filter;
-
-    let sorted = 'id';
-    if ( request.sorted ) sorted = request.sorted;
-
-    let id = '0';
-    if ( request.id ) id = request.id;
-
-    console.log('Elevator_List filter = ',request);
-
-    if ( filter == 'all' )
-    connection.query("SELECT e.id, e.elevator_name, e.adress, e.owner, e.complex, e.silo, e.warehouse, e.comments, f.name FROM `elevators`.`elevator` AS e LEFT JOIN `elevators`.`firm` AS f ON e.owner = f.id ORDER by " + sorted, function (err, result) {
-      if (err) resolve(err);
-      console.log(result);
-      resolve(result);
-    });
-
-    if ( filter == 'owner' )
-    connection.query("SELECT e.id, e.elevator_name, e.adress, e.owner, e.complex, e.silo, e.warehouse, e.comments, f.name FROM `elevators`.`elevator` AS e LEFT JOIN `elevators`.`firm` AS f ON e.owner = f.id WHERE e.owner = " + id + " ORDER by " + sorted, function (err, result) {
-      if (err) resolve(err);
-      console.log(result);
-      resolve(result);
-    });
-
-  })
-};
-
-function Elevator_Data( request ){
-  console.log(request);
-
-  return new Promise ( function(resolve, reject) {
-    connection.query("SELECT * FROM `elevators`.`elevator` WHERE id = " + request.id, function (err, result) {
-      if (err) resolve(err);
-
-      console.log(result);
-      resolve(result);
-    })
-  })
-};
+*/
 
 function Import_Complex( request ){
   return new Promise ( function(resolve, reject) {
-    connection.query("UPDATE `elevators`.`elevator` SET `complex` = '" + request.data + "' WHERE id = " + request.id, function (err, result) {
+    pool.query("UPDATE `elevators`.`elevator` SET `complex` = '" + request.data + "' WHERE id = " + request.id, function (err, result) {
 
       if (err) resolve(err);
 
@@ -568,7 +492,7 @@ function Import_Complex( request ){
 
 function Import_Silo( request ){
   return new Promise ( function(resolve, reject) {
-    connection.query("UPDATE `elevators`.`elevator` SET `silo` = '" + request.data + "' WHERE id = " + request.id, function (err, result) {
+    pool.query("UPDATE `elevators`.`elevator` SET `silo` = '" + request.data + "' WHERE id = " + request.id, function (err, result) {
 
       if (err) resolve(err);
 
@@ -580,7 +504,7 @@ function Import_Silo( request ){
 
 function Import_Warehouse( request ){
   return new Promise ( function(resolve, reject) {
-    connection.query("UPDATE `elevators`.`elevator` SET `warehouse` = '" + request.data + "' WHERE id = " + request.id, function (err, result) {
+    pool.query("UPDATE `elevators`.`elevator` SET `warehouse` = '" + request.data + "' WHERE id = " + request.id, function (err, result) {
 
       if (err) resolve(err);
 
@@ -590,55 +514,7 @@ function Import_Warehouse( request ){
   })
 };
 
-function Firm_List( request ){
-  return new Promise ( function(resolve, reject) {
-    console.log('filter = ', request);
-    let filter = 'all';
-    if ( request.filter ) filter = request.filter;
 
-    let sorted = 'id';
-
-    let list = 'simple';
-    if ( request.list ) list = request.list;
-    if ( request.sorted ) sorted = request.sorted;
-
-    let id = '0';
-    if ( request.id ) id = request.id;
-
-    //if ( request.filter == 'all' ) 
-      if ( list == 'simple')
-        connection.query("SELECT * FROM `elevators`.`firm` ORDER BY " + sorted, function (err, result) {
-          if (err) resolve(err);
-          console.log(result);
-          resolve(result);
-        });
-
-    if ( list == 'contact') 
-      connection.query("SELECT f.id, p.firm, p.elevator, e.elevator_name, p.name, p.surname, p.position, p.phone, p.comments FROM `elevators`.`firm` AS f LEFT JOIN `elevators`.`person` AS p ON f.id = p.firm LEFT JOIN `elevators`.`elevator` AS e ON e.id = p.elevator WHERE f.id = " + id + " ORDER BY e.elevator_name", function (err, result) {
-        if (err) resolve(err);
-        console.log(result);
-        resolve(result);
-      });
-
-    if ( request.filter == 'id' ) 
-      connection.query("SELECT * FROM `elevators`.`firm` WHERE id = '" + request.id + "'", function (err, result) {
-        if (err) resolve(err);
-        console.log(result);
-        resolve(result);
-      });
-  })
-};
-
-function Firm_Data( request ){
-  console.log(request);
-  return new Promise ( function(resolve, reject) {
-    connection.query("SELECT * FROM `elevators`.`firm` WHERE id = " + request.id, function (err, result) {
-      if (err) resolve(err);
-      console.log(result);
-      resolve(result);
-    })
-  })
-};
 
 function Person_List( request ){
   return new Promise ( function(resolve, reject) {
@@ -657,35 +533,35 @@ function Person_List( request ){
     if ( request.filter ) filter = request.filter;
 
     if ( list == 'person' && filter == 'all' ) 
-      connection.query("SELECT p.id, p.name, p.surname, p.firm, p.elevator, p.position, p.phone, p.comments, f.name AS firm_name, e.elevator_name FROM `elevators`.`person` AS p LEFT JOIN `elevators`.`firm` AS f ON p.firm = f.id LEFT JOIN `elevators`.`elevator` AS e ON p.elevator = e.id ORDER BY " + sort, function (err, result) {
+      pool.query("SELECT p.id, p.name, p.surname, p.firm, p.elevator, p.position, p.phone, p.comments, f.name AS firm_name, e.elevator_name FROM `elevators`.`person` AS p LEFT JOIN `elevators`.`firm` AS f ON p.firm = f.id LEFT JOIN `elevators`.`elevator` AS e ON p.elevator = e.id ORDER BY " + sort, function (err, result) {
         if (err) resolve(err);
         console.log(result);
         resolve(result);
       });
 
     if ( list == 'inspector' && filter == 'all' ) 
-      connection.query("SELECT * FROM `elevators`.`person` WHERE position = '" + list + "'  ORDER BY " + sort, function (err, result) {
+      pool.query("SELECT * FROM `elevators`.`person` WHERE position = '" + list + "'  ORDER BY " + sort, function (err, result) {
         if (err) resolve(err);
         console.log(result);
         resolve(result);
       });
 
     if ( list == 'person' && filter == 'id' ) 
-      connection.query("SELECT * FROM `elevators`.`person` WHERE id = '" + request.id + "'", function (err, result) {
+      pool.query("SELECT * FROM `elevators`.`person` WHERE id = '" + request.id + "'", function (err, result) {
         if (err) resolve(err);
         console.log(result);
         resolve(result);
       });
     
     if ( list == 'firm') 
-      connection.query("SELECT f.id, p.firm, p.elevator, e.elevator_name, p.name, p.surname, p.position, p.phone, p.comments FROM `elevators`.`firm` AS f LEFT JOIN `elevators`.`person` AS p ON f.id = p.firm LEFT JOIN `elevators`.`elevator` AS e ON e.id = p.elevator WHERE f.id = " + id + " ORDER BY e.elevator_name", function (err, result) {
+      pool.query("SELECT f.id, p.firm, p.elevator, e.elevator_name, p.name, p.surname, p.position, p.phone, p.comments FROM `elevators`.`firm` AS f LEFT JOIN `elevators`.`person` AS p ON f.id = p.firm LEFT JOIN `elevators`.`elevator` AS e ON e.id = p.elevator WHERE f.id = " + id + " ORDER BY e.elevator_name", function (err, result) {
         if (err) resolve(err);
         console.log(result);
         resolve(result);
       });
 
     if ( list == 'elevator') 
-      connection.query("SELECT e.id, p.elevator, p.name, p.surname, p.position, p.phone, p.comments FROM `elevators`.`elevator` AS e LEFT JOIN `elevators`.`person` AS p ON e.id = p.elevator WHERE e.id = '" + id + "' ORDER BY p.position", function (err, result) {
+      pool.query("SELECT e.id, p.elevator, p.name, p.surname, p.position, p.phone, p.comments FROM `elevators`.`elevator` AS e LEFT JOIN `elevators`.`person` AS p ON e.id = p.elevator WHERE e.id = '" + id + "' ORDER BY p.position", function (err, result) {
         if (err) resolve(err);
         console.log(result);
         resolve(result);
@@ -696,7 +572,7 @@ function Person_List( request ){
 function Person_Data( request ){
   console.log(request);
   return new Promise ( function(resolve, reject) {
-    connection.query("SELECT * FROM `elevators`.`person` WHERE id = " + request.id, function (err, result) {
+    pool.query("SELECT * FROM `elevators`.`person` WHERE id = " + request.id, function (err, result) {
       if (err) resolve(err);
       console.log(result);
       resolve(result);
@@ -724,7 +600,7 @@ function User_List( request ){
 
     if ( filter == 'all' ) 
       //connection.query('SELECT u.*, p.name, p.surname FROM `elevators`.`users` AS u LEFT JOIN `elevators`.`person` AS p ON u.person_id = p.id ORDER BY " + sort, function (err, result) {
-      connection.query("SELECT *, '***' AS password FROM `elevators`.`users` ORDER BY " + sort, function (err, result) {
+        pool.query("SELECT *, '***' AS password FROM `elevators`.`users` ORDER BY " + sort, function (err, result) {
         if (err) resolve(err);
         console.log(result);
         resolve(result);
@@ -733,7 +609,7 @@ function User_List( request ){
 function User_Data( request ){
   console.log(request);
   return new Promise ( function(resolve, reject) {
-    connection.query("SELECT * FROM `elevators`.`users` WHERE id = " + request.id, function (err, result) {
+    pool.query("SELECT * FROM `elevators`.`users` WHERE id = " + request.id, function (err, result) {
       if (err) resolve(err);
       console.log(result);
       resolve(result);
@@ -793,7 +669,7 @@ function New_Inspection( request ){
           }
     ); 
     */
-    connection.query("INSERT INTO `elevators`.`inspection` (`order_no`, `order_date`)" +
+    pool.query("INSERT INTO `elevators`.`inspection` (`order_no`, `order_date`)" +
       " VALUES ('" + request.order_no + "', '" + request.order_date + "')",
       function (err, result) {
         console.log('New_Inspection - err - ',err);
@@ -809,7 +685,7 @@ function Update_Inspection( request ){
   return new Promise ( function(resolve, reject) {
     if ( request.parameter == 'full' ) {
       console.log('Update_Inspection - request - ',request);
-      connection.query("UPDATE `elevators`.`inspection` SET "+
+      pool.query("UPDATE `elevators`.`inspection` SET "+
       "`order_no` = '" +  request.order_no + "', " +
       "`order_date` = '" +  request.order_date + "', " +
       "`order_time` = '" +  request.order_time + "', " +
@@ -838,7 +714,7 @@ function Update_Inspection( request ){
 
 function Del_Inspection( request ){
   return new Promise ( function(resolve, reject) {
-    connection.query("DELETE FROM `elevators`.`inspection` WHERE (`id` = '"+ request.id + "')",
+    pool.query("DELETE FROM `elevators`.`inspection` WHERE (`id` = '"+ request.id + "')",
         function (err, result) {
           console.log('Del_Inspection- err - ',err);
           console.log('Del_Inspection - result - ',result);
@@ -851,7 +727,7 @@ function Del_Inspection( request ){
 
 function New_Elevator( request ){
   return new Promise ( function(resolve, reject) {
-    connection.query(
+    pool.query(
       "INSERT INTO `elevators`.`elevator` VALUES ( DEFAULT,'"+ request.elevator_name + "',"+"DEFAULT,DEFAULT,DEFAULT,DEFAULT,DEFAULT,DEFAULT " + ")",
         function (err, result) {
           console.log('New_Elevator - err - ',err);
@@ -867,7 +743,7 @@ function New_Elevator( request ){
 function Update_Elevator( request ){
   return new Promise ( function(resolve, reject) {
     if ( request.parameter == 'simple' ) {
-      connection.query("UPDATE `elevators`.`elevator` SET "+
+      pool.query("UPDATE `elevators`.`elevator` SET "+
       "`elevator_name` = '" +  request.elevator_name + "', " +
       "`adress` = '" +  request.adress + "', " +
       "`owner` = " + ( request.owner == null || request.owner == 0 ? "DEFAULT, " : "'" +  request.owner + "', " ) +
@@ -888,7 +764,7 @@ function Update_Elevator( request ){
 
 function Del_Elevator( request ){
   return new Promise ( function(resolve, reject) {
-    connection.query("DELETE FROM `elevators`.`elevator` WHERE (`id` = '"+ request.id + "')",
+    pool.query("DELETE FROM `elevators`.`elevator` WHERE (`id` = '"+ request.id + "')",
         function (err, result) {
           console.log('Del_Elevator - err - ',err);
           console.log('Del_Elevator - result - ',result);
@@ -902,7 +778,7 @@ function Del_Elevator( request ){
 
 function New_Firm( request ){
   return new Promise ( function(resolve, reject) {
-    connection.query("INSERT INTO `elevators`.`firm` VALUES ( DEFAULT,'"+ request.name + "',"+"DEFAULT,DEFAULT,DEFAULT,DEFAULT " + ")",
+    pool.query("INSERT INTO `elevators`.`firm` VALUES ( DEFAULT,'"+ request.name + "',"+"DEFAULT,DEFAULT,DEFAULT,DEFAULT " + ")",
         function (err, result) {
           console.log('New_Firm - err - ',err);
           console.log('New_Firm - result - ',result);
@@ -916,7 +792,7 @@ function New_Firm( request ){
 
 function Del_Firm( request ){
   return new Promise ( function(resolve, reject) {
-    connection.query("DELETE FROM `elevators`.`firm` WHERE (`id` = '"+ request.id + "')",
+    pool.query("DELETE FROM `elevators`.`firm` WHERE (`id` = '"+ request.id + "')",
         function (err, result) {
           console.log('Del_Firm - err - ',err);
           console.log('Del_Firm - result - ',result);
@@ -929,7 +805,7 @@ function Del_Firm( request ){
 
 function Update_Firm( request ){
   return new Promise ( function(resolve, reject) {
-      connection.query("UPDATE `elevators`.`firm` SET "+
+    pool.query("UPDATE `elevators`.`firm` SET "+
       "`name` = '" +  request.name + "', " +
       "`type` = '" +  request.type + "', " +
       "`adress` = '" +  request.adress + "', " +
@@ -948,7 +824,7 @@ function Update_Firm( request ){
 
 function New_Person( request ){
   return new Promise ( function(resolve, reject) {
-    connection.query("INSERT INTO `elevators`.`person` VALUES ( DEFAULT,'"+ 
+    pool.query("INSERT INTO `elevators`.`person` VALUES ( DEFAULT,'"+ 
       request.name + "', '"+
       request.surname + "',DEFAULT,DEFAULT,DEFAULT,DEFAULT,DEFAULT " + ")",
         function (err, result) {
@@ -964,7 +840,7 @@ function New_Person( request ){
 
 function Del_Person( request ){
   return new Promise ( function(resolve, reject) {
-    connection.query("DELETE FROM `elevators`.`person` WHERE (`id` = '"+ request.id + "')",
+    pool.query("DELETE FROM `elevators`.`person` WHERE (`id` = '"+ request.id + "')",
         function (err, result) {
           console.log('Del_Person - err - ',err);
           console.log('Del_Person - result - ',result);
@@ -977,7 +853,7 @@ function Del_Person( request ){
 
 function Update_Person( request ){
   return new Promise ( function(resolve, reject) {
-      connection.query("UPDATE `elevators`.`person` SET "+
+      pool.query("UPDATE `elevators`.`person` SET "+
       "`name` = '" +  request.name + "', " +
       "`surname` = '" +  request.surname + "', " +
       "`firm` = '" +  request.firm + "', " +
@@ -997,32 +873,5 @@ function Update_Person( request ){
 }
 
 //----------------------------------------------------------
-
-function Connect( request ){
-  let response = {
-      message: 'user not found',
-      connected: false
-    };
-
-  console.log(' request = ',request.body.username,'pass = ***');
-
-
-
-  if ( request.body.username == user.username && request.body.password == user.password ) {
-      response = {
-         message: "User found",
-         ip: request.ip,
-         hostname: request.hostname,
-         name: user.name,
-         surname: user.surname,
-         level: 'test-user',
-         connected: true
-        }
-    };
-
-  console.log(' response = ',response);
-
-  return ( response )
-}
 
 module.exports = app;

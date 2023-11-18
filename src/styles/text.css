@@ -1,0 +1,11 @@
+span {
+    color: black;
+}
+
+span#header {
+    color: white;
+}
+
+label {
+    color: blue;
+}

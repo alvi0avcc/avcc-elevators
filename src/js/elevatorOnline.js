@@ -5,12 +5,16 @@ class cElevatorOnline {
     constructor() {
         this.inspection = [];
         this.Comments   = '';
-        this.ServerPath = 'http://localhost:3001/';
+        //this.ServerPath = 'https://127.0.0.1:3001/';
+        this.ServerPath = ( window.location.hostname == 'localhost' ? 'https://localhost:3001/' : 'https://avcc.sytes.net:8443/' ) ;
+        //this.ServerPath = 'https://avcc.sytes.net:8443/';
     }
 
     get get_ServerPath(){
+        console.log('localtion = ', this.ServerPath);
         return this.ServerPath;
     }
+
     get get_ElevatorOnline_Info() {
         return ElevatorOnline;
     }
@@ -27,7 +31,7 @@ class cElevatorOnline {
         return new Promise ( (resolve, reject) => {
             if ( User.get_LoginStatus ) {
                 console.log('info request= ',request);
-                fetch( this.ServerPath + "info" , { 
+                fetch( this.get_ServerPath + "info" , { 
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json;charset=utf-8' },
                     credentials: 'include',
@@ -69,6 +73,8 @@ class cElevatorOnline {
      * @param {number} id Inspection
      */
     get_Inspection( id ){
+        return this.get_Info( { type: 'inspection', filter: 'id', id: id } );
+        /*
         let data = {};
         data.id = id;
         return new Promise ( ( resolve, reject ) => {
@@ -84,6 +90,7 @@ class cElevatorOnline {
                     });
             }
         })
+        */
     }
 
     get_Elevator_List( filter ){
